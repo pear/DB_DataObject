@@ -25,22 +25,6 @@
  * extends_location =
  * ; optional default = DB_DataObject
  * extends =
- * ; leave blank to not generate template stuff.
- * make_template = display,list,edit
- *
- * ; options for Template Generation (using FlexyTemplate
- * [DB_DataObject_Generator_Template_Flexy]
- * templateDir = /home/xxx/templates
- * compileDir = /home/xxx/compiled",
- * filters   = php,simpletags,bodyonly
- * forceCompile = 0
- *
- * ; fileds to flags as hidden for template generation(preg_match format)
- * hideFields = password
- * ; fields to flag as read only.. (preg_match format)
- * readOnlyFields = created|person_created|modified|person_modified
- * ; fields to flag as links (from lists->edit/view) (preg_match formate)
- * linkFields = id|username|name
  * ; alter the extends field when updating a class (defaults to only replacing DB_DataObject)
  * generator_class_rewrite = ANY|specific_name   // default is DB_DataObject
  *
