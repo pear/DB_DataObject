@@ -377,6 +377,9 @@ class test extends DB_DataObject {
         var_dump($x->insert());
         
         
+        // bug #970
+        
+        
         
         $options['ignore_sequence_keys'] = false;
         DB_DataObject::debugLevel(3);
