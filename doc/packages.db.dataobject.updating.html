@@ -1,0 +1,556 @@
+<HTML
+><HEAD
+><TITLE
+>Modifying the database</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"><LINK
+REL="HOME"
+TITLE="PEAR Manual"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="SQL Builder and Data Modeling Layer"
+HREF="packages.db.dataobject.html"><LINK
+REL="PREVIOUS"
+TITLE="Finding and fetching"
+HREF="packages.db.dataobject.find_fetch.html"><LINK
+REL="NEXT"
+TITLE="Advanced Filters"
+HREF="packages.db.dataobject.filters.html"><META
+HTTP-EQUIV="Content-type"
+CONTENT="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="refentry"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>PEAR Manual</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="packages.db.dataobject.find_fetch.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="packages.db.dataobject.filters.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="packages.DB.DataObject.updating">Modifying the database</H1
+><DIV
+CLASS="refnamediv"
+><A
+NAME="AEN3955"
+></A
+>Modifying the database&nbsp;--&nbsp;
+        ::update, ::insert, ::delete,
+      </DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3958"
+></A
+><H2
+>Update</H2
+><P
+>&#13;      Updating the data.
+      </P
+><DIV
+CLASS="funcsynopsis"
+><A
+NAME="AEN3961"><P
+></P
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>boolean <B
+CLASS="function"
+>::update</B
+></CODE
+> ()</CODE
+></P
+><P
+></P
+></DIV
+><P
+>&#13;        updates the database using the objects variables
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3968"><P
+><B
+>Example 1.  Simple fetch and updated</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+$person = new DataObjects_Person;
+$person-&#62;get(12);
+$person-&#62;name='fred';
+$person-&#62;update();
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        
+       This would execute the following SQL statements, both fetching and updating the database.
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3971"><P
+><B
+>Example 2.  Resulting SQL </B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="sql"
+>SELECT * FROM person WHERE id = 12
+UPDATE person SET name='fred', age='21', eyes='blue' WHERE id = 12</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        To perform a general update on a table, use the WhereAdd() method
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3974"><P
+><B
+>Example 3.  Simple fetch and updated</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+$person = new DataObjects_Person;
+$person-&#62;removed=1;
+$person-&#62;whereAdd('age &#62; 21');
+$person-&#62;update();
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        
+        This would execute the following SQL statements, both fetching and updating the database.
+       <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3977"><P
+><B
+>Example 4.  Resulting SQL </B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="sql"
+>SELECT * FROM person WHERE id = 12;
+UPDATE person SET removed=1 WHERE age &#62; 21</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        
+      </P
+></DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3980"
+></A
+><H2
+>Insert</H2
+><P
+>&#13;      Inserting data.
+      </P
+><DIV
+CLASS="funcsynopsis"
+><A
+NAME="AEN3983"><P
+></P
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>int <B
+CLASS="function"
+>::insert</B
+></CODE
+> ()</CODE
+></P
+><P
+></P
+></DIV
+><P
+>&#13;        Inserts data into the database and returns the key/ID if any.
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3990"><P
+><B
+>Example 5.  Simple insert </B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+$person = new DataObjects_Person;
+$person-&#62;name='fred';
+$id = $person-&#62;insert();
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        
+       This would execute the following SQL statements, (It may also do sequences on some databases, it
+       uses mysql_next_id on mysql)
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3993"><P
+><B
+>Example 6.  Resulting SQL </B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="sql"
+>INSERT INTO person (name) VALUES ('fred');</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+      </P
+></DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3996"
+></A
+><H2
+>Delete</H2
+><P
+>&#13;      Deleting data.
+      </P
+><DIV
+CLASS="funcsynopsis"
+><A
+NAME="AEN3999"><P
+></P
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+><B
+CLASS="function"
+>::delete</B
+></CODE
+> ()</CODE
+></P
+><P
+></P
+></DIV
+><P
+>&#13;        Deletes data from the data, either using primary key or based on a WhereAdd() method call.
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN4006"><P
+><B
+>Example 7.  Simple insert </B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+$person = new DataObjects_Person;
+$person-&#62;get(12);
+$person-&#62;delete();
+
+
+$person = new DataObjects_Person;
+$person-&#62;whereAdd('age &#60; 21');
+$person-&#62;delete();
+
+
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        
+       This would execute the following SQL statements, 
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN4009"><P
+><B
+>Example 8.  Resulting SQL </B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="sql"
+>SELECT * FROM person WHERe id=12
+DELETE FROM person WHERE id=12 AND name='test' AND age=21
+DELETE FROM person WHERE age &#60; 21</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+      </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.find_fetch.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.filters.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Finding and fetching</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Advanced Filters</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

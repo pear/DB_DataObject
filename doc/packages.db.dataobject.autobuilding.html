@@ -1,0 +1,338 @@
+<HTML
+><HEAD
+><TITLE
+>AutoBuilding</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"><LINK
+REL="HOME"
+TITLE="PEAR Manual"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="SQL Builder and Data Modeling Layer"
+HREF="packages.db.dataobject.html"><LINK
+REL="PREVIOUS"
+TITLE="Configuration Options"
+HREF="packages.db.dataobject.configuration.html"><LINK
+REL="NEXT"
+TITLE="Finding and fetching"
+HREF="packages.db.dataobject.find_fetch.html"><META
+HTTP-EQUIV="Content-type"
+CONTENT="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="refentry"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>PEAR Manual</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="packages.db.dataobject.configuration.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="packages.db.dataobject.find_fetch.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="packages.DB.DataObject.autobuilding">AutoBuilding</H1
+><DIV
+CLASS="refnamediv"
+><A
+NAME="AEN3845"
+></A
+>AutoBuilding&nbsp;--&nbsp;
+        creating the base Classes and Database schema
+      </DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3848"
+></A
+><H2
+>What the AutoBuilder Does</H2
+><P
+>&#13;          One of the essential features of an SQL building tool is to to have some understanding of the
+          database structure, So that Integers can be checked, and strings can be escaped. There a few ways
+          this could be accomplished
+        
+        <P
+></P
+><UL
+><LI
+><P
+>Request the database description from the database, on each database build</P
+></LI
+><LI
+><P
+>Request the database description from the database, at the initialization of every web page.</P
+></LI
+><LI
+><P
+>Request the database description from the database, once, and store it in a file</P
+></LI
+></UL
+>
+         DB_DataObject uses the last of these, it utilizes the parse_ini_file function to read the file, so it should be 
+         reasonably fast. However this does involve a stage of setting up DB_DataObject prior to use.
+      </P
+><P
+>&#13;        The other key concept of DB_DataObject is that you work with extended classes of DB_DataObject, which
+        do all the 'table' related work. Setting these tables up for a large database can be time consuming, so 
+        the createTables.php file is included to assist in creating these files.
+      </P
+><P
+>  
+        To start the autobulider simple go to the pear/DB/DataObject/ directory, and type
+        <B
+CLASS="command"
+>c:\php4\php.exe createTables.php myconfig.ini</B
+> this will read your configuration file
+        and generate all the base classes, along with the data definition file.
+      </P
+></DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3861"
+></A
+><H2
+>Default Class Definition</H2
+><P
+> 
+        The default generated class looks like this.
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3864"><P
+><B
+>Example 1. an generated extended class</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+/*
+* Table Definition for group
+*/
+
+ 
+class DataObjects_Grp extends DB_DataObject {
+
+    ###START_AUTOCODE
+    /* the code below is auto generated do not remove the above tag */
+
+    var $__table='group';                             // table name
+    var $id;                              // int(11)
+    var $name;                            // varchar(255)
+    var $grp_owner;                       // int(11)
+    var $official;                        // varchar(255)
+    var $street;                          // varchar(255)
+    var $postcode;                        // varchar(255)
+    var $city;                            // varchar(255)
+    var $homepage;                        // varchar(255)
+    var $email;                           // varchar(255)
+    var $extra;                           // longtext
+
+
+    /* Static get */
+    function staticGet($k,$v=NULL) { return DB_DataObject::staticGet('DataObjects_Grp',$k,$v); }
+
+
+    /* the code above is auto generated do not remove the tag below */
+    ###END_AUTOCODE
+}
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        The class defines the table name, and comments some of table columns for your reference,
+        It also adds the staticGet() method, which can be used to quickly get single rows as Objects.
+        You should add your table related code after the ###END_AUTOCODE.
+      </P
+></DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3867"
+></A
+><H2
+>Database Definition File</H2
+><P
+> 
+        The default generated database definition file looks like this.
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3870"><P
+><B
+>Example 2. Database configuration file</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="ini"
+>[group]
+id = 1
+name = 2
+grp_owner = 1
+official = 2
+street = 2
+postcode = 2
+city = 2
+homepage = 2
+email = 2
+extra = 2
+
+[group__keys]
+id = 1</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        The blocks indicate either tables and the type of field (1=integer,2=string), 
+        or a list of keys for each table.  You should not need to edit or create this file, unless
+        the createTables.php does not support your database.
+        
+      </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.configuration.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.find_fetch.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Configuration Options</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Finding and fetching</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,670 @@
+<HTML
+><HEAD
+><TITLE
+>Finding and fetching</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"><LINK
+REL="HOME"
+TITLE="PEAR Manual"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="SQL Builder and Data Modeling Layer"
+HREF="packages.db.dataobject.html"><LINK
+REL="PREVIOUS"
+TITLE="AutoBuilding"
+HREF="packages.db.dataobject.autobuilding.html"><LINK
+REL="NEXT"
+TITLE="Modifying the database"
+HREF="packages.db.dataobject.updating.html"><META
+HTTP-EQUIV="Content-type"
+CONTENT="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="refentry"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>PEAR Manual</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="packages.db.dataobject.autobuilding.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="packages.db.dataobject.updating.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="packages.DB.DataObject.find_fetch">Finding and fetching</H1
+><DIV
+CLASS="refnamediv"
+><A
+NAME="AEN3874"
+></A
+>Finding and fetching&nbsp;--&nbsp;
+        Simple Querying methods ::staticGet ::get ::find ::fetch
+      </DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3877"
+></A
+><H2
+>get</H2
+><P
+>&#13;      Simple Get (Select) request, are achieved using the get methods
+      </P
+><DIV
+CLASS="funcsynopsis"
+><A
+NAME="AEN3880"><P
+></P
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+><B
+CLASS="function"
+>::get</B
+></CODE
+> (mixed Key or Value [, mixed Value])</CODE
+></P
+><P
+></P
+></DIV
+><P
+>&#13;        The basic get method for an extended class can be used in two ways, to get based on the primary key (one parameter)
+        or based on a key and value (two parameters)
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3890"><P
+><B
+>Example 1.  Simple fetch of data based on Primary Key</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+$person = new DataObjects_Person;
+$person-&#62;get(12);
+print_r($person);
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+      This would execute the following SQL statement and fetch the results into the objects variables
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3893"><P
+><B
+>Example 2.  Resulting SQL </B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="sql"
+>SELECT * FROM person WHERE id=12</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        To use another field other than the primary key, you would use it with two parameters
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3896"><P
+><B
+>Example 3.  Simple fetch of data based on Primary Key</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+$person = new DataObjects_Person;
+$person-&#62;get('email','test@example.com');
+print_r($person);
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        This would execute the following SQL statement and fetch the results into the objects variables
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3899"><P
+><B
+>Example 4.  Resulting SQL </B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="sql"
+>SELECT * FROM person WHERE email='test@example.com'</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        
+        The result of these two queries would be that all the objects variables would contain the matched row's 
+        data and the variable $person-&#62;N would contain the number of matches.
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3902"><P
+><B
+>Example 5.  Results of example code</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="ini"
+>Object (DataObjects_Person) =&#62;
+    [N] =&#62; 1
+    [id] =&#62; 12
+    [group] =&#62; 5
+    [has_glasses] =&#62; 1
+    [name] =&#62; 'fred blogs'
+    [password] =&#62; '**testing'
+    [email] =&#62; 'test@example.com'</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+      </P
+></DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3905"
+></A
+><H2
+>staticGet</H2
+><P
+>&#13;      Simple Get (Select) request, abreviated get request.
+      </P
+><DIV
+CLASS="funcsynopsis"
+><A
+NAME="AEN3908"><P
+></P
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+><B
+CLASS="function"
+>::staticGet</B
+></CODE
+> (mixed Key or Value [, mixed Value])</CODE
+></P
+><P
+></P
+></DIV
+><P
+>&#13;        The static method is similar to the get request, however it does not require the 
+        initial instantation of the class
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3918"><P
+><B
+>Example 6.  Simple fetch of data based on Primary Key</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+$person = DataObjects_Person::staticGet(12);
+print_r($person);
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+      
+        You may also use the DB_DataObject staticGet method directly, however you need to specify which
+        class you wish to use.
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3921"><P
+><B
+>Example 7.  Simple fetch of data based on Primary Key</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+$person = DB_DataObject::staticGet('DataObjects_Person',12);
+print_r($person);
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+      </P
+></DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3924"
+></A
+><H2
+>find</H2
+><P
+>&#13;      Searching for Items
+      </P
+><DIV
+CLASS="funcsynopsis"
+><A
+NAME="AEN3927"><P
+></P
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>integer <B
+CLASS="function"
+>::find</B
+></CODE
+> ([boolean Auto Fetch])</CODE
+></P
+><P
+></P
+></DIV
+><P
+>&#13;        The find method can be used to execute, and optionally fetch data based on the values of
+        the object
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3935"><P
+><B
+>Example 8.  Simple fetch of data based on Object Vars</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+$person = new DataObjects_Person;
+$person-&#62;hair = 'red';
+$person-&#62;has_glasses = 1;
+$number_of_rows = $person-&#62;find();
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+  
+       This would execute the following SQL statement and fetch the results into the objects variables
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3938"><P
+><B
+>Example 9.  Resulting SQL </B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="sql"
+>SELECT * FROM person WHERE hair='red' and has_glasses = 1</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+  
+      </P
+></DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3941"
+></A
+><H2
+>fetch</H2
+><P
+>&#13;      Getting the data.
+      </P
+><DIV
+CLASS="funcsynopsis"
+><A
+NAME="AEN3944"><P
+></P
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+>boolean <B
+CLASS="function"
+>::fetch</B
+></CODE
+> ()</CODE
+></P
+><P
+></P
+></DIV
+><P
+>&#13;        The fetch method gets the next row and  sets the objects variables to the rows data.
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3951"><P
+><B
+>Example 10.  Simple fetch of data based on Object Vars</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+$person = new DataObjects_Person;
+
+$person-&#62;hair = 'red';
+$person-&#62;has_glasses = 1;
+
+$number_of_rows = $person-&#62;find();
+
+$person = array();
+while ($person-&#62;fetch()) {
+    $people[] = $person;
+    echo "GOT {$person-&#62;name}&#60;BR&#62;";
+}
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+      </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.autobuilding.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.updating.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>AutoBuilding</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Modifying the database</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

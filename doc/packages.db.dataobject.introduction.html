@@ -1,0 +1,330 @@
+<HTML
+><HEAD
+><TITLE
+>Introduction</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"><LINK
+REL="HOME"
+TITLE="PEAR Manual"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="SQL Builder and Data Modeling Layer"
+HREF="packages.db.dataobject.html"><LINK
+REL="PREVIOUS"
+TITLE="SQL Builder and Data Modeling Layer"
+HREF="packages.db.dataobject.html"><LINK
+REL="NEXT"
+TITLE="Configuration Options"
+HREF="packages.db.dataobject.configuration.html"><META
+HTTP-EQUIV="Content-type"
+CONTENT="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="refentry"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>PEAR Manual</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="packages.db.dataobject.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="packages.db.dataobject.configuration.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="packages.DB.DataObject.Introduction">Introduction</H1
+><DIV
+CLASS="refnamediv"
+><A
+NAME="AEN3725"
+></A
+>Introduction&nbsp;--&nbsp;
+        What DB_DataObject can do
+      </DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3728"
+></A
+><H2
+>Introduction</H2
+><P
+>&#13;      Db_DataObject is a SQL Builder and Data Modeling Layer built ontop of PEAR DB, It main purpose is to
+      </P
+><P
+>&#13;        <P
+></P
+><UL
+><LI
+><P
+>Build SQL and execute statements based on the objects variables.</P
+></LI
+><LI
+><P
+>Group source code around the Data that they relate to.</P
+></LI
+><LI
+><P
+>Provide a simple consistant API to access and manipulate that data.</P
+></LI
+></UL
+>
+      </P
+><P
+>&#13;        The DB_DataObject is rarely accessed directly, it is intended to be the base class which you can
+        extend to put the code specificly relating to a particular database table. Below is an example of how you 
+        can use the end result (and extended class), 
+      </P
+><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3740"><P
+><B
+>Example 1. Typical usage example for <B
+CLASS="classname"
+>PEAR::DB_DataObject</B
+></B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?   
+        // initialize the DataObject Manager
+        
+        require_once('PEAR.php');
+        $options = &#38;PEAR::getStaticProperty('DB_DataObject','options');
+        $config = parse_ini_file('example.ini',TRUE);
+        $options = $config['DB_DataObject'];
+        
+        
+        // use one of the extended classes.
+        
+        require_once('DataObjects/Person.php');
+        
+        $person = new DataObjects_Person;
+     
+        $person-&#62;get(12);
+     
+        echo $person-&#62;name;
+        
+        
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+><P
+>&#13;        The above example illustrates the two components of the DataManager, By setting the options, all 
+        The core objects will autoload the data definitons from a generated ini file. and know how to access 
+        the database. (multiple databases are supported - see section on configuration)
+      </P
+><P
+>&#13;        The later half illustrates how to query and get the result for a single row. the $person-&#62;get() would connect
+        to the database, perform the query, fetch the result and assign the objects variables to the values from 
+        the row returned.
+      </P
+><P
+>&#13;        In the above example, this query would be performed.
+      </P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>SELECT * FROM person WHERE id=12;</PRE
+></TD
+></TR
+></TABLE
+><P
+>&#13;        to Make a change to the Object you would just change the value of the objects variables and call
+        the update method
+      </P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+        
+        $person = new DataObjects_Person;
+        
+        $person-&#62;get(12);
+         
+        $person-&#62;name = 'Fred';
+         
+        $person-&#62;update();
+        
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+><P
+>&#13;        The Package includes a number of tools to make building the extended classes and configuration file,
+        Once you have made your extended classes, the idea is that any data maniplation/calculation that relates
+        to this table, or how this table interacts with other data is placed inside the extended class.
+      </P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+    require_once 'DB/DataObject.php';
+    
+    class DataObjects_Person extends DB_DataObject {
+     
+        function &#38;listMembership()
+        {
+            $members = new DataObjects_Members();
+            $members-&#62;person_id = $this-&#62;id;
+            $members-&#62;find();
+            return $members;
+        }
+    }
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+><P
+>&#13;        In this example the Person object asks the Members Object to list all records that have the column
+        person_id equal to the current instance's id.
+      </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.configuration.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>SQL Builder and Data Modeling Layer</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Configuration Options</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,316 @@
+<HTML
+><HEAD
+><TITLE
+>AutoForm Utilities and Debugging</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"><LINK
+REL="HOME"
+TITLE="PEAR Manual"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="SQL Builder and Data Modeling Layer"
+HREF="packages.db.dataobject.html"><LINK
+REL="PREVIOUS"
+TITLE="Automatic Table Linking"
+HREF="packages.db.dataobject.links.html"><LINK
+REL="NEXT"
+TITLE="Filesystem related"
+HREF="packages.file.html"><META
+HTTP-EQUIV="Content-type"
+CONTENT="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="refentry"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>PEAR Manual</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="packages.db.dataobject.links.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="packages.file.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="packages.DB.DataObject.utils">AutoForm Utilities and Debugging</H1
+><DIV
+CLASS="refnamediv"
+><A
+NAME="AEN4167"
+></A
+>AutoForm Utilities and Debugging&nbsp;--&nbsp;
+        setFrom(), debugLevel()
+      </DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN4170"
+></A
+><H2
+>setFrom</H2
+><P
+>&#13;      Copies data from an Array or object into the current object
+      </P
+><DIV
+CLASS="funcsynopsis"
+><A
+NAME="AEN4173"><P
+></P
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+><B
+CLASS="function"
+>::setFrom</B
+></CODE
+> (Array or Object from)</CODE
+></P
+><P
+></P
+></DIV
+><P
+>&#13;        copies all that relates to this table (Except keys) into the current object
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN4180"><P
+><B
+>Example 1.  Copying data from post or object</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+$person = new DataObjects_Person;
+$person-&#62;get(12);
+$person-&#62;setFrom($_POST['input']);
+$person-&#62;update();
+
+
+// or copying from another object
+$personA = new DataObjects_Person;
+$personA-&#62;get(12);
+
+$personB = new DataObjects_Person;
+$personB-&#62;get(12);
+
+$personA-&#62;setFrom($personB);
+$person-&#62;update();
+
+
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        
+        Copies all the data (with names the of this objects columns) from another object or array into 
+        this one.
+        
+        
+      </P
+></DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN4183"
+></A
+><H2
+>DB_DataObject::debugLevel</H2
+><P
+>&#13;      Sets the debugging level - so you can see the Queries Being build and executed
+      </P
+><DIV
+CLASS="funcsynopsis"
+><A
+NAME="AEN4186"><P
+></P
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+><B
+CLASS="function"
+>DB_DataObject::debugLevel</B
+></CODE
+> ([int debug level])</CODE
+></P
+><P
+></P
+></DIV
+><P
+>&#13;        Sets the debugging level (without any parameters it will disable the debugging output)
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN4194"><P
+><B
+>Example 2.  Setting the debugging level </B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+// turn debugging high
+DB_DataObject::debugLevel(5);
+$person = new DataObjects_Person;
+$person-&#62;get(12);
+$person-&#62;setFrom($_POST['input']);
+$person-&#62;update();
+// turn debugging off
+DB_DataObject::debugLevel();
+
+
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        
+        
+      </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.links.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="packages.file.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Automatic Table Linking</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Filesystem related</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

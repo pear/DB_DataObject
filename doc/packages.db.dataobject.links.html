@@ -1,0 +1,397 @@
+<HTML
+><HEAD
+><TITLE
+>Automatic Table Linking</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"><LINK
+REL="HOME"
+TITLE="PEAR Manual"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="SQL Builder and Data Modeling Layer"
+HREF="packages.db.dataobject.html"><LINK
+REL="PREVIOUS"
+TITLE="Advanced Filters"
+HREF="packages.db.dataobject.filters.html"><LINK
+REL="NEXT"
+TITLE="AutoForm Utilities and Debugging"
+HREF="packages.db.dataobject.utils.html"><META
+HTTP-EQUIV="Content-type"
+CONTENT="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="refentry"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>PEAR Manual</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="packages.db.dataobject.filters.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="packages.db.dataobject.utils.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="packages.DB.DataObject.links">Automatic Table Linking</H1
+><DIV
+CLASS="refnamediv"
+><A
+NAME="AEN4125"
+></A
+>Automatic Table Linking&nbsp;--&nbsp;
+       Automatic Table Linking - getLink, getLinks
+      </DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN4128"
+></A
+><H2
+>Automating the colleciton of related data</H2
+><P
+>&#13;        When designing a database, often some tables are related to others - a membership table would contain
+        a reference to a person's id and the group id that they are a member of. Using the Link methods, you 
+        can automatically fetch objects into the parents variables.
+      </P
+><P
+>&#13;        The method of doing this is heavily dependant on naming columns relating to databases, for example in the
+        membership described above, you would have to have a column called person_id, group_id for the Link methods
+        to understand which table to fetch the data from. The principle is TABLENAME_ANYTHING, and it will always
+        attempt to find primary keys that match the value of field, and load the related object into $object-&#62;_tablename_anything
+      </P
+><P
+>&#13;        The linking feature is not essential to the core operation of DB_DataObject, and can be ignored if you
+        do not wish to set up or revise your database structure. - It just saves alot of work next time you
+        set up an application.
+      </P
+><P
+>&#13;        
+      </P
+></DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN4134"
+></A
+><H2
+>getLink</H2
+><P
+>&#13;      Loads the related object into the main object, with a variable name prefixed with _
+      </P
+><DIV
+CLASS="funcsynopsis"
+><A
+NAME="AEN4137"><P
+></P
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+><B
+CLASS="function"
+>::getLink</B
+></CODE
+> (string Row)</CODE
+></P
+><P
+></P
+></DIV
+><P
+>&#13;        Loads the related Object 
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN4144"><P
+><B
+>Example 1.  loading the related object </B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+$person = new DataObjects_Person;
+$person-&#62;get(12);
+$person-&#62;getLink('group_owner');
+print_r($_person_group);
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        
+        This would execute the following SQL statement, and fetch the data
+       <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN4147"><P
+><B
+>Example 2.  Resulting SQL </B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="sql"
+>SELECT * FROM person WHERE id=12
+SELECT * FROM group WHERE id=3</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        
+        
+      </P
+></DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN4150"
+></A
+><H2
+>getLinks</H2
+><P
+>&#13;      Loads the all the related objects into the main object, with a variable name prefixed with _
+      </P
+><DIV
+CLASS="funcsynopsis"
+><A
+NAME="AEN4153"><P
+></P
+><P
+><CODE
+><CODE
+CLASS="FUNCDEF"
+><B
+CLASS="function"
+>::getLinks</B
+></CODE
+> ()</CODE
+></P
+><P
+></P
+></DIV
+><P
+>&#13;        Loads all the related Objects 
+        <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN4160"><P
+><B
+>Example 3.  Loading all the related objects </B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?
+$person = new DataObjects_Person;
+$person-&#62;get(12);
+$person-&#62;getLinks();
+print_r($_person_group);
+print_r($_person_eyes);
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        
+        This would execute the following SQL statement, and fetch the data
+       <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN4163"><P
+><B
+>Example 4.  Resulting SQL </B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="sql"
+>SELECT * FROM person WHERE id=12
+SELECT * FROM eyes WHERE id=11
+SELECT * FROM group WHERE id=3</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+        
+        
+      </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.filters.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.utils.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Advanced Filters</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>AutoForm Utilities and Debugging</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

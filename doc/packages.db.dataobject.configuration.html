@@ -1,0 +1,506 @@
+<HTML
+><HEAD
+><TITLE
+>Configuration Options</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"><LINK
+REL="HOME"
+TITLE="PEAR Manual"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="SQL Builder and Data Modeling Layer"
+HREF="packages.db.dataobject.html"><LINK
+REL="PREVIOUS"
+TITLE="Introduction"
+HREF="packages.db.dataobject.introduction.html"><LINK
+REL="NEXT"
+TITLE="AutoBuilding"
+HREF="packages.db.dataobject.autobuilding.html"><META
+HTTP-EQUIV="Content-type"
+CONTENT="text/html; charset=ISO-8859-1"></HEAD
+><BODY
+CLASS="refentry"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>PEAR Manual</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="packages.db.dataobject.introduction.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="packages.db.dataobject.autobuilding.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><H1
+><A
+NAME="packages.DB.DataObject.configuration">Configuration Options</H1
+><DIV
+CLASS="refnamediv"
+><A
+NAME="AEN3754"
+></A
+>Configuration Options&nbsp;--&nbsp;
+       Setting the defaults for database Access
+      </DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3757"
+></A
+><H2
+>Configuration</H2
+><P
+>&#13;      DB_DataObject needs to be configured before using it and auto generating classes and definitions,
+      the easiest way to configure DB_DataObject is to use ini files (although you may also like to consider
+      the PEAR::Config class.
+      </P
+><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3760"><P
+><B
+>Example 1.  This is a typical configuration file for <B
+CLASS="classname"
+>DB_DataObject</B
+></B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="ini"
+>[DB_DataObject]
+
+database    = mysql://user:password@localhost/vending
+schema_location = /home/me/Projects/myapplication/DataObjects
+class_location  = /home/me/Projects/myapplication/DataObjects
+require_prefix  = DataObjects/
+class_prefix    = DataObjects_</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+><P
+>&#13;        To use this ini file with DB_DataObject, (and Possibly any other classes that use options like this)
+      </P
+><TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3765"><P
+><B
+>Example 2.  Setting the default options</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="php"
+>&#60;?php
+$config = parse_ini_file('example.ini',TRUE);
+foreach($config as $key=&#62;$value) {
+  $options = &#38;PEAR::getStaticProperty($key,'options');
+  $options = $value;
+}
+?&#62;</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3768"
+></A
+><H2
+>Configuration Options - Standard</H2
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+><TT
+CLASS="parameter"
+><I
+>database</I
+></TT
+>
+            DSN</DT
+><DD
+><P
+>&#13;            This is the default DSN to connect to your database
+            </P
+></DD
+><DT
+><TT
+CLASS="parameter"
+><I
+>schema_location</I
+></TT
+>
+            directory</DT
+><DD
+><P
+>&#13;            The Directory where the DB_DataObject database schema file is store.
+            </P
+><P
+>&#13;            DB_DataObject Stores the Description of the database (Tables and Columns) in an .ini file, in this directory
+            this information is used to determine if the column is a string and needs quotes, or should be a number (and is checked)
+            at SQL building time. It is quite common to store the schema in the same directory as your DataObject
+            Classes.
+            </P
+></DD
+><DT
+><TT
+CLASS="parameter"
+><I
+>require_prefix</I
+></TT
+>
+            directory</DT
+><DD
+><P
+>&#13;            The Path absoloute, or relative to your default include path(s), where your 
+            extended classes can be found.
+            </P
+><P
+>&#13;            This is used by the staticGet() method and the getLinks() method to auto load classes, 
+            </P
+></DD
+><DT
+><TT
+CLASS="parameter"
+><I
+>class_prefix</I
+></TT
+>
+            string</DT
+><DD
+><P
+>&#13;            All the generated Classes are Named {class_prefix}ucfirst($table_name), Use this to 
+            alter the prefixed name, this is used by the staticGet() and getLinks() methods
+            </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3797"
+></A
+><H2
+>Configuration Options - Mulitiple Databases (optional)</H2
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+><TT
+CLASS="parameter"
+><I
+>database_*</I
+></TT
+>
+            string</DT
+><DD
+><P
+>&#13;            When you have multiple databases you can use the database_* to specifiy the dsn for each
+            database
+            </P
+><P
+>&#13;              <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3807"><P
+><B
+>Example 3.  using multiple databases - database passwords</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="ini"
+>database_authentication  = mysql://user:password@localhost/authentication
+database_sales           = mysql://user:password@localhost/sales</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+            </P
+></DD
+><DT
+><TT
+CLASS="parameter"
+><I
+>table_*</I
+></TT
+>
+            string</DT
+><DD
+><P
+>&#13;            When you have multiple databases you can use the table_* configuration variables to map
+            individual tables to different databases, for example
+            </P
+><P
+>&#13;              <TABLE
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+CLASS="EXAMPLE"
+><TR
+><TD
+><DIV
+CLASS="example"
+><A
+NAME="AEN3817"><P
+><B
+>Example 4.  using multiple databases - table settings</B
+></P
+><TABLE
+WIDTH="100%"
+CELLSPACING="0"
+CELLPADDING="0"
+BORDER="0"
+BGCOLOR="#EEEEEE"
+><TR
+><TD
+><PRE
+CLASS="ini"
+>table_users     = authentication
+table_saleslog  = sales
+table_stock     = sales</PRE
+></TD
+></TR
+></TABLE
+></DIV
+></TD
+></TR
+></TABLE
+>
+            </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="refsect1"
+><A
+NAME="AEN3820"
+></A
+><H2
+>Configuration Options - Builder</H2
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+><TT
+CLASS="parameter"
+><I
+>class_location</I
+></TT
+>
+            directory</DT
+><DD
+><P
+>&#13;            The Directory where your DataObject extended Classes are.
+            </P
+><P
+>&#13;            It is also used by the Class AutoBuilder when updating/writing to your class definitions.
+            </P
+></DD
+><DT
+><TT
+CLASS="parameter"
+><I
+>extends</I
+></TT
+>
+            string</DT
+><DD
+><P
+>&#13;            The Name of your Base Class (usually DB_DataObject) is located.
+            </P
+><P
+>&#13;            If you wish to add a common layer of useful methods for all classes, you can set the extends_location and 
+            extends settings to a different class. the default is 'DB_DataObject'
+            </P
+></DD
+><DT
+><TT
+CLASS="parameter"
+><I
+>extends_location</I
+></TT
+>
+            directory</DT
+><DD
+><P
+>&#13;            The Directory where your Base Class (usually DB_DataObject) is located.
+            </P
+><P
+>&#13;            If you wish to add a common layer of useful methods for all classes, you can set the extends_location and 
+            extends settings to a different class. the default is 'DB/DataObject.php'
+            </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.introduction.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.autobuilding.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Introduction</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="packages.db.dataobject.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>AutoBuilding</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE package SYSTEM "../package.dtd">
+<package version="1.0">
+  <name>DB_DataObject</name>
+  <summary>An SQL Builder, Object Interface to Database Tables</summary>
+  <description>DataObject performs 2 tasks:
+  1. Builds SQL statements based on the objects vars and the builder methods.
+  2. acts as a datastore for a table row.
+  The core class is designed to be extended for each of your tables so that you put the 
+  data logic inside the data classes.
+  included is a Generator to make your configuraiton files and your base classes.
+  
+</description>
+  <license>PHP License</license>
+  <maintainers>
+    <maintainer>
+      <user>alan_k</user>
+      <role>lead</role>
+      <name>Alan Knowles</name>
+      <email>alan@akbkhome.com</email>
+    </maintainer>
+  </maintainers>
+  <release>
+    <version>0.1</version>
+    <date>2002-06-19</date>
+    <notes>PEARified</notes>
+    <state>stable</state>
+    <filelist>
+        <dir name="/" baseinstalldir="DB" role="php">
+            <file>DataObject.php</file>
+            <dir name="DataObject" role="php">
+                <file>Generator.php</file>
+                <file>createTables.php</file>
+                <file>example.ini</file>
+            </dir>
+        </dir>
+    </filelist>
+  </release>
+  <changelog>
+    <release>
+      <version>0.1</version>
+      <date>2002-06-19</date>
+      <notes>PEARified</notes>
+      <state>stable</state>
+    </release>
+  </changelog>
+</package>
