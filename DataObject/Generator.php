@@ -331,13 +331,6 @@ class DB_DataObject_Generator extends DB_DataObject
      * @access private
      */
     var $_className;
-    /**
-     * class being generated
-     *
-     * @var    string
-     * @access private
-     */
-    var $_className;
 
     /**
      * The table class geneation part - single file.
