@@ -2320,7 +2320,10 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         $this->databaseStructure();
         // if there is no link data at all on the file!
-         
+        // we return null.
+        if (!isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
+            return null;
+        }
         
         if (isset($_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table])) {
             return $_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table];
@@ -2349,25 +2352,19 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function getLinks($format = '_%s')
     {
-        global $_DB_DATAOBJECT;
+         
         // get table will load the options.
         if ($this->_link_loaded) {
             return true;
         }
         $this->_link_loaded = false;
         $cols  = $this->table();
-        if (!isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
-            return false;
-        }
-        $links = &$_DB_DATAOBJECT['LINKS'][$this->_database];
-        /* if you define it in the links.ini file with no entries */
-        if (isset($links[$this->__table]) && (!@$links[$this->__table])) {
-            return false;
-        }
+        $links = $this->links();
+         
         $loaded = array();
-        if (@$links[$this->__table]) {
-            
-            foreach($links[$this->__table] as $key => $match) {
+        
+        if ($links) {   
+            foreach($links as $key => $match) {
                 list($table,$link) = explode(':', $match);
                 $k = sprintf($format, str_replace('.', '_', $key));
                 // makes sure that '.' is the end of the key;
@@ -2383,6 +2380,15 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->_link_loaded = $loaded;
             return true;
         }
+        // this is the autonaming stuff..
+        // it sends the column name down to getLink and lets that sort it out..
+        // if there is a links file then it is not used!
+        // IT IS DEPRECIATED!!!! - USE 
+        if (is_null($links)) {    
+            return false;
+        }
+        
+        
         foreach (array_keys($cols) as $key) {
             if (!($p = strpos($key, '_'))) {
                 continue;
@@ -2424,41 +2430,41 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function &getLink($row, $table = null, $link = false)
     {
-        /* see if autolinking is available
-         * This will do a recursive call!
-         */
-        global $_DB_DATAOBJECT;
-
-        $this->table(); /* make sure the links are loaded */
-
+        
+        
+        // GUESS THE LINKED TABLE.. (if found - recursevly call self)
+        
         if ($table === null) {
-            $links = array();
-            if (isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
-                $links = &$_DB_DATAOBJECT['LINKS'][$this->_database];
-            }
-
-            if (isset($links[$this->__table])) {
-                if (@$links[$this->__table][$row]) {
-                    list($table,$link) = explode(':', $links[$this->__table][$row]);
+            $links = $this->links();
+            
+            if (is_array($links)) {
+            
+                if ($links[$row]) {
+                    list($table,$link) = explode(':', $links[$row]);
                     if ($p = strpos($row,".")) {
                         $row = substr($row,0,$p);
                     }
                     return $r = &$this->getLink($row,$table,$link);
-                } else {
-                    $this->raiseError(
-                        "getLink: $row is not defined as a link (normally this is ok)", 
-                        DB_DATAOBJECT_ERROR_NODATA);
-                        
-                    return false; // technically a possible error condition?
-                }
-            } else { // use the old _ method
-                if (!($p = strpos($row, '_'))) {
-                    return null;
-                }
-                $table = substr($row, 0, $p);
-                return $r = &$this->getLink($row, $table);
+                } 
+                
+                $this->raiseError(
+                    "getLink: $row is not defined as a link (normally this is ok)", 
+                    DB_DATAOBJECT_ERROR_NODATA);
+                    
+                return false; // technically a possible error condition?
+
+            }  
+            // use the old _ method - this shouldnt happen if called via getLinks()
+            if (!($p = strpos($row, '_'))) {
+                return null; 
             }
+            $table = substr($row, 0, $p);
+            return $r = &$this->getLink($row, $table);
+
         }
+        
+        
+        
         if (!isset($this->$row)) {
             $this->raiseError("getLink: row not set $row", DB_DATAOBJECT_ERROR_NODATA);
             return false;
@@ -2468,7 +2474,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $obj = $this->factory($table);
         
-        if (PEAR::isError($obj)) {
+        if (!is_a($obj,'DB_DataObject')) {
             $this->raiseError(
                 "getLink:Could not find class for row $row, table $table", 
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
@@ -2477,9 +2483,8 @@ class DB_DataObject extends DB_DataObject_Overload
         if ($link) {
             if ($obj->get($link, $this->$row)) {
                 return $obj;
-            } else {
-                return false;
-            }
+            } 
+            return false;
         }
         
         if ($obj->get($this->$row)) {
@@ -2503,20 +2508,17 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function &getLinkArray($row, $table = null)
     {
-        global $_DB_DATAOBJECT;
-
-        $this->table(); /* make sure the links are loaded */
-
-
+        
         $ret = array();
         if (!$table) {
-            $links = array();
-            if (isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
-                $links = &$_DB_DATAOBJECT['LINKS'][$this->_database];
-            }
-
-            if (@$links[$this->__table][$row]) {
-                list($table,$link) = explode(':',$links[$this->__table][$row]);
+            $links = $this->links();
+            
+            if (is_array($links)) {
+                if (!isset($links[$row])) {
+                    // failed..
+                    return $ret;
+                }
+                list($table,$link) = explode(':',$links[$row]);
             } else {
                 if (!($p = strpos($row,'_'))) {
                     return $ret;
@@ -2524,9 +2526,14 @@ class DB_DataObject extends DB_DataObject_Overload
                 $table = substr($row,0,$p);
             }
         }
+        
         $c  = $this->factory($table);
-        if (PEAR::isError($c)) {
-            $this->raiseError("getLinkArray:Could not find class for row $row, table $table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+        
+        if (!is_a($obj,'DB_DataObject')) {
+            $this->raiseError(
+                "getLinkArray:Could not find class for row $row, table $table", 
+                DB_DATAOBJECT_ERROR_INVALIDCONFIG
+            );
             return $ret;
         }
 
