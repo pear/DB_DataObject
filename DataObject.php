@@ -186,8 +186,17 @@ if ( substr(phpversion(),0,1) == 5) {
         }
     }
 } else {
+    if ((phpversion() == '4.3.10') && !defined('DB_DATAOBJECT_NO_OVERLOAD')) {
+        trigger_error(
+            "overload does not work with PHP4.3.10, either upgrade 
+            (snaps.php.net) or more recent version 
+            or define DB_DATAOBJECT_NO_OVERLOAD as per the manual.
+            ",E_USER_ERROR);
+    }
+
     if (!function_exists('clone')) {
-        eval('function clone($t) { return $t; }');
+        // emulate clone  - as per php_compact, slow but really the correct behaviour..
+        eval('function clone($t) { $r = $t; if (method_exists($r,"__clone")) { $r->__clone(); } return $r; }');
     }
     eval('
         class DB_DataObject_Overload {

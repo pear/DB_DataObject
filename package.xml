@@ -22,19 +22,20 @@
   </maintainers>
 
   <release>
-     <version>1.7.4</version>
-      <date>2004-12-25</date>
+     <version>1.7.5</version>
+      <date>2004-03-02</date>
       <notes><![CDATA[
-      Christmas Present release... - explicitly block 4.3.10 & 5.0.3 installations
       
-      (re-release of 1.7.3 - broken release)
+      A few releases where skipped, this should be the amalgamated upgrade!
       
-      Due to bugs in the last PHP releases, this has been released in an attempt to 
-      prevent everyone trying to use those release..
+      Note: php4.3.10 will exit with an error if you dont define NO_OVERLOAD, rather 
+      than segfaulting..
       
-      Please use snaps.php.net until 4.3.11 or 5.0.4 are release.
+      Generator is buggy with 5.0.3 - upgrade DB or PHP..
       
       Bug Fixes:
+        #3584 - Cast now supports time and datetime, (theiron)
+        #3645 - PHP4 clone FC hack now calls $obj->__clone() in a similar way to PHP5
         #2928 - lastError contains the last error when query bugs out now.
         #2674 - column names null / true /false etc. now halt createtables
         #2778 - more informative warning shown when postgres bug is found.
@@ -84,8 +85,6 @@
 
    <deps>
       <dep type="php" rel="ge" version="4.2"/>
-      <dep type="php" rel="ne" version="4.3.10"/>
-      <dep type="php" rel="ne" version="5.0.3"/>
       <dep type="pkg" rel="ge" version="1.6">DB</dep>
       <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
       <dep type="pkg" rel="ge" version="1.4.3">Date</dep>
