@@ -379,7 +379,7 @@ class DB_DataObject_Generator extends DB_DataObject
         $connections = array();
         $sets = array();
         foreach($defs as $t) {
-            if (strlen(trim($t->name))) {
+            if (!strlen(trim($t->name))) {
                 continue;
             }
             $padding = (30 - strlen($t->name));

@@ -25,14 +25,15 @@
  
     <release>
       <version>0.18</version>
-      <date>2003-03-20</date>
+      <date>2003-04-21</date>
       <notes>
         - add table prefix to autobuilt queries (assist in ambigous querys for joins)
           (Daniel Von Fange)
         - change update and delete to return the number of rows affected or false on failure
         - various code tidy ups - standards etc. (Arnaud Limbourg)
         - fix generator for postgres and mdb - use unique keys and look for 'nextval' as keys.
-        
+        - fix no key insert bug (G Moxley Kempster)
+        - fix empty table bug in generator (Robert Janeczek)
       </notes>
       <state>stable</state>
     </release>
