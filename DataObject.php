@@ -2662,18 +2662,12 @@ class DB_DataObject extends DB_DataObject_Overload
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
 
-        $this->table(); /* make sure the links are loaded */
- 
-        $links = array();
-        if (isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
-            $links = $_DB_DATAOBJECT['LINKS'][$this->_database];
-        }
-
+        $links = $this->links(); 
         
          /* look up the links for obj table */
 
-        if (!$ofield && isset($links[$obj->__table])) {
-            foreach ($links[$obj->__table] as $k => $v) {
+        if (!$ofield && $links) {
+            foreach ($links as $k => $v) {
                 /* link contains {this column} = {linked table}:{linked column} */
                 $ar = explode(':', $v);
                 if ($ar[0] == $this->__table) {
@@ -2701,8 +2695,8 @@ class DB_DataObject extends DB_DataObject_Overload
 
         /* otherwise see if there are any links from this table to the obj. */
 
-        if (($ofield === false) &&isset($links[$this->__table])) {
-            foreach ($links[$this->__table] as $k => $v) {
+        if (($ofield === false) && $links) {
+            foreach ($links as $k => $v) {
                 /* link contains {this column} = {linked table}:{linked column} */
                 $ar = explode(':', $v);
                 if ($ar[0] == $obj->__table) {
@@ -2757,7 +2751,6 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $table = $this->__table;
         
-
         if ($quoteIdentifiers) {
             $joinAs   = $DB->quoteIdentifier($joinAs);
             $table    = $DB->quoteIdentifier($table);     
