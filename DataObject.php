@@ -2667,12 +2667,12 @@ class DB_DataObject extends DB_DataObject_Overload
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
 
-        $links = $this->links(); 
+        
         
          /* look up the links for obj table */
 
-        if (!$ofield && $links) {
-            foreach ($links as $k => $v) {
+        if (!$ofield && ($olinks = $obj->links()) {
+            foreach ($olinks as $k => $v) {
                 /* link contains {this column} = {linked table}:{linked column} */
                 $ar = explode(':', $v);
                 if ($ar[0] == $this->__table) {
@@ -2700,7 +2700,7 @@ class DB_DataObject extends DB_DataObject_Overload
 
         /* otherwise see if there are any links from this table to the obj. */
 
-        if (($ofield === false) && $links) {
+        if (($ofield === false) && ($links = $this->links())) {
             foreach ($links as $k => $v) {
                 /* link contains {this column} = {linked table}:{linked column} */
                 $ar = explode(':', $v);
