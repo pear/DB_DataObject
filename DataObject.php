@@ -45,6 +45,12 @@ define('DB_DATAOBJECT_ERROR_NODATA',        -2);  // no data available
 define('DB_DATAOBJECT_ERROR_INVALIDCONFIG', -3);  // something wrong with the config
 define('DB_DATAOBJECT_ERROR_NOCLASS',       -4);  // no class exists
 
+/**
+ * Used in methods like delete() and count() to specify that the method should
+ * build the condition only out of the whereAdd's and not the object parameters.
+ */
+define('DB_DATAOBJECT_WHEREADD_ONLY', true);
+
 /*
  *
  * storage for connection and result objects, 
@@ -693,23 +699,26 @@ Class DB_DataObject
      * $object->whereAdd('age > 12');
      * $object->delete(true); // use the condition
      *
+     * @param bool $useWhere (optional) If DB_DATAOBJECT_WHEREADD_ONLY is passed in then
+     *             we will build the condition only using the whereAdd's.  Default is to
+     *             build the condition only using the object parameters. 
+     *
      * @access public
-     * @param  boolean $use_where  use the whereAdd conditions (default = no - use current values.)
-     * @return boolean true on success
+     * @return bool True on success
      */
-    function delete($use_where = false)
+    function delete($useWhere = false)
     {
-        $keys = $this->_get_keys();
-        if (!$use_where) {
-            $this->_condition=""; // default behaviour not to use where condition
+        if (!$useWhere) {
+            $keys = $this->_get_keys();
+            $this->_condition = ''; // default behaviour not to use where condition
+            $this->_build_condition($keys);
+            // if primary keys are not set then use data from rest of object.
+            if (!$this->_condition) {
+                $this->_build_condition($this->_get_table(),array(),$keys);
+            }
         }
 
-        $this->_build_condition($keys);
-        // if primary keys are not set then use data from rest of object.
-        if (!$use_where && !$this->_condition) {
-            $this->_build_condition($this->_get_table(),array(),$keys);
-        }
-
+        // don't delete without a condition
         if ($this->_condition) {
             $r = $this->_query("DELETE FROM {$this->__table} {$this->_condition}");
             if (PEAR::isError($r)) {
@@ -717,9 +726,10 @@ Class DB_DataObject
             }
             $this->_clear_cache();
             return true;
+        } else {
+            DB_DataObject::raiseError("delete: No condition specifed for query", DB_DATAOBJECT_ERROR_NODATA);
+            return false;
         }
-        DB_DataObject::raiseError("delete: No Data specifed for query {$this->_condition}", DB_DATAOBJECT_ERROR_NODATA);
-        return false;
     }
 
     /**
@@ -777,7 +787,7 @@ Class DB_DataObject
     }
 
     /**
-     * find the number of results from a simple query
+     * Find the number of results from a simple query
      *
      * for example
      *
@@ -785,39 +795,41 @@ Class DB_DataObject
      * $object->name = "fred";
      * echo $object->count();
      *
+     * @param bool $whereAddOnly (optional) If DB_DATAOBJECT_WHEREADD_ONLY is passed in then
+     *             we will build the condition only using the whereAdd's.  Default is to
+     *             build the condition using the object parameters as well.
+     *
      * @access public
      * @return int
      */
-    function count()
+    function count($whereAddOnly = false)
     {
         $items   = $this->_get_table();
         $tmpcond = $this->_condition;
-        $this->_connect();
-        
-        $__DB  = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
+        $__DB    = $this->getDatabaseConnection(); 
      
-        if ($items)  {
-            while (list ($k, $v) = each($items)) {
-                if (isset($this->$k))  {
-                    $this->whereAdd($k. ' = ' . $__DB->quote($this->$k) . ' ');
+        if (!$whereAddOnly && $items)  {
+            foreach ($items as $key => $val) {
+                if (isset($this->$key))  {
+                    $this->whereAdd($key . ' = ' . $__DB->quote($this->$key));
                 }
             }
         }
         $keys = $this->_get_keys();
 
         if (!$keys[0]) {
-            echo "CAN NOT COUNT WITHOUT PRIMARY KEYS ";
+            echo 'CAN NOT COUNT WITHOUT PRIMARY KEYS';
             exit;
         }
 
-        $r = $this->_query("SELECT count({$keys[0]}) as num FROM {$this->__table} {$this->_condition}");
+        $r = $this->_query("SELECT count({$keys[0]}) as __num FROM {$this->__table} {$this->_condition}");
         if (PEAR::isError($r)) {
             return false;
         }
         $this->_condition = $tmpcond;
         $result  = &$GLOBALS['_DB_DATAOBJECT']['RESULTS'][$this->_DB_resultid];
         $l = $result->fetchRow(DB_FETCHMODE_ASSOC,0);
-        return $l["num"];
+        return $l['__num'];
     }
 
     /**
