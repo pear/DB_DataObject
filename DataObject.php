@@ -3279,6 +3279,7 @@ class DB_DataObject extends DB_DataObject_Overload
                  
                 if (!$value) {
                     $this->$col = '';
+                    return true; 
                 }
             
                 if (is_numeric($value)) {
