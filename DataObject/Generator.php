@@ -334,9 +334,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 case 'VARCHAR':
                 case 'VARCHAR2':
                 case 'TINYTEXT':
-                case 'TEXT':
-                case 'MEDIUMTEXT':
-                case 'LONGTEXT':
+                
                 case 'ENUM':
                 case 'SET':         // not really but oh well
                 case 'TIMESTAMPTZ': // postgres
@@ -350,7 +348,15 @@ class DB_DataObject_Generator extends DB_DataObject
                 
                     $type = DB_DATAOBJECT_STR;
                     break;
+                
+                case 'TEXT':
+                case 'MEDIUMTEXT':
+                case 'LONGTEXT':
                     
+                    $type = DB_DATAOBJECT_STR + DB_DATAOBJECT_TXT;
+                    break;
+                
+                
                 case 'DATE':    
                     $type = DB_DATAOBJECT_STR + DB_DATAOBJECT_DATE;
                     break;
