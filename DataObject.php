@@ -3136,10 +3136,6 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         
         $element = substr($method,3);
-        if ($element{0} == '_') {
-            return false;
-        }
-         
         
         // dont you just love php's case insensitivity!!!!
         
