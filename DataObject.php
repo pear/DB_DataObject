@@ -112,6 +112,7 @@ $GLOBALS['_DB_DATAOBJECT']['CACHE'] = array();
 $GLOBALS['_DB_DATAOBJECT']['OVERLOADED'] = false;
 $GLOBALS['_DB_DATAOBJECT']['QUERYENDTIME'] = 0;
 
+
  
 // this will be horrifically slow!!!!
 // NOTE: Overload SEGFAULTS ON PHP4 + Zend Optimizer (see define before..)
@@ -1970,10 +1971,10 @@ class DB_DataObject extends DB_DataObject_Overload
             return $this->raiseError("Disabling Update as you are in debug mode", null) ;
 
         }
-        if (@$_DB_DATAOBJECT['CONFIG']['debug'] > 1) {
+        //if (@$_DB_DATAOBJECT['CONFIG']['debug'] > 1) {
             // this will only work when PEAR:DB supports it.
             //$this->debug($DB->getAll('explain ' .$string,DB_FETCHMODE_ASSOC), $log="sql",2);
-        }
+        //}
         
         // some sim
         $t= explode(' ',microtime());
@@ -3246,7 +3247,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $message = print_r($message,true);
         }
         if (!is_int( $_DB_DATAOBJECT['CONFIG']['debug']) && is_callable( $_DB_DATAOBJECT['CONFIG']['debug'])) {
-            return call_user_func($_DB_DATAOBJECT['CONFIG']['debug'], $message, $logtype, $level);
+            return call_user_func($_DB_DATAOBJECT['CONFIG']['debug'], $class, $message, $logtype, $level);
         }
         
         if (!ini_get('html_errors')) {
