@@ -301,6 +301,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 case 'FLOAT8': // double precision (postgres)
                 case 'DECIMAL':
                 case 'NUMERIC':
+                case 'NUMBER': // oci8 
                     $type = DB_DATAOBJECT_INT; // should really by FLOAT!!! / MONEY...
                     break;
                     
