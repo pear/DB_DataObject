@@ -245,6 +245,7 @@ class DB_DataObject_Generator extends DB_DataObject
         $ret_keys_secondary = array();
         
         
+        
         foreach($defs as $t) {
              
             $n=0;
@@ -562,12 +563,15 @@ class DB_DataObject_Generator extends DB_DataObject
     * @param   string  table   name of table to create proxy for.
     * 
     *
-    * @return   object    Instance of class.
+    * @return   object    Instance of class. or PEAR Error
     * @access   public
     */
     function getProxyFull($database,$table) {
         
-        $this->fillTableSchema($database,$table);
+        if ($err = $this->fillTableSchema($database,$table)) {
+            return $err;
+        }
+        
         
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         $class_prefix  = $options['class_prefix'];
@@ -596,7 +600,7 @@ class DB_DataObject_Generator extends DB_DataObject
     * @param   string database name
     * @param   string  table   name of table to create schema info for
     *
-    * @return   none
+    * @return   none | PEAR::error()
     * @access   public
     */
     function fillTableSchema($database,$table) {
@@ -606,9 +610,18 @@ class DB_DataObject_Generator extends DB_DataObject
         
         
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
-        $defs =  $__DB->tableInfo($table);
         
+        $defs =  $__DB->tableInfo($table);
+        if (PEAR::isError($defs)) {
+            return $defs;
+        }
+        if (@$_DB_DATAOBJECT['CONFIG']['debug'] > 2) {
+            $this->debug("getting def for $database/$table",'fillTable');
+            $this->debug(print_r($defs,true),'defs');
+        }
         // cast all definitions to objects - as we deal with that better.
+        
+            
         foreach($defs as $def) {
             if (is_array($def)) {
                 $this->_definitions[$table][] = (object) $def;
@@ -620,7 +633,7 @@ class DB_DataObject_Generator extends DB_DataObject
         
         $_DB_DATAOBJECT['INI'][$database][$table] = $ret['table'];
         $_DB_DATAOBJECT['INI'][$database][$table.'__keys'] = $ret['keys'];
-         
+        return false;
         
     }
     

@@ -21,7 +21,7 @@ $options['debug_force_updates'] = TRUE;
 $options['proxy'] = 'full';
 $options['class_prefix'] = 'MyProject_DataObject_';
  
-//DB_DataObject::debugLevel(3);
+DB_DataObject::debugLevel(1);
 // create a record
 
 
@@ -78,7 +78,7 @@ class test extends DB_DataObject {
               password varchar(13) binary NOT NULL default '',
               firstname varchar(255) NOT NULL default '',
               lastname varchar(255) NOT NULL default '' 
-            )");     
+            ) TYPE = InnoDB");     
 	
     }
     
@@ -149,11 +149,22 @@ class test extends DB_DataObject {
         
         echo "\n\n\n******changing database stuff.\n";
         
-        $t = new test;
+        $t = DB_DataObject::factory('testproxy2'); 
         $t->query('BEGIN');
         $t->username = 'xxx';
         $t->insert();
+        $t->query('ROLLBACK');
+        
+        
+        $this->dumpTest('testproxy2');
+        $t->query('BEGIN');
+        $t->username = 'yyy';
+        $t->insert();
+        
+        
         $t->query('COMMIT');
+        
+      
         
         echo "\n\n\n******sequences.\n";
             
@@ -175,13 +186,13 @@ class test extends DB_DataObject {
         
         
         //bug #532
-        DB_DataObject::debugLevel(3);
+       
         $item = DB_DataObject::factory('testproxy2'); 
         $item->id = 0; //id is the key with auto_increment flag on
         $newid = $item->insert();
         print_r($newid);
         
-	
+        
         
     }
     
@@ -194,19 +205,19 @@ class test extends DB_DataObject {
     }
     
     function dumpTest($table = 'test') {
-        $t = new $table;
+        $t = DB_DataObject::Factory($table);
         $t->find();
         if (!$t->N)  {
             echo "NO RESULTS!\n";
             return;
         }
         while ($t->fetch()) {
-           $t->debugPrint();
+           $this->debugPrint($t);
         }
     }
     
-    function debugPrint() {
-        $t = $this;
+    function debugPrint($t) {
+      
         foreach(get_object_vars($t) as $k=>$v) {
             if ($k{0}== '_') {
                 unset($t->$k);

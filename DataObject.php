@@ -987,7 +987,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             
             if (is_a($this->$k,'db_dataobject_cast')) {
                 $value = $this->$k->toString($v,$dbtype);
-                if (PEAR::isError($value)) {
+                if (PEAR::isError($vale)) {
                     DB_DataObject::raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
                     return false;
                 }
@@ -1948,8 +1948,13 @@ Class DB_DataObject extends DB_DataObject_Overload
             $proxyMethod = 'getProxy'.$_DB_DATAOBJECT['CONFIG']['proxy'];
             
             require_once 'DB/DataObject/Generator.php';
+            $d = new DB_DataObject;
+           
+            $d->__table = $table;
+            $d->_connect();
+            
             $x = new DB_DataObject_Generator;
-            return $x->$proxyMethod( $_DB_DATAOBJECT['CONFIG']['database'], $table);
+            return $x->$proxyMethod( $d->_database, $table);
         }
         
         if (!$class) {
@@ -2875,16 +2880,16 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (DB_DataObject::debugLevel()<$level) {
             return;
         }
-
+        $class = isset($this) ? get_class($this) : __CLASS__;
         if (!ini_get('html_errors')) {
-            echo "$logtype       : $message\n";
+            echo "$class   : $logtype       : $message\n";
             flush();
             return;
         }
         if (is_array($message)) {
             $message = print_r($message,true);
         }
-        echo "<code><B>DB_DataObject: $logtype:</B> $message</code><BR>\n";
+        echo "<code><B>$class: $logtype:</B> $message</code><BR>\n";
         flush();
     }
 
