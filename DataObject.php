@@ -1024,7 +1024,7 @@ class DB_DataObject extends DB_DataObject_Overload
      *
      * for example
      *
-     * $object = new mytable();
+     * $object = DB_DataObject::factory('mytable');
      * $object->get("ID",234);
      * $object->email="testing@test.com";
      * if(!$object->update())
@@ -1038,8 +1038,12 @@ class DB_DataObject extends DB_DataObject_Overload
      *    $dataobject->update($original);
      * } // otherwise an error...
      *
+     * performing global updates:
+     * $object = DB_DataObject::factory('mytable');
+     * $object->name = "fred";
+     * $object->update(
      *
-     * @param object dataobject (optional) - used to only update changed items.
+     * @param object dataobject (optional) | DB_DATAOBJECT_WHEREADD_ONLY - used to only update changed items.
      * @access public
      * @return  int rows affected or false on failure
      */
@@ -1055,8 +1059,21 @@ class DB_DataObject extends DB_DataObject_Overload
         $items =  isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table]) ?   
             $_DB_DATAOBJECT['INI'][$this->_database][$this->__table] : $this->table();
         
+        // only apply update against sequence key if it is set?????
         
-        $keys  = $this->keys();
+        $seq    = $this->sequenceKeys();
+        if ($seq[0] !== false) {
+            $keys = array($seq[0]);
+            if (empty($this->{$keys[0]}) && $dataObject !== true) {
+                $this->raiseError("update: trying to perform an update without 
+                        the key set, and argument to update is not 
+                        DB_DATAOBJECT_WHEREADD_ONLY
+                    ", DB_DATAOBJECT_ERROR_INVALIDARGS);
+                return false;  
+            }
+        } else {
+            $keys = $this->keys();
+        }
         
          
         if (!$items) {
@@ -1082,7 +1099,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            // beta testing.. - dont write keys to left.!!!
+            // - dont write keys to left.!!!
             if (in_array($k,$keys)) {
                 continue;
             }
@@ -1143,8 +1160,19 @@ class DB_DataObject extends DB_DataObject_Overload
         if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("got keys as ".serialize($keys),3);
         }
+        if ($dataObject !== true) {
+            $this->_build_condition($items,$keys);
+        } else {
+            // prevent wiping out of data!
+            if (empty($this->_query['condition'])) {
+                 $this->raiseError("update: global table update not available
+                        do \$do->whereAdd('1=1'); if you really want to do that.
+                    ", DB_DATAOBJECT_ERROR_INVALIDARGS);
+                return false;
+            }
+        }
         
-        $this->_build_condition($items,$keys);
+        
         
         //  echo " $settings, $this->condition ";
         if ($settings && isset($this->_query) && $this->_query['condition']) {
