@@ -253,53 +253,62 @@ class test extends DB_DataObject {
             
         $x = DB_DataObject::factory('typetest');
         print_r($x->table());
-	if (!defined('DB_DATAOBJECT_NO_OVERLOAD')) {
-		$x->seta_date(strtotime('1 jan 2003')); // 
-		$x->seta_time('12pm');
-		$x->seta_datetime(strtotime('1am yesterday'));
-		$x->setb_date('null'); // 
-		print_R($x);
-		$id = $x->insert();
-		$x = DB_DataObject::factory('typetest');
-		$x->get($id);
-		$x->setb_date(strtotime('12/1/1960'));
-		$x->update();
-	
-		echo "TIMESTAMP = ".$x->getTs('%d/%m/%Y %H:%M:%S') . "\n";
+        if (!defined('DB_DATAOBJECT_NO_OVERLOAD')) {
+            $x->seta_date(strtotime('1 jan 2003')); // 
+            $x->seta_time('12pm');
+            $x->seta_datetime(strtotime('1am yesterday'));
+            $x->setb_date('null'); // 
+            print_R($x);
+            $id = $x->insert();
+            $x = DB_DataObject::factory('typetest');
+            $x->get($id);
+            $x->setb_date(strtotime('12/1/1960'));
+            $x->update();
+        
+            echo "TIMESTAMP = ".$x->getTs('%d/%m/%Y %H:%M:%S') . "\n";
+            }
+        print_r($x);
+            
+            // bug #753
+        DB_DataObject::debugLevel(0);
+        $org= DB_DataObject::factory('test');
+        set_time_limit(0);
+        ini_set('memory_limit','32M');
+        $p = posix_getpid();
+        $r = 'xxxx';
+        for($i = 0; $i < 10000; $i++) {
+            
+            $org->name =$r;
+            //$rslt = $org->query("INSERT INTO test (name) VALUES ('$r')");
+            $rslt = $org->insert();
+            if (!($i % 1000)) {
+                echo "$i:".strlen(serialize($GLOBALS['_DB_DATAOBJECT']))."\n";
+                //print_r($GLOBALS['_PEAR_error_handler_stack']);
+                echo `cat /proc/$p/status | grep VmData`;
+                //print_r($org);
+            }
         }
-	print_r($x);
-        
-        // bug #753
-	DB_DataObject::debugLevel(0);
-	$org= DB_DataObject::factory('test');
-	set_time_limit(0);
-	ini_set('memory_limit','32M');
-	$p = posix_getpid();
-	$r = 'xxxx';
-	for($i = 0; $i < 10000; $i++) {
-		
-		$org->name =$r;
-		//$rslt = $org->query("INSERT INTO test (name) VALUES ('$r')");
-		$rslt = $org->insert();
-		if (!($i % 100)) {
-			echo "$i:".strlen(serialize($GLOBALS['_DB_DATAOBJECT']))."\n";
-			//print_r($GLOBALS['_PEAR_error_handler_stack']);
-			echo `cat /proc/$p/status | grep VmData`;
-			//print_r($org);
-		}
-	}
-	
+        $org= DB_DataObject::factory('test');
+        $org->find();
+        $i=0;
+        while($org->fetch()) {
+            $i++;
+            
+            if (!($i % 1000)) {
+                echo "$i:\n";
+                echo `cat /proc/$p/status | grep VmData`;
+            }
+            
+        }
         DB_DataObject::debugLevel(1);
-        
+            
         print_r(DB_DataObject::databaseStructure('test'));
-        
+            
         $this->postgresTest();
-        
-	
-	
-	
-	
-	
+            
+    
+    
+    
         
     }
     
@@ -325,12 +334,12 @@ class test extends DB_DataObject {
             CREATE TABLE seqtest (
                  id INT NOT NULL UNIQUE   default nextval( 'response_response_id_seq' ),
                 xxx varchar(32),
-		price double precision
+        price double precision
             )");
             
-	//DB_DataObject::debugLevel(0);
+    //DB_DataObject::debugLevel(0);
         $x = DB_DataObject::factory('seqtest');
-	print_r($x->table());
+    print_r($x->table());
         $x->xxx = "Fred";
         var_dump($x->insert()); // will return id (based on response_response_id_seq)
         $x = DB_DataObject::factory('seqtest');
@@ -350,40 +359,40 @@ class test extends DB_DataObject {
         
         
     }
-    
-    
-    
-    
-    
-    function createRecordWithName($name) {
-        $t = new test;
-        $t->name = $name;
-        $t->username = 'username';
-        $r= $t->insert(); 
-        echo "INSERT got $r\n";
+
+
+
+
+
+function createRecordWithName($name) {
+    $t = new test;
+    $t->name = $name;
+    $t->username = 'username';
+    $r= $t->insert(); 
+    echo "INSERT got $r\n";
+}
+
+function dumpTest($table = 'test') {
+    $t = DB_DataObject::Factory($table);
+    $t->find();
+    if (!$t->N)  {
+        echo "NO RESULTS!\n";
+        return;
     }
-    
-    function dumpTest($table = 'test') {
-        $t = DB_DataObject::Factory($table);
-        $t->find();
-        if (!$t->N)  {
-            echo "NO RESULTS!\n";
-            return;
-        }
-        while ($t->fetch()) {
-           $this->debugPrint($t);
+    while ($t->fetch()) {
+       $this->debugPrint($t);
+    }
+}
+
+function debugPrint($t) {
+  
+    foreach(get_object_vars($t) as $k=>$v) {
+        if ($k{0}== '_') {
+            unset($t->$k);
         }
     }
-    
-    function debugPrint($t) {
-      
-        foreach(get_object_vars($t) as $k=>$v) {
-            if ($k{0}== '_') {
-                unset($t->$k);
-            }
-        }
-        print_r($t);
-    }
+    print_r($t);
+}
     
     
 }
