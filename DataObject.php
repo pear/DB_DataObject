@@ -146,7 +146,7 @@ if ( substr(phpversion(),0,1) == 5) {
  *
  * //Start and initialize...................... - dont forget the &
  * $config = parse_ini_file('example.ini',true);
- * $options = &PEAR::setStaticProperty('DB_DataObject','options');
+ * $options = &PEAR::getStaticProperty('DB_DataObject','options');
  * $options = $config['DB_DataObject'];
  *
  * // example of a class (that does not use the 'auto generated tables data')
