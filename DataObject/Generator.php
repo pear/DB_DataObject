@@ -581,7 +581,11 @@ class DB_DataObject_Generator extends DB_DataObject
         $body .= "\n";
         $body .= "    /* Static get */\n";
         $body .= "    function staticGet(\$k,\$v=NULL) { return DB_DataObject::staticGet('{$this->classname}',\$k,\$v); }\n";
-
+        
+        // generate getter and setter methods
+        $body .= $this->_generateGetters($input);
+        $body .= $this->_generateSetters($input);
+        
         /*
         theoretically there is scope here to introduce 'list' methods
         based up 'xxxx_up' column!!! for heiracitcal trees..
@@ -771,6 +775,106 @@ class DB_DataObject_Generator extends DB_DataObject
         
     }
     
+    /**
+    * Generate getter methods for class definition
+    *
+    * @param    string  $input  Existing class contents
+    * @return   string
+    * @access   public
+    */
+    function _generateGetters($input) {
 
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        $getters = '';
+
+        // only generate if option is set to true
+        if  (empty($options['generate_getters'])) {
+            return '';
+        }
+
+        // remove auto-generated code from input to be able to check if the method exists outside of the auto-code
+        $input = preg_replace('/(\n|\r\n)\s*###START_AUTOCODE(\n|\r\n).*(\n|\r\n)\s*###END_AUTOCODE(\n|\r\n)/s', '', $input);
+
+        $getters .= "\n\n";
+        $defs     = $this->_definitions[$this->table];
+
+        // loop through properties and create getter methods
+        foreach ($defs = $defs as $t) {
+
+            // build mehtod name
+            $methodName = 'get' . ucfirst($t->name);
+
+            if (!strlen(trim($t->name)) || preg_match("/function[\s]+[&]?$methodName\(/i", $input)) {
+                continue;
+            }
+
+            $getters .= "   /**\n";
+            $getters .= "    * Getter for \${$t->name}\n";
+            $getters .= "    *\n";
+            $getters .= (stristr($t->flags, 'multiple_key')) ? "    * @return   object\n"
+                                                             : "    * @return   {$t->type}\n";
+            $getters .= "    * @access   public\n";
+            $getters .= "    */\n";
+            $getters .= (substr(phpversion(),0,1) > 4) ? '    public '
+                                                       : '    ';
+            $getters .= "function $methodName() {\n";
+            $getters .= "        return \$this->{$t->name};\n";
+            $getters .= "    }\n\n";
+        }
+   
+
+        return $getters;
+    }
+
+
+   /**
+    * Generate setter methods for class definition
+    *
+    * @param    string  Existing class contents
+    * @return   string
+    * @access   public
+    */
+    function _generateSetters($input) {
+
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        $setters = '';
+
+        // only generate if option is set to true
+        if  (empty($options['generate_setters'])) {
+            return '';
+        }
+
+        // remove auto-generated code from input to be able to check if the method exists outside of the auto-code
+        $input = preg_replace('/(\n|\r\n)\s*###START_AUTOCODE(\n|\r\n).*(\n|\r\n)\s*###END_AUTOCODE(\n|\r\n)/s', '', $input);
+
+        $setters .= "\n";
+        $defs     = $this->_definitions[$this->table];
+
+        // loop through properties and create setter methods
+        foreach ($defs = $defs as $t) {
+
+            // build mehtod name
+            $methodName = 'set' . ucfirst($t->name);
+
+            if (!strlen(trim($t->name)) || preg_match("/function[\s]+[&]?$methodName\(/i", $input)) {
+                continue;
+            }
+
+            $setters .= "   /**\n";
+            $setters .= "    * Setter for \${$t->name}\n";
+            $setters .= "    *\n";
+            $setters .= "    * @param    mixed   input value\n";
+            $setters .= "    * @access   public\n";
+            $setters .= "    */\n";
+            $setters .= (substr(phpversion(),0,1) > 4) ? '    public '
+                                                       : '    ';
+            $setters .= "function $methodName(\$value) {\n";
+            $setters .= "        \$this->{$t->name} = \$value;\n";
+            $setters .= "    }\n\n";
+        }
+        
+
+        return $setters;
+    }
 
 }
