@@ -1099,7 +1099,7 @@ Class DB_DataObject
         $this->_connect();
         $__DB = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
         
-        if (!@$options['debug_ignore_updates'] &&
+        if (@$options['debug_ignore_updates'] &&
             (strtolower(substr(trim($string), 0, 6)) != 'select') &&
             (strtolower(substr(trim($string), 0, 4)) != 'show') &&
             (strtolower(substr(trim($string), 0, 8)) != 'describe')) {
