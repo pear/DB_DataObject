@@ -2833,13 +2833,17 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         
+        $database_prefix = in_array($DB->type,array('mysql','mysqli')) ?
+            $obj->_database . '.' : '';
+        
         // not sure  how portable adding database prefixes is..
         $objTable = $quoteIdentifiers ? 
-                $DB->quoteIdentifier($obj->_database . '.' . $obj->__table) : 
-                $obj->_database . '.' . $obj->__table ;
+                $DB->quoteIdentifier($database_prefix  . '.' . $obj->__table) : 
+                $database_prefix  . '.' . $obj->__table ;
                 
         // add database prefix if they are different databases
-        if (($obj->_database != $this->_database) && strlen($obj->_database )) {
+        if ($database_prefix && ($obj->_database != $this->_database) && strlen($obj->_database )) {
+            // ojbjTable is already quoted????
             $objTable = ($quoteIdentifiers ? $DB->quoteIdentifier($obj->_database) : $obj->_database) . '.' . $objTable;
         }
         
@@ -2868,7 +2872,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $tfield   = $DB->quoteIdentifier($tfield);    
         }
         // add database prefix if they are different databases
-        if (($obj->_database != $this->_database) && strlen($this->_database )) {
+        if ($database_prefix && ($obj->_database != $this->_database) && strlen($this->_database )) {
             $table = ($quoteIdentifiers ? $DB->quoteIdentifier($this->_database) : $this->_database) . '.' . $table;
             
         }
@@ -2878,7 +2882,7 @@ class DB_DataObject extends DB_DataObject_Overload
         if ($addJoinAs) {
             $fullJoinAs = "AS {$joinAs}";
         } else {
-            if (($obj->_database != $this->_database) && strlen($this->_database )) {
+            if ($database_prefix && ($obj->_database != $this->_database) && strlen($this->_database )) {
                 $joinAs = ($quoteIdentifiers ? $DB->quoteIdentifier($obj->_database) : $obj->_database) . '.' . $joinAs;
             }
         }
