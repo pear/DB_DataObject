@@ -26,7 +26,12 @@ $options['class_prefix'] = 'MyProject_DataObject_';
 DB_DataObject::debugLevel(1);
 // create a record
 
-
+class Client extends DB_DataObject {
+    var $__table = 'Client';
+    function get($id) {
+        return parent::get($id);
+    }
+}
 
 
 class test extends DB_DataObject {
@@ -287,11 +292,10 @@ class test extends DB_DataObject {
                 'leandro@s.com', '2004-09-01');");
         $x->query("INSERT INTO `Client` VALUES (26, 'Grupos', 'Agência', 'Gian',
             'gian@email.com', '2004-09-01');");
-        $x = DB_DataObject::factory("Client");
-        $x->find();
-        while($x->fetch()) {
-            print_r($x);
-        }
+        $x = new Client;
+        $x->get(30);
+        print_r($x->toArray());
+        
     }
         
 	function test90() {
