@@ -1634,7 +1634,7 @@ class DB_DataObject extends DB_DataObject_Overload
                     $_DB_DATAOBJECT['CONFIG']["links_{$this->_database}"] :
                     str_replace('.ini','.links.ini',$ini);
 
-            if (file_exists($ini)) {
+            if (file_exists($ini) && is_file($ini)) {
                 $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);
                 if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                     $this->debug("Loaded ini file: $ini","databaseStructure",1);
@@ -1646,7 +1646,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
                 
                 
-            if (empty($_DB_DATAOBJECT['LINKS'][$this->_database]) && file_exists($links)) {
+            if (empty($_DB_DATAOBJECT['LINKS'][$this->_database]) && file_exists($links) && is_file($links)) {
                 /* not sure why $links = ... here  - TODO check if that works */
                 $_DB_DATAOBJECT['LINKS'][$this->_database] = parse_ini_file($links, true);
                 if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
@@ -2738,8 +2738,9 @@ class DB_DataObject extends DB_DataObject_Overload
         
         
          /* look up the links for obj table */
-
+        //print_r($obj->links());
         if (!$ofield && ($olinks = $obj->links())) {
+            
             foreach ($olinks as $k => $v) {
                 /* link contains {this column} = {linked table}:{linked column} */
                 $ar = explode(':', $v);
@@ -2767,7 +2768,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
 
         /* otherwise see if there are any links from this table to the obj. */
-
+        //print_r($this->links());
         if (($ofield === false) && ($links = $this->links())) {
             foreach ($links as $k => $v) {
                 /* link contains {this column} = {linked table}:{linked column} */
