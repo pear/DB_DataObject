@@ -3135,7 +3135,7 @@ class DB_DataObject extends DB_DataObject_Overload
             foreach($array as $k) {
                 $case[strtolower($k)] = $k;
             }
-            if ((substr(php_version(),0,1) == 5) && isset($case[strtolower($element)])) {
+            if ((substr(phpversion(),0,1) == 5) && isset($case[strtolower($element)])) {
                 trigger_error("PHP5 set/get calls should match the case of the variable",E_USER_WARNING);
                 $element = strtolower($element);
             }
