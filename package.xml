@@ -23,14 +23,18 @@
   
   
   
-  <release>
-      <version>0.9</version>
-      <date>2002-12-06</date>
+    <release>
+      <version>0.10</version>
+      <date>2002-12-09</date>
       <notes>
-        - bug fix release - dsn was not set correctly
+        - bug fix - Generator incorrectly set _database, causing generation of database.ini files to fail
+        - change addslashes to PEAR::DB::quote()
+        - generator now only replaces DB_DataObjects with extends variable if set, 
+          you can use generator_rewrite_class to set what is a valid replacement.
+        
       </notes>
       <state>stable</state>
-     </release>
+    </release>
      
      
      
@@ -49,6 +53,20 @@
    
    
   <changelog>
+  
+   <release>
+      <version>0.10</version>
+      <date>2002-12-09</date>
+      <notes>
+        - bug fix - Generator incorrectly set _database, causing generation of database.ini files to fail
+        - change addslashes to PEAR::DB::quote()
+        - generator now only replaces DB_DataObjects with extends variable if set, 
+          you can use generator_rewrite_class to set what is a valid replacement.
+        
+      </notes>
+      <state>stable</state>
+    </release>
+     
   <release>
       <version>0.9</version>
       <date>2002-12-06</date>
