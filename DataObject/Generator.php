@@ -228,75 +228,85 @@ class DB_DataObject_Generator extends DB_DataObject
             echo "TABLE STRUCTURE FOR {$this->table}\n";
             print_r($defs);
         }
+        $DB = $this->getDatabaseConnection();
+        $dbtype = $DB->phptype;
+        
         foreach($defs as $t) {
              
             $n=0;
 
             switch (strtoupper($t->type)) {
 
-                case "INT":
-                case "INT2";    // postgres
-                case "INT4";    // postgres
-                case "INT8";    // postgres
-                case "SERIAL4"; // postgres
-                case "SERIAL8"; // postgres
-                case "INTEGER":
-                case "TINYINT":
-                case "SMALLINT":
-                case "MEDIUMINT":
-                case "BIGINT":
+                case 'INT':
+                case 'INT2':    // postgres
+                case 'INT4':    // postgres
+                case 'INT8':    // postgres
+                case 'SERIAL4': // postgres
+                case 'SERIAL8': // postgres
+                case 'INTEGER':
+                case 'TINYINT':
+                case 'SMALLINT':
+                case 'MEDIUMINT':
+                case 'BIGINT':
                     $type = DB_DATAOBJECT_INT;
                     if ($t->len == 1) {
                         $type +=  DB_DATAOBJECT_BOOL;
                     }
                     break;
                
-                case "REAL":
-                case "DOUBLE":
-                case "FLOAT":
-                case "DECIMAL":
-                case "NUMERIC":
+                case 'REAL':
+                case 'DOUBLE':
+                case 'FLOAT':
+                case 'DECIMAL':
+                case 'NUMERIC':
                     $type = DB_DATAOBJECT_INT;
                     break;
-                    
-                 case "BOOL":   // postgres needs to quote '0'
-                    $type = DB_DATAOBJECT_STR + DB_DATAOBJECT_BOOL;
+                
+                case 'BIT':
+                case 'BOOL':   
+                case 'BOOLEAN':   
+                
+                    $type = DB_DATAOBJECT_BOOL;
+                    // postgres needs to quote '0'
+                    if ($dbtype == 'pgsql') {
+                        $type +=  DB_DATAOBJECT_STR;
+                    }
                     break;
                     
-                case "STRING":
-                case "CHAR":
-                case "VARCHAR":
-                case "VARCHAR2":
-                case "TINYTEXT":
-                case "TEXT":
-                case "MEDIUMTEXT":
-                case "LONGTEXT":
-                case "ENUM":
-                case "SET":         // not really but oh well
-                case "TIMESTAMPTZ": // postgres
-                case "BPCHAR":      // postgres
-                case "INTERVAL":    // postgres (eg. '12 days')
+                case 'STRING':
+                case 'CHAR':
+                case 'VARCHAR':
+                case 'VARCHAR2':
+                case 'TINYTEXT':
+                case 'TEXT':
+                case 'MEDIUMTEXT':
+                case 'LONGTEXT':
+                case 'ENUM':
+                case 'SET':         // not really but oh well
+                case 'TIMESTAMPTZ': // postgres
+                case 'BPCHAR':      // postgres
+                case 'INTERVAL':    // postgres (eg. '12 days')
                     $type=DB_DATAOBJECT_STR;
                     break;
                     
-                case "DATE":    
+                case 'DATE':    
                     $type=DB_DATAOBJECT_STR + DB_DATAOBJECT_DATE;
                     break;
                     
-                case "TIME":    
+                case 'TIME':    
                     $type=DB_DATAOBJECT_STR + DB_DATAOBJECT_TIME;
                     break;    
                     
-                case "TIMESTAMP":    
-                case "DATETIME":    
+                case 'TIMESTAMP':
+                case 'DATETIME':    
                     $type=DB_DATAOBJECT_STR + DB_DATAOBJECT_DATE + DB_DATAOBJECT_TIME;
                     break;    
                     
-                case "TINYBLOB":
-                case "BLOB":       /// these should really be ignored!!!???
-                case "MEDIUMBLOB":
-                case "LONGBLOB":
-                case "BYTEA":   // postgres blob support..
+                case 'TINYBLOB':
+                case 'BLOB':       /// these should really be ignored!!!???
+                case 'MEDIUMBLOB':
+                case 'LONGBLOB':
+                case 'BYTEA':   // postgres blob support..
                     $type=DB_DATAOBJECT_STR + DB_DATAOBJECT_BLOB;
                     break;
                     
