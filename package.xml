@@ -82,8 +82,8 @@
 
    <deps>
       <dep type="php" rel="ge" version="4.2"/>
-      <dep type="php" rel="ne" version="4.3.10"/>
-      <dep type="php" rel="ne" version="5.0.3"/>
+      <dep type="php" rel="not" version="4.3.10"/>
+      <dep type="php" rel="not" version="5.0.3"/>
       <dep type="pkg" rel="ge" version="1.6">DB</dep>
       <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
       <dep type="pkg" rel="ge" version="1.4.3">Date</dep>
