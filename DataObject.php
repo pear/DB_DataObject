@@ -2897,8 +2897,8 @@ Class DB_DataObject extends DB_DataObject_Overload
     * normally called from __call..  
     *
     * Current supports
-    *   date      = using strtotime + pear::date
-    *   time      = using strtotime
+    *   date      = using strtotime + pear::date 
+    *   time      = using strtotime 
     *   datetime  = using strtotime (if fails = use raw..)
     *   string    = typecast only..
     * 
@@ -2974,7 +2974,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     *
     *  with formaters..
     * supported formaters:  
-    *   date/time : d/m/Y (eg. php date..) or pear::Date ** broken!!!
+    *   date/time : %d/%m/%Y (eg. php strftime) or pear::Date 
     *   numbers   : %02d (eg. sprintf)
     *
     * 
@@ -2983,7 +2983,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     *
     * @return   true     Description
     * @access   public 
-    * @see      DB_DataObject::_call
+    * @see      DB_DataObject::_call(),strftime(),Date::format()
     */
     function toValue($col,$format = null) 
     {
@@ -2994,14 +2994,14 @@ Class DB_DataObject extends DB_DataObject_Overload
             case (($cols[$col] & DB_DATAOBJECT_DATE) &&  ($cols[$col] & DB_DATAOBJECT_TIME)):
                 $guess = strtotime($this->$col);
                 if ($guess != -1) {
-                    return date($format, $guess);
+                    return strftime($format, $guess);
                 }
                 // eak... - no way to validate date time otherwise...
                 return $this->$col;
             case ($cols[$col] & DB_DATAOBJECT_DATE):
                 $guess = strtotime($this->$col);
                 if ($guess != -1) {
-                    $this->$col = date($format,$guess);
+                    $this->$col = strftime($format,$guess);
                     return true;
                 }
                 // try date!!!!
@@ -3013,7 +3013,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             case ($cols[$col] & DB_DATAOBJECT_TIME):
                 $guess = strtotime($this->$col);
                 if ($guess != -1) {
-                    return date($format, $guess);
+                    return strftime($format, $guess);
                 }
                 // otherwise an error in type...
                 return $this->$col;
