@@ -25,11 +25,42 @@
       <version>1.6.0</version>
       <date>2004-04-24</date>
       <notes><![CDATA[
-        Minor Feature Release.
+        Minor Feature Release and many bug fixes..
         
         * DB_DataObject_Error added to enable testing for dataobject errors
         * Date fixes - needs latest date package.
+        * Generator fails with clear message if backend doesnt support tableInfo
+        * added cidr, inet, macaddr for postgres
+        * new options to filter generation of classes
+          generator_include_regex = /foo_.*/i
+          generator_exclude_regex = /tmp_.*/i
+        * result column list is now stored for all queries (in the result object)
+          so toArray() allways relates to the query.
+        * php version correted in package file.
+        * getLinks called before other database call fixed.
+        * Updating without changing things, no longer raises a pear error,
+          it just returns 0 (eg. no rows affected)
+        * now Depends on 1.4 DB - escapeSimple is now used
+        * extra option to disable assumtions to use pear db's nextID
+          dont_use_pear_sequences = true
+        * DebugLevel($val) if $val is not an integer - it is assumed to be a callback.
+        * fixed clearing of data results after last fetch (reduces memory consumption 
+          when doing many queries)
+        * strtolower any class name tests.
+        * count accepts 1 or 2 arguments
+          $countWhat or $whereAddonly, or $countWhat and $whereAddonly
+          eg. $countWhat = "distinct id"
+          eg. $countWhat = true (means $whereAdd = true)
+        * selectAdd() returns existing value, so you can modify it.
+        * most debugging & raiseError calls are dynamic, so you can overload them.
+        * numbers allowed in tablenames.
+        * ini filename uses database_{projectname} => {projectname}.ini so
+          database names are portable, and multiple projects are theoretically feasible.
+        * __clone is replaced with clone() for PHP5 compaitiblity.
+        * use PEAR::getStaticProperty("DB","options") for oracle portablity settings.
+        * null checked against not null spec.
         
+        And probably a few more - as it's been quite a while since the last release..
       
       ]]></notes>
       <state>stable</state>
