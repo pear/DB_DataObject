@@ -39,29 +39,39 @@ class test extends DB_DataObject {
             )"); 
     }
     
-	function test1() {
+    function test1() {
         $this->createRecordWithName('test');
         $this->dumpTest(); 
         $t = new test;
         //$t->id = 1;
-        /* delete everything with test and 'username'; */
+	
+       	echo "******delete everything with test and 'username' \n";
         $t->name = 'test';
         $t->username = 'username';
         $t->delete();
         $this->dumpTest(); 
-        /* update everything with username to firstname = 'fred' */
+	
+        echo "***** update everything with username to firstname = 'fred' *\n";
         $this->createRecordWithName('test');
         $t = new test;
         $t->whereAdd("username = 'username'");
         $t->firstname='fred';
         $t->update(TRUE);
         $this->dumpTest(); 
-        /* now update based on key */
+	
+
+	echo "****** now update based on key\n";
         $t= new test;
         $t->get(2);
         $t->firstname='brian';
         $t->update();
-         $this->dumpTest();  
+        $this->dumpTest();  
+	
+
+	echo "******get and delete an object key\n";
+	$t = new test;
+	$t->get(2);
+	$t->delete();
         
         
         

@@ -27,12 +27,12 @@
       <version>0.15</version>
       <date>2003-02-13</date>
       <notes>
-        - modified find(1), so that it calls fetch rather than fetchrow
+        - modified find(true), so that it calls fetch rather than fetchrow
           so that overriding fetch will affect get() calls.
           (probably depreciates fetchrow now .. shout if anyone is using it)
         - added escape method as a quasi quote wrapper into pear::DB - useful for
-          building your own queries.
-          
+          building your own queries - eg. like requests.. (does not add quotes)
+        - fixed bug with delete not using primary key if it was set. (Ian Eure)
         
       </notes>
       <state>stable</state>
@@ -65,7 +65,7 @@
           the Objects lastError value.
           Note: databases that do not support affectedRows(), will always 
           return false.
-        
+     
           
         
       </notes>

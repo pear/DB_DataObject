@@ -720,9 +720,10 @@ Class DB_DataObject
     function delete($useWhere = false)
     {
         if (!$useWhere) {
+            
             $keys = $this->_get_keys();
             $this->_condition = ''; // default behaviour not to use where condition
-            $this->_build_condition($keys);
+            $this->_build_condition($this->_get_table(),$keys);
             // if primary keys are not set then use data from rest of object.
             if (!$this->_condition) {
                 $this->_build_condition($this->_get_table(),array(),$keys);
@@ -1209,9 +1210,9 @@ Class DB_DataObject
         $this->_connect();
         
         $__DB  = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
-     
+
         foreach($keys as $k => $v) {
-        
+            // index keys is an indexed array
             /* these filter checks are a bit suspicious.. 
                 - need to check that update really wants to work this way */
                 
