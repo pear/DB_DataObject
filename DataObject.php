@@ -3279,7 +3279,7 @@ class DB_DataObject extends DB_DataObject_Overload
             DB_DataObject::_loadConfig();
         }
         if ($v !== null) {
-            $r = $_DB_DATAOBJECT['CONFIG']['debug'];
+            $r = @$_DB_DATAOBJECT['CONFIG']['debug'];
             $_DB_DATAOBJECT['CONFIG']['debug']  = $v;
             return $r;
         }
