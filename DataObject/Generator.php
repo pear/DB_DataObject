@@ -192,7 +192,11 @@ class DB_DataObject_Generator extends DB_DataObject
             $this->_generateDefinitionsTable();
         }
         $this->_connect();
-
+        // dont generate a schema if location is not set
+        // it's created on the fly!
+        if (!@$options['schema_location']) {
+            return;
+        }
         $base =  $options['schema_location'];
         $file = "{$base}/{$this->_database}.ini";
         if (!file_exists($base))
@@ -554,34 +558,16 @@ class DB_DataObject_Generator extends DB_DataObject
     * similar to generated files - but also evals the class definitoin code.
     * 
     * 
+    * @param   string database name
     * @param   string  table   name of table to create proxy for.
-    * @param   boolean|string|int|object    Description
     * 
     *
     * @return   object    Instance of class.
     * @access   public
     */
     function getProxyFull($database,$table) {
-        $this->_database_dsn = $database; 
-        $this->_connect();
         
-        
-        $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
-        $defs =  $__DB->tableInfo($table);
-        
-        // cast all definitions to objects - as we deal with that better.
-        foreach($defs as $def) {
-            if (is_array($def)) {
-                $this->_definitions[$table][] = (object) $def;
-            }
-        }
-
-        $this->table = $table;
-        $ret = $this->_generateDefinitionsTable();
-        
-        $_DB_DATAOBJECT['INI'][$database][$table] = $ret['table'];
-        $_DB_DATAOBJECT['INI'][$database][$table.'__keys'] = $ret['keys'];
-        
+        $this->fillTableSchema($database,$table);
         
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         $class_prefix  = $options['class_prefix'];
@@ -601,6 +587,43 @@ class DB_DataObject_Generator extends DB_DataObject
         return new $classname;
         
     }
+    
+     /**
+    * fillTableSchema - set the database schema on the fly
+    *
+    * 
+    * 
+    * @param   string database name
+    * @param   string  table   name of table to create schema info for
+    *
+    * @return   none
+    * @access   public
+    */
+    function fillTableSchema($database,$table) {
+        global $_DB_DATAOBJECT;
+        $this->_database  = $database; 
+        $this->_connect();
+        
+        
+        $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
+        $defs =  $__DB->tableInfo($table);
+        
+        // cast all definitions to objects - as we deal with that better.
+        foreach($defs as $def) {
+            if (is_array($def)) {
+                $this->_definitions[$table][] = (object) $def;
+            }
+        }
+
+        $this->table = $table;
+        $ret = $this->_generateDefinitionsTable();
+        
+        $_DB_DATAOBJECT['INI'][$database][$table] = $ret['table'];
+        $_DB_DATAOBJECT['INI'][$database][$table.'__keys'] = $ret['keys'];
+         
+        
+    }
+    
 
 
 }

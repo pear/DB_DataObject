@@ -1389,7 +1389,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         // if you supply this with arguments, then it will take those
         // as the database and links array...
-       
+        if (!@$_DB_DATAOBJECT['CONFIG']['schema_location']) {
+            return true;
+        }
         $location = $_DB_DATAOBJECT['CONFIG']['schema_location'];
 
         $ini   = $location . "/{$this->_database}.ini";
@@ -1474,6 +1476,13 @@ Class DB_DataObject extends DB_DataObject_Overload
         $this->databaseStructure();
 
 
+        
+        if (!isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
+            require_once 'DB/DataObject/Generator.php';
+            $x = new DB_DataObject_Generator;
+            $x->fillTableSchema($this->_database,$this->__table);
+        }
+        
         $ret = array();
         if (isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
             $ret =  $_DB_DATAOBJECT['INI'][$this->_database][$this->__table];
@@ -1511,7 +1520,13 @@ Class DB_DataObject extends DB_DataObject_Overload
             $this->_connect();
         }
         $this->databaseStructure();
-
+        // attempt autoload..
+        if (!isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
+            require_once 'DB/DataObject/Generator.php';
+            $x = new DB_DataObject_Generator;
+            $x->fillTableSchema($this->_database,$this->__table);
+        }
+        
         if (isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table."__keys"])) {
             return array_keys($_DB_DATAOBJECT['INI'][$this->_database][$this->__table."__keys"]);
         }

@@ -15,13 +15,13 @@ include_once dirname(__FILE__)."/../DataObject.php";
 include_once 'PEAR.php';
 
 $options = &PEAR::getStaticProperty('DB_DataObject','options');
-$options['schema_location'] = dirname(__FILE__);
+//$options['schema_location'] = dirname(__FILE__);
 $options['database'] = 'mysql://@localhost/test';
 $options['debug_force_updates'] = TRUE;
 $options['proxy'] = 'full';
 $options['class_prefix'] = 'MyProject_DataObject_';
  
-DB_DataObject::debugLevel(3);
+//DB_DataObject::debugLevel(3);
 // create a record
 
 
@@ -38,8 +38,9 @@ class test extends DB_DataObject {
     function createDB() {
         $this->query('DROP TABLE IF EXISTS test');
         $this->query('DROP TABLE IF EXISTS test2');
-    
-    
+        $this->query('DROP TABLE IF EXISTS testproxy');
+        $this->query('DROP TABLE IF EXISTS testproxy2');
+        
         $this->query(
             "CREATE TABLE test (
               id int(11) NOT NULL auto_increment PRIMARY KEY,
@@ -51,7 +52,7 @@ class test extends DB_DataObject {
             )"); 
 	
 	// table 2 = manual sequences.
-	$this->query(
+        $this->query(
             "CREATE TABLE test2 (
               id int(11) NOT NULL PRIMARY KEY,
               name varchar(255) NOT NULL default '',
@@ -60,8 +61,17 @@ class test extends DB_DataObject {
               firstname varchar(255) NOT NULL default '',
               lastname varchar(255) NOT NULL default '' 
             )");     
-	$this->query(
+        $this->query(
             "CREATE TABLE testproxy (
+              id int(11) NOT NULL PRIMARY KEY,
+              name varchar(255) NOT NULL default '',
+              username varchar(32) NOT NULL default '',
+              password varchar(13) binary NOT NULL default '',
+              firstname varchar(255) NOT NULL default '',
+              lastname varchar(255) NOT NULL default '' 
+            )");     
+        $this->query(
+            "CREATE TABLE testproxy2 (
               id int(11) NOT NULL PRIMARY KEY,
               name varchar(255) NOT NULL default '',
               username varchar(32) NOT NULL default '',
@@ -158,8 +168,8 @@ class test extends DB_DataObject {
         
         $t = DB_DataObject::factory('testproxy');
         print_R($t);
-	
-	
+        $t = DB_DataObject::factory('testproxy2');
+        print_r($t->table());
 	
         
     }
@@ -204,6 +214,15 @@ class test2 extends test {
 		return array('id',false);
 	}
 }
+
+class myproject_dataobject_testproxy2 extends db_dataobject { 
+    var $__table = 'testproxy2';
+	function sequenceKey() {
+		return array('id',false);
+	}
+}
+
+
 
 
 
