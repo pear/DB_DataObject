@@ -2345,7 +2345,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         /* did I find a conneciton between them? */
 
         if ($ofield === false) {
-            DB_DataObject::raiseError("joinAdd: {$obj->__table} has no link with {$this->__table}", DB_DATAOBJECT_ERROR_NODATA);
+            DB_DataObject::raiseError(
+                "joinAdd: {$obj->__table} has no link with {$this->__table}",
+                DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
         $joinType = strtoupper($joinType);
@@ -2363,6 +2365,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         $table = $this->__table;
         
+        $quoteEntities = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
         if ($quoteEntities) {
             $joinAs   = $DB->quoteEntity($joinAs);
             $objTable = $DB->quoteEntity($objTable)  ;
@@ -2402,7 +2405,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         
         if (!$items) {
-            DB_DataObject::raiseError("joinAdd: No table definition for {$obj->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+            DB_DataObject::raiseError(
+                "joinAdd: No table definition for {$obj->__table}", 
+                DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
         }
 
@@ -2454,7 +2459,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         $keys  = $this->keys();
         $items = $this->table();
         if (!$items) {
-            DB_DataObject::raiseError("setFrom:Could not find table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+            DB_DataObject::raiseError(
+                "setFrom:Could not find table definition for {$this->__table}", 
+                DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return;
         }
         $overload_return = array();
