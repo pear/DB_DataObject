@@ -927,14 +927,22 @@ Class DB_DataObject
     /**
      * connects to the database
      *
+     * 
+     * TODO: tidy this up - This has grown to support a number of connection options like
+     *  a) dynamic changing of ini file to change which database to connect to
+     *  b) multi data via the table_{$table} = dsn ini option
+     *  c) session based storage. 
+     * 
      * @access private
      * @return none
      */
     function _connect()
     {
         $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
-
-        if ($this->_database_dsn_md5) {// already connected
+        
+        // is it already connected ?
+        
+        if ($this->_database_dsn_md5 && @$connections[$this->_database_dsn_md5]) { 
             if (PEAR::isError($connections[$this->_database_dsn_md5])) {
                 DB_DataObject::raiseError(
                         $connections[$this->_database_dsn_md5]->message,
@@ -942,12 +950,16 @@ Class DB_DataObject
                 );
                 return;
             }
+            
             if (!$this->_database) {
                 $this->_database = $connections[$this->_database_dsn_md5]->dsn["database"];
             }
             return;
         }
-
+        
+        // it's not currently connected!
+        // try and work out what to use for the dsn !
+        
         $options= &PEAR::getStaticProperty('DB_DataObject','options');
         $dsn = @$this->_database_dsn;
 
@@ -1294,16 +1306,27 @@ Class DB_DataObject
      * joinAdd - adds another dataobject to this, building a joined query.
      *
      * example (requires links.ini to be set up correctly)
-     * $pi = new DataObjects_Product_images;
-     * $p = new DataObjects_Product;
-     * $i = new DataObject_Images;
-     * $p->id = 24; // set the product id to 24
-     * $pi->joinAdd($p); // add the product connection
-     * $pi->joinAdd($i); // add the image connectoin
-     * $pi->find();
-     * while ($pi->fetch()) {
+     * // get all the images for product 24
+     * $i = new DataObject_Image();
+     * $pi = new DataObjects_Product_image();
+     * $pi->product_id = 24; // set the product id to 24
+     * $i->joinAdd($pi); // add the product_image connectoin
+     * $i->find();
+     * while ($i->fetch()) {
      *     // do stuff
      * }
+     * // an example with 2 joins
+     * // get all the images linked with products or productgroups
+     * $i = new DataObject_Image();
+     * $pi = new DataObject_Product_image();
+     * $pgi = new DataObject_Productgroup_image();
+     * $i->joinAdd($pi);
+     * $i->joinAdd($pgi);
+     * $i->find();
+     * while ($i->fetch()) {
+     *     // do stuff
+     * }
+     *
      *
      * @param    optional $obj    object      the joining object (no value resets the join)
      * @return   none
@@ -1320,7 +1343,7 @@ Class DB_DataObject
             DB_DataObject::raiseError("joinAdd: called without an object", DB_DATAOBJECT_ERROR_NODATA,PEAR_ERROR_DIE);
         }
         
-        $this->_get_table(); /* ??? eh - load this tables config? = eg. links if req.*/
+        $this->_connect(); /*  make sure $this->_database is set.  */
         
         $links = PEAR::getStaticProperty('DB_DataObject', "{$this->_database}.links");
        
@@ -1344,7 +1367,7 @@ Class DB_DataObject
         
         /* otherwise see if there are any links from this table to the obj. */    
         
-        if (($field === false) &&isset($links[$this->__table])) {
+        if (($ofield === false) &&isset($links[$this->__table])) {
             foreach ($links[$this->__table] as $k => $v) {
                 /* link contains {this column} = {linked table}:{linked column} */
                 $ar = explode(':', $v);
