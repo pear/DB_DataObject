@@ -32,8 +32,6 @@
           - schema is created on the fly if no schema file exists
           - using config option proxy=full, a class is generated on the fly to
             represent the tables.
-         
-        
         * toValue and fromValue added as getter and setter providers
           - they include date formating tools - eg.
           $do->getBirthDay('%d/%m/%Y') will work with overload and PEAR::Date 
@@ -48,14 +46,13 @@
         * transactions support works transparently by sending
           $do->query('BEGIN'), $do->query('COMMIT'),$do->query('ROLLBACK')
           will automatically relay into the DB methods.
-        
         * re-add support for sequence_{tablename} - prefered method is still
           overriding sequenceKey, and returning correct values.
         
+        Bug Fixes
 	* fix bug #595 - replace non letters in class names with underscore..
 	* fix bug #532 - better recoginsion of sequence keys
         * fix bug #528/#476 - typo fix (E_NOTICE error on $valu)
-
 	* fix bug #473 - query can return a DB_Error 
 	* fix bug #501 - autoload/factory  now uses full path (not require path)
 	* fix bug #507 - sequences broken
