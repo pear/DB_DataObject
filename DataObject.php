@@ -1450,8 +1450,13 @@ Class DB_DataObject
         // only include the file if it exists - and barf badly if it has parse errors :)
         
         $file = $_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).'.php';
-        if (!isset($_DB_DATAOBJECT['LOADED'][$file]) && $fh = @fopen($file,'r',1)) {
-            fclose($fh);
+        
+        if (version_compare( phpversion(), "4.3") > 0) {
+            if (!isset($_DB_DATAOBJECT['LOADED'][$file]) && $fh = @fopen($file,'r',1)) {
+                fclose($fh);
+                include_once $_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).".php";
+            }
+        } else {
             include_once $_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).".php";
         }
         
