@@ -29,6 +29,7 @@
 *
 *     THIS MAY SEGFAULT PHP IF YOU ARE USING THE ZEND OPTIMIZER (to fix it, just add 
 *     "define('DB_DATAOBJECT_NO_OVERLOAD',true);" before you include this file.
+*     reducing the optimization level may also solve the segfault.
 *  =====================================================================================
 */
 
@@ -2919,9 +2920,11 @@ Class DB_DataObject extends DB_DataObject_Overload
     * normally called from __call..  
     *
     * Current supports
-    *   date      = using strtotime + pear::date 
+    *   date      = using (standard time format, or unixtimestamp).... so you could create a method :
+    *               function setLastread($string) { $this->fromValue('lastread',strtotime($string)); }
+    *
     *   time      = using strtotime 
-    *   datetime  = using strtotime (if fails = use raw..)
+    *   datetime  = using  same as date - accepts iso standard or unixtimestamp.
     *   string    = typecast only..
     * 
     * TODO: add formater:: eg. d/m/Y for date! ???
@@ -2958,10 +2961,9 @@ Class DB_DataObject extends DB_DataObject_Overload
                 return false;
         
             case (($cols[$col] & DB_DATAOBJECT_DATE) &&  ($cols[$col] & DB_DATAOBJECT_TIME)):
-                $guess = strtotime($value);
                 
-                if ($guess != -1) {
-                    $this->$col = date('Y-m-d H:i:s', $guess);
+                if (is_numeric($value)) {
+                    $this->$col = date('Y-m-d H:i:s', $value);
                     return true;
                 }
               
@@ -2970,9 +2972,8 @@ Class DB_DataObject extends DB_DataObject_Overload
                 return true;
             
             case ($cols[$col] & DB_DATAOBJECT_DATE):
-                $guess = strtotime($value);
-                if ($guess != -1) {
-                    $this->$col = date('Y-m-d',$guess);
+                if (is_numeric($value)) {
+                    $this->$col = date('Y-m-d',$value);
                     return true;
                 }
                 // try date!!!!
@@ -3013,6 +3014,8 @@ Class DB_DataObject extends DB_DataObject_Overload
     * supported formaters:  
     *   date/time : %d/%m/%Y (eg. php strftime) or pear::Date 
     *   numbers   : %02d (eg. sprintf)
+    *  NOTE you will get unexpected results with times like 0000-00-00 !!!
+    *
     *
     * 
     * @param   string       column of database
