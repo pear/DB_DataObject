@@ -563,7 +563,7 @@ class DB_DataObject_Generator extends DB_DataObject
     */
     function getProxyFull($database,$table) {
         $this->_database_dsn = $database; 
-        $this->connect();
+        $this->_connect();
         
         
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
@@ -584,7 +584,6 @@ class DB_DataObject_Generator extends DB_DataObject
         
         
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
-        $base          = $options['class_location'];
         $class_prefix  = $options['class_prefix'];
         
         if ($extends = @$options['extends']) {
@@ -597,7 +596,8 @@ class DB_DataObject_Generator extends DB_DataObject
         $classname = $this->classname = $class_prefix.ucfirst($this->table);
 
         $out = $this->_generateClassTable();
-        eval($out);
+        //echo $out;
+        eval('?>'.$out);
         return new $classname;
         
     }

@@ -2,7 +2,7 @@
 DB::DataObject test
 --SKIPIF--
 <?php
-//define('DB_DATAOBJECT_NO_OVERLOAD',true);  
+ define('DB_DATAOBJECT_NO_OVERLOAD',true);  
 
 if (!@include(dirname(__FILE__)."/../DataObject.php")) print "skip"; ?>
 --FILE--
@@ -18,6 +18,8 @@ $options = &PEAR::getStaticProperty('DB_DataObject','options');
 $options['schema_location'] = dirname(__FILE__);
 $options['database'] = 'mysql://@localhost/test';
 $options['debug_force_updates'] = TRUE;
+$options['proxy'] = 'full';
+$options['class_prefix'] = 'MyProject_DataObject_';
  
 DB_DataObject::debugLevel(3);
 // create a record
@@ -51,6 +53,15 @@ class test extends DB_DataObject {
 	// table 2 = manual sequences.
 	$this->query(
             "CREATE TABLE test2 (
+              id int(11) NOT NULL PRIMARY KEY,
+              name varchar(255) NOT NULL default '',
+              username varchar(32) NOT NULL default '',
+              password varchar(13) binary NOT NULL default '',
+              firstname varchar(255) NOT NULL default '',
+              lastname varchar(255) NOT NULL default '' 
+            )");     
+	$this->query(
+            "CREATE TABLE testproxy (
               id int(11) NOT NULL PRIMARY KEY,
               name varchar(255) NOT NULL default '',
               username varchar(32) NOT NULL default '',
@@ -145,7 +156,8 @@ class test extends DB_DataObject {
         
         $t->dumpTest('test2');
         
-        
+        $t = DB_DataObjecT::factory('testproxy');
+        print_R($t);
 	
 	
 	

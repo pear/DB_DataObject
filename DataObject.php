@@ -1962,6 +1962,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         $table   = substr($class,strlen($_DB_DATAOBJECT['CONFIG']['class_prefix']));
 
         // only include the file if it exists - and barf badly if it has parse errors :)
+        if (@$_DB_DATAOBJECT['CONFIG']['proxy'] && empty($_DB_DATAOBJECT['CONFIG']['class_location'])) {
+            return false;
+        }
         
         $file = $_DB_DATAOBJECT['CONFIG']['class_location'].'/'.ucfirst($table).".php";
         
