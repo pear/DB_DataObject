@@ -511,7 +511,7 @@ class DB_DataObject_Generator extends DB_DataObject
         // and replace them with $x = clone($y);
         // due to the change in the PHP5 clone design.
         
-        if (( substr(phpversion(),0,1) < 5) {
+        if ( substr(phpversion(),0,1) < 5) {
             $body .= "\n";
             $body .= "    /* ZE2 compatibility trick*/\n";
             $body .= "    function __clone() { return \$this;}\n";
