@@ -2718,10 +2718,12 @@ class DB_DataObject extends DB_DataObject_Overload
             $tfield = $obj[0];
             list($toTable,$ofield) = explode(':',$obj[1]);
             $obj = DB_DataObject::factory($toTable);
+            
             if (!$obj) {
                 $obj = new DB_DataObject;
                 $obj->__table = $toTable;
             }
+            $obj->_connect();
             // set the table items to nothing.. - eg. do not try and match
             // things in the child table...???
             $items = array();
