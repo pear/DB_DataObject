@@ -376,14 +376,14 @@ Class DB_DataObject extends DB_DataObject_Overload
         $query_before = $this->_query;
         $this->_build_condition($this->table()) ;
         
-        $quoteEntities = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
+        $quoteIdentifiers = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
 
         $this->_query('SELECT ' .
             $this->_query['data_select'] .
-            ' FROM ' . ($quoteEntities ? $DB->quoteEntity($this->__table) : $this->__table) . " " .
+            ' FROM ' . ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table) . " " .
             $this->_join .
             $this->_query['condition'] . ' '.
             $this->_query['group_by']  . ' '.
@@ -782,13 +782,13 @@ Class DB_DataObject extends DB_DataObject_Overload
             $table = $tableName;
         }
         $s = '%s';
-        if (@$_DB_DATAOBJECT['CONFIG']['quote_entities']) {
+        if (@$_DB_DATAOBJECT['CONFIG']['quote_identifiers']) {
             $this->_connect();
             $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
-            $table  = $DB->quoteEntity($table);
-            $s      = $DB->quoteEntity($k);
-            $format = $DB->quoteEntity($format);
+            $table  = $DB->quoteIdentifier($table);
+            $s      = $DB->quoteIdentifier($k);
+            $format = $DB->quoteIdentifier($format);
         }
         foreach ($from as $k) {
             $this->selectAdd(sprintf("{$s}.{$s} as {$format}",$table,$k,$k));
@@ -814,7 +814,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     function insert()
     {
         global $_DB_DATAOBJECT;
-        $quoteEntities  = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
+        $quoteIdentifiers  = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
         // we need to write to the connection (For nextid) - so us the real
         // one not, a copyied on (as ret-by-ref fails with overload!)
         
@@ -882,7 +882,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                 $rightq .= ', ';
             }
             
-            $leftq .= ($quoteEntities ? ($DB->quoteEntity($k) . ' ')  : "$k ");
+            $leftq .= ($quoteIdentifiers ? ($DB->quoteIdentifier($k) . ' ')  : "$k ");
             
             if (is_a($this->$k,'db_dataobject_cast')) {
                 $value = $this->$k->toString($v,$dbtype);
@@ -916,7 +916,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         
         if ($leftq || $useNative) {
-            $table = ($quoteEntities ? $DB->quoteEntity($this->__table)    : $this->__table);
+            $table = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table)    : $this->__table);
             
             $r = $this->_query("INSERT INTO {$table} ($leftq) VALUES ($rightq) ");
  
@@ -1036,7 +1036,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         $DB            = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
         $dbtype        = $DB->dsn["phptype"];
-        $quoteEntities = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
+        $quoteIdentifiers = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
         
         foreach($items as $k => $v) {
             if (!isset($this->$k)) {
@@ -1063,7 +1063,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                 $settings .= ', ';
             }
             
-            $kSql = ($quoteEntities ? $DB->quoteEntity($k) : $k);
+            $kSql = ($quoteIdentifiers ? $DB->quoteIdentifier($k) : $k);
             
             if (is_a($this->$k,'db_dataobject_cast')) {
                 $value = $this->$k->toString($v,$dbtype);
@@ -1103,7 +1103,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         //  echo " $settings, $this->condition ";
         if ($settings && isset($this->_query) && $this->_query['condition']) {
             
-            $table = ($quoteEntities ? $DB->quoteEntity($this->__table) : $this->__table);
+            $table = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
         
             $r = $this->_query("UPDATE  {$table}  SET {$settings} {$this->_query['condition']} ");
             
@@ -1160,7 +1160,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         // connect will load the config!
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-        $quoteEntities  = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
+        $quoteIdentifiers  = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
         
         if (!$useWhere) {
 
@@ -1177,7 +1177,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         // don't delete without a condition
         if (isset($this->_query) && $this->_query['condition']) {
         
-            $table = ($quoteEntities ? $DB->quoteEntity($this->__table) : $this->__table);
+            $table = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
         
             $r = $this->_query("DELETE FROM {$table} {$this->_query['condition']}");
             
@@ -1279,7 +1279,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         $t = clone($this);
         
-        $quoteEntities = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
+        $quoteIdentifiers = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
         
         $items   = $t->table();
         if (!isset($t->_query)) {
@@ -1305,9 +1305,9 @@ Class DB_DataObject extends DB_DataObject_Overload
             
         }
         
-        $table   = ($quoteEntities ? $DB->quoteEntity($this->__table) : $this->__table);
-        $key_col = ($quoteEntities ? $DB->quoteEntity($keys[0]) : $keys[0]);
-        $as      = ($quoteEntities ? $DB->quoteEntity('DATAOBJECT_NUM') : 'DATAOBJECT_NUM');
+        $table   = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
+        $key_col = ($quoteIdentifiers ? $DB->quoteIdentifier($keys[0]) : $keys[0]);
+        $as      = ($quoteIdentifiers ? $DB->quoteIdentifier('DATAOBJECT_NUM') : 'DATAOBJECT_NUM');
         $r = $t->_query(
             "SELECT count({$table}.{$key_col}) as $as
                 FROM $table {$t->_join} {$t->_query['condition']}");
@@ -2010,7 +2010,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
-        $quoteEntities  = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
+        $quoteIdentifiers  = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
         // if we dont have query vars.. - reset them.
         if (!isset($this->_query)) {
             $x = new DB_DataObject;
@@ -2036,8 +2036,8 @@ Class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            $kSql = $quoteEntities 
-                ? ( $DB->quoteEntity($this->__table) . '.' . $DB->quoteEntity($k) )  
+            $kSql = $quoteIdentifiers 
+                ? ( $DB->quoteIdentifier($this->__table) . '.' . $DB->quoteIdentifier($k) )  
                 : "{$this->__table}.{$k}";
              
              
@@ -2607,9 +2607,9 @@ Class DB_DataObject extends DB_DataObject_Overload
             $joinAs = $obj->__table;
         }
         
-        $quoteEntities = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];        
+        $quoteIdentifiers = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];        
         
-        $objTable = $quoteEntities ? $DB->quoteEntity($objTable) : $obj->__table ;
+        $objTable = $quoteIdentifiers ? $DB->quoteIdentifier($objTable) : $obj->__table ;
         
         
         // nested (join of joined objects..)
@@ -2629,11 +2629,11 @@ Class DB_DataObject extends DB_DataObject_Overload
         $table = $this->__table;
         
 
-        if ($quoteEntities) {
-            $joinAs   = $DB->quoteEntity($joinAs);
-            $table    = $DB->quoteEntity($table);     
-            $ofield   = $DB->quoteEntity($ofield);    
-            $tfield   = $DB->quoteEntity($tfield);    
+        if ($quoteIdentifiers) {
+            $joinAs   = $DB->quoteIdentifier($joinAs);
+            $table    = $DB->quoteIdentifier($table);     
+            $ofield   = $DB->quoteIdentifier($ofield);    
+            $tfield   = $DB->quoteIdentifier($tfield);    
         }
         
         $fullJoinAs = '';
@@ -2683,7 +2683,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            $kSql = ($quoteEntities ? $DB->quoteEntity($k) : $k);
+            $kSql = ($quoteIdentifiers ? $DB->quoteIdentifier($k) : $k);
             
             
             if ($v & DB_DATAOBJECT_STR) {
