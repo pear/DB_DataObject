@@ -456,7 +456,7 @@ class DB_DataObject extends DB_DataObject_Overload
             return false;
         }
         
-        if (!empty($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]) || 
+        if (empty($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]) || 
             !is_object($result = &$_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid])) 
         {
             if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
