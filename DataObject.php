@@ -372,6 +372,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             exit;
         }
         $this->N = 0;
+        $query_before = $this->_query;
         $this->_build_condition($this->table()) ;
         
         $quoteEntities = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
@@ -403,7 +404,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug("DONE", "__find", 1);
         }
-        
+        $this->_query = $query_before;
         return $this->N;
     }
 
