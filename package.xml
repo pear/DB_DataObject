@@ -22,21 +22,30 @@
   </maintainers>
 
   <release>
-      <version>1.7.1</version>
-      <date>2004-08-09</date>
+   
+     <version>1.7.2</version>
+      <date>2004-08-28</date>
       <notes><![CDATA[
-      Minor bug fix release
+      Minor bug fix / Minor feature addition release
         
         
       Bug Fixes:
-        #2088 - class_prefix may be left out.
-        #------ php4.2 compatibility should work as advertised in last realease
-        #------ Generator didnt have DB loaded due to lazy load changes.
+        #1835 - more fixes to ensure that joinAdd works correctly.
+        #2106 - Update with old object having no changes does not raise an error
+        #---- - fixed problem of call() code producing parse error on PHP5.0.1 
+        #2205 - fixed case sensitivity of PHP5 call() 
+        #---- - fixed undefined index in delete after a fetch()
+        
+      Features Added:
+        #2086 - Support for buliding dataobjects for Views (use option build_view=1)
+        #2240 - factory() called on a dataobject returns a new instance of that object.
  
       ]]></notes>
       <state>stable</state>
     </release>
 
+
+   
     <filelist>
         <dir name="/" baseinstalldir="DB" role="php">
             <file name="DataObject.php" role="php">
@@ -65,8 +74,25 @@
     </deps>
 
   <changelog>
-  
-  
+   <release>
+   
+     <version>1.7.1</version>
+      <date>2004-08-09</date>
+      <notes><![CDATA[
+      Minor bug fix release
+        
+        
+      Bug Fixes:
+        #2088 - class_prefix may be left out.
+        #------ php4.2 compatibility should work as advertised in last realease
+        #------ Generator didnt have DB loaded due to lazy load changes.
+ 
+      ]]></notes>
+      <state>stable</state>
+    </release>
+
+
+
   <release>
       <version>1.7.0</version>
       <date>2004-06-03</date>

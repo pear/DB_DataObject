@@ -1,6 +1,42 @@
 
+2004-08-28 Saturday  alan_k
+
+	* quick class instantation $newdo = $do->factory();
+
+2004-08-25 Wednesday  alan_k
+
+	* typo in last commit
+	* fix bug #2205 - case sensitivity of call in PHP5
+
+2004-08-24 Tuesday  alan_k
+
+	* fix bug - unset order_by/limit causing undefined indexes.
+
+2004-08-20 Friday  alan_k
+
+	* kludging PHP5 support again.
+	* update results for checking
+	* add test for bug #2116
+
+2004-08-12 Thursday  alan_k
+
+	* add warning note about build_views
+
+2004-08-11 Wednesday  alan_k
+
+	* oops typo
+	* try and get #1835 fixed correctly so it doesnt break the whole
+	joinAdd code..
+	* bug #2106 - update() with old object having no changes does not
+	raise an error
+	* bug #2086 - support building of dataobjects for views with
+	build_view=1 option
+	* hopefully finaly close #1835
+	* fix incorrect test for keep_query_after_fetch
+
 2004-08-09 Monday  alan_k
 
+	* prep for bugfix release
 	* fix typo on generator
 	* fix generator not having DB available
 
