@@ -297,11 +297,13 @@ class test extends DB_DataObject {
         $r = $x->query("
             CREATE TABLE seqtest (
                  id INT NOT NULL UNIQUE   default nextval( 'response_response_id_seq' ),
-                xxx varchar(32)
+                xxx varchar(32),
+		price double precision
             )");
             
-            
+	//DB_DataObject::debugLevel(0);
         $x = DB_DataObject::factory('seqtest');
+	print_r($x->table());
         $x->xxx = "Fred";
         var_dump($x->insert()); // will return id (based on response_response_id_seq)
         $x = DB_DataObject::factory('seqtest');
