@@ -2623,7 +2623,26 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         return $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
     }
-
+    /*
+    * enable/disable automatic Commit
+    *
+    * This is a wrapper, as overload does not allow you to return by reference properly.
+    *
+    * @param optional boolean $onoff (default turns off)
+    * @return mixed DB_Error 
+    *
+    * @access public
+    */
+    function autoCommit($onoff=false)
+    {
+        $this->_connect();
+        if (!isset($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
+            return  false;
+        }
+        return $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->autoCommit($onoff);
+        
+    }
+ 
     /**
      * Gets the DB result object related to the objects active query
      *  - so you can use funky pear stuff with it - like pager for example.. :)
@@ -2631,6 +2650,11 @@ Class DB_DataObject extends DB_DataObject_Overload
      * @access public
      * @return object The DB result object
      */
+     
+   
+     
+     
+     
     function &getDatabaseResult()
     {
         global $_DB_DATAOBJECT;
