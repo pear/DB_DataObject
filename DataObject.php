@@ -795,7 +795,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
             $table  = $DB->quoteIdentifier($table);
-            $s      = $DB->quoteIdentifier($k);
+            $s      = $DB->quoteIdentifier($s);
             $format = $DB->quoteIdentifier($format);
         }
         foreach ($from as $k) {
@@ -2681,7 +2681,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $quoteIdentifiers = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];        
         
-        $objTable = $quoteIdentifiers ? $DB->quoteIdentifier($objTable) : $obj->__table ;
+        $objTable = $quoteIdentifiers ? $DB->quoteIdentifier($obj->__table) : $obj->__table ;
         
         
         // nested (join of joined objects..)
