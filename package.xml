@@ -22,13 +22,13 @@
   </maintainers>
   
   <release>
-     <version>1.7.11</version>
-      <date>2004-03-22</date>
+     <version>1.7.12</version>
+      <date>2004-03-23</date>
       <notes><![CDATA[
-        Minor Bugfix release. 
+        Daily Bugfix release. ;)
       
-        #3898 - fix count , which got broken by previous distinct argument changes
-        #------ support $x IS NOT NULL using $obj->value = DB_DataObject_Cast::sql("NOT NULL");
+        #3898 - mysqli quote bug fixed. (Greg Beaver)
+        #------ provisional support for mysql blobs in Cast object (Antony Jankelowitz)
         
  
       ]]></notes>
@@ -66,6 +66,19 @@
 
   <changelog>
   
+  <release>
+     <version>1.7.11</version>
+      <date>2004-03-22</date>
+      <notes><![CDATA[
+        Minor Bugfix release. 
+      
+        #3898 - fix count , which got broken by previous distinct argument changes
+        #------ support $x IS NOT NULL using $obj->value = DB_DataObject_Cast::sql("NOT NULL");
+        
+ 
+      ]]></notes>
+      <state>stable</state>
+    </release> 
   
   <release>
      <version>1.7.10</version>
