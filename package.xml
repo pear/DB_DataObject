@@ -22,12 +22,37 @@
   </maintainers>
 
   <release>
-      <version>1.6.1</version>
+      <version>1.7.0</version>
       <date>2004-06-03</date>
       <notes><![CDATA[
-        Minor Bug Fix
+      Major bug fix release, Minor features added.  
         
-        * fixed count() breaks when countWhat used.
+        
+      Bug Fixes:
+        #1559 - __FUNCTION__ remove, so dependancy on php 4.2 may still be valid.
+        #1595 - regex include/exclude working correctly (Thanks to Stephane Gully)
+        #1664 - configuration line links_{databasename} now available 
+        #1726 - enable orderby and limit can be used with delete()   
+        #1697 - prevent generator from adding an extra line created after definition.
+        #1704 - update only adds null when the column is not marked 'not null'
+        #1778 - toArray() returns a merge of defined table and actual results
+        #1828 - Generator will die, if tableinfo is not supported.      
+        #1833 - links() now returns an empty array (no links) or null (no links.ini)
+            so it can be used generically with : $ar = (array) $do->links();
+        #1835 - getLinks, getLink etc. now use ->links(), so you can define your
+            own links() to return table links, rather than use links.ini files.
+        #1923 - removed all @ silencers, and replace with empty/isset.
+        #1935 - selectAs() - removed double quoteIdentifiers
+        #2068 - workaround for DB bug, postgres nextval() being rawurlencoded
+        #1980 - logic error when using quoteIdentifiers
+        
+      Changes:
+        * DebugLevel(1) now displays native errors from database when queries fail.
+        * Result Field names now stored seperately from Result Object
+        * free() method added, to clean up memory instantly, if you are doing alot of queries.
+            = Cleans Result Fields, Result Object, NumRows returned in Connection object.
+        * include path is used to do file hunting if factory fails to find file.
+        * DB is lazy loaded on connection.b
  
       ]]></notes>
       <state>stable</state>
@@ -61,6 +86,23 @@
     </deps>
 
   <changelog>
+  
+  
+  
+  <release>
+      <version>1.6.1</version>
+      <date>2004-06-03</date>
+      <notes><![CDATA[
+        Minor Bug Fix
+        
+        * fixed count() breaks when countWhat used.
+ 
+      ]]></notes>
+      <state>stable</state>
+    </release>
+
+  
+  
   <release>
       <version>1.6.0</version>
       <date>2004-04-24</date>
