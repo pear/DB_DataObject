@@ -1040,8 +1040,9 @@ class DB_DataObject extends DB_DataObject_Overload
      *
      * performing global updates:
      * $object = DB_DataObject::factory('mytable');
-     * $object->name = "fred";
-     * $object->update(
+     * $object->status = "dead";
+     * $object->whereAdd('age > 150');
+     * $object->update(DB_DATAOBJECT_WHEREADD_ONLY);
      *
      * @param object dataobject (optional) | DB_DATAOBJECT_WHEREADD_ONLY - used to only update changed items.
      * @access public
