@@ -21,15 +21,13 @@
     </maintainer>
   </maintainers>
   <release>
-      <version>0.5</version>
-      <date>2002-09-07</date>
+      <version>0.6</version>
+      <date>2002-09-10</date>
       <notes>
-        - fixed database.links.ini file loading in wrong location (Jens Fischer)
-        - fixed type on extends (Jens Fischer)
-        - added __clone() support to pre- php5 classes
-        - added multiple linked table support
+        - bug fix release on insert (broke due to compatibility fixes)
       </notes>
       <state>beta</state>
+     </release>
     <filelist>
         <dir name="/" baseinstalldir="DB" role="php">
             <file>DataObject.php</file>
@@ -40,8 +38,16 @@
             </dir>
         </dir>
     </filelist>
-  </release>
+   
   <changelog>
+  <release>
+      <version>0.6</version>
+      <date>2002-09-10</date>
+      <notes>
+        - bug fix release on insert (broke due to compatibility fixes)
+      </notes>
+      <state>beta</state>
+     </release>
     <release>
       <version>0.5</version>
       <date>2002-09-07</date>

@@ -505,7 +505,7 @@ Class DB_DataObject {
         $items = $this->_get_table();
         if (!$items) {
             DB_DataObject::raiseError("insert:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            return;
+            return FALSE;
         }
         $datasaved=1;
         $leftq="";
@@ -540,13 +540,18 @@ Class DB_DataObject {
             
         }
         if ($leftq) {
-            $this->_query("INSERT INTO {$this->__table} ($leftq) VALUES ($rightq) ");
+            $r = $this->_query("INSERT INTO {$this->__table} ($leftq) VALUES ($rightq) ");
+            if (PEAR::isError($r)) {
+                DB_DataObject::raiseError($r);
+                return FALSE;
+            }
             if ($key && ($dbtype == 'mysql'))
                 $this->$key = mysql_insert_id($connections[$this->_database_dsn_md5]->connection);
             $this->_clear_cache();
             return $this->$key;
         }
         DB_DataObject::raiseError("insert: No Data specifed for query", DB_DATAOBJECT_ERROR_NODATA);
+        return FALSE;
     }
 
     /**
@@ -572,7 +577,7 @@ Class DB_DataObject {
 
         if (!$items) {
             DB_DataObject::raiseError("update:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            return;
+            return FALSE;
         }
         $datasaved=1;
         $settings ="";
@@ -608,11 +613,15 @@ Class DB_DataObject {
         $this->_build_condition($items,$keys);
         //  echo " $settings, $this->condition ";
         if ($settings && $this->_condition) {
-            $this->_query("UPDATE  {$this->__table}  SET {$settings} {$this->_condition} ");
+            $r = $this->_query("UPDATE  {$this->__table}  SET {$settings} {$this->_condition} ");
+            if (PEAR::isError($r)) {
+                return FALSE;
+            }
             $this->_clear_cache();
             return TRUE;
         }
         DB_DataObject::raiseError("update: No Data specifed for query $settings , {$this->_condition}", DB_DATAOBJECT_ERROR_NODATA);
+        return FALSE;
     }
     /**
     * Deletes items from table which match current objects variables
@@ -1429,8 +1438,12 @@ Class DB_DataObject {
     * @access	  public
     * @return   error object
     */
-    function raiseError($message,$type,$behaviour=NULL) {
-        $error = PEAR::raiseError($message,$type,$behaviour);
+    function raiseError($message,$type=NULL,$behaviour=NULL) {
+        if (PEAR::isError($message)) {
+            $error = $message;
+        } else {
+            $error = PEAR::raiseError($message,$type,$behaviour);
+        }
         if (is_object($this)) {
             $this->_lastError = $error;
         }
