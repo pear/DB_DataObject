@@ -254,7 +254,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             $v = $k;
             $keys = $this->keys();
             if (!$keys) {
-                DB_DataObject::raiseError("No Keys available for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+                $this->raiseError("No Keys available for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
                 return false;
             }
             $k = $keys[0];
@@ -264,7 +264,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         
         if ($v === null) {
-            DB_DataObject::raiseError("No Value specified for get", DB_DATAOBJECT_ERROR_INVALIDARGS);
+            $this->raiseError("No Value specified for get", DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
         }
         $this->$k = $v;
@@ -350,7 +350,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
         if (!isset($this->_query)) {
-            DB_DataObject::raiseError(
+            $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
@@ -499,7 +499,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     function whereAdd($cond = false, $logic = 'AND')
     {
         if (!isset($this->_query)) {
-            DB_DataObject::raiseError(
+            $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
@@ -511,7 +511,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         // check input...= 0 or '   ' == error!
         if (!trim($cond)) {
-            return DB_DataObject::raiseError("WhereAdd: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
+            return $this->raiseError("WhereAdd: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
         }
         if ($this->_query['condition']) {
             $this->_query['condition'] .= " {$logic} {$cond}";
@@ -534,7 +534,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     function orderBy($order = false)
     {
         if (!isset($this->_query)) {
-            DB_DataObject::raiseError(
+            $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
@@ -545,7 +545,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         // check input...= 0 or '    ' == error!
         if (!trim($order)) {
-            return DB_DataObject::raiseError("orderBy: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
+            return $this->raiseError("orderBy: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
         }
         
         if (!$this->_query['order_by']) {
@@ -569,7 +569,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     function groupBy($group = false)
     {
         if (!isset($this->_query)) {
-            DB_DataObject::raiseError(
+            $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
@@ -580,7 +580,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         // check input...= 0 or '    ' == error!
         if (!trim($group)) {
-            return DB_DataObject::raiseError("groupBy: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
+            return $this->raiseError("groupBy: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
         }
         
         
@@ -604,7 +604,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     function having($having = false)
     {
         if (!isset($this->_query)) {
-            DB_DataObject::raiseError(
+            $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
@@ -615,7 +615,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         // check input...= 0 or '    ' == error!
         if (!trim($having)) {
-            return DB_DataObject::raiseError("Having: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
+            return $this->raiseError("Having: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
         }
         
         
@@ -645,7 +645,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     function limit($a = null, $b = null)
     {
         if (!isset($this->_query)) {
-            DB_DataObject::raiseError(
+            $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
@@ -658,7 +658,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         // check input...= 0 or '    ' == error!
         if ((!is_int($a) && ((string)((int)$a) !== (string)$a)) 
             || (($b !== null) && (!is_int($b) && ((string)((int)$b) !== (string)$b)))) {
-            return DB_DataObject::raiseError("limit: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
+            return $this->raiseError("limit: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
         }
 
         $db = $this->getDatabaseConnection();
@@ -672,7 +672,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             $this->_query['limit'] = $db->modifyLimitQuery('',$a,$b);
             
         } else {
-            DB_DataObject::raiseError(
+            $this->raiseError(
                 "DB_DataObjects only supports mysql and postgres limit queries at present, \n".
                 "Refer to your Database manual to find out how to do limit queries manually.\n",
                 DB_DATAOBJECT_ERROR_NOTSUPPORTED, PEAR_ERROR_DIE);
@@ -694,7 +694,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     function selectAdd($k = null)
     {
         if (!isset($this->_query)) {
-            DB_DataObject::raiseError(
+            $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
@@ -706,7 +706,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         // check input...= 0 or '    ' == error!
         if (!trim($k)) {
-            return DB_DataObject::raiseError("selectAdd: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
+            return $this->raiseError("selectAdd: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
         }
         
         if ($this->_query['data_select'])
@@ -734,7 +734,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         global $_DB_DATAOBJECT;
         
         if (!isset($this->_query)) {
-            DB_DataObject::raiseError(
+            $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
@@ -796,7 +796,7 @@ Class DB_DataObject extends DB_DataObject_Overload
          
         $items = $this->table();
         if (!$items) {
-            DB_DataObject::raiseError("insert:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+            $this->raiseError("insert:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
         }
         $options= &$_DB_DATAOBJECT['CONFIG'];
@@ -854,7 +854,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             if (is_a($this->$k,'db_dataobject_cast')) {
                 $value = $this->$k->toString($v,$dbtype);
                 if (PEAR::isError($value)) {
-                    DB_DataObject::raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
+                    $this->raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
                     return false;
                 }
                 $rightq .=  $value;
@@ -888,11 +888,11 @@ Class DB_DataObject extends DB_DataObject_Overload
             $r = $this->_query("INSERT INTO {$table} ($leftq) VALUES ($rightq) ");
             
             if (PEAR::isError($r)) {
-                DB_DataObject::raiseError($r);
+                $this->raiseError($r);
                 return false;
             }
             if ($r < 1) {
-                DB_DataObject::raiseError('No Data Affected By insert',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
+                $this->raiseError('No Data Affected By insert',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
                 return false;
             }
            
@@ -914,7 +914,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                         
                         $mssql_key = $DB->getOne("SELECT @@IDENTITY");
                         if (PEAR::isError($mssql_key)) {
-                            DB_DataObject::raiseError($r);
+                            $this->raiseError($r);
                             return false;
                         }
                         $this->$key = $mssql_key;
@@ -926,7 +926,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                         }
                     	$pgsql_key = $DB->getOne("SELECT last_value FROM ".$seq);
                         if (PEAR::isError($pgsql_key)) {
-                            DB_DataObject::raiseError($r);
+                            $this->raiseError($r);
                             return false;
                         }
                         $this->$key = $pgsql_key;
@@ -941,7 +941,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             }
             return true;
         }
-        DB_DataObject::raiseError("insert: No Data specifed for query", DB_DATAOBJECT_ERROR_NODATA);
+        $this->raiseError("insert: No Data specifed for query", DB_DATAOBJECT_ERROR_NODATA);
         return false;
     }
 
@@ -985,7 +985,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         
          
         if (!$items) {
-            DB_DataObject::raiseError("update:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+            $this->raiseError("update:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
         }
         $datasaved = 1;
@@ -1025,7 +1025,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             if (is_a($this->$k,'db_dataobject_cast')) {
                 $value = $this->$k->toString($v,$dbtype);
                 if (PEAR::isError($value)) {
-                    DB_DataObject::raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
+                    $this->raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
                     return false;
                 }
                 $settings .= "$kSql = $value ";
@@ -1072,7 +1072,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                 return false;
             }
             if ($r < 1) {
-                DB_DataObject::raiseError('No Data Affected By update',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
+                $this->raiseError('No Data Affected By update',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
                 return false;
             }
 
@@ -1082,7 +1082,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         // restore original query conditions.
         $this->_query = $original_query;
         
-        DB_DataObject::raiseError(
+        $this->raiseError(
             "update: No Data specifed for query $settings , {$this->_query['condition']}", 
             DB_DATAOBJECT_ERROR_NODATA);
         return false;
@@ -1142,13 +1142,13 @@ Class DB_DataObject extends DB_DataObject_Overload
                 return false;
             }
             if ($r < 1) {
-                DB_DataObject::raiseError('No Data Affected By delete',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
+                $this->raiseError('No Data Affected By delete',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
                 return false;
             }
             $this->_clear_cache();
             return $r;
         } else {
-            DB_DataObject::raiseError("delete: No condition specifed for query", DB_DATAOBJECT_ERROR_NODATA);
+            $this->raiseError("delete: No condition specifed for query", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
     }
@@ -1168,21 +1168,21 @@ Class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
-            DB_DataObject::_loadConfig();
+            $this->_loadConfig();
         }
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug("{$this->__table} $row of {$this->N}", "fetchrow",3);
         }
         if (!$this->__table) {
-            DB_DataObject::raiseError("fetchrow: No table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+            $this->raiseError("fetchrow: No table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
         }
         if ($row === null) {
-            DB_DataObject::raiseError("fetchrow: No row specified", DB_DATAOBJECT_ERROR_INVALIDARGS);
+            $this->raiseError("fetchrow: No row specified", DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
         }
         if (!$this->N) {
-            DB_DataObject::raiseError("fetchrow: No results avaiable", DB_DATAOBJECT_ERROR_NODATA);
+            $this->raiseError("fetchrow: No results avaiable", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
@@ -1193,7 +1193,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         $result = &$_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid];
         $array  = $result->fetchrow(DB_FETCHMODE_ASSOC,$row);
         if (!is_array($array)) {
-            DB_DataObject::raiseError("fetchrow: No results available", DB_DATAOBJECT_ERROR_NODATA);
+            $this->raiseError("fetchrow: No results available", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
 
@@ -1238,7 +1238,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         $items   = $t->table();
         if (!isset($t->_query)) {
-            DB_DataObject::raiseError(
+            $this->raiseError(
                 "You cannot do run count after you have run fetch()", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
@@ -1743,14 +1743,14 @@ Class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
-            DB_DataObject::_loadConfig();
+            $this->_loadConfig();
         }
 
         // is it already connected ?
 
         if ($this->_database_dsn_md5 && @$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]) {
             if (PEAR::isError($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
-                return DB_DataObject::raiseError(
+                return $this->raiseError(
                         $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->message,
                         $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->code, PEAR_ERROR_DIE
                 );
@@ -1803,7 +1803,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             $this->debug(serialize($_DB_DATAOBJECT['CONNECTIONS']), "CONNECT",5);
         }
         if (PEAR::isError($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
-            return DB_DataObject::raiseError(
+            return $this->raiseError(
                         $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->message,
                         $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->code, PEAR_ERROR_DIE
             );
@@ -1876,7 +1876,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             (strtolower(substr(trim($string), 0, 8)) != 'describe')) {
 
             $this->debug('Disabling Update as you are in debug mode');
-            return DB_DataObject::raiseError("Disabling Update as you are in debug mode", null) ;
+            return $this->raiseError("Disabling Update as you are in debug mode", null) ;
 
         }
         if (@$_DB_DATAOBJECT['CONFIG']['debug'] > 1) {
@@ -1895,7 +1895,7 @@ Class DB_DataObject extends DB_DataObject_Overload
 
         if (DB::isError($result)) {
             if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
-                DB_DataObject::debug($string, "SENT");
+                $this->debug($string, "SENT");
                 
             }
             return $result;
@@ -1973,7 +1973,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             if (is_a($this->$k,'db_dataobject_cast')) {
                 $value = $this->$k->toString($v,$dbtype);
                 if (PEAR::isError($value)) {
-                    DB_DataObject::raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
+                    $this->raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
                     return false;
                 }
                 if ($value == 'NULL') {
@@ -2145,7 +2145,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
-            DB_DataObject::_loadConfig();
+            $this->_loadConfig();
         }
         if (isset($_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table])) {
             return $_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table];
@@ -2269,7 +2269,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                     }
                     return $r = &$this->getLink($row,$table,$link);
                 } else {
-                    DB_DataObject::raiseError(
+                    $this->raiseError(
                         "getLink: $row is not defined as a link (normally this is ok)", 
                         DB_DATAOBJECT_ERROR_NODATA);
                         
@@ -2284,7 +2284,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             }
         }
         if (!isset($this->$row)) {
-            DB_DataObject::raiseError("getLink: row not set $row", DB_DATAOBJECT_ERROR_NODATA);
+            $this->raiseError("getLink: row not set $row", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
         
@@ -2293,7 +2293,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         $obj = $this->factory($table);
         
         if (PEAR::isError($obj)) {
-            DB_DataObject::raiseError(
+            $this->raiseError(
                 "getLink:Could not find class for row $row, table $table", 
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
@@ -2350,7 +2350,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         $c  = $this->factory($table);
         if (PEAR::isError($c)) {
-            DB_DataObject::raiseError("getLinkArray:Could not find class for row $row, table $table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+            $this->raiseError("getLinkArray:Could not find class for row $row, table $table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return $ret;
         }
 
@@ -2454,7 +2454,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         
         if (!is_object($obj)) {
-            DB_DataObject::raiseError("joinAdd: called without an object", DB_DATAOBJECT_ERROR_NODATA,PEAR_ERROR_DIE);
+            $this->raiseError("joinAdd: called without an object", DB_DATAOBJECT_ERROR_NODATA,PEAR_ERROR_DIE);
         }
         /*  make sure $this->_database is set.  */
         $DB = &$this->getDatabaseConnection();
@@ -2480,7 +2480,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                     // not sure if 1:1 table could cause probs here..
                     
                     if ($joinCol !== false) {
-                        DB_DataObject::raiseError( 
+                        $this->raiseError( 
                             "joinAdd: You cannot target a join column in the " .
                             "'link from' table ({$obj->__table}). " . 
                             "Either remove the fourth argument to joinAdd() ".
@@ -2523,7 +2523,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         /* did I find a conneciton between them? */
 
         if ($ofield === false) {
-            DB_DataObject::raiseError(
+            $this->raiseError(
                 "joinAdd: {$obj->__table} has no link with {$this->__table}",
                 DB_DATAOBJECT_ERROR_NODATA);
             return false;
@@ -2598,7 +2598,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         
         if (!$items) {
-            DB_DataObject::raiseError(
+            $this->raiseError(
                 "joinAdd: No table definition for {$obj->__table}", 
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
@@ -2652,7 +2652,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         $keys  = $this->keys();
         $items = $this->table();
         if (!$items) {
-            DB_DataObject::raiseError(
+            $this->raiseError(
                 "setFrom:Could not find table definition for {$this->__table}", 
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return;
