@@ -27,6 +27,10 @@
       <version>1.1</version>
       <date>2003-08-07</date>
       <notes>
+        Bug Fixes
+        - limit argument testing now accepts &quot;10&quot; (a string with an integer
+        in it, as a valid argument) (Demian Turner)
+      
         New Features
         - JoinAdd has additional Argument $joinCol, so you can specify 
           multiple targets links of the  same table, eg. user->friend, 
