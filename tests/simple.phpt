@@ -40,18 +40,19 @@ class test extends DB_DataObject {
     }
     
     function test1() {
+       	echo "\n\n\n******create database' \n";
         $this->createRecordWithName('test');
         $this->dumpTest(); 
         $t = new test;
         //$t->id = 1;
 	
-       	echo "******delete everything with test and 'username' \n";
+       	echo "\n\n\n******delete everything with test and 'username' \n";
         $t->name = 'test';
         $t->username = 'username';
         $t->delete();
         $this->dumpTest(); 
 	
-        echo "***** update everything with username to firstname = 'fred' *\n";
+        echo "\n\n\n***** update everything with username to firstname = 'fred' *\n";
         $this->createRecordWithName('test');
         $t = new test;
         $t->whereAdd("username = 'username'");
@@ -60,15 +61,25 @@ class test extends DB_DataObject {
         $this->dumpTest(); 
 	
 
-	echo "****** now update based on key\n";
+	echo "\n\n\n****** now update based on key\n";
         $t= new test;
         $t->get(2);
         $t->firstname='brian';
         $t->update();
         $this->dumpTest();  
 	
+	echo "\n\n\n****** now update using changed items only\n";
+        $t= new test;
+        $t->get(2);
+	$copy = $t;
+        $t->firstname='jones';
+        $t->update($copy);
+        $this->dumpTest();  
+	echo "\n\n\n****** now update using changed items only\n";	
 
-	echo "******get and delete an object key\n";
+	print_r($t->toArray('user[%s]'));
+
+	echo "\n\n\n******get and delete an object key\n";
 	$t = new test;
 	$t->get(2);
 	$t->delete();

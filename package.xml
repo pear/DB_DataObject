@@ -30,6 +30,10 @@
         - replaced config storage  - should improve performance
         - removed production option (not required due to improved config storage)
         - bugfix : added checks for is_array on ignore_sequence_keys (Hermen Heinen)
+        - add toArray($format) which supports sprintf to enable easy integration with
+          Quickforms etc. (Demian Turner)
+        - add optional dataobject as variable to update(), so you can update will 
+          only create an update based on what has changed. (Geoff Hopson)
         
       </notes>
       <state>stable</state>

@@ -655,10 +655,20 @@ Class DB_DataObject
      * if(!$object->update())
      *   echo "UPDATE FAILED";
      *
+     * to only update changed items :
+     * $dataobject->get(132);
+     * $original = $dataobject; // clone/copy it..
+     * $dataobject->setFrom($_POST);
+     * if ($dataobject->validate()) {
+     *    $dataobject->update($original);
+     * } // otherwise an error...
+     *
+     *
+     * @param object dataobject (optional) - used to only update changed items.
      * @access public
      * @return  boolean true = success
      */
-    function update()
+    function update($dataObject = false)
     {
         global $_DB_DATAOBJECT;
         // connect will load the config!
@@ -682,6 +692,11 @@ Class DB_DataObject
             if (!isset($this->$k)) {
                 continue;
             }
+            if (($dataObject !== false) && (@$dataObject->$k == $this->$k)) {
+                continue;
+            }
+            
+            
             if ($settings)  {
                 $settings .= ', ';
             }
@@ -1700,6 +1715,30 @@ Class DB_DataObject
         return true;
     }
 
+
+
+
+    /**
+     * Returns an associative array from the current data
+     * (kind of oblivates the idea behind DataObjects, but 
+     * is usefull if you use it with things like QuickForms.
+     *
+     * you can use the format to return things like user[key]
+     * by sending it $object->toArray('user[%s]')
+     *
+     *
+     * @param   string sprintf format for array
+     * @access   public
+     * @return   array of key => value for row
+     */
+
+    function toArray($format = '%s')
+    {
+        foreach($this->_get_table() as $k=>$v) {
+            $ret[sprintf($format,$k)] = $this->$k;
+        }
+        return $ret;
+    }
     /**
      * validate - override this to set up your validation rules
      *
