@@ -1062,7 +1062,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         // only apply update against sequence key if it is set?????
         
-        $seq    = $this->sequenceKeys();
+        $seq    = $this->sequenceKey();
         if ($seq[0] !== false) {
             $keys = array($seq[0]);
             if (empty($this->{$keys[0]}) && $dataObject !== true) {
