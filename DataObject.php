@@ -1314,10 +1314,14 @@ Class DB_DataObject extends DB_DataObject_Overload
      *  
      * It should append to the table structure array 
      *
+     *     
+     * @param optional string  name of database to assign
+     * @param optional array   structure of database, and keys
+     * @param optional array  table links
      *
-     * @access private
+     * @access public
      * @static
-     * @return boolean
+     * @return true or PEAR:error on wrong paramenters..
      */
     function databaseStructure()
     {
@@ -1342,11 +1346,11 @@ Class DB_DataObject extends DB_DataObject_Overload
                 $_DB_DATAOBJECT['LINKS'][$args[0]] = isset($_DB_DATAOBJECT['LINKS'][$args[0]]) ?
                     $_DB_DATAOBJECT['LINKS'][$args[0]] + $args[2] : $args[2];
             }
-            return array($_DB_DATAOBJECT['INI'][$args[0]], $_DB_DATAOBJECT['LINKS'][$args[0]]);
+            return true;
         }
         // loaded already?
         if (isset($_DB_DATAOBJECT['INI'][$this->_database])) {
-            return array($_DB_DATAOBJECT['INI'][$this->_database], $_DB_DATAOBJECT['LINKS'][$this->_database]);
+            return true;
         }
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
@@ -1371,7 +1375,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             /* not sure why $links = ... here  - TODO check if that works */
             $_DB_DATAOBJECT['LINKS'][$this->_database] = parse_ini_file($links, true);
         }
-        return array($_DB_DATAOBJECT['INI'][$this->_database], $_DB_DATAOBJECT['LINKS'][$this->_database]);
+        return true;
     }
 
 
