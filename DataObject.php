@@ -2252,10 +2252,20 @@ class DB_DataObject extends DB_DataObject_Overload
         $file = $_DB_DATAOBJECT['CONFIG']['class_location'].'/'.preg_replace('/[^A-Z0-9]/i','_',ucfirst($table)).".php";
         
         if (!file_exists($file)) {
-            DB_DataObject::raiseError(
-                "autoload:Could not find class {$class} using class_location value", 
-                DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            return false;
+            $found = false;
+            foreach(explode(PATH_SEPERATOR, ini_get('include_path')) as $p) {
+                if (file_exists("$p/$file")) {
+                    $file = "$p/$file";
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                DB_DataObject::raiseError(
+                    "autoload:Could not find class {$class} using class_location value", 
+                    DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+                return false;
+            }
         }
         
         include_once $file;
