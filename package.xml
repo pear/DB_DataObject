@@ -22,8 +22,70 @@
   </maintainers>
 
   <release>
+      <version>1.4</version>
+      <date>2003-12-20</date>
+      <notes>
+
+        New Features / Fixes
+        - oracle supported, by adding portibility option.
+        - optional entity quoting added (Justin Patrin)
+          - requires patch to DB at present
+          - quote_entities = 1 in ini file (or config)
+          
+        - revert to old behaviour on query clearing 
+          it is cleared after first fetch() / it stays set after find()
+        - Debug prefixes all message with class name.
+        - new Overrideable method sequenceKey(), allows manual override of sequence keys
+        - count fixed.
+        - more Mysql Boolean types supported by generator.
+        - $do->query('BEGIN'); will turn off autocommit forever.
+        - nested Joins for Mysql do not use brackets.
+        
+       
+
+        Updated note about overload..
+        
+        - DB_DATAOBJECT_NO_OVERLOAD, if defined, dataobjects will not be overload
+          NOTE: overload causes problems in PHP4:
+            - all pass and return by reference fail
+            - zend optimizer may segfault
+            - getDatabaseConnection() does not return real connection
+              (eg. it's read only!)
+              
+      </notes>
+      <state>stable</state>
+    </release>
+
+    <filelist>
+        <dir name="/" baseinstalldir="DB" role="php">
+            <file name="DataObject.php" role="php">
+              <replace from="@version@" to="version" type="package-info"/>
+            </file>
+            <dir name="DataObject" role="php">
+                <file>Cast.php</file>            
+                <file>Generator.php</file>
+                <file>createTables.php</file>
+            </dir>
+        </dir>
+        <dir name="docs" role="doc">
+            <file>example.ini</file>
+        </dir>
+        <dir name="scripts" role="script">
+            <file>DB_DataObject_createTables.bat</file>
+        </dir>
+    </filelist>
+
+   <deps>
+      <dep type="php" rel="ge" version="4.1"/>
+      <dep type="pkg" rel="ge" version="1.3">DB</dep>
+      <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
+    </deps>
+
+  <changelog>
+  
+   <release>
       <version>1.3</version>
-      <date>2003-10-15</date>
+      <date>2003-11-14</date>
       <notes>
 
         New Features
@@ -84,33 +146,9 @@
       </notes>
       <state>stable</state>
     </release>
-
-    <filelist>
-        <dir name="/" baseinstalldir="DB" role="php">
-            <file name="DataObject.php" role="php">
-              <replace from="@version@" to="version" type="package-info"/>
-            </file>
-            <dir name="DataObject" role="php">
-                <file>Cast.php</file>            
-                <file>Generator.php</file>
-                <file>createTables.php</file>
-            </dir>
-        </dir>
-        <dir name="docs" role="doc">
-            <file>example.ini</file>
-        </dir>
-        <dir name="scripts" role="script">
-            <file>DB_DataObject_createTables.bat</file>
-        </dir>
-    </filelist>
-
-   <deps>
-      <dep type="php" rel="ge" version="4.1"/>
-      <dep type="pkg" rel="ge" version="1.3">DB</dep>
-      <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
-    </deps>
-
-  <changelog>
+  
+  
+  
    <release>
       <version>1.2</version>
       <date>2003-08-07</date>

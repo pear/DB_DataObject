@@ -1,4 +1,62 @@
 
+2003-12-19 Friday  alan_k
+
+	* attempt to get inherited/nested joins partly working for other
+	databases
+	* fix typo in last commit.
+	* revert last patch - $do->query("BEGIN"); will turn off
+	autocommits
+	* relay autocommit - as overloading borks return by reference
+
+2003-12-16 Tuesday  alan_k
+
+	* CS fixes, add BIT, BOOL, BOOLEAN, make the STR quoting of BOOL
+	postgres specific.
+	* typo spotted by Norbert Mocsnik
+
+2003-12-14 Sunday  alan_k
+
+	* oops typo in last commit
+
+2003-12-13 Saturday  alan_k
+
+	* major patch to add support for entity quoting (Justin Patrin)
+	* experimental - toArray includes links
+	* fix bug #413
+
+2003-12-10 Wednesday  alan_k
+
+	* set oracle optimization for portibility
+
+2003-12-06 Saturday  alan_k
+
+	* catch empty arrays
+	* dont return arrays = reduce overhead a bit, document the params
+	* oops - statically called method will not have $this
+	* make definition loading/setting available externally... and fix
+	count
+
+2003-12-05 Friday  alan_k
+
+	* revert to previous behavoir of reseting query after fetch, make
+	count occur on cloned element
+
+2003-12-04 Thursday  alan_k
+
+	* make debugging explain where its comming from
+	* add new method sequenceKey(), remove ignore_sequence_keys option.
+	- try and rationalize the sequence logic
+
+2003-11-17 Monday  alan_k
+
+	* extra debugging on generator, remove closing tags (not really
+	needed)
+
+2003-11-15 Saturday  alan_k
+
+	* slight updates for 1.3 release - and package.xml updated
+	* slight updates for 1.3 release - and package.xml updated
+
 2003-11-13 Thursday  alan_k
 
 	* attempt to fix bug #228

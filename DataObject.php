@@ -1552,19 +1552,41 @@ Class DB_DataObject extends DB_DataObject_Overload
         $table = $this->table();
         $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'];
         
+        $usekey = $keys[0];
+        
+        if (@$_DB_DATAOBJECT['CONFIG']['sequence_'.$this->__table]) {
+            $usekey = $_DB_DATAOBJECT['CONFIG']['sequence_'.$this->__table];
+        }  
+        
+        
         // if the key is not an integer - then it's not a sequence or native
-        if (!($table[$keys[0]] & DB_DATAOBJECT_INT)) {
+        if (!($table[$usekey] & DB_DATAOBJECT_INT)) {
                 return array(false,false);
         }
 
+        if (@$_DB_DATAOBJECT['CONFIG']['ignore_sequence_keys']) {
+            $ignore =  $_DB_DATAOBJECT['CONFIG']['ignore_sequence_keys'];
+            if (is_string($ignore) && (strtoupper($ignore) == 'ALL')) {
+                return array(false,false);
+            }
+            if (is_string($ignore)) {
+                $ignore = $_DB_DATAOBJECT['CONFIG']['ignore_sequence_keys'] = explode(',',$ignore);
+            }
+            if (in_array($this->__table,$ignore)) {
+                return array(false,false);
+            }
+        }
+        
+        
+        
         
         // use native sequence keys...
-        if (in_array($dbtype , array( 'mysql', 'mssql')) && ($table[$keys[0]] & DB_DATAOBJECT_INT)) {
-            return array($keys[0],true);
+        if (in_array($dbtype , array( 'mysql', 'mssql')) && ($table[$usekey] & DB_DATAOBJECT_INT)) {
+            return array($usekey,true);
         }
         // I assume it's going to try and be a nextval DB sequence.. (not native)
         
-        return array($keys[0],false);
+        return array($usekey,false);
     }
     
     
