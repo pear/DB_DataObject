@@ -306,7 +306,7 @@ Class DB_DataObject
             if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
                 $this->debug("ABOUT TO AUTOFETCH", "__find", 1);
             }
-            $this->fetchRow(0) ;
+            $this->fetch() ;
         }
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("DONE", "__find", 1);
