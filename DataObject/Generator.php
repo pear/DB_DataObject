@@ -85,7 +85,8 @@ class DB_DataObject_Generator extends DB_DataObject {
     * @access	public
     * @return 	none
     */
-    function start() {
+    function start() 
+    {
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         $databases = array();
         foreach($options as $k=>$v) {
@@ -134,7 +135,8 @@ class DB_DataObject_Generator extends DB_DataObject {
     * @access	private
     * @return 	none
     */
-    function _createTableList() {
+    function _createTableList() 
+    {
         $this->_connect();
         $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
           
@@ -161,7 +163,8 @@ class DB_DataObject_Generator extends DB_DataObject {
     * @access	private
     * @return 	none
     */
-    function generateDefinitions() {
+    function generateDefinitions() 
+    {
         echo "Generating Definitions file:        ";
         if (!$this->tables) {
             echo "-- NO TABLES -- \n";
@@ -199,7 +202,8 @@ class DB_DataObject_Generator extends DB_DataObject {
     * @access	private
     * @return 	none
     */
-    function _generateDefinitionsTable() {
+    function _generateDefinitionsTable() 
+    {
         $defs = $this->_definitions[$this->table];
         $this->_newConfig .= "\n[{$this->table}]\n";
         $keys_out =  "\n[{$this->table}__keys]\n";
@@ -263,7 +267,8 @@ class DB_DataObject_Generator extends DB_DataObject {
     * building the class files
     * for each of the tables output a file!
     */
-    function generateClasses() {
+    function generateClasses() 
+    {
         echo "Generating Class files:        \n";
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         $base = $options['class_location'];
@@ -320,7 +325,8 @@ class DB_DataObject_Generator extends DB_DataObject {
     * @return 	none
     */
     
-    function _generateClassTable($input='') {
+    function _generateClassTable($input='') 
+    {
         // title = expand me!
         $foot = "";
         $head = "<?\n/*\n* Table Definition for {$this->table}\n*/\n\n";
@@ -415,11 +421,11 @@ class DB_DataObject_Generator extends DB_DataObject {
     * @return  string added to class eg. functions.
     */
     function derivedHookFunctions()
-	{
-		// This is so derived generator classes can generate functions
-		// It MUST NOT be changed here!!! 
-		return ""; 
-	}	   
+    {
+        // This is so derived generator classes can generate functions
+        // It MUST NOT be changed here!!! 
+        return ""; 
+    }   
     /**
     * hook for var lines
     * called each time a var line is generated, override to add extra var
@@ -430,12 +436,12 @@ class DB_DataObject_Generator extends DB_DataObject {
     * @access	 public
     * @return  string added to class eg. functions.
     */
- 	function derivedHookVar(&$t,$padding)
-	{
-		// This is so derived generator classes can generate variabels
-		// It MUST NOT be changed here!!! 
-		return "";
-	} 
+    function derivedHookVar(&$t,$padding)
+    {
+        // This is so derived generator classes can generate variabels
+        // It MUST NOT be changed here!!! 
+        return "";
+    } 
     
 }
 ?>
