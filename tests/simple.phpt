@@ -215,7 +215,7 @@ class test extends DB_DataObject {
         
         
         // bug #547
-        
+        $this->query('DROP TABLE IF EXISTS `page_module`');
         
         $this->query("
             CREATE TABLE `page_module` (
@@ -236,6 +236,33 @@ class test extends DB_DataObject {
         $page_module->module_id=1;
         $page_module->position='top';
         $page_module->insert();
+        
+        
+        
+        // type casting...
+        $this->query('DROP TABLE IF EXISTS  typetest');
+        $this->query("
+            CREATE TABLE typetest (
+                id int(11) NOT NULL auto_increment PRIMARY KEY,
+                a_date date NOT NULL default '',
+                a_time time NOT NULL default '',
+                a_datetime  datetime default ''
+            ) TYPE=MyISAM;");
+            
+        $x = DB_DataObject::factory('typetest');
+     
+        $x->seta_date('1 jan 2003'); // 
+        $x->seta_time('12pm');
+        $x->seta_datetime('1am yesterday');
+        print_R($x);
+        
+        
+        
+        
+        
+        
+        
+        
         
     }
     

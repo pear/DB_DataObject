@@ -2772,7 +2772,9 @@ Class DB_DataObject extends DB_DataObject_Overload
 
     
     function _call($method,$params,&$return) {
-         
+        
+        //$this->debug("ATTEMPTING OVERLOAD? $method");
+        
         // ignore constructors : - mm
         if ($method == get_class($this)) {
             return true;
@@ -2831,8 +2833,17 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (!isset($cols[$element])) {
             return $return = true;
         }
-        switch ($cols[$element]) {
-            case DB_DATAOBJECT_DATE:
+        switch (true) {
+            case (($cols[$element] & DB_DATAOBJECT_DATE) &&  ($cols[$element] & DB_DATAOBJECT_TIME)):
+                $guess = strtotime($params[0]);
+                if ($guess != -1) {
+                    $this->$element = date('Y-m-d H:i:s', $guess);
+                }
+                // eak... - no way to validate date time otherwise...
+                $this->$element = (string) $this->$element;
+                return $return = true;
+            
+            case ($cols[$element] & DB_DATAOBJECT_DATE):
                 $guess = strtotime($params[0]);
                 if ($guess != -1) {
                     $this->$element = date('Y-m-d',$guess);
@@ -2844,7 +2855,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                 $this->$element = $x->format("%Y-%m-%d");
                 return $return = true;
             
-            case DB_DATAOBJECT_TIME:
+            case ($cols[$element] & DB_DATAOBJECT_TIME):
                 $guess = strtotime($params[0]);
                 if ($guess != -1) {
                      $this->$element = date('H:i:s', $guess);
@@ -2854,16 +2865,9 @@ Class DB_DataObject extends DB_DataObject_Overload
                 $return = false;
                 return true;
             
-            case (DB_DATAOBJECT_DATE + DB_DATAOBJECT_TIME) :
-                $guess = strtotime($params[0]);
-                if ($guess != -1) {
-                    $this->$element = date('Y-m-d H:i:s', $guess);
-                }
-                // eak... - no way to validate date time otherwise...
-                $this->$element = (string) $this->$element;
-                return $return = true;
+           
             
-            case DB_DATAOBJECT_STR:
+            case ($cols[$element] & DB_DATAOBJECT_STR):
                 $this->$element = (string) $this->$element;
                 return $return = true;
                 
