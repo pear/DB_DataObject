@@ -1907,6 +1907,11 @@ Class DB_DataObject extends DB_DataObject_Overload
      * use @ to silence it (if you are sure it is acceptable)
      * eg. $do = @DB_DataObject::factory('person')
      *
+     * table name will eventually be databasename/table
+     * - and allow modular dataobjects to be written..
+     * (this also helps proxy creation)
+     *
+     *
      * @param  string  $table  table
      * @access private
      * @return DataObject|PEAR_Error 
@@ -1922,7 +1927,16 @@ Class DB_DataObject extends DB_DataObject_Overload
         $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . ucfirst($table);
         
         $class = (class_exists($class)) ? $class  : DB_DataObject::_autoloadClass($class);
-
+        
+        // proxy = full|light
+        if (!$class && isset($_DB_DATAOBJECT['CONFIG']['proxy'])) { 
+            $proxyMethod = 'getProxy'.$_DB_DATAOBJECT['CONFIG']['proxy'];
+            
+            require_once 'DB/DataObject/Generator.php';
+            $x = new DB_DataObject_Generator;
+            return $x->$proxyMethod( $_DB_DATAOBJECT['CONFIG']['database'], $table);
+        }
+        
         if (!$class) {
             return DB_DataObject::raiseError(
                 "factory could not find class $class from $table",

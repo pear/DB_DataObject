@@ -188,8 +188,9 @@ class DB_DataObject_Generator extends DB_DataObject
 
         //$this->_newConfig = new Config('IniFile');
         $this->_newConfig = '';
-        foreach($this->tables as $this->table)
+        foreach($this->tables as $this->table) {
             $this->_generateDefinitionsTable();
+        }
         $this->_connect();
 
         $base =  $options['schema_location'];
@@ -213,7 +214,7 @@ class DB_DataObject_Generator extends DB_DataObject
      * The table geneation part
      *
      * @access  private
-     * @return  none
+     * @return  tabledef and keys array.
      */
     function _generateDefinitionsTable()
     {
@@ -230,6 +231,15 @@ class DB_DataObject_Generator extends DB_DataObject
         }
         $DB = $this->getDatabaseConnection();
         $dbtype = $DB->phptype;
+        
+        $ret = array(
+                'table' => array(),
+                'keys' => array(),
+            );
+            
+        $ret_keys_primary = array();
+        $ret_keys_secondary = array();
+        
         
         foreach($defs as $t) {
              
@@ -286,20 +296,20 @@ class DB_DataObject_Generator extends DB_DataObject
                 case 'TIMESTAMPTZ': // postgres
                 case 'BPCHAR':      // postgres
                 case 'INTERVAL':    // postgres (eg. '12 days')
-                    $type=DB_DATAOBJECT_STR;
+                    $type = DB_DATAOBJECT_STR;
                     break;
                     
                 case 'DATE':    
-                    $type=DB_DATAOBJECT_STR + DB_DATAOBJECT_DATE;
+                    $type = DB_DATAOBJECT_STR + DB_DATAOBJECT_DATE;
                     break;
                     
                 case 'TIME':    
-                    $type=DB_DATAOBJECT_STR + DB_DATAOBJECT_TIME;
+                    $type = DB_DATAOBJECT_STR + DB_DATAOBJECT_TIME;
                     break;    
                     
                 case 'TIMESTAMP':
                 case 'DATETIME':    
-                    $type=DB_DATAOBJECT_STR + DB_DATAOBJECT_DATE + DB_DATAOBJECT_TIME;
+                    $type = DB_DATAOBJECT_STR + DB_DATAOBJECT_DATE + DB_DATAOBJECT_TIME;
                     break;    
                     
                 case 'TINYBLOB':
@@ -307,7 +317,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 case 'MEDIUMBLOB':
                 case 'LONGBLOB':
                 case 'BYTEA':   // postgres blob support..
-                    $type=DB_DATAOBJECT_STR + DB_DATAOBJECT_BLOB;
+                    $type = DB_DATAOBJECT_STR + DB_DATAOBJECT_BLOB;
                     break;
                     
                     
@@ -316,21 +326,26 @@ class DB_DataObject_Generator extends DB_DataObject
                 continue;
             }
             $this->_newConfig .= "{$t->name} = $type\n";
-
+            $ret['table'][$t->name] = $type;
             // i've no idea if this will work well on other databases?
             // only use primary key or nextval(), cause the setFrom blocks you setting all key items...
             // if no keys exist fall back to using unique
 
             if (preg_match("/(primary|nextval\()/i",$t->flags)) {
                 $keys_out_primary .= "{$t->name} = $type\n";
+                $ret_keys_primary[$t->name] = $type;
             } else if (preg_match("/\sunique\s/i",$t->flags)) {
                 $keys_out_secondary .= "{$t->name} = $type\n";
+                $ret_keys_secondary[$t->name] = $type;
             }
 
         }
         
         $this->_newConfig .= $keys_out . (empty($keys_out_primary) ? $keys_out_secondary : $keys_out_primary);
-
+        $ret['keys'] = empty($keys_out_primary) ? $ret_keys_secondary : $ret_keys_primary;
+        return $ret;
+        
+        
     }
 
     /*
@@ -531,4 +546,61 @@ class DB_DataObject_Generator extends DB_DataObject
         // It MUST NOT be changed here!!!
         return "";
     }
+
+
+    /**
+    * getProxyFull - create a class definition on the fly and instantate it..
+    *
+    * similar to generated files - but also evals the class definitoin code.
+    * 
+    * 
+    * @param   string  table   name of table to create proxy for.
+    * @param   boolean|string|int|object    Description
+    * 
+    *
+    * @return   object    Instance of class.
+    * @access   public
+    */
+    function getProxyFull($database,$table) {
+        $this->_database_dsn = $database; 
+        $this->connect();
+        
+        
+        $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
+        $defs =  $__DB->tableInfo($table);
+        
+        // cast all definitions to objects - as we deal with that better.
+        foreach($defs as $def) {
+            if (is_array($def)) {
+                $this->_definitions[$table][] = (object) $def;
+            }
+        }
+
+        $this->table = $table;
+        $ret = $this->_generateDefinitionsTable();
+        
+        $_DB_DATAOBJECT['INI'][$database][$table] = $ret['table'];
+        $_DB_DATAOBJECT['INI'][$database][$table.'__keys'] = $ret['keys'];
+        
+        
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        $base          = $options['class_location'];
+        $class_prefix  = $options['class_prefix'];
+        
+        if ($extends = @$options['extends']) {
+            $this->_extends = $extends;
+            $this->_extendsFile = $options['extends_location'];
+        }
+
+        
+        $this->_classInclude = '';
+        $classname = $this->classname = $class_prefix.ucfirst($this->table);
+
+        $out = $this->_generateClassTable();
+        eval($out);
+        return new $classname;
+        
+    }
+
+
 }
