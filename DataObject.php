@@ -803,7 +803,7 @@ Class DB_DataObject extends DB_DataObject_Overload
      
         list($key,$useNative) = $this->sequenceKey();
         $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["phptype"];
-
+         
          
         // nativeSequences or Sequences..     
 
@@ -869,7 +869,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         
         
-        if ($leftq) {
+        if ($leftq || $useNative) {
             $table = ($quoteEntities ? $DB->quoteEntity($this->__table)    : $this->__table);
             
             $r = $this->_query("INSERT INTO {$table} ($leftq) VALUES ($rightq) ");
@@ -1551,7 +1551,6 @@ Class DB_DataObject extends DB_DataObject_Overload
     function sequenceKey()
     {
         global $_DB_DATAOBJECT;
-        
         // for temporary storage of database fields..
         // note this is not declared as we dont want to bloat the print_r output
         $args = func_get_args();
@@ -1596,8 +1595,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         
         
-        
-        
+         
         // use native sequence keys...
         if (in_array($dbtype , array( 'mysql', 'mssql')) && ($table[$usekey] & DB_DATAOBJECT_INT)) {
             return array($usekey,true);

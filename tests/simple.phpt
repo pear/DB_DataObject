@@ -64,7 +64,7 @@ class test extends DB_DataObject {
             )");     
         $this->query(
             "CREATE TABLE testproxy (
-              id int(11) NOT NULL PRIMARY KEY,
+              id int(11) NOT NULL  auto_increment PRIMARY KEY,
               name varchar(255) NOT NULL default '',
               username varchar(32) NOT NULL default '',
               password varchar(13) binary NOT NULL default '',
@@ -155,7 +155,8 @@ class test extends DB_DataObject {
         
         echo "\n\n\n******changing database stuff.\n";
         
-        $t = DB_DataObject::factory('testproxy2'); 
+        
+        
         $t->query('BEGIN');
         $t->username = 'xxx';
         $t->insert();
@@ -178,7 +179,7 @@ class test extends DB_DataObject {
         $t->username = 'qqqqqq';
         $t->insert();
         
-        exit;
+       
           
       
         
@@ -203,11 +204,13 @@ class test extends DB_DataObject {
         
         //bug #532
        
-        $item = DB_DataObject::factory('testproxy2'); 
+        $item = DB_DataObject::factory('testproxy'); 
         $item->id = 0; //id is the key with auto_increment flag on
         $newid = $item->insert();
         print_r($newid);
-        
+        $item->id = 0; //id is the key with auto_increment flag on
+        $newid = $item->insert();
+        print_r($newid);
         
         
     }
