@@ -608,7 +608,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 }
                 $validate_fname = 'validate' . ucfirst(strtolower($t->name));
                 // dont re-add it..
-                if (preg_match('/\s+function\s+' . $validate_fname . '\s*(/i', $input)) {
+                if (preg_match('/\s+function\s+' . $validate_fname . '\s*\(/i', $input)) {
                     continue;
                 }
                 $body .= "\n    function {$validate_fname}()\n    {\n        return false;\n    }\n";
