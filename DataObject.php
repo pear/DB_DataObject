@@ -558,20 +558,26 @@ Class DB_DataObject
      *                  objectTableName.colnameA as prefix_colnameA
      *
      * @param  array|object|null the array or object to take column names from.
-     * @param  string format in sprintf format (use %s for the colname)
+     * @param  string           format in sprintf format (use %s for the colname)
+     * @param  string           table name eg. if you have joinAdd'd or send $from as an array.
      * @access public
      * @return void
      */
-    function selectAs($from = null,$format = '%s')
+    function selectAs($from = null,$format = '%s',$tableName=false)
     {
         if ($from === null) {
             // blank the '*' 
             $this->selectAdd();
             $from = $this;
         }
+        
+        
         $table = $this->__table;
         if (is_object($from)) {
             $table = $from->__table;
+            if ($tableAs !== false) {
+                $table = $tableAs;
+            }
             $from = array_keys($from->_get_table());
         }
         foreach ($from as $k) {
@@ -1649,11 +1655,17 @@ Class DB_DataObject
      *
      *
      * @param    optional $obj    object      the joining object (no value resets the join)
+     * @param    optional $joinType    string  'LEFT'|'INNER'|'RIGHT'|'' Inner is default, '' indicates 
+     *                                  just select ... from a,b,c with no join and 
+     *                                      links are added as where items.
+     * @param    optional $joinAs    string   if you want to select the table as anther name
+     *                                      usefull when you want to select multiple columsn
+     *                                      from a secondary table.
      * @return   none
      * @access   public
      * @author   Stijn de Reede      <sjr@gmx.co.uk>
      */
-    function joinAdd($obj = false)
+    function joinAdd($obj = false,$joinType='INNER',$joinAs=false)
     {
         global $_DB_DATAOBJECT;
         if ($obj === false) {
@@ -1663,7 +1675,7 @@ Class DB_DataObject
         if (!is_object($obj)) {
             DB_DataObject::raiseError("joinAdd: called without an object", DB_DATAOBJECT_ERROR_NODATA,PEAR_ERROR_DIE);
         }
-
+        
         $this->_connect(); /*  make sure $this->_database is set.  */
 
         $this->_get_table(); /* make sure the links are loaded */
@@ -1706,16 +1718,29 @@ Class DB_DataObject
                 }
             }
         }
-
+        
         /* did I find a conneciton between them? */
 
         if ($ofield === false) {
             DB_DataObject::raiseError("joinAdd: {$obj->__table} has no link with {$this->__table}", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
-
-        $this->_join .= "INNER JOIN {$obj->__table} ON {$obj->__table}.{$ofield}={$this->__table}.{$tfield} ";
-         
+        $joinType = strtoupper($joinType);
+        if ($joinAs === false) {
+            $joinAs = $obj->__table;
+        }
+        
+        switch ($joinType) {
+            case 'INNER':
+            case 'LEFT': 
+            case 'RIGHT': // others??? .. cross, left outer, right outer, natural..?
+                $this->_join .= "\n {$joinType} JOIN {$obj->__table} AS {$joinAs}".
+                                "ON {$joinAs}.{$ofield}={$this->__table}.{$tfield} ";
+                break;
+            case '': // this is just a standard multitable select..
+                $this->_join .= "\n , {$obj->__table} AS {$joinAs} ";
+                $this->whereAdd("{$joinAs}.{$ofield}={$this->__table}.{$tfield}");
+        }
          
         /* now add where conditions for anything that is set in the object */
 
@@ -1730,15 +1755,15 @@ Class DB_DataObject
                 continue;
             }
             if ($v & DB_DATAOBJECT_STR) {
-                $this->whereAdd("{$obj->__table}.{$k} = " . $__DB->quote($obj->$k));
+                $this->whereAdd("{$joinAs}.{$k} = " . $__DB->quote($obj->$k));
                 continue;
             }
             if (is_numeric($obj->$k)) {
-                $this->whereAdd("{$obj->__table}.{$k} = {$obj->$k}");
+                $this->whereAdd("{$joinAs}.{$k} = {$obj->$k}");
                 continue;
             }
             /* this is probably an error condition! */
-            $this->whereAdd("{$obj->__table}.{$k} = 0");
+            $this->whereAdd("{$joinAs}.{$k} = 0");
         }
 
 
