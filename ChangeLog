@@ -1,4 +1,67 @@
 
+2004-01-19 Monday  alan_k
+
+	* typo in setFrom
+	* typo in setter
+	* force setFrom to utilize fromValue and return errors
+	* standardize auto getters for date elements on strftime format -
+	so it works with Date::Date()
+
+2004-01-18 Sunday  alan_k
+
+	* provisional rich setters/getters
+	* for some reason table name needs trimming..
+	* fix bug #595 - replace non letters with underscore..
+	* make native key recognision a little better - changes ini file
+	format (key=N|K) - native or key. - BC protected... - ignores it
+	when it finds a number..
+	* rationalize the table schema autoload code.
+
+2004-01-16 Friday  alan_k
+
+	* allow multiple updates on the same object - without adding lots
+	of id=.... on the end..
+	*  databaseStructure retuns false.. - so it doesnt issue errors
+	when autofilling the schema
+
+2004-01-10 Saturday  alan_k
+
+	* add support for postgres native sequences.
+	* fix auto date typecasting in setters
+	* consider additional types...
+	* really fix #532
+	* transactions support complete...
+	* working version - do not use (trying to get transactions to work
+	nicely...)
+	* fix proxy code a bit more & test transactions properly
+	* add example for bug #532
+
+2004-01-09 Friday  alan_k
+
+	* Im sure I fixed this before.. typo - bug #528
+
+2004-01-07 Wednesday  alan_k
+
+	* if schema_location is not set, schemas will be read on the fly
+	* fixing php5 support, adding type support in setters
+	* fix bugs in on-the-fly proxies, and provide tests
+	* First phase of on-the-fly proxy creation code
+
+2004-01-01 Thursday  alan_k
+
+	* fix bug #473 - query can return a DB_Error
+	* fix bug #501 - autoload using full path
+	* fix bug #507
+
+2003-12-23 Tuesday  alan_k
+
+	* fix typo  - bug #476
+
+2003-12-22 Monday  alan_k
+
+	* re-add sequence_{tablename} and ignore_sequence_keys - in for BC,
+	although not recommended anymore
+
 2003-12-19 Friday  alan_k
 
 	* attempt to get inherited/nested joins partly working for other
