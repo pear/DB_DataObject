@@ -896,7 +896,9 @@ Class DB_DataObject
             exit;
         }
 
-        $r = $this->_query("SELECT count({$keys[0]}) as __num FROM {$this->__table} {$this->_condition}");
+        $r = $this->_query(
+            "SELECT count({$keys[0]}) as __num 
+                FROM {$this->__table} {$this->_join} {$this->_condition}");
         if (PEAR::isError($r)) {
             return false;
         }

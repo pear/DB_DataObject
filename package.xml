@@ -34,6 +34,7 @@
           Quickforms etc. (Demian Turner)
         - add optional dataobject as variable to update(), so you can update will 
           only create an update based on what has changed. (Geoff Hopson)
+        - add join condition to count() (Daniel Von Fange)
         
       </notes>
       <state>stable</state>
