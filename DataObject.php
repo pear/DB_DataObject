@@ -1199,7 +1199,7 @@ Class DB_DataObject {
                 continue; // ignore empty keys!!! what
             }
             if (is_object($from) && @isset($from->$k)) {
-                $this->$k = $this->$k;    
+                $this->$k = $from->$k;    
                 continue;
             }
             if (!@isset($from[$k])) {
