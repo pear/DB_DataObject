@@ -22,11 +22,13 @@
   </maintainers>
 
   <release>
-     <version>1.7.3</version>
-      <date>2004-12-23</date>
+     <version>1.7.4</version>
+      <date>2004-12-25</date>
       <notes><![CDATA[
       Christmas Present release... - explicitly block 4.3.10 & 5.0.3 installations
-        
+      
+      (re-release of 1.7.3 - broken release)
+      
       Due to bugs in the last PHP releases, this has been released in an attempt to 
       prevent everyone trying to use those release..
       
