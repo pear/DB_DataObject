@@ -3357,7 +3357,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         // this is a bit flaky due to php's wonderfull class passing around crap..
         // but it's about as good as it gets..
-        $class = (isset($this) && is_a($this,__CLASS__)) ? get_class($this) : __CLASS__;
+        $class = (isset($this) && is_a($this,'DB_DataObject')) ? get_class($this) : 'DB_DataObject';
         
         if (!is_string($message)) {
             $message = print_r($message,true);
