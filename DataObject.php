@@ -2275,6 +2275,10 @@ class DB_DataObject extends DB_DataObject_Overload
         if (isset($_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table])) {
             return $_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table];
         }
+        $this->databaseStructure();
+        if (isset($_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table])) {
+            return $_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table];
+        }
         return false;
     }
     /**
