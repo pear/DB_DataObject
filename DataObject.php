@@ -704,6 +704,7 @@ Class DB_DataObject
              
 
         // big check for using sequences
+        $useSequence  = false;
         if (    ($key = @$keys[0]) &&
                 (!in_array($dbtype , array( 'mysql', 'mssql'))) &&
                 (@$options['ignore_sequence_keys'] != 'ALL') &&
@@ -715,6 +716,8 @@ Class DB_DataObject
             if (!($seq = @$options['sequence_'. $this->__table])) {
                 $seq = $this->__table;
             }
+            // we are using sequences !!!!!
+            $usedSequence = false;
             $this->$key = $__DB->nextId($seq);
         }
 
@@ -756,19 +759,26 @@ Class DB_DataObject
                 DB_DataObject::raiseError('No Data Affected By insert',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
                 return false;
             }
+           
+            // this whole logic is very confusing...
+            // if we ignored sequences before..  the we will try autoincrement
+            $tryAutoIncrement = !$usedSequence;
             
-            $ignoreSequences =     
-                ((@$options['ignore_sequence_keys'] != 'ALL') &&
-                    (
-                        !@$options['ignore_sequence_keys'] ||
-                        (is_array(@$options['ignore_sequence_keys']) &&
-                            in_array($this->__table,@$options['ignore_sequence_keys']))
-                    )
-                );
-
+            // then check again to see if we manually said NO TO ALL SEQUENCES...
+            if ($options['ignore_sequence_keys'] == 'ALL') {
+                $tryAutoIncrement = false;
+            }
             
-
-            if ($key && ($items[$key] & DB_DATAOBJECT_INT) && $ignoreSequences) {
+            // how about if we specified no sequences for this table....
+            
+            if (@is_array($options['ignore_sequence_keys']) && 
+                in_array($this->__table,$options['ignore_sequence_keys'])) {
+                $tryAutoIncrement = false;
+            }
+            
+            // now do we have an integer key!
+            
+            if ($key && ($items[$key] & DB_DATAOBJECT_INT) && $tryAutoIncrement) {
                 switch ($dbtype) {
                     case 'mysql':
                         $this->$key = mysql_insert_id(
