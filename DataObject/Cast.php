@@ -33,7 +33,7 @@
 *
 *   // dates?
 *   $d1 = new DB_DataObject_Cast::date('12/12/2000');
-*   $d2 = new DB_DataObject_Cast::date(12,12,2000);
+*   $d2 = new DB_DataObject_Cast::date(2000,12,30);
 *   $d3 = new DB_DataObject_Cast::date($d1->year, $d1->month+30, $d1->day+30);
 *   
 *   // time, datetime.. ?????????
