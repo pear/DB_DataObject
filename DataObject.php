@@ -1247,7 +1247,7 @@ Class DB_DataObject {
                 continue; // ignore empty keys!!! what
             }
             if (is_object($from) && @isset($from->$k)) {
-                $this->$k = $this->$k;    
+                $this->$k = $from->$k;    
                 continue;
             }
             if (!@isset($from[$k])) {
@@ -1262,8 +1262,49 @@ Class DB_DataObject {
             $this->$k = $from[$k];
         }
         return TRUE;
-    }  
-  
+    } 
+    
+     /**
+    * validate - override this to set up your validation rules
+    *
+    * validate the current objects values either just testing strings/numbers or
+    * using the user defined validate{Row name}() methods.
+    * will attempt to call $this->validate{column_name}() - expects TRUE = ok  FALSE = ERROR
+    * you can the use the validate Class from your own methods.  
+    *      
+    * @access    public
+    * @return    array of validation results or TRUE
+    */
+    function validate() 
+    {
+        require_once("Validate.php");
+        $table = &$this->_get_table();
+        $ret = array();
+         
+        foreach($table as $key=>$val) {
+            if (!isset($this->$key)) continue;
+            $method = "Validate".ucfirst($key);
+            if (method_exists($this,$method)) {
+                $ret[$key] = $this->$method();
+                continue;
+            }
+            switch ($val) {
+                case  DB_DATAOBJECT_STR:
+                    $ret[$key] = Validate::string($this->$key, VAL_PUNCTUATION . VAL_NAME);
+                    continue;
+                case  DB_DATAOBJECT_INT: 
+                    $ret[$key] = Validate::number($this->$key, ".");
+                    continue;
+            }
+        }
+        
+        foreach ($ret as $key=>$val) {
+            if ($val == FALSE) return $ret;
+        }
+        return TRUE; // everything is OK.
+    }
+    
+     
     /* ----------------------- Debugger ------------------ */
     /**
     * Debugger. - use this in your extended classes to output debugging information.
