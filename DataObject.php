@@ -948,7 +948,7 @@ Class DB_DataObject {
  
     function _autoloadClass($class) {
         $options= &PEAR::getStaticProperty('DB_DataObject','options');
-        $table = substr($class,strlen($options['class_prefix']);
+        $table = substr($class,strlen($options['class_prefix']));
         
             // this should/could autoload
         @include_once($options['require_prefix'].ucfirst($table).".php");
