@@ -1471,6 +1471,8 @@ Class DB_DataObject
          */
         global $_DB_DATAOBJECT;
         
+        $this->_get_table(); /* make sure the links are loaded */
+       
         if ($table === NULL) {
             $links = array();
             if (isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
@@ -1527,6 +1529,10 @@ Class DB_DataObject
     function &getLinkArray($row, $table = NULL)
     {
         global $_DB_DATAOBJECT;
+        
+        $this->_get_table(); /* make sure the links are loaded */
+       
+
         $ret = array();
         if (!$table) {
             $links = array();
@@ -1613,6 +1619,7 @@ Class DB_DataObject
         
         $this->_connect(); /*  make sure $this->_database is set.  */
         
+        $this->_get_table(); /* make sure the links are loaded */
         
         $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
      
