@@ -997,7 +997,7 @@ Class DB_DataObject {
    
     function _autoloadTable($table) {
         $options= &PEAR::getStaticProperty('DB_DataObject','options');
-        $class = $this->_autoloadClass($options['class_prefix'].ucfirst($table));
+        $class = DB_DataObject::_autoloadClass($options['class_prefix'].ucfirst($table));
         return $class;
     }
        
