@@ -22,17 +22,20 @@
   </maintainers>
   
   
-  
+ 
     <release>
-      <version>0.17</version>
-      <date>2003-03-12</date>
+      <version>0.18</version>
+      <date>2003-03-20</date>
       <notes>
-        - Usual post feature bug fix release
-        - fix loading of links.ini for joinAdd, getLinks etc. (Geoff Hopson)
+        - add table prefix to autobuilt queries (assist in ambigous querys for joins)
+          (Daniel Von Fange)
           
       </notes>
       <state>stable</state>
     </release>
+     
+     
+     
      
      
      
@@ -50,7 +53,20 @@
    
    
   <changelog>
-     
+  
+  
+  
+   <release>
+      <version>0.17</version>
+      <date>2003-03-12</date>
+      <notes>
+        - Usual post feature bug fix release
+        - fix loading of links.ini for joinAdd, getLinks etc. (Geoff Hopson)
+          
+      </notes>
+      <state>stable</state>
+    </release>
+      
     <release>
       <version>0.16</version>
       <date>2003-03-06</date>

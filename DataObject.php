@@ -1326,15 +1326,15 @@ Class DB_DataObject
             }
 
             if ($v & DB_DATAOBJECT_STR) {
-                $this->whereAdd($k .' = ' . $__DB->quote($this->$k) );
+                $this->whereAdd(" {$this->__table}.{$k}  = " . $__DB->quote($this->$k) );
                 continue;
             }
             if (is_numeric($this->$k)) {
-                $this->whereAdd("$k = {$this->$k}");
+                $this->whereAdd(" {$this->__table}.{$k} = {$this->$k}");
                 continue;
             }
             /* this is probably an error condition! */
-            $this->whereAdd("$k = 0");
+            $this->whereAdd(" {$this->__table}.{$k} = 0");
         }
     }
 
