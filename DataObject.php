@@ -384,8 +384,8 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->debug($n, "__find",1);
         }
         if (!$this->__table) {
-            echo "NO \$__table SPECIFIED in class definition";
-            exit;
+            // xdebug can backtrace this!
+            php_error("NO \$__table SPECIFIED in class definition",E_USER_ERROR);
         }
         $this->N = 0;
         $query_before = $this->_query;
@@ -843,10 +843,11 @@ class DB_DataObject extends DB_DataObject_Overload
             $_DB_DATAOBJECT['INI'][$this->_database][$this->__table] : $this->table();
             
         if (!$items) {
-            $this->raiseError("insert:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+            $this->raiseError("insert:No table definition for {$this->__table}",
+                DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
         }
-        $options= &$_DB_DATAOBJECT['CONFIG'];
+        $options = &$_DB_DATAOBJECT['CONFIG'];
 
 
         $datasaved = 1;
@@ -944,6 +945,8 @@ class DB_DataObject extends DB_DataObject_Overload
             $rightq .= ' ' . intval($this->$k) . ' ';
 
         }
+        
+        // not sure why we let empty insert here.. - I guess to generate a blank row..
         
         
         if ($leftq || $useNative) {
@@ -2811,8 +2814,11 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         
-        $objTable = $quoteIdentifiers ? $DB->quoteIdentifier($obj->__table) : $obj->__table ;
-        
+        // not sure  how portable adding database prefixes is..
+        $objTable = $quoteIdentifiers ? 
+                $DB->quoteIdentifier($obj->_database . '.' . $obj->__table) : 
+                $obj->_database . '.' . $obj->__table ;
+                
         // add database prefix if they are different databases
         if (($obj->_database != $this->_database) && strlen($obj->_database )) {
             $objTable = ($quoteIdentifiers ? $DB->quoteIdentifier($obj->_database) : $obj->_database) . '.' . $objTable;
