@@ -25,11 +25,11 @@
  
     <release>
       <version>0.19</version>
-      <date>2003-05-18</date>
+      <date>2003-05-22</date>
       <notes>
         - fix bug #23712 - deleting (and probably updating as well) an object while 
           being fetched. (Michael McCarthy for spotting this)
-      
+        
         - fix generator overwriting code when file was edited in a Windows editor           (Robert Janeczek)
           
         - validation will not produce errors on empty numeric data by default.
@@ -38,7 +38,7 @@
           methods, which are predefined as
           getXXX = returns $object->XXX
           setXXX($V) = returns true (or an error string if you create your own)
-          (on affects php-4.3.2RC2 or later..)
+          (only affects php-4.3.2RC2 or later..)
           
         - selectAs($dataobject,'prefix_%s') to help control the way join queries return 
           their data * doing selectAs() - clears the select and sets it to table.id as id ... etc.
