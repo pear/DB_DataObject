@@ -121,6 +121,8 @@ class test extends DB_DataObject {
         $this->dumpTest(); 
     }
     
+    
+    
 	function test30() {
 	
         echo "\n\n\n***** update everything with username to firstname = 'fred' *\n";
@@ -259,6 +261,38 @@ class test extends DB_DataObject {
     }
 
 
+    function test82() {
+    
+       	echo "\n\n\nBug #2267 ******enum test  \n";
+        
+         
+        $x  = new DB_DataObject;
+         
+        $x->query("DROP TABLE  IF EXISTS Client");
+        
+        
+       
+        $x->query("
+            CREATE TABLE `Client` (
+              `clientID` smallint(3) unsigned NOT NULL auto_increment,
+              `client` varchar(100) NOT NULL default '',
+              `type` enum('Agência','Anunciante') NOT NULL default 'Agência',
+              `contact` varchar(100) NOT NULL default '',
+              `email` varchar(60) NOT NULL default '',
+              `signup` date NOT NULL default '0000-00-00',
+              PRIMARY KEY  (`clientID`)
+            )  
+             ");
+        $x->query("INSERT INTO `Client` VALUES (30, 'Internet', 'Anunciante', 'Leandro S.',
+                'leandro@s.com', '2004-09-01');");
+        $x->query("INSERT INTO `Client` VALUES (26, 'Grupos', 'Agência', 'Gian',
+            'gian@email.com', '2004-09-01');");
+        $x = DB_DataObject::factory("Client");
+        $x->find();
+        while($x->fetch()) {
+            print_r($x);
+        }
+    }
         
 	function test90() {
   

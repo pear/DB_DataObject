@@ -1975,7 +1975,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         if (PEAR::isError($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
             return $this->raiseError(
-                        $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->message,
+                        $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->toString(),
                         $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->code, PEAR_ERROR_DIE
             );
 
