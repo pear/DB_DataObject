@@ -705,7 +705,7 @@ Class DB_DataObject
 
         // big check for using sequences
         if (    ($key = @$keys[0]) &&
-                ($dbtype != 'mysql') &&
+                (!in_array($dbtype , array( 'mysql', 'mssql'))) &&
                 (@$options['ignore_sequence_keys'] != 'ALL') &&
                 (!is_array(@$options['ignore_sequence_keys']) ||
                     @!in_array($this->__table,$options['ignore_sequence_keys']))
