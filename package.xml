@@ -47,6 +47,10 @@
         </dir>
     </filelist>
     
+   
+   
+  <changelog>
+     
     <release>
       <version>0.16</version>
       <date>2003-03-06</date>
@@ -68,10 +72,6 @@
     </release>
      
    
-   
-   
-  <changelog>
-     
     <release>
       <version>0.15</version>
       <date>2003-02-13</date>
