@@ -1,4 +1,4 @@
-<?
+<?php
 // +----------------------------------------------------------------------+
 // | PHP Version 4                                                        |
 // +----------------------------------------------------------------------+
@@ -332,7 +332,7 @@ class DB_DataObject_Generator extends DB_DataObject {
     {
         // title = expand me!
         $foot = "";
-        $head = "<?\n/*\n* Table Definition for {$this->table}\n*/\n\n";
+        $head = "<?php\n/*\n* Table Definition for {$this->table}\n*/\n\n";
         // requires
         $head .= "\n\nrequire_once('{$this->_extendsFile}');\n\n";
         // add dummy class header in...
