@@ -143,7 +143,7 @@ class DB_DataObject_Generator extends DB_DataObject
         $this->_connect();
         
         
-        $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECITONS'][$this->_database_dsn_md5];
+        $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
 
         $this->tables = $__DB->getListOf('tables');
 
