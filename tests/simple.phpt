@@ -260,10 +260,60 @@ class test extends DB_DataObject {
         
       
         
-        
+        $this->postgresTest();
         
         
     }
+    
+    
+    function postgresTest() {
+    
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        //$options['schema_location'] = dirname(__FILE__);
+        $options['database'] = 'pgsql://@localhost/test';
+        $options['debug_force_updates'] = TRUE;
+        $options['proxy'] = 'full';
+        $options['class_prefix'] = 'MyProject_DataObject_';
+        $options['sequence_seqtest'] = 'id:response_response_id_seq';
+        
+        
+        $x  = new DB_DataObject;
+        $x->query("DROP SEQUENCE response_response_id_seq");
+        $x->query("DROP TABLE seqtest");
+        
+        
+        $r = $x->query("CREATE SEQUENCE response_response_id_seq INCREMENT 1 START 1");
+        $r = $x->query("
+            CREATE TABLE seqtest (
+                 id INT NOT NULL UNIQUE   default nextval( 'response_response_id_seq' ),
+                xxx varchar(32)
+            )");
+            
+            
+        $x = DB_DataObject::factory('seqtest');
+        $x->xxx = "Fred";
+        var_dump($x->insert()); // will return id (based on response_response_id_seq)
+        $x = DB_DataObject::factory('seqtest');
+        $x->xxx = "Blogs";
+        $options['ignore_sequence_keys'] = 'ALL';
+        var_dump($x->insert()); // will not return anything!!!!
+        
+        unset($options['ignore_sequence_keys']);
+        unset($options['sequence_seqtest']);
+        $x = DB_DataObject::factory('seqtest');
+        
+        $x->xxx = "Jones";
+        
+        $x->sequenceKey('id',true,'response_response_id_seq');
+        $options['ignore_sequence_keys'] = 'ALL';
+        var_dump($x->insert());
+        
+        
+    }
+    
+    
+    
+    
     
     function createRecordWithName($name) {
         $t = new test;
