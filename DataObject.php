@@ -1305,9 +1305,11 @@ Class DB_DataObject
             return DB_DataObject::raiseError("Disabling Update as you are in debug mode", NULL) ;
 
         }
-        $this->_DB_resultid = count($_DB_DATAOBJECT['RESULTS']); // add to the results stuff...
-        $_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid] = $__DB->query($string);
-        $result = &$_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid];
+        
+        
+         
+        $result = $__DB->query($string);
+
         if (DB::isError($result)) {
             if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
                 DB_DataObject::debug($string, "SENT");
@@ -1321,9 +1323,13 @@ Class DB_DataObject
             case 'insert':
             case 'update':
             case 'delete':
-                unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]);
                 return $__DB->affectedRows();;
         }
+        // lets hope that copying the result object is OK!
+        $_DB_resultid  = count($_DB_DATAOBJECT['RESULTS']); // add to the results stuff...
+        $_DB_DATAOBJECT['RESULTS'][$_DB_resultid] = $result; 
+        $this->_DB_resultid = $_DB_resultid;
+        
         $this->N = 0;
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug(serialize($result), 'RESULT',5);
