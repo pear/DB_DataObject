@@ -2748,6 +2748,9 @@ class DB_DataObject extends DB_DataObject_Overload
             return false;
         }
         $joinType = strtoupper($joinType);
+        
+        // we default to joining as the same name (this is remvoed later..)
+        
         if ($joinAs === false) {
             $joinAs = $obj->__table;
         }
@@ -2781,7 +2784,8 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         
         $fullJoinAs = '';
-        if ($DB->quoteIdentifier($obj->__table) != $joinAs) {
+        $addJoinAs  = ($quoteIdentifiers ? $DB->quoteIdentifier($obj->__table) : $obj->__table) != $joinAs;
+        if ($addJoinAs) {
             $fullJoinAs = "AS {$joinAs}";
         }
         
