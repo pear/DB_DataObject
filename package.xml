@@ -22,27 +22,26 @@
   </maintainers>
 
   <release>
-      <version>1.5.2</version>
-      <date>2004-01-24</date>
+      <version>1.5.3</version>
+      <date>2004-01-29</date>
       <notes><![CDATA[
         Bug fix release.
         
         Changes:
-          - removed automatic strtotime() in setters and setFrom
-           ** this is closer to the previous behaviour (it caused too many problems with strange dates
-           ** if you set a date/time column with a number, it assumes it is a unixtimestamp
-           -- enables you to write setters like 
-            function setSome_Date($value) { $this->fromValue('some_date',strtotime($value)); }
+          - fixed toValue()
+           ** previously did not work correclty..
+           ** getXXX($format) correctly relays into toValue - see strftime / Data::format or sprintf
+             for formats, depending on column type.
           
       
         Fixes
-        * $DB_DataObject->getDatabaseConnection() will return a pear error if dont_die is set,
-        so it can be used to test connections.
-        * note changed on databaseStructure, it can be called statically and dynamically.
-        * fix bug #612 databaseStructure('databasename') will output the ini file structure array , with __keys
-        * fix bug #611 corrected comment about NO_OVERLOAD
-        * fix bug #603 to prevent clearing of queries after fetch, use the option keep_query_after_fetch = 1
-        * fix bug #359 (again) - _link_loaded array should only contain links that where sucessfully loaded
+        * fix bug #630 - correct handling of YEAR (it's an int)
+        * fix bug #630 - mysql timestamps are ingored for updated and insert (use query() if you want to change
+          them manually.
+        * fix bug #620 - limit accepts floats and doubles, as long as they are really integers..
+        
+        
+        
       
       ]]></notes>
       <state>stable</state>
@@ -75,8 +74,36 @@
     </deps>
 
   <changelog>
+  
+  <release>
+      <version>1.5.2</version>
+      <date>2004-01-24</date>
+      <notes><![CDATA[
+        Bug fix release.
+        
+        Changes:
+          - removed automatic strtotime() in setters and setFrom
+           ** this is closer to the previous behaviour (it caused too many problems with strange dates
+           ** if you set a date/time column with a number, it assumes it is a unixtimestamp
+           -- enables you to write setters like 
+            function setSome_Date($value) { $this->fromValue('some_date',strtotime($value)); }
+          
+      
+        Fixes
+        * $DB_DataObject->getDatabaseConnection() will return a pear error if dont_die is set,
+        so it can be used to test connections.
+        * note changed on databaseStructure, it can be called statically and dynamically.
+        * fix bug #612 databaseStructure('databasename') will output the ini file structure array , with __keys
+        * fix bug #611 corrected comment about NO_OVERLOAD
+        * fix bug #603 to prevent clearing of queries after fetch, use the option keep_query_after_fetch = 1
+        * fix bug #359 (again) - _link_loaded array should only contain links that where sucessfully loaded
+      
+      ]]></notes>
+      <state>stable</state>
+    </release>
+  
  <release>
-      <version>1.5.</version>
+      <version>1.5.1</version>
       <date>2004-01-22</date>
       <notes><![CDATA[
         Bug fix release.
