@@ -1735,7 +1735,7 @@ Class DB_DataObject
             case 'LEFT': 
             case 'RIGHT': // others??? .. cross, left outer, right outer, natural..?
                 $this->_join .= "\n {$joinType} JOIN {$obj->__table} AS {$joinAs}".
-                                "ON {$joinAs}.{$ofield}={$this->__table}.{$tfield} ";
+                                " ON {$joinAs}.{$ofield}={$this->__table}.{$tfield} ";
                 break;
             case '': // this is just a standard multitable select..
                 $this->_join .= "\n , {$obj->__table} AS {$joinAs} ";
