@@ -1529,7 +1529,9 @@ class DB_DataObject extends DB_DataObject_Overload
         
         
         
-        
+        if (!$this->_database) {
+            $this->_connect();
+        }
         
         // loaded already?
         if (!empty($_DB_DATAOBJECT['INI'][$this->_database])) {
@@ -2272,9 +2274,7 @@ class DB_DataObject extends DB_DataObject_Overload
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             $this->_loadConfig();
         }
-        if (!$this->_database) {
-            $this->_connect();
-        }
+        
         
         if (isset($_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table])) {
             return $_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table];
