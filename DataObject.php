@@ -942,7 +942,9 @@ Class DB_DataObject
                 );
                 return;
             }
-            $this->_database = $connections[$this->_database_dsn_md5]->dsn["database"];
+            if (!$this->_database) {
+                $this->_database = $connections[$this->_database_dsn_md5]->dsn["database"];
+            }
             return;
         }
 
@@ -950,28 +952,35 @@ Class DB_DataObject
         $dsn = @$this->_database_dsn;
 
         if (!$dsn) {
-            if ($database = @$options["table_{$this->__table}"])  {
-                $dsn = $options["database_{$database}"];
+            if (!$this->_database) {
+                $this->_database = @$options["table_{$this->__table}"];
+            }
+            if (@$this->_database)  {
+                $dsn = $options["database_{$this->_database}"];
             } else if ($options['database']) {
                 $dsn = $options['database'];
             }
         }
+        
         $this->_database_dsn_md5 = md5($dsn);
 
         if (@$connections[$this->_database_dsn_md5]) {
             if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
                 $this->debug("USING CACHE", "CONNECT",3);
             }
-            $this->_database = $connections[$this->_database_dsn_md5]->dsn["database"];
+            if (!$this->_database) {
+                $this->_database = $connections[$this->_database_dsn_md5]->dsn["database"];
+            }
             return;
         }
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("NEW CONNECTION", "CONNECT",3);
-        /* actualy make a connection */
-
+            /* actualy make a connection */
             $this->debug("{$dsn} {$this->_database_dsn_md5}", "CONNECT",3);
         }
+        
         $connections[$this->_database_dsn_md5] = DB::connect($dsn);
+        
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug(serialize($connections), "CONNECT",3);
         }
@@ -982,8 +991,11 @@ Class DB_DataObject
             );
 
         }
-
-        $this->_database = $connections[$this->_database_dsn_md5]->dsn["database"];
+        
+        if (!$this->_database) {
+            $this->_database = $connections[$this->_database_dsn_md5]->dsn["database"];
+        }
+        
         return true;
     }
 
