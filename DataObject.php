@@ -1372,7 +1372,7 @@ Class DB_DataObject extends DB_DataObject_Overload
      *
      * @access public
      * @static
-     * @return true or PEAR:error on wrong paramenters..
+     * @return true or PEAR:error on wrong paramenters.. or false if no file exists..
      */
     function databaseStructure()
     {
@@ -1420,7 +1420,12 @@ Class DB_DataObject extends DB_DataObject_Overload
             $ini = $_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"];
         }
         $links = str_replace('.ini','.links.ini',$ini);
-
+        
+        if (!file_exists($ini)) {
+            return false;
+        
+        }
+        
         $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);
         $_DB_DATAOBJECT['LINKS'][$this->_database] = array();
         /* load the link table if it exists. */
