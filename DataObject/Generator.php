@@ -213,7 +213,11 @@ class DB_DataObject_Generator extends DB_DataObject {
             switch (strtoupper($t->type)) {
             
                 case "INT":
-                case "INT4": // postgres
+                case "INT2";    // postgres
+                case "INT4";    // postgres
+                case "INT8";    // postgres
+                case "SERIAL4"; // postgres
+                case "SERIAL8"; // postgres
                 case "REAL":
                 case "INTEGER":
                 case "TINYINT":
