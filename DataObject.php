@@ -898,9 +898,6 @@ Class DB_DataObject extends DB_DataObject_Overload
             
             $r = $this->_query("INSERT INTO {$table} ($leftq) VALUES ($rightq) ");
             
-            if ($this->_DB_resultid && isset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid ])) {
-                unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid ]); 
-            }
             
             
             if (PEAR::isError($r)) {
@@ -1082,9 +1079,6 @@ Class DB_DataObject extends DB_DataObject_Overload
         
             $r = $this->_query("UPDATE  {$table}  SET {$settings} {$this->_query['condition']} ");
             
-            if ($this->_DB_resultid && isset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid ])) {
-                unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid ]); 
-            }
             // restore original query conditions.
             $this->_query = $original_query;
             
@@ -1158,9 +1152,6 @@ Class DB_DataObject extends DB_DataObject_Overload
         
             $r = $this->_query("DELETE FROM {$table} {$this->_query['condition']}");
             
-            if ($this->_DB_resultid && isset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid ])) {
-                unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid ]); 
-            }
             
             if (PEAR::isError($r)) {
                 $this->raiseError($r);

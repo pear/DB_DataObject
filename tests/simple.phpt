@@ -2,7 +2,7 @@
 DB::DataObject test
 --SKIPIF--
 <?php
-// define('DB_DATAOBJECT_NO_OVERLOAD',true);  
+//define('DB_DATAOBJECT_NO_OVERLOAD',true);  
 
 if (!require(dirname(__FILE__)."/../DataObject.php")) print "skip"; ?>
 --FILE--
@@ -253,31 +253,38 @@ class test extends DB_DataObject {
             
         $x = DB_DataObject::factory('typetest');
         print_r($x->table());
-        $x->seta_date(strtotime('1 jan 2003')); // 
-        $x->seta_time('12pm');
-        $x->seta_datetime(strtotime('1am yesterday'));
-        $x->setb_date('null'); // 
-        print_R($x);
-        $id = $x->insert();
-        $x = DB_DataObject::factory('typetest');
-        $x->get($id);
-        $x->setb_date(strtotime('12/1/1960'));
-        $x->update();
-        echo "TIMESTAMP = ".$x->getTs('%d/%m/%Y %H:%M:%S') . "\n";
-        print_r($x);
+	if (!defined('DB_DATAOBJECT_NO_OVERLOAD')) {
+		$x->seta_date(strtotime('1 jan 2003')); // 
+		$x->seta_time('12pm');
+		$x->seta_datetime(strtotime('1am yesterday'));
+		$x->setb_date('null'); // 
+		print_R($x);
+		$id = $x->insert();
+		$x = DB_DataObject::factory('typetest');
+		$x->get($id);
+		$x->setb_date(strtotime('12/1/1960'));
+		$x->update();
+	
+		echo "TIMESTAMP = ".$x->getTs('%d/%m/%Y %H:%M:%S') . "\n";
+        }
+	print_r($x);
         
         // bug #753
 	DB_DataObject::debugLevel(0);
 	$org= DB_DataObject::factory('test');
 	set_time_limit(0);
+	ini_set('memory_limit','32M');
 	$p = posix_getpid();
+	$r = 'xxxx';
 	for($i = 0; $i < 10000; $i++) {
-
-		$org->name ='record ' . $i;
+		
+		$org->name =$r;
 		$rslt = $org->insert();
 		if (!($i % 100)) {
-			echo "$i:".count($GLOBALS['_DB_DATAOBJECT']['RESULTS'])."\n";
+			echo "$i:".strlen(serialize($GLOBALS['_DB_DATAOBJECT']))."\n";
+			print_r($GLOBALS['_PEAR_error_handler_stack']);
 			echo `cat /proc/$p/status | grep VmData`;
+			//print_r($org);
 		}
 	}
 	
