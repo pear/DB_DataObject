@@ -257,6 +257,12 @@ class test extends DB_DataObject {
         $x->seta_datetime(strtotime('1am yesterday'));
         $x->setb_date('null'); // 
         print_R($x);
+        $id = $x->insert();
+        $x = DB_DataObject::factory('typetest');
+        $x->get($id);
+        var_dump($x);
+        
+        
         
         
         print_r(DB_DataObject::databaseStructure('test'));
