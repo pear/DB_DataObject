@@ -499,13 +499,32 @@ Class DB_DataObject
             DB_DataObject::raiseError("insert:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
         }
+        $options= &PEAR::getStaticProperty('DB_DataObject','options');
+        
+        // turn the sequence keys into an array
+        if ((@$options['ignore_sequence_keys']) && 
+                (@$options['ignore_sequence_keys'] != 'ALL') && 
+                (!is_array($options['ignore_sequence_keys']))) {
+            $options['ignore_sequence_keys']  = explode(',', $options['ignore_sequence_keys']);    
+        }
+        
         $datasaved = 1;
         $leftq     = '';
         $rightq    = '';
         $key       = false;
         $keys      = $this->_get_keys();
         $dbtype    = $connections[$this->_database_dsn_md5]->dsn["phptype"];
-        if (($key = @$keys[0]) && ($dbtype != 'mysql')) {
+        
+        // big check for using sequences
+        if (    ($key = @$keys[0]) && 
+                ($dbtype != 'mysql') && 
+                (@$options['ignore_sequence_keys'] != 'ALL') &&   
+                (!in_array($this->__table,$options['ignore_sequence_keys']))) 
+        {
+                
+            if (!($seq = @$options['sequence_'. $this->__table])) {
+                $seq = $this->__table;
+            }
             $this->$key = $__DB->nextId($this->__table);
         }
 
@@ -537,8 +556,11 @@ Class DB_DataObject
                 DB_DataObject::raiseError($r);
                 return false;
             }
-            if ($key && ($dbtype == 'mysql'))
-                $this->$key = mysql_insert_id($connections[$this->_database_dsn_md5]->connection);
+            if ($key && ($dbtype == 'mysql') && (@$options['ignore_sequence_keys'] != 'ALL')) {
+                if (!@$options['ignore_sequence_keys'] || in_array($this->__table,@$options['ignore_sequence_keys'])) {
+                    $this->$key = mysql_insert_id($connections[$this->_database_dsn_md5]->connection);
+                }
+            }
             $this->_clear_cache();
             return $this->$key;
         }
