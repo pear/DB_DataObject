@@ -451,7 +451,17 @@ Class DB_DataObject extends DB_DataObject_Overload
             }
             return false;
         }
-        $result = &$_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid];
+        
+        if (!$_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid] || 
+            !is_object($result = &$_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid])) 
+        {
+            if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+                $this->debug('fetched on object after fetch completed (no results found)');
+            }
+            return false;
+        }
+        
+        
         $array = $result->fetchRow(DB_FETCHMODE_ASSOC);
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug(serialize($array),"FETCH");
@@ -1011,6 +1021,8 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         $items =  isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table]) ?   
             $_DB_DATAOBJECT['INI'][$this->_database][$this->__table] : $this->table();
+        
+        
         $keys  = $this->keys();
         
          
