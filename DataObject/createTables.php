@@ -19,6 +19,11 @@
 // $Id$
 //
 
+// since this version doesnt use overload, 
+// and I assume anyone using custom generators should add this..
+
+define('DB_DATAOBJECT_NO_OVERLOAD',1);
+
 require_once 'DB/DataObject/Generator.php';
 
 if (!ini_get('register_argc_argv')) {
