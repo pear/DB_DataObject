@@ -394,6 +394,19 @@ class DB_DataObject_Generator extends DB_DataObject
             }
             
             $this->_newConfig .= "{$t->name} = $type\n";
+            $write_ini = true;
+            if (in_array($t->name,array('null','yes','no','true','false'))) {
+                echo "*****************************************************************\n".
+                     "**                             WARNING                         **\n".
+                     "** Found column '{$t->name}', which is invalid in an .ini file **\n".
+                     "** This line will not be writen to the file - you will have    **\n".
+                     "** define the keys()/method manually.                          **\n".
+                     "*****************************************************************\n";
+                $write_ini = false;
+            } else {
+                $this->_newConfig .= "{$t->name} = $type\n";
+            }
+            
             $ret['table'][$t->name] = $type;
             // i've no idea if this will work well on other databases?
             // only use primary key or nextval(), cause the setFrom blocks you setting all key items...
@@ -401,17 +414,20 @@ class DB_DataObject_Generator extends DB_DataObject
             //echo "\n{$t->name} => {$t->flags}\n";
             if (preg_match("/(auto_increment|nextval\()/i",rawurldecode($t->flags))) {
                 // native sequences = 2
-                $keys_out_primary .= "{$t->name} = N\n";
+                if ($write_ini) {
+                    $keys_out_primary .= "{$t->name} = N\n";
+                }
                 $ret_keys_primary[$t->name] = 'N';
+            
             } else if (preg_match("/(primary|unique)/i",$t->flags)) {
                 // keys.. = 1
-                $keys_out_secondary .= "{$t->name} = K\n";
+                if ($write_ini) {
+                    $keys_out_secondary .= "{$t->name} = K\n";
+                }
                 $ret_keys_secondary[$t->name] = 'K';
             }
             
-            
-            
-
+        
         }
         
         $this->_newConfig .= $keys_out . (empty($keys_out_primary) ? $keys_out_secondary : $keys_out_primary);
