@@ -656,8 +656,8 @@ Class DB_DataObject extends DB_DataObject_Overload
            return;
         }
         // check input...= 0 or '    ' == error!
-        if ((!is_int($a) && ((string)((int)$a) !== $a)) 
-            || (($b !== null) && (!is_int($b) && ((string)((int)$b) !== $b)))) {
+        if ((!is_int($a) && ((string)((int)$a) !== (string)$a)) 
+            || (($b !== null) && (!is_int($b) && ((string)((int)$b) !== (string)$b)))) {
             return DB_DataObject::raiseError("limit: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
         }
 
