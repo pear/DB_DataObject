@@ -24,20 +24,10 @@
   
   
   <release>
-      <version>0.8</version>
-      <date>2002-09-21</date>
+      <version>0.9</version>
+      <date>2002-12-06</date>
       <notes>
-        - changed to stable status as it appears to be pretty stable now.
-        - update and insert now return FALSE on error conditions (Peter Gebauer)
-          which can be checked using === FALSE, and the error obtained using $object->_lastError
-        - delete will only use primary keys if they are set, otherwise it will use all object 
-          variables to build the condition. (Daniel Ferreira)
-        - Added derivedHookFunctions(), and derivedHookVar() to enable extensions to generator to
-          make user defined methods. (Michael Lund Rasmussen)
-        - support for INT4, BPCHAR, TIMESTAMPTZ  and postres Primary keys (Xavier)
-        - better PEAR CS complience (tabs and TRUE -> true), removed short open tags in generator (Thomas Volkmar Worm)
-	- experimental addJoin method (Stijn de Reede)
-	- Allow active options array (eg. dynamic changing of database config) (Sergey Lipnevich)
+        - bug fix release - dsn was not set correctly
       </notes>
       <state>stable</state>
      </release>
@@ -59,6 +49,14 @@
    
    
   <changelog>
+  <release>
+      <version>0.9</version>
+      <date>2002-12-06</date>
+      <notes>
+        - bug fix release - dsn was not set correctly
+      </notes>
+      <state>stable</state>
+     </release>
   
   <release>
       <version>0.8</version>
@@ -73,8 +71,8 @@
           make user defined methods. (Michael Lund Rasmussen)
         - support for INT4, BPCHAR, TIMESTAMPTZ  and postres Primary keys (Xavier)
         - better PEAR CS complience (tabs and TRUE -> true), removed short open tags in generator (Thomas Volkmar Worm)
-	- experimental addJoin method (Stijn de Reede)
-	- Allow active options array (eg. dynamic changing of database config) (Sergey Lipnevich)
+        - experimental addJoin method (Stijn de Reede)
+        - Allow active options array (eg. dynamic changing of database config) (Sergey Lipnevich)
       </notes>
       <state>stable</state>
      </release>
