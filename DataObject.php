@@ -172,11 +172,17 @@ $GLOBALS['_DB_DATAOBJECT']['QUERYENDTIME'] = 0;
 // these two are BC/FC handlers for call in PHP4/5
 
 if ( substr(phpversion(),0,1) == 5) {
-    class DB_DataObject_Overload {
-        function __call($method,$args) {
+    class DB_DataObject_Overload 
+    {
+        function __call($method,$args) 
+        {
             $return = null;
             $this->_call($method,$args,$return);
             return $return;
+        }
+        function __sleep() 
+        {
+            return array_keys(get_object_vars($this)) ; 
         }
     }
 } else {
@@ -3515,7 +3521,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->num_rows = array();
         
     }
-     
+    
     
     /* ---- LEGACY BC METHODS - NOT DOCUMENTED - See Documentation on New Methods. ---*/
     

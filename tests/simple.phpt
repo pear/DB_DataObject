@@ -161,6 +161,14 @@ class test extends DB_DataObject {
         print_R($t->toArray());
     }
     
+    function test42() { //serialize test bug #2739
+        $t= new test;
+        $t->id = 2;
+        $t->find(true);
+        $s = serialize($t);
+        echo $s;
+    }
+    
 	function test50() {
 	
         echo "\n\n\n****** now update using changed items only\n";
