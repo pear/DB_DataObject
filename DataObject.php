@@ -107,13 +107,13 @@ $GLOBALS['_DB_DATAOBJECT']['OVERLOADED'] = false;
  *     // mandatory - set the table
  *     var $_database_dsn = "mysql://username:password@localhost/database";
  *     var $__table = "mytable";
- *     function _get_table() {
+ *     function table() {
  *         return array(
  *             'id' => 1, // integer or number
  *             'name' => 2, // string
  *        );
  *     }
- *     function _get_keys() {
+ *     function keys() {
  *         return array('id');
  *     }
  * }
@@ -186,7 +186,7 @@ Class DB_DataObject
      * see the fetch example on how to extend this.
      *
      * if no value is entered, it is assumed that $key is a value
-     * and get will then use the first key in _get_keys
+     * and get will then use the first key in keys()
      * to obtain the key.
      *
      * @param   string  $k column
@@ -203,7 +203,7 @@ Class DB_DataObject
 
         if ($v === null) {
             $v = $k;
-            $keys = $this->_get_keys();
+            $keys = $this->keys();
             if (!$keys) {
                 DB_DataObject::raiseError("No Keys available for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
                 return false;
@@ -234,7 +234,7 @@ Class DB_DataObject
      * function &staticGet($k,$v=NULL) { return DB_DataObject::staticGet("This_Class",$k,$v);  }
      *
      * @param   string  $class class name
-     * @param   string  $k     column (or value if using _get_keys)
+     * @param   string  $k     column (or value if using keys)
      * @param   string  $v     value (optional)
      * @access  public
      * @return  object
@@ -313,7 +313,7 @@ Class DB_DataObject
         }
         $this->N = 0;
         $tmpcond = $this->_condition;
-        $this->_build_condition($this->_get_table()) ;
+        $this->_build_condition($this->table()) ;
         $this->_query('SELECT ' .
             $this->_data_select .
             ' FROM ' . $this->__table . " " .
@@ -634,7 +634,7 @@ Class DB_DataObject
         $table = $this->__table;
         if (is_object($from)) {
             $table = $from->__table;
-            $from = array_keys($from->_get_table());
+            $from = array_keys($from->table());
         }
         
         if ($tableName !== false) {
@@ -669,7 +669,7 @@ Class DB_DataObject
         $this->_connect();
 
         $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-        $items = $this->_get_table();
+        $items = $this->table();
         if (!$items) {
             DB_DataObject::raiseError("insert:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
@@ -687,7 +687,7 @@ Class DB_DataObject
         $leftq     = '';
         $rightq    = '';
         $key       = false;
-        $keys      = $this->_get_keys();
+        $keys      = $this->keys();
         $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["phptype"];
 
         // big check for using sequences
@@ -770,7 +770,7 @@ Class DB_DataObject
 
     /**
      * Updates  current objects variables into the database
-     * uses the _get_keys() to decide how to update
+     * uses the keys() to decide how to update
      * Returns the  true on success
      *
      * for example
@@ -800,8 +800,8 @@ Class DB_DataObject
         // connect will load the config!
         $this->_connect();
 
-        $items = $this->_get_table();
-        $keys  = $this->_get_keys();
+        $items = $this->table();
+        $keys  = $this->keys();
 
         if (!$items) {
             DB_DataObject::raiseError("update:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
@@ -900,12 +900,12 @@ Class DB_DataObject
 
         if (!$useWhere) {
 
-            $keys = $this->_get_keys();
+            $keys = $this->keys();
             $this->_condition = ''; // default behaviour not to use where condition
-            $this->_build_condition($this->_get_table(),$keys);
+            $this->_build_condition($this->table(),$keys);
             // if primary keys are not set then use data from rest of object.
             if (!$this->_condition) {
-                $this->_build_condition($this->_get_table(),array(),$keys);
+                $this->_build_condition($this->table(),array(),$keys);
             }
         }
 
@@ -1005,7 +1005,7 @@ Class DB_DataObject
     function count($whereAddOnly = false)
     {
         global $_DB_DATAOBJECT;
-        $items   = $this->_get_table();
+        $items   = $this->table();
         $tmpcond = $this->_condition;
         $__DB    = $this->getDatabaseConnection();
 
@@ -1016,7 +1016,7 @@ Class DB_DataObject
                 }
             }
         }
-        $keys = $this->_get_keys();
+        $keys = $this->keys();
 
         if (!$keys[0]) {
             echo 'CAN NOT COUNT WITHOUT PRIMARY KEYS';
@@ -1194,13 +1194,49 @@ Class DB_DataObject
         return true;
     }
 
+
+
+
+    /**
+     * Return or assign the name of the current table
+     *
+     *
+     * @param   string table name
+     * @access public
+     * @return string The name of the current table
+     */
+    function tableName()
+    {
+        $args = func_get_args();
+        if (count($args)) {
+            $this->__table = $args[0];
+        }
+        return $this->__table;
+    }
+    
+    /**
+     * Return or assign the name of the current database
+     *
+    * @param   string database name
+     * @access public
+     * @return string The name of the current database
+     */
+    function database()
+    {
+        $args = func_get_args();
+        if (count($args)) {
+            $this->__database = $args[0];
+        }
+        return $this->_database;
+    }
+  
     /**
      * get an associative array of table columns
      *
      * @access private
      * @return array (associative)
      */
-    function _get_table()
+    function table()
     {
         global $_DB_DATAOBJECT;
         if (!@$this->_database) {
@@ -1226,7 +1262,7 @@ Class DB_DataObject
      * @access private
      * @return array
      */
-    function _get_keys()
+    function keys()
     {
         global $_DB_DATAOBJECT;
         if (!@$this->_database) {
@@ -1584,7 +1620,7 @@ Class DB_DataObject
         if ($this->_link_loaded) {
             return true;
         }
-        $cols  = $this->_get_table();
+        $cols  = $this->table();
         if (!isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
             return false;
         }
@@ -1648,7 +1684,7 @@ Class DB_DataObject
          */
         global $_DB_DATAOBJECT;
 
-        $this->_get_table(); /* make sure the links are loaded */
+        $this->table(); /* make sure the links are loaded */
 
         if ($table === null) {
             $links = array();
@@ -1716,7 +1752,7 @@ Class DB_DataObject
     {
         global $_DB_DATAOBJECT;
 
-        $this->_get_table(); /* make sure the links are loaded */
+        $this->table(); /* make sure the links are loaded */
 
 
         $ret = array();
@@ -1819,7 +1855,7 @@ Class DB_DataObject
         
         $this->_connect(); /*  make sure $this->_database is set.  */
 
-        $this->_get_table(); /* make sure the links are loaded */
+        $this->table(); /* make sure the links are loaded */
 
         $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
 
@@ -1919,7 +1955,7 @@ Class DB_DataObject
          
         /* now add where conditions for anything that is set in the object */
 
-        $items = $obj->_get_table();
+        $items = $obj->table();
         if (!$items) {
             DB_DataObject::raiseError("joinAdd: No table definition for {$obj->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
@@ -1970,8 +2006,8 @@ Class DB_DataObject
     function setFrom(&$from, $format = '%s')
     {
         global $_DB_DATAOBJECT;
-        $keys  = $this->_get_keys();
-        $items = $this->_get_table();
+        $keys  = $this->keys();
+        $items = $this->table();
         if (!$items) {
             DB_DataObject::raiseError("setFrom:Could not find table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return;
@@ -2045,7 +2081,7 @@ Class DB_DataObject
         global $_DB_DATAOBJECT;
         $ret = array();
  
-        foreach($this->_get_table() as $k=>$v) {
+        foreach($this->table() as $k=>$v) {
              
             if (!isset($this->$k)) {
                 $ret[sprintf($format,$k)] = '';
@@ -2075,7 +2111,7 @@ Class DB_DataObject
     function validate()
     {
         require_once 'Validate.php';
-        $table = &$this->_get_table();
+        $table = &$this->table();
         $ret   = array();
 
         foreach($table as $key => $val) {
@@ -2342,6 +2378,16 @@ Class DB_DataObject
 
 
     }
+    
+    
+    /* ---- LEGACY BC METHODS - NOT DOCUMENTED - See Documentation on New Methods. ---*/
+    
+    function _get_table() { return $this->table(); }
+    function _get_keys()  { return $this->keys();  }
+    
+    
+    
+    
 }
 // technially 4.3.2RC1 was broken!!
 // looks like 4.3.3 may have problems too....

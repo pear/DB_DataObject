@@ -9,7 +9,7 @@
   The core class is designed to be extended for each of your tables so that you put the 
   data logic inside the data classes.
   included is a Generator to make your configuration files and your base classes.
-  
+  nd 
 </description>
   <license>PHP License</license>
   <maintainers>
@@ -24,17 +24,24 @@
   
  
     <release>
-      <version>1.1</version>
+      <version>1.2</version>
       <date>2003-08-07</date>
       <notes>
-        Bug Fixes
-        - limit argument testing now accepts &quot;10&quot; (a string with an integer
-        in it, as a valid argument) (Demian Turner)
-      
+         
         New Features
-        - JoinAdd has additional Argument $joinCol, so you can specify 
-          multiple targets links of the  same table, eg. user->friend, 
-          user->parent both connect to the user table..  (Andy Crain)
+        - A Number of the private methods have been made Public,
+        
+          changes:
+            - _get_table()  = table()
+            - _get_keys()   = keys()
+          additions
+            - tableName()  = returns or assign the table name
+            - database()   = returns or assign the database name
+          
+          changes by Marcus Wolff
+        
+        POSSIBLE BC Implications:   If you define _get_table or _get_keys manually (rather than using the ini file)
+          you should rename your methods table() and keys()
         
         
       </notes>
@@ -70,6 +77,25 @@
   <changelog>
   
   
+ 
+    <release>
+      <version>1.1</version>
+      <date>2003-08-07</date>
+      <notes>
+        Bug Fixes
+        - limit argument testing now accepts &quot;10&quot; (a string with an integer
+        in it, as a valid argument) (Demian Turner)
+      
+        New Features
+        - JoinAdd has additional Argument $joinCol, so you can specify 
+          multiple targets links of the  same table, eg. user->friend, 
+          user->parent both connect to the user table..  (Andy Crain)
+        
+        
+      </notes>
+      <state>stable</state>
+    </release>
+     
  
     <release>
       <version>1.0.2</version>
