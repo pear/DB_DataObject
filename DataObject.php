@@ -23,14 +23,14 @@
  * $Id$
  */
 
-/* =====================================================================================
+/* =========================================================================== 
 *
-*        !!!!!!!!!!!!!               W A R N I N G                !!!!!!!!!!!
+*    !!!!!!!!!!!!!               W A R N I N G                !!!!!!!!!!!
 *
-*     THIS MAY SEGFAULT PHP IF YOU ARE USING THE ZEND OPTIMIZER (to fix it, just add 
-*     "define('DB_DATAOBJECT_NO_OVERLOAD',true);" before you include this file.
-*     reducing the optimization level may also solve the segfault.
-*  =====================================================================================
+*  THIS MAY SEGFAULT PHP IF YOU ARE USING THE ZEND OPTIMIZER (to fix it, 
+*  just add "define('DB_DATAOBJECT_NO_OVERLOAD',true);" before you include 
+*  this file. reducing the optimization level may also solve the segfault.
+*  ===========================================================================
 */
 
 
@@ -468,7 +468,11 @@ Class DB_DataObject extends DB_DataObject_Overload
             //DB_DataObject::raiseError("fetch: no data returned", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
-
+        if (@$this->_join && !isset($this->_joinFields)) {
+            // note: we dont declare this to keep the print_r size down.
+            $this->_joinFields = array_keys($array);
+        }
+        
         foreach($array as $k=>$v) {
             $kk = str_replace(".", "_", $k);
             $kk = str_replace(" ", "_", $kk);
@@ -2736,8 +2740,8 @@ Class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
         $ret = array();
- 
-        foreach($this->table() as $k=>$v) {
+        $ar = isset($this->_joinFields) ? $this->_joinFields : $this->table();
+        foreach($ar as $k=>$v) {
              
             if (!isset($this->$k)) {
                 $ret[sprintf($format,$k)] = '';
