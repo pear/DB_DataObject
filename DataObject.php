@@ -1388,6 +1388,8 @@ Class DB_DataObject extends DB_DataObject_Overload
 
         global $_DB_DATAOBJECT;
         
+        // Assignment code 
+        
         if ($args = func_get_args()) {
         
             if (count($args) == 1) {
@@ -1408,10 +1410,23 @@ Class DB_DataObject extends DB_DataObject_Overload
             }
             return true;
         }
+        
+        
+        
+        
+        
         // loaded already?
         if (!empty($_DB_DATAOBJECT['INI'][$this->_database])) {
+            // database loaded - but this is table is not available..
+            if (empty($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
+                require_once 'DB/DataObject/Generator.php';
+                $x = new DB_DataObject_Generator;
+                $x->fillTableSchema($this->_database,$this->__table);
+            }
             return true;
         }
+        
+        
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
@@ -1430,18 +1445,25 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         $links = str_replace('.ini','.links.ini',$ini);
         
-        if (!file_exists($ini)) {
-            return false;
-        
+        if (file_exists($ini)) {
+            $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);    
         }
         
-        $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);
-        $_DB_DATAOBJECT['LINKS'][$this->_database] = array();
-        /* load the link table if it exists. */
-        if (file_exists($links)) {
+        
+        if (empty($_DB_DATAOBJECT['LINKS'][$this->_database]) && file_exists($links)) {
             /* not sure why $links = ... here  - TODO check if that works */
             $_DB_DATAOBJECT['LINKS'][$this->_database] = parse_ini_file($links, true);
         }
+        
+        // now have we loaded the structure.. - if not try building it..
+        
+        if (empty($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
+            require_once 'DB/DataObject/Generator.php';
+            $x = new DB_DataObject_Generator;
+            $x->fillTableSchema($this->_database,$this->__table);
+        }
+        
+        
         return true;
     }
 
@@ -1508,14 +1530,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         
         $this->databaseStructure();
-
-
-        
-        if (!isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
-            require_once 'DB/DataObject/Generator.php';
-            $x = new DB_DataObject_Generator;
-            $x->fillTableSchema($this->_database,$this->__table);
-        }
+ 
         
         $ret = array();
         if (isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
@@ -1554,12 +1569,6 @@ Class DB_DataObject extends DB_DataObject_Overload
             $this->_connect();
         }
         $this->databaseStructure();
-        // attempt autoload..
-        if (!isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
-            require_once 'DB/DataObject/Generator.php';
-            $x = new DB_DataObject_Generator;
-            $x->fillTableSchema($this->_database,$this->__table);
-        }
         
         if (isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table."__keys"])) {
             return array_keys($_DB_DATAOBJECT['INI'][$this->_database][$this->__table."__keys"]);
