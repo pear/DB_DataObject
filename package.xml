@@ -33,7 +33,7 @@
           to ensure thread safety. (Markus Wolff)
 
         Fixes:
-        - Validate is an optional dependancy (Arnaud Limbourg)
+        - Validate is an optional dependency (Arnaud Limbourg)
 
       </notes>
       <state>stable</state>
