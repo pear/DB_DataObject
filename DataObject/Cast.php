@@ -381,7 +381,11 @@ class DB_DataObject_Cast {
         switch ($db) {
             case 'pgsql':
                 return "'".pg_escape_bytea($this->value)."'::bytea";
-            
+                
+            case 'mysql':
+            case 'mysqli': // this probably works
+                 return "'".addSlashes($this->value)."'";
+                 
             default:
                 return PEAR::raiseError("DB_DataObject_Cast cant handle blobs for Database:$db Yet");
         }
