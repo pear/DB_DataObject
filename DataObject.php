@@ -1176,9 +1176,12 @@ class DB_DataObject extends DB_DataObject_Overload
      * $object = new mytable();
      * $object->ID=123;
      * echo $object->delete(); // builds a conditon
+     *
      * $object = new mytable();
      * $object->whereAdd('age > 12');
-     * $object->delete(true); // use the condition
+     * $object->limit(1);
+     * $object->orderBy('age DESC');
+     * $object->delete(true); // dont use object vars, use the conditions, limit and order.
      *
      * @param bool $useWhere (optional) If DB_DATAOBJECT_WHEREADD_ONLY is passed in then
      *             we will build the condition only using the whereAdd's.  Default is to
@@ -1195,6 +1198,8 @@ class DB_DataObject extends DB_DataObject_Overload
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
         $quoteIdentifiers  = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
         
+        $extra_cond = " {$this->_query['order_by']} {$this->_query['limit']}";
+        
         if (!$useWhere) {
 
             $keys = $this->keys();
@@ -1205,14 +1210,16 @@ class DB_DataObject extends DB_DataObject_Overload
             if (!$this->_query['condition']) {
                 $this->_build_condition($this->table(),array(),$keys);
             }
-        }
+            $extra_cond = '';
+        } 
+            
 
         // don't delete without a condition
         if (isset($this->_query) && $this->_query['condition']) {
         
             $table = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
         
-            $r = $this->_query("DELETE FROM {$table} {$this->_query['condition']}");
+            $r = $this->_query("DELETE FROM {$table} {$this->_query['condition']}{$extra_cond}");
             
             
             if (PEAR::isError($r)) {
