@@ -310,7 +310,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         $obj = DB_DataObject::factory(substr($class,strlen($_DB_DATAOBJECT['CONFIG']['class_prefix'])));
         if (PEAR::isError($obj)) {
             DB_DataObject::raiseError("could not autoload $class", DB_DATAOBJECT_ERROR_NOCLASS);
-            return $r = false;
+            return false;
         }
         
         if (!@$_DB_DATAOBJECT['CACHE'][$lclass]) {
@@ -318,7 +318,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         if (!$obj->get($k,$v)) {
             DB_DataObject::raiseError("No Data return from get $k $v", DB_DATAOBJECT_ERROR_NODATA);
-            return $r = false;
+            return false;
         }
         $_DB_DATAOBJECT['CACHE'][$lclass][$key] = $obj;
         return $_DB_DATAOBJECT['CACHE'][$lclass][$key];
@@ -1960,25 +1960,25 @@ Class DB_DataObject extends DB_DataObject_Overload
                     if ($p = strpos($row,".")) {
                         $row = substr($row,0,$p);
                     }
-                    return $r = $this->getLink($row,$table,$link);
+                    return $r = &$this->getLink($row,$table,$link);
                 } else {
                     DB_DataObject::raiseError(
                         "getLink: $row is not defined as a link (normally this is ok)", 
                         DB_DATAOBJECT_ERROR_NODATA);
                         
-                    return $r = false; // technically a possible error condition?
+                    return false; // technically a possible error condition?
                 }
             } else { // use the old _ method
                 if (!($p = strpos($row, '_'))) {
-                    return $r = null;
+                    return null;
                 }
                 $table = substr($row, 0, $p);
-                return $r = $this->getLink($row, $table);
+                return $r = &$this->getLink($row, $table);
             }
         }
         if (!isset($this->$row)) {
             DB_DataObject::raiseError("getLink: row not set $row", DB_DATAOBJECT_ERROR_NODATA);
-            return $r = false;
+            return false;
         }
         
         // check to see if we know anything about this table..
@@ -1989,20 +1989,20 @@ Class DB_DataObject extends DB_DataObject_Overload
             DB_DataObject::raiseError(
                 "getLink:Could not find class for row $row, table $table", 
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            return $r = false;
+            return false;
         }
         if ($link) {
             if ($obj->get($link, $this->$row)) {
                 return $obj;
             } else {
-                return $r= false;
+                return false;
             }
         }
         
         if ($obj->get($this->$row)) {
             return $obj;
         }
-        return $r = false;
+        return false;
     }
 
     /**
@@ -2464,7 +2464,7 @@ Class DB_DataObject extends DB_DataObject_Overload
 
         $this->_connect();
         if (!isset($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
-            return $r = false;
+            return  false;
         }
         return $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
     }
@@ -2481,7 +2481,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         global $_DB_DATAOBJECT;
         $this->_connect();
         if (!isset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid])) {
-            return $r = false;
+            return  false;
         }
         return $_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid];
     }

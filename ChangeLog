@@ -1,6 +1,158 @@
 
+2003-11-13 Thursday  alan_k
+
+	* attempt to fix bug #228
+
+2003-11-09 Sunday  alan_k
+
+	* typo
+	* subtle warning
+	* add DB_DATAOBJECT_NO_OVERLOAD define, and FC/BC support for PHP5
+	(including return by ref fixes)
+
+2003-10-28 Tuesday  alan_k
+
+	* remove raiseError on fetch with no data.. - just produces debug
+	warning now..
+
+2003-10-25 Saturday  alan_k
+
+	* Major change to internal storage of query building store -
+	significantly reduces the size of objects when they are
+	fetched/print_r.ed - needs more testing!
+	* restore some checks for class include - file exists.. - its
+	relayed into from getLink
+
+2003-10-22 Wednesday  alan_k
+
+	* fix bug #133 and tidy up debuging a little
+
+2003-10-18 Saturday  alan_k
+
+	* fix toString() for date usage.
+	* raise Errors..
+	* correct examples
+	* db_dataobject_cast support.
+	* prevent writing of key values for insert (autoincrement only) and
+	on update all the time.. - required for MSSQL support (Markus
+	Wolff)
+
+2003-10-08 Wednesday  alan_k
+
+	* tidy up debugging a little
+
+2003-09-25 Thursday  alan_k
+
+	* spotted typo in database()
+
+2003-09-23 Tuesday  alan_k
+
+	* small fixes on last update
+	* oops - thanks to commit emails for this one
+	* try and make some sense of the sequence - autoincrement logic
+
+2003-09-18 Thursday  alan_k
+
+	* fix bug #20 - generator on win32 thanks to sergey at nikiforov
+	dot net
+
+2003-09-16 Tuesday  alan_k
+
+	* add mssql to early check for sequences - oops missed that one -
+	thx Markus again..
+
+2003-09-13 Saturday  alan_k
+
+	* make the link syntax as an array, the alternative first argument
+	for joinAdd.. - enables joins without links.ini..
+
+2003-09-11 Thursday  alan_k
+
+	* experimental - on the fly setting of database fields and keys
+
+2003-09-10 Wednesday  alan_k
+
+	* let php warnings show on failed include - they are far more
+	informative that anything worth displaying.
+
+2003-09-09 Tuesday  arnaud
+
+	* * typo
+	* * add a simple batch script to execute createTables.php * update
+	package.xml filelist # this is done in agreement with alan ;)
+	* * ws
+
+2003-09-04 Thursday  alan_k
+
+	* native autoincrement for MsSQL (Markus Wolff)
+	* using case sensitive naming doesnt work - oracle likes upper -
+	postgres.. etc. lowercase the result name... - use default
+
+2003-08-27 Wednesday  alan_k
+
+	* apparently that breaks as well.. - fetchrow without the extra
+	param
+	* oracle only likes uppercase names - not the smartest of expensive
+	databases that one..
+	* fix problem with oracle - hopefully dataobject_num is reasonably
+	rare. (Patrick Roos)
+	* show fetch timings in debug mode
+	* changing level 1 debugging to display queries and result times..
+	- 2 now shows each fetch
+	* try auto updating package number (thanks to Tomas Cox)
+
+2003-08-26 Tuesday  alan_k
+
+	* make validate an optional dependancy... - does this work!
+	* sync this up for the next release for a change.. - ( Arnaud
+	Limbourg)
+
+2003-08-17 Sunday  alan_k
+
+	* adding links() to retreive the links array (Markus Wolff)
+
+2003-08-14 Thursday  alan_k
+
+	* future support for explain on debug
+	* sync up package.xml with generator changes
+	* CS fixes and make generator more tolerant of broken editors
+	(Andreas Ljunggren)
+
+2003-08-13 Wednesday  alan_k
+
+	* revert the null checking change - there is a big knock on effect
+	from this change. - staticGet relays rely on the null var
+	* using null is not always a great way to evaluted variable
+	arguments.
+
+2003-08-11 Monday  alan_k
+
+	* get name right :)
+	* making table(), keys() public, adding access to database() and
+	tableName() (Marcus Wolff)
+
+2003-08-09 Saturday  alan_k
+
+	* reducing the dependancy
+
+2003-08-07 Thursday  alan_k
+
+	* Properly fix the limit testing
+	* Improve argument testing on limit (Demian Turner)
+	* extra argument ot joinAdd() to allow multiple targets of same
+	type. (Andy Crain)
+	* fix the static get cache properly
+
+2003-07-18 Friday  alan_k
+
+	* prepping for a bugfix release
+	* fix NULL values when updating
+
 2003-07-16 Wednesday  alan_k
 
+	* prepping for 1.0 release
+	* full generated Changelog - it would be nice if we had standard
+	tools to do this in pear = pear changelog :)..
 	* fix bug with cache clearing not working with staticGet and update
 
 2003-07-12 Saturday  mj
