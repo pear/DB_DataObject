@@ -1636,7 +1636,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
 
         $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn);
-
+        
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug(serialize($_DB_DATAOBJECT['CONNECTIONS']), "CONNECT",5);
         }
@@ -1651,6 +1651,18 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (!$this->_database) {
             $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["database"];
         }
+        
+        // Oracle need to optimize for portibility - not sure exactly what this does though :)
+        $c = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
+        if ($c->phptype == 'oci8') {
+            $c->setOption('optimize','portability');
+
+		}
+        
+        
+        
+        
+        
 
         return true;
     }
