@@ -477,8 +477,8 @@ class DB_DataObject extends DB_DataObject_Overload
                         " seconds",
                     "FETCH", 1);
             }
-            // clear the stack..
-            unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]);
+            // reduce the memory usage a bit... (but leave the id in, so count() works ok on it)
+            $_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid] = null;
             $this->_DB_resultid = null;
             // this is probably end of data!!
             //DB_DataObject::raiseError("fetch: no data returned", DB_DATAOBJECT_ERROR_NODATA);
