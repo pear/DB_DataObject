@@ -424,8 +424,8 @@ class DB_DataObject_Generator extends DB_DataObject
         $full = $head . $body . $foot;
 
         if (!$input) return $full;
-        if (!preg_match('/\n\s*###START_AUTOCODE\n/s',$input))  return $full;
-        if (!preg_match('/\n\s*###END_AUTOCODE\n/s',$input))  return $full;
+        if (!preg_match('/(\n|\r\n)\s*###START_AUTOCODE(\n|\r\n)/s',$input))  return $full;
+        if (!preg_match('/(\n|\r\n)\s*###END_AUTOCODE(\n|\r\n)/s',$input))  return $full;
 
 
         /* this will only replace extends DB_DataObject by default,
@@ -441,12 +441,12 @@ class DB_DataObject_Generator extends DB_DataObject
         }
 
         $input = preg_replace(
-            '/\nclass\s*[a-z_]+\s*extends\s*' .$class_rewrite . '\s*\{\n/si',
+            '/(\n|\r\n)class\s*[a-z_]+\s*extends\s*' .$class_rewrite . '\s*\{(\n|\r\n)/si',
             "\nclass {$this->classname} extends {$this->_extends} \n{\n",
             $input);
 
         return preg_replace(
-            '/\n    ###START_AUTOCODE\n.*\n    ###END_AUTOCODE\n/s',
+            '/(\n|\r\n)    ###START_AUTOCODE\n.*\n    ###END_AUTOCODE(\n|\r\n)/s',
             $body,$input);
     }
 
