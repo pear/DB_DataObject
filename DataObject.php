@@ -39,6 +39,7 @@ define('DB_DATAOBJECT_DATE', 4);  // is date #TODO
 define('DB_DATAOBJECT_TIME', 8);  // is time #TODO
 define('DB_DATAOBJECT_BOOL', 16); // is boolean #TODO
 define('DB_DATAOBJECT_TXT',  32); // is long text #TODO
+define('DB_DATAOBJECT_BLOB', 64); // is blob type
 
 /**
  * Theses are the standard error codes, most methods will fail silently - and return false
@@ -759,6 +760,17 @@ Class DB_DataObject
                 $rightq .= ', ';
             }
             $leftq .= "$k ";
+            
+            if (is_a($this->$k,'db_dataobject_cast')) {
+                $value = $this->$k->toString($v,$dbtype);
+                if (PEAR::isError($vale)) {
+                    DB_DataObject::raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
+                    return false;
+                }
+                $rightq .=  $value;
+                continue;
+            }
+            
 
             if (strtolower($this->$k) === 'null') {
                 $rightq .= " NULL ";
@@ -874,7 +886,8 @@ Class DB_DataObject
 
 
         $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-
+        $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["phptype"];
+        
         foreach($items as $k => $v) {
             if (!isset($this->$k)) {
                 continue;
@@ -893,6 +906,19 @@ Class DB_DataObject
             if ($settings)  {
                 $settings .= ', ';
             }
+
+            if (is_a($this->$k,'db_dataobject_cast')) {
+                $value = $this->$k->toString($v,$dbtype);
+                if (PEAR::isError($vale)) {
+                    DB_DataObject::raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
+                    return false;
+                }
+                $settings .= "$k = ". $value;
+                continue;
+            }
+
+            
+            
             /* special values ... at least null is handled...*/
             if (strtolower($this->$k) === 'null') {
                 $settings .= "$k = NULL";
@@ -1589,7 +1615,20 @@ Class DB_DataObject
             if (!isset($this->$k)) {
                 continue;
             }
-                        
+             
+            if (is_a($this->$k,'db_dataobject_cast')) {
+                $value = $this->$k->toString($v,$dbtype);
+                if (PEAR::isError($value)) {
+                    DB_DataObject::raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
+                    return false;
+                }
+                if ($value == 'NULL') {
+                    $value = 'IS NULL';
+                }
+                $this->whereAdd(" {$this->__table}.{$k} = $value");
+                continue;
+            }
+            
             if (strtolower($this->$k) === 'null') {
                 $this->whereAdd(" {$this->__table}.{$k}  IS NULL");
                 continue;

@@ -27,11 +27,39 @@
       <notes>
 
         New Features
+        - Inserts and updates do not use keys in the data creation part of the query
+          (Markus Wolff)
+        
         - MsSQL native get_last_insert ID using SELECT @@IDENTITY
-          you may wat not consider using this with transactions eg.
+          
+          
+          ** you may wat not consider using this with transactions eg.
           $dataobject->query('BEGIN') and $dataobject->query('COMMIT')
           to ensure thread safety. (Markus Wolff)
-
+        - DB_DataObject_Cast - a generic casting feature for assigning variables
+        
+          * Common usages:
+            // blobs
+            $dataObject->someblobfield = DB_DataObject_Cast::blob(file_get_contents('xxx.jpg'));
+            $dataObject->someblobfield = DB_DataObject_Cast::string('xxxxx');
+            
+          
+             // dates?
+            $dataObject->at_date = DB_DataObject_Cast::date('12/12/2000'); //Human
+            $dataObject->at_date = DB_DataObject_Cast::date('2000-12-12'); //ISO
+            $d2 = DB_DataObject_Cast::date(); // today!
+            // some addition
+            $dataObject->expires = DB_DataObject_Cast::date($d1->year, $d1->month+30, $d1->day+30);
+             
+          
+            // raw sql????
+            $dataObject->maxids = DB_DataObject_Cast::sql('max(id) > 12');
+            $dataObject->emptyfield = DB_DataObject_Cast::sql('NULL');
+            
+            You can extend this object to provide your own datatypes..
+             
+        
+        
         Fixes:
         - Validate is an optional dependency (Arnaud Limbourg)
 
@@ -45,6 +73,7 @@
               <replace from="@version@" to="version" type="package-info"/>
             </file>
             <dir name="DataObject" role="php">
+                <file>Cast.php</file>            
                 <file>Generator.php</file>
                 <file>createTables.php</file>
             </dir>

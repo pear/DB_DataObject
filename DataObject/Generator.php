@@ -252,6 +252,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 case "NUMERIC":
                     $type=DB_DATAOBJECT_INT;
                     break;
+                    
                 case "STRING":
                 case "CHAR":
                 case "VARCHAR":
@@ -260,20 +261,35 @@ class DB_DataObject_Generator extends DB_DataObject
                 case "TEXT":
                 case "MEDIUMTEXT":
                 case "LONGTEXT":
-                case "TINYBLOB":
-                case "BLOB":       /// these should really be ignored!!!???
-                case "MEDIUMBLOB":
-                case "LONGBLOB":
-                case "DATE":
-                case "TIME":
-                case "TIMESTAMP":
-                case "DATETIME":
                 case "ENUM":
                 case "SET": // not really but oh well
                 case "TIMESTAMPTZ": // postgres
                 case "BPCHAR":// postgres
                     $type=DB_DATAOBJECT_STR;
                     break;
+                    
+                case "DATE":    
+                    $type=DB_DATAOBJECT_STR + DB_DATAOBJECT_DATE;
+                    break;
+                    
+                case "TIME":    
+                    $type=DB_DATAOBJECT_STR + DB_DATAOBJECT_TIME;
+                    break;    
+                    
+                case "TIMESTAMP":    
+                case "DATETIME":    
+                    $type=DB_DATAOBJECT_STR + DB_DATAOBJECT_DATE + DB_DATAOBJECT_TIME;
+                    break;    
+                    
+                case "TINYBLOB":
+                case "BLOB":       /// these should really be ignored!!!???
+                case "MEDIUMBLOB":
+                case "LONGBLOB":
+                case "BYTEA":   // postgres blob support..
+                    $type=DB_DATAOBJECT_STR + DB_DATAOBJECT_BLOB;
+                    break;
+                    
+                    
             }
             if (!strlen(trim($t->name))) {
                 continue;
