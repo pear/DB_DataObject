@@ -2319,10 +2319,14 @@ class DB_DataObject extends DB_DataObject_Overload
             return $_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table];
         }
         $this->databaseStructure();
+        // if there is no link data at all on the file!
+         
+        
         if (isset($_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table])) {
             return $_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table];
         }
-        return false;
+        
+        return null;
     }
     /**
      * load related objects
