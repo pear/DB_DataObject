@@ -1,38 +1,38 @@
+Current TODO list:
+----------------------------------
+Issue: Table Rebuilds
 
-add a clone method,  to make is Forward compatible to PHP5
--- need to test PHP5
-
-the principle is that this code (which is common with DB_DataObject usage), will probably break
-
-$person = new DataObject_Person;
-$people = array();
-$person->find();
-while ($person->fetch()) {
-	$people[] = $person;
-}
+If you modify the database table, then DB_DataObject will be unaware of the change until you
+run createTables.php again.
 
 
-will probably have to change to 
+Solution:
+if the 'production' option is off, then it should rebuild the table information at the same time as loading
+the table description. and compare the current definition to the new generated one...
 
+-----------------------------------
+Issue: Replace 
 
-$person = new DataObject_Person;
-$people = array();
-$person->find();
-while ($person->fetch()) {
-	$people[] = $person->clone();
-}
+Mysql has a nice replace feature, It would be nice to have in dataObjects
 
+Solution:
+Add a method, if the database is mysql, use the native 'REPLACE call'
+otherwise, do a select on ID then insert|update..
 
-clone method will probably look something like this.
+----------------------------------
+Issue: Delete
 
-funtion clone() {
-	if (phpversion() < 5) {
-		return $this;
-	}
-	return $this->__clone();
-}
-	
+delete can be called in many ways:
 
+$object->get(12);
+$object->delete();
+in which case deleting on the primary key is desired.
 
+$object->colour = 'red';
+$object->delete();
+in which case deleting on the _build_condition is desired
+(eg. when the primary key is not set)
 
-
+$object->whereAdd("colour like 'r%');
+$object->delete(TRUE);
+works OK - just uses the where condition, not the values.
