@@ -1,5 +1,5 @@
 <?php
-define('DB_DATAOBJECT_NO_OVERLOAD',true);
+//define('DB_DATAOBJECT_NO_OVERLOAD',true);
  
 require_once 'DB/DataObject.php';
 
@@ -11,9 +11,9 @@ $options['proxy'] = 'full';
 $options['class_prefix'] = 'MyProject_DataObject_';
   
 $oldUsg = memory_get_usage();
-
+$i=0;
 for( ; true; ) {
-  $mytable = DB_DataObject::factory('test');
+  $mytable = &DB_DataObject::factory('test');
   $mytable->find();
   while($mytable->fetch() ) { /* NULL */ } // fetch ALL records
   $mytable->free();
@@ -21,12 +21,14 @@ for( ; true; ) {
   if (strlen(serialize($_DB_DATAOBJECT)) > 7000) {
       print_r($_DB_DATAOBJECT);exit;
     }
-  echo "DBDO:".strlen(serialize($_DB_DATAOBJECT)). "\n";
+  echo "$i. global size:".strlen(serialize($_DB_DATAOBJECT)). ",memory increase: ";
+
   //print_r($_DB_DATAOBJECT);
   $newUsg = memory_get_usage();
   echo ($deltaUsg = $newUsg - $oldUsg)."\n"; // this is within 728 and 1048 each iteration
 
   $oldUsg = memory_get_usage();
+  $i++;
 } 
 
 

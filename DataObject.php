@@ -660,7 +660,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->_query['having'] = " HAVING {$having} ";
             return;
         }
-        $this->_query['having'] .= " , {$having}";
+        $this->_query['having'] .= " AND {$having}";
     }
 
     /**
