@@ -1995,7 +1995,7 @@ Class DB_DataObject
          
         
         
-        // deal with naming conflick of setFrom
+        // deal with naming conflick of setFrom = this is messy ATM!
         
         if (strtolower($method) == 'set_from') {
             $this->from = $params[0];
@@ -2007,12 +2007,22 @@ Class DB_DataObject
             return false;
         }
          
-        // it appear to cause problems for some reason...
+        
+        // dont you just love php's case insensitivity!!!!
         
         $array =  array_keys(get_class_vars($class));
-         
+        
         if (!in_array($element,$array)) {
-            return false;            
+            // munge case
+            foreach($array as $k) {
+                $case[strtolower($k)] = $k;
+            }
+            // does it really exist?
+            if (!isset($case[$element])) {
+                return false;            
+            }
+            // use the mundged case
+            $element = $case[$element]; // real case !
         }
         
         
