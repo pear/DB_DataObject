@@ -3612,7 +3612,9 @@ class DB_DataObject extends DB_DataObject_Overload
             unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]);
         }
         // this is a huge bug in DB!
-        $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->num_rows = array();
+        if (isset($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
+            $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->num_rows = array();
+        }
         
     }
     
