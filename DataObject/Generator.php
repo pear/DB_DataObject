@@ -375,7 +375,7 @@ class DB_DataObject_Generator extends DB_DataObject
      */
     function generateClasses()
     {
-        echo "Generating Class files:        \n";
+        //echo "Generating Class files:        \n";
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         $base = $options['class_location'];
         if (!file_exists($base))
@@ -387,14 +387,13 @@ class DB_DataObject_Generator extends DB_DataObject
         }
 
         foreach($this->tables as $this->table) {
-            $this->_classInclude = str_replace('_','/',$class_prefix)."/" .ucfirst($this->table);
-            $this->classname = $class_prefix.ucfirst($this->table);
+            $this->classname = $class_prefix.preg_replace('/[^A-Z]/i','_',ucfirst($this->table));
             $i = '';
-            $outfilename = "{$base}/".ucfirst($this->table).".php";
+            $outfilename = "{$base}/".preg_replace('/[^A-Z]/i','_',ucfirst($this->table)).".php";
             if (file_exists($outfilename))
                 $i = implode('',file($outfilename));
             $out = $this->_generateClassTable($i);
-            echo "writing $this->classname\n";
+            //echo "writing $this->classname\n";
             $fh = fopen($outfilename, "w");
             fputs($fh,$out);
             fclose($fh);
@@ -598,8 +597,7 @@ class DB_DataObject_Generator extends DB_DataObject
         }
 
         
-        $this->_classInclude = '';
-        $classname = $this->classname = $class_prefix.ucfirst($this->table);
+        $classname = $this->classname = $class_prefix.preg_replace('/[^A-Z]/i','_',ucfirst($this->table));
 
         $out = $this->_generateClassTable();
         //echo $out;

@@ -1986,7 +1986,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . ucfirst($table);
+        $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . preg_replace('/[^A-Z]/i','_',ucfirst($table));
         $class = (class_exists($class)) ? $class  : DB_DataObject::_autoloadClass($class);
         return $class;
     }
@@ -2016,7 +2016,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . ucfirst($table);
+        $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . preg_replace('/[^A-Z]/i','_',ucfirst($table));
         
         $class = (class_exists($class)) ? $class  : DB_DataObject::_autoloadClass($class);
         
@@ -2063,7 +2063,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             return false;
         }
         
-        $file = $_DB_DATAOBJECT['CONFIG']['class_location'].'/'.ucfirst($table).".php";
+        $file = $_DB_DATAOBJECT['CONFIG']['class_location'].'/'.preg_replace('/[^A-Z]/i','_',ucfirst($table)).".php";
         
         if (!file_exists($file)) {
             DB_DataObject::raiseError(
