@@ -19,8 +19,8 @@
 //
 // Object Based Database Query Builder and data store
 //
-require_once( 'DB.php' );
-require_once( 'PEAR.php' );
+require_once 'DB.php';
+require_once 'PEAR.php';
 
 /**
  * these are constants for the get_table array 
@@ -1262,7 +1262,7 @@ Class DB_DataObject {
             $this->$k = $from[$k];
         }
         return TRUE;
-    } 
+    }}} 
     
      /**
     * validate - override this to set up your validation rules
@@ -1319,6 +1319,10 @@ Class DB_DataObject {
     */
     
     function debug($message,$logtype=0, $level=1) {
+        if ($GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
+            return;
+        }
+        
         if (DB_DataObject::debugLevel()<$level) {
             return;
         }
