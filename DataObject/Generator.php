@@ -17,7 +17,7 @@
 // $Id$
 
 /**
- * Generation tools for DB_DataObject
+ * Generation tools for DB_DataObjectp
  *
  * Config _$ptions
  * [DB_DataObject_Generator]
@@ -401,9 +401,9 @@ class DB_DataObject_Generator extends DB_DataObject
 
         foreach($this->tables as $this->table) {
             $this->table = trim($this->table);
-            $this->classname = $class_prefix.preg_replace('/[^A-Z]/i','_',ucfirst($this->table));
+            $this->classname = $class_prefix.preg_replace('/[^A-Z0-9]/i','_',ucfirst($this->table));
             $i = '';
-            $outfilename = "{$base}/".preg_replace('/[^A-Z]/i','_',ucfirst($this->table)).".php";
+            $outfilename = "{$base}/".preg_replace('/[^A-Z0-9]/i','_',ucfirst($this->table)).".php";
             if (file_exists($outfilename))
                 $i = implode('',file($outfilename));
             $out = $this->_generateClassTable($i);
@@ -538,7 +538,7 @@ class DB_DataObject_Generator extends DB_DataObject
         }
 
         $input = preg_replace(
-            '/(\n|\r\n)class\s*[a-z_]+\s*extends\s*' .$class_rewrite . '\s*\{(\n|\r\n)/si',
+            '/(\n|\r\n)class\s*[a-z0-9_]+\s*extends\s*' .$class_rewrite . '\s*\{(\n|\r\n)/si',
             "\nclass {$this->classname} extends {$this->_extends} \n{\n",
             $input);
 
@@ -611,7 +611,7 @@ class DB_DataObject_Generator extends DB_DataObject
         }
 
         
-        $classname = $this->classname = $class_prefix.preg_replace('/[^A-Z]/i','_',ucfirst(trim($this->table)));
+        $classname = $this->classname = $class_prefix.preg_replace('/[^A-Z0-9]/i','_',ucfirst(trim($this->table)));
 
         $out = $this->_generateClassTable();
         //echo $out;
