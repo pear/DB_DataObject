@@ -24,15 +24,12 @@
   
   
     <release>
-      <version>0.15</version>
-      <date>2003-02-13</date>
+      <version>0.16</version>
+      <date>2003-03-06</date>
       <notes>
-        - modified find(true), so that it calls fetch rather than fetchrow
-          so that overriding fetch will affect get() calls.
-          (probably depreciates fetchrow now .. shout if anyone is using it)
-        - added escape method as a quasi quote wrapper into pear::DB - useful for
-          building your own queries - eg. like requests.. (does not add quotes)
-        - fixed bug with delete not using primary key if it was set. (Ian Eure)
+        - replaced config storage  - should improve performance
+        - removed production option (not required due to improved config storage)
+        - bugfix : added checks for is_array on ignore_sequence_keys (Hermen Heinen)
         
       </notes>
       <state>stable</state>
@@ -55,7 +52,23 @@
    
    
   <changelog>
-    
+     
+    <release>
+      <version>0.15</version>
+      <date>2003-02-13</date>
+      <notes>
+        - modified find(true), so that it calls fetch rather than fetchrow
+          so that overriding fetch will affect get() calls.
+          (probably depreciates fetchrow now .. shout if anyone is using it)
+        - added escape method as a quasi quote wrapper into pear::DB - useful for
+          building your own queries - eg. like requests.. (does not add quotes)
+        - fixed bug with delete not using primary key if it was set. (Ian Eure)
+        
+      </notes>
+      <state>stable</state>
+    </release>
+     
+      
   <release>
       <version>0.14</version>
       <date>2003-02-06</date>
