@@ -28,7 +28,11 @@
       <date>2003-08-20</date>
       <notes>
          
-        
+        New Features
+        - MsSQL native get_last_insert ID using SELECT @@IDENTITY
+          you may wat not consider using this with transactions eg.
+          $dataobject->query('BEGIN') and $dataobject->query('COMMIT')
+          to ensure thread safety. (Markus Wolff)
         
         Fixes:
         - Validate is an optional dependancy (Arnaud Limbourg)

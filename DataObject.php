@@ -700,6 +700,9 @@ Class DB_DataObject
         $keys      = $this->keys();
         $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["phptype"];
 
+         
+             
+
         // big check for using sequences
         if (    ($key = @$keys[0]) &&
                 ($dbtype != 'mysql') &&
@@ -753,19 +756,41 @@ Class DB_DataObject
                 DB_DataObject::raiseError('No Data Affected By insert',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
                 return false;
             }
-
-            if ($key &&
-                ($items[$key] & DB_DATAOBJECT_INT) &&
-                ($dbtype == 'mysql') &&
-                (@$options['ignore_sequence_keys'] != 'ALL') &&
+            
+            $ignoreSequences =     
+                ((@$options['ignore_sequence_keys'] != 'ALL') &&
                     (
                         !@$options['ignore_sequence_keys'] ||
                         (is_array(@$options['ignore_sequence_keys']) &&
                             in_array($this->__table,@$options['ignore_sequence_keys']))
                     )
-                )
-            {
-                $this->$key = mysql_insert_id($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->connection);
+                );
+
+            
+
+            if ($key && ($items[$key] & DB_DATAOBJECT_INT) && $ignoreSequences) {
+                switch ($dbtype) {
+                    case 'mysql':
+                        $this->$key = mysql_insert_id(
+                            $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->connection
+                        );
+                        break;
+                    case 'mssql':
+                        // note this is not really thread safe - you should wrapp it with 
+                        // transactions = eg.
+                        // $db->query('BEGIN');
+                        // $db->insert();
+                        // $db->query('COMMIT');
+                        
+                        $mssql_key = $__DB->getOne("SELECT @@IDENTITY");
+                        if (PEAR::isError($mssql_key)) {
+                            DB_DataObject::raiseError($r);
+                            return false;
+                        }
+                        $this->$key = $mssql_key;
+                        break; 
+                }
+                        
             }
 
             $this->_clear_cache();
