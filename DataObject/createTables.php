@@ -20,11 +20,11 @@
 require_once("DB/DataObject/Generator.php");
 
 
-if (!@$argv[1]) {
+if (!@$_SERVER['argv'][1]) {
     PEAR::raiseError("\nERROR: createTable.php usage:\n\ncreateTable example.ini\n\n",null,PEAR_ERROR_DIE);
     exit;
 }
-$config = parse_ini_file($argv[1],TRUE);
+$config = parse_ini_file($_SERVER['argv'],TRUE);
 $options = &PEAR::getStaticProperty('DB_DataObject','options');
 $options = $config['DB_DataObject'];
 //DB_DataObject::debugLevel(5);
