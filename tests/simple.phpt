@@ -266,13 +266,32 @@ class test extends DB_DataObject {
         echo "TIMESTAMP = ".$x->getTs('%d/%m/%Y %H:%M:%S') . "\n";
         print_r($x);
         
-        
-        
+        // bug #753
+	DB_DataObject::debugLevel(0);
+	$org= DB_DataObject::factory('test');
+	set_time_limit(0);
+	$p = posix_getpid();
+	for($i = 0; $i < 10000; $i++) {
+
+		$org->name ='record ' . $i;
+		$rslt = $org->insert();
+		if (!($i % 100)) {
+			echo "$i:".count($GLOBALS['_DB_DATAOBJECT']['RESULTS'])."\n";
+			echo `cat /proc/$p/status | grep VmData`;
+		}
+	}
+	
+        DB_DataObject::debugLevel(1);
         
         print_r(DB_DataObject::databaseStructure('test'));
         
         $this->postgresTest();
         
+	
+	
+	
+	
+	
         
     }
     

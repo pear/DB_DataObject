@@ -463,7 +463,9 @@ Class DB_DataObject extends DB_DataObject_Overload
                         " seconds",
                     "FETCH", 1);
             }
-
+            // clear the stack..
+            unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]);
+            $this->_DB_resultid = null;
             // this is probably end of data!!
             //DB_DataObject::raiseError("fetch: no data returned", DB_DATAOBJECT_ERROR_NODATA);
             return false;
@@ -896,15 +898,22 @@ Class DB_DataObject extends DB_DataObject_Overload
             
             $r = $this->_query("INSERT INTO {$table} ($leftq) VALUES ($rightq) ");
             
+            if ($this->_DB_resultid && isset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid ])) {
+                unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid ]); 
+            }
+            
+            
             if (PEAR::isError($r)) {
                 $this->raiseError($r);
                 return false;
             }
+            
             if ($r < 1) {
                 $this->raiseError('No Data Affected By insert',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
                 return false;
             }
-           
+            
+            
             // now do we have an integer key!
             
             if ($key && $useNative) {
@@ -1073,6 +1082,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         
             $r = $this->_query("UPDATE  {$table}  SET {$settings} {$this->_query['condition']} ");
             
+            if ($this->_DB_resultid && isset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid ])) {
+                unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid ]); 
+            }
             // restore original query conditions.
             $this->_query = $original_query;
             
@@ -1145,6 +1157,10 @@ Class DB_DataObject extends DB_DataObject_Overload
             $table = ($quoteEntities ? $DB->quoteEntity($this->__table) : $this->__table);
         
             $r = $this->_query("DELETE FROM {$table} {$this->_query['condition']}");
+            
+            if ($this->_DB_resultid && isset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid ])) {
+                unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid ]); 
+            }
             
             if (PEAR::isError($r)) {
                 $this->raiseError($r);
@@ -1921,11 +1937,12 @@ Class DB_DataObject extends DB_DataObject_Overload
             case 'delete':
                 return $DB->affectedRows();;
         }
-        // lets hope that copying the result object is OK!
-        $_DB_resultid  = count($_DB_DATAOBJECT['RESULTS']); // add to the results stuff...
-        $_DB_DATAOBJECT['RESULTS'][$_DB_resultid] = $result; 
-        $this->_DB_resultid = $_DB_resultid;
-        
+        if (is_object($result)) {
+            // lets hope that copying the result object is OK!
+            $_DB_resultid  = count($_DB_DATAOBJECT['RESULTS']); // add to the results stuff...
+            $_DB_DATAOBJECT['RESULTS'][$_DB_resultid] = $result; 
+            $this->_DB_resultid = $_DB_resultid;
+        }
         $this->N = 0;
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug(serialize($result), 'RESULT',5);
