@@ -2665,8 +2665,8 @@ Class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             $ret = $this->fromValue($k,$from[sprintf($format,$k)]);
-            if (is_string($ret)) {
-                $overload_return[$k] = $ret;
+            if ($ret !== true)) {
+                $overload_return[$k] = 'Not A Valid Value';
             }
             //$this->$k = $from[sprintf($format,$k)];
         }
@@ -2913,7 +2913,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     * @param   mixed        value to assign
     
     *
-    * @return   true     Description
+    * @return   true| false     (False on error)
     * @access   public 
     * @see      DB_DataObject::_call
     */
@@ -2923,7 +2923,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     {
         $cols = $this->table();
         // dont know anything about this col..
-        if (!isset($cols[$element])) {
+        if (!isset($cols[$col])) {
             $this->$col = $value;
             return true;
         }
