@@ -86,6 +86,7 @@ $GLOBALS['_DB_DATAOBJECT']['CONFIG'] = array();
 $GLOBALS['_DB_DATAOBJECT']['CACHE'] = array();
 $GLOBALS['_DB_DATAOBJECT']['LOADED'] = array();
 $GLOBALS['_DB_DATAOBJECT']['OVERLOADED'] = false;
+$GLOBALS['_DB_DATAOBJECT']['QUERYENDTIME'] = 0;
 /**
  * The main "DB_DataObject" class is really a base class for your own tables classes
  *
@@ -387,6 +388,15 @@ Class DB_DataObject
         }
 
         if (!is_array($array)) {
+            if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+                $t= explode(' ',microtime());
+            
+                $this->debug("Last Data Fetch'ed after " . 
+                        ($t[0]+$t[1]- $_DB_DATAOBJECT['QUERYENDTIME']  ) . 
+                        " seconds",
+                    "FETCH", 1);
+            }
+
             // this is probably end of data!!
             //DB_DataObject::raiseError("fetch: no data returned", DB_DATAOBJECT_ERROR_NODATA);
             return false;
@@ -1421,10 +1431,10 @@ Class DB_DataObject
             // this will only work when PEAR:DB supports it.
             //$this->debug($__DB->getAll('explain ' .$string,DB_FETCHMODE_ASSOC), $log="sql",2);
         }
-
-        $t= explode(' ',microtime());
-        $time = $t[0]+$t[1];
         
+        // some sim
+        $t= explode(' ',microtime());
+        $_DB_DATAOBJECT['QUERYENDTIME'] = $time = $t[0]+$t[1];
          
         $result = $__DB->query($string);
         
@@ -1439,7 +1449,8 @@ Class DB_DataObject
         }
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $t= explode(' ',microtime());
-            $this->debug('QUERY DONE IN  '.($t[0]+$t[1]-$time)."seconds", 'query',1);
+            $_DB_DATAOBJECT['QUERYENDTIME'] = $t[0]+$t[1];
+            $this->debug('QUERY DONE IN  '.($t[0]+$t[1]-$time)." seconds", 'query',1);
         }
         switch (strtolower(substr(trim($string),0,6))) {
             case 'insert':
