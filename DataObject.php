@@ -3090,7 +3090,7 @@ class DB_DataObject extends DB_DataObject_Overload
             
             if (!isset($this->$key) && ($val & DB_DATAOBJECT_NOTNULL)) {
                 // dont check empty sequence key values..
-                if (($key == $seq[0]) && ($seq[1] == 'N')) {
+                if (($key == $seq[0]) && ($seq[1] == true)) {
                     continue;
                 }
                 $ret[$key] = false;
