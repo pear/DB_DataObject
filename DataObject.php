@@ -2664,7 +2664,11 @@ Class DB_DataObject extends DB_DataObject_Overload
                 }
                 continue;
             }
-            $this->$k = $from[sprintf($format,$k)];
+            $ret = $this->fromValue($k,$from[sprintf($format,$k)]);
+            if (is_string($ret)) {
+                $overload_return[$k] = $ret;
+            }
+            //$this->$k = $from[sprintf($format,$k)];
         }
         if ($overload_return) {
             return $overload_return;
@@ -2703,6 +2707,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                 $ret[sprintf($format,$k)] = $this->{'get'.$k}();
                 continue;
             }
+            // should this call toValue() ???
             $ret[sprintf($format,$k)] = $this->$k;
         }
         if (!$this->_link_loaded) {
