@@ -400,9 +400,10 @@ Class DB_DataObject
             $this->$kk = $array[$k];
         }
         if (!empty($this->_data_select)) {
-            foreach(array('_data_select','_join','_group_by','_order_by', '_having', '_limit','_condition') as $k) {
+            foreach(array('_join','_group_by','_order_by', '_having', '_limit','_condition') as $k) {
                 $this->$k = '';
             }
+            $this->_data_select = '*';
         }
         // set link flag
         $this->_link_loaded=false;

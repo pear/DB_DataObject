@@ -24,30 +24,12 @@
   
  
     <release>
-      <version>1.0</version>
-      <date>2003-07-16</date>
+      <version>1.0.1</version>
+      <date>2003-07-18</date>
       <notes>
-        - Gold 1.0 Release.. - final stable release in this series. Future versions 
-          (eg. 1.1.*(dev)-&gt;1.2.*(release)) series will be generally API compatible, 
-          however is likely to use MDB rather than DB.
-      
-        - fix bug #23983 - argument checking on whereAdd, orderBy, limit and a few others
-          (Mike Carter)
-        - fix bug with cache clearing not working with staticGet and update/insert
-        - null comparison for $object-&gt;var = 'null' will generate IS NULL query
-        - null insert/update  works when using 'null' as a value.
-        - getLinks returns true on success
-        - getLinks now has a formatter eg. '_%s' is default to allow user to define the
-          format of variables to assign child objects to.
-        - generator uses UNIQUE only if no primary/autoincrement type field is found.
-        - added support for $object-&gt;having('sum(value) &gt; 10');
-        - fetch will remove some query lines (so if you want to see how the query was built
-          you will have to print_r() the object after find(), and before fetch(), or just use
-          debugLevel(1)
-        - overload calls from setFrom and toArray do method checks, as overload is still proving to
-          be a little unstable especially with Zend Encoder. (Note: if DataObjects causes crashes 
-          , remove the overload code at the bottom of DataObjects.php)
-          
+        Minor Bugfix Release
+        - Fix Select defaults back to * after an update
+        - Fix Update with NULL values
         
       </notes>
       <state>stable</state>
@@ -80,7 +62,35 @@
 
    
   <changelog>
-  
+  <release>
+      <version>1.0</version>
+      <date>2003-07-16</date>
+      <notes>
+        - Gold 1.0 Release.. - final stable release in this series. Future versions 
+          (eg. 1.1.*(dev)-&gt;1.2.*(release)) series will be generally API compatible, 
+          however is likely to use MDB rather than DB.
+      
+        - fix bug #23983 - argument checking on whereAdd, orderBy, limit and a few others
+          (Mike Carter)
+        - fix bug with cache clearing not working with staticGet and update/insert
+        - null comparison for $object-&gt;var = 'null' will generate IS NULL query
+        - null insert/update  works when using 'null' as a value.
+        - getLinks returns true on success
+        - getLinks now has a formatter eg. '_%s' is default to allow user to define the
+          format of variables to assign child objects to.
+        - generator uses UNIQUE only if no primary/autoincrement type field is found.
+        - added support for $object-&gt;having('sum(value) &gt; 10');
+        - fetch will remove some query lines (so if you want to see how the query was built
+          you will have to print_r() the object after find(), and before fetch(), or just use
+          debugLevel(1)
+        - overload calls from setFrom and toArray do method checks, as overload is still proving to
+          be a little unstable especially with Zend Encoder. (Note: if DataObjects causes crashes 
+          , remove the overload code at the bottom of DataObjects.php)
+          
+        
+      </notes>
+      <state>stable</state>
+    </release>
       <release>
       <version>0.19</version>
       <date>2003-05-22</date>
