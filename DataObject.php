@@ -1892,10 +1892,21 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             if (@$this->_database && @$options["database_{$this->_database}"])  {
                 $dsn = $options["database_{$this->_database}"];
-            } else if ($options['database']) {
+            } else if (@$options['database']) {
                 $dsn = $options['database'];
             }
         }
+        
+        // if still no database...
+        if (!$dsn) {
+            return $this->raiseError(
+                "No database name / dsn found anywhere",
+                DB_DATAOBJECT_ERROR_INVALIDCONFIG, PEAR_ERROR_DIE
+            );
+                 
+        }
+        
+        
 
         $this->_database_dsn_md5 = md5($dsn);
 
