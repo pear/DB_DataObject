@@ -1161,7 +1161,7 @@ Class DB_DataObject {
     * @access	public
     * @return mixed object on success
     */
-    function &getLink($row, $table=NULL,$link = FALSE;) {
+    function &getLink($row, $table=NULL,$link = FALSE) {
         /* see if autolinking is available 
        This will do a recursive call! 
         */
