@@ -610,6 +610,7 @@ Class DB_DataObject
         foreach ($from as $k) {
             $this->selectAdd(sprintf("%s.%s as {$format}",$table,$k,$k));
         }
+        $this->_data_select .= "\n";
     }
     /**
      * Insert the current objects variables into the database
@@ -1764,15 +1765,24 @@ Class DB_DataObject
             $joinAs = $obj->__table;
         }
         
+        $objTable = $obj->__table;
+        if ($obj->_join) {
+            $objTable = "($objTable {$obj->_join})";
+        }
+        $fullJoinAs = '';
+        if ($obj->__table != $joinAs) {
+            $fullJoinAs = "AS {$joinAs}";
+        }
+        
         switch ($joinType) {
             case 'INNER':
             case 'LEFT': 
             case 'RIGHT': // others??? .. cross, left outer, right outer, natural..?
-                $this->_join .= "\n {$joinType} JOIN {$obj->__table} AS {$joinAs}".
+                $this->_join .= "\n {$joinType} JOIN {$objTable}  {$fullJoinAs}".
                                 " ON {$joinAs}.{$ofield}={$this->__table}.{$tfield} ";
                 break;
             case '': // this is just a standard multitable select..
-                $this->_join .= "\n , {$obj->__table} AS {$joinAs} ";
+                $this->_join .= "\n , {$objTable} {$fullJoinAs} ";
                 $this->whereAdd("{$joinAs}.{$ofield}={$this->__table}.{$tfield}");
         }
          
@@ -1799,7 +1809,19 @@ Class DB_DataObject
             /* this is probably an error condition! */
             $this->whereAdd("{$joinAs}.{$k} = 0");
         }
-
+        
+        // and finally merge the whereAdd from the child..
+        if (!$obj->_condition) {
+            return;
+        }
+        $cond = preg_replace('/^\sWHERE/i','',$obj->_condition);
+        $this->whereAdd("($cond)");
+        
+        
+        
+        
+        
+        
 
     }
 
