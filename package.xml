@@ -28,17 +28,31 @@
       <date>2003-05-18</date>
       <notes>
         - fix generator overwriting code when file was edited in a Windows editor           (Robert Janeczek)
+          
         - validation will not produce errors on empty numeric data by default.
+        
         - overload extension enabled to relay setFrom and toArray calls to get*, set*
           methods, which are predefined as
           getXXX = returns $object->XXX
           setXXX($V) = returns true (or an error string if you create your own)
           (on affects php-4.3.2RC2 or later..)
+          
         - selectAs($dataobject,'prefix_%s') to help control the way join queries return 
           their data * doing selectAs() - clears the select and sets it to table.id as id ... etc.
+          
+        - joinAdd has 2 extra optional arguments
+          $dataObject->joinAdd($otherDataObject, $joinType, $joinAs)
+          existing behaviour (INNER Joins) is default (eg. no value)
+          $joinType can be:
+            INNER,LEFT,RIGHT = eg. INNER JOIN ... etc.
+            '' = just added with a , and the link conditions are added with a WHERE statement.
+          $joinAs can be used to name the table differently in the join eg.
+            SELECT .. FROM person INNER JOIN address as homeaddress ......
+            
         - setFrom has an extra optional parameter for formating: eg.
           $object->setFrom($_POST,'prefix_%s') would map prefix_name to $object->name
           the default is '%s' which is the same as the previous behaviour
+          
         - added option dont_die (default no) to ini file
           default (no) means that DataObjects will emit a PEAR_ERROR_DIE on configuration and 
           programming errors
