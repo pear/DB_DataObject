@@ -2575,7 +2575,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $c  = $this->factory($table);
         
-        if (!is_a($obj,'DB_DataObject')) {
+        if (!is_a($c,'DB_DataObject')) {
             $this->raiseError(
                 "getLinkArray:Could not find class for row $row, table $table", 
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG
