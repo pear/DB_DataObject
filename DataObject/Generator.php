@@ -259,7 +259,7 @@ class DB_DataObject_Generator extends DB_DataObject
                     $type = DB_DATAOBJECT_INT;
                     break;
                     
-                 case "BOOL": // postgres needs to quote '0'
+                 case "BOOL":   // postgres needs to quote '0'
                     $type = DB_DATAOBJECT_STR + DB_DATAOBJECT_BOOL;
                     break;
                     
@@ -272,9 +272,10 @@ class DB_DataObject_Generator extends DB_DataObject
                 case "MEDIUMTEXT":
                 case "LONGTEXT":
                 case "ENUM":
-                case "SET": // not really but oh well
+                case "SET":         // not really but oh well
                 case "TIMESTAMPTZ": // postgres
-                case "BPCHAR":// postgres
+                case "BPCHAR":      // postgres
+                case "INTERVAL":    // postgres (eg. '12 days')
                     $type=DB_DATAOBJECT_STR;
                     break;
                     
