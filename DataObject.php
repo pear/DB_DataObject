@@ -2312,7 +2312,10 @@ class DB_DataObject extends DB_DataObject_Overload
     *       [local_col_name] => "related_tablename:related_col_name"
     * 
     * 
-    * @return   array   ass. array of links  
+    * @return   array|null    
+    *           array       = if there are links defined for this table.
+    *           empty array - if there is a links.ini file, but no links on this table
+    *           null        - if no links.ini exists for this database (hence try auto_links).
     * @access   public
     * @see      DB_DataObject::getLinks(), DB_DataObject::getLink()
     */
@@ -2394,7 +2397,7 @@ class DB_DataObject extends DB_DataObject_Overload
         // it sends the column name down to getLink and lets that sort it out..
         // if there is a links file then it is not used!
         // IT IS DEPRECIATED!!!! - USE 
-        if (is_null($links)) {    
+        if (!is_null($links)) {    
             return false;
         }
         
