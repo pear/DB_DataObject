@@ -1598,7 +1598,32 @@ Class DB_DataObject
      * @var     boolean
      */
     var $_link_loaded = false;
-
+    
+    /**
+    * Get the links associate array  as defined by the links.ini file.
+    * 
+    *
+    * Experimental... - 
+    * Should look a bit like
+    *       [local_col_name] => "related_tablename:related_col_name"
+    * 
+    * 
+    * @return   array    key value of 
+    * @access   public
+    * @see      DB_DataObject::getLinks(), DB_DataObject::getLink()
+    */
+    
+    function links()
+    {
+        global $_DB_DATAOBJECT;
+        if (empty($_DB_DATAOBJECT['CONFIG'])) {
+            DB_DataObject::_loadConfig();
+        }
+        if (isset($_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table])) {
+            return $_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table];
+        }
+        return false;
+    }
     /**
      * load related objects
      *
