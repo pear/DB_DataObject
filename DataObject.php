@@ -554,6 +554,7 @@ Class DB_DataObject
      * $object->selectAs(null); // adds "table.colnameA as colnameA,table.colnameB as colnameB,......"
      *                      // note with null it will also clear the '*' default select
      * $object->selectAs(array('a','b'),'%s_x'); // adds "a as a_x, b as b_x"
+     * $object->selectAs(array('a','b'),'ddd_%s','ccc'); // adds "ccc.a as ddd_a, ccc.b as ddd_b"
      * $object->selectAdd($object,'prefix_%s'); // calls $object->get_table and adds it all as
      *                  objectTableName.colnameA as prefix_colnameA
      *
@@ -575,11 +576,13 @@ Class DB_DataObject
         $table = $this->__table;
         if (is_object($from)) {
             $table = $from->__table;
-            if ($tableName !== false) {
-                $table = $tableName;
-            }
             $from = array_keys($from->_get_table());
         }
+        
+        if ($tableName !== false) {
+            $table = $tableName;
+        }
+        
         foreach ($from as $k) {
             $this->selectAdd(sprintf("%s.%s as {$format}",$table,$k,$k));
         }
