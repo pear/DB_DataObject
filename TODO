@@ -1,0 +1,207 @@
+
+
+
+Data Validation
+
+Although techically Data Validation really should fall under the responsibility of the 
+controller, not the Model.. , there is still good reason to add data validation to the 
+DataObject class. - Ideally using the PEAR Validate class..
+
+Proposal:
+
+$validate = $dataobject->validate()
+if ($validate === TRUE) {
+    echo "everything is OK!";
+} else {
+    foreach($validate as $key=>$error) {
+        $tag = "o_error_".$key;
+        if ($error) {
+            $this->$tag = TRUE;
+        }
+    }
+}
+
+
+
+
+default validate method:
+
+<?
+function &getValidateArray() 
+{
+    /* over ride this to return something like this
+    - see the validate manual for more details
+    return array (
+        'name' => array(
+            'type'      => 'string',
+            'format'    =>  VAL_NUM . VAL_ALPHA,
+            'min_lenght'=>5,
+            'max_lenght'=>30),
+        page' => array(
+            'type'      => 'number',
+            'decimal'   => FALSE, 
+            'min'       => 18,
+            'max'       => 109),
+        'email' => array() {
+            'type'      => 'email',
+            'check_domain' => TRUE),
+        'homepage' => array(
+            'type' => 'url',
+            'domain_check' = 'true'
+        );
+        
+     
+    
+    */
+    $ret = FALSE;
+    return $ret;
+    
+}
+    
+
+function validate() 
+{
+    require_once("Validate.php");
+    $table = &$this->_get_table();
+    $ret = array();
+    foreach($table as $key=>$val) {
+        $test[$key] = $this->$key;
+    }
+
+    if ($conditions = &$this->getValidateArray()) {
+        $ret = Validate::multiple($test,$conditions, TRUE);
+    } else {
+        foreach($table as $key=>$val) {
+            switch ($val) {
+                case  DB_DATAOBJECT_STR:
+                    $ret[$key] = Validate::string($val, VAL_NUM . VAL_ALPHA);
+                    continue;
+                case  DB_DATAOBJECT_INT: 
+                    $ret[$key] = Validate::number($val, ".");
+                    continue;
+            }
+        }
+    }
+    foreach ($ret as $key=>$val) {
+        if ($val == FALSE) return $ret;
+    }
+    return TRUE; // everything is OK.
+}
+?>
+
+
+
+
+
+/*-------------------------------------------------------------------------------*/
+
+Advanced Linking Methods : 
+
+At present the link method assumes that you have set up the database in a  certian way - 
+in reality it is unlikely that DB_DataObject is going to be always used with table formated this 
+way. So it's worth adding an alternative method to gather what the table links are:
+
+
+use an extra ini file: {databasename}.links.ini
+[member]
+group = grp:id
+person = person:id
+
+[group]
+owner_group = grp:id
+read_group  = grp:id
+write_group = grp:id
+
+[stock_groups]
+manager_group = grp:id
+createdby = person:id
+modifiedby = person:id
+
+
+-----
+Modifications needed to getLink:
+
+<?
+
+    function &getLink($row, $table=NULL) {
+        $links = &PEAR::getStaticProperty('DB_DataObject',"{$this->database}.links");
+        $link = FALSE;
+        if ($table === NULL) {
+            if (@$links[$this->table]) {
+                if ( @$links[$this->table][$row]) {
+                   list($table,$link) = $links[$this->table][$row];
+                } else {
+                    return; // technically a possible error condition? 
+                }
+            } else { // use the old _ method
+                if (!($p = strpos($row,'_'))) { 
+                    return;
+                }
+                $table = substr($row,0,$p);
+            }
+        }
+        if (!isset($this->$row)) {
+            DB_DataObject::raiseError("getLink: row not set $row", DB_DATAOBJECT_ERROR_NODATA);
+            return;
+        }
+        
+        
+        $class = $this->_autoloadTable($table);
+        if (!$class) {
+            DB_DataObject::raiseError("getLink:Could not find class for row $row, table $table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+            return;
+        }
+        if ($link) {
+            return DB_DataObject::staticGet($class,$link,$this->$row);
+        }
+        
+        return DB_DataObject::staticGet($class,$this->$row);
+    }
+
+
+?>
+
+
+Modifications needed to getLinks:
+
+<?
+
+
+ function getLinks() {
+       
+        if ($this->_link_loaded) {
+            return;
+        }
+        $cols = $this->_get_table();
+        $links = &PEAR::getStaticProperty('DB_DataObject',"{$this->database}.links");
+        if (@$links[$this->table]) {
+            foreach(array_keys($links[$this->table]) as $key) {
+                $this->$k = $this->getLink($key);
+            }
+            return;
+        }
+        foreach (array_keys($cols) as $key) {
+            
+            if (!($p = strpos($key,'_'))) {
+                continue;
+            }
+            // does the table exist.
+            $k = "_{$key}";
+            $this->$k = $this->getLink($key);
+        }    
+        $this->_link_loaded=TRUE;
+    }
+
+
+?>
+--- 
+
+need to 'position the loadlinks somewhere' ...
+
+
+
+
+
+
+
+
