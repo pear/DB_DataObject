@@ -1727,6 +1727,7 @@ Class DB_DataObject
      */
     function setFrom(&$from)
     {
+        global $_DB_DATAOBJECT;
         $keys  = $this->_get_keys();
         $items = $this->_get_table();
         if (!$items) {
