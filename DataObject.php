@@ -2965,7 +2965,6 @@ Class DB_DataObject extends DB_DataObject_Overload
     function _call($method,$params,&$return) {
         
         //$this->debug("ATTEMPTING OVERLOAD? $method");
-        
         // ignore constructors : - mm
         if ($method == get_class($this)) {
             return true;
@@ -3143,6 +3142,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         $cols = $this->table();
         switch (true) {
             case (($cols[$col] & DB_DATAOBJECT_DATE) &&  ($cols[$col] & DB_DATAOBJECT_TIME)):
+                if (!$this->$col) {
+                    return '';
+                }
                 $guess = strtotime($this->$col);
                 if ($guess != -1) {
                     return strftime($format, $guess);
@@ -3150,7 +3152,9 @@ Class DB_DataObject extends DB_DataObject_Overload
                 // eak... - no way to validate date time otherwise...
                 return $this->$col;
             case ($cols[$col] & DB_DATAOBJECT_DATE):
-                 
+                if (!$this->$col) {
+                    return '';
+                } 
                 $guess = strtotime($this->$col);
                 if ($guess > -1) {
                    
@@ -3163,6 +3167,9 @@ Class DB_DataObject extends DB_DataObject_Overload
                 return $x->format($format);
                 
             case ($cols[$col] & DB_DATAOBJECT_TIME):
+                if (!$this->$col) {
+                    return '';
+                }
                 $guess = strtotime($this->$col);
                 if ($guess > -1) {
                     return strftime($format, $guess);
@@ -3171,6 +3178,9 @@ Class DB_DataObject extends DB_DataObject_Overload
                 return $this->$col;
                 
             case ($cols[$col] &  DB_DATAOBJECT_MYSQLTIMESTAMP):
+                if (!$this->$col) {
+                    return '';
+                }
                 require_once 'Date.php';
                 
                 $x = new Date($this->$col);
