@@ -911,7 +911,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
 
-            if (strtolower($this->$k) === 'null') {
+            if ((strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
                 $rightq .= " NULL ";
                 continue;
             }
@@ -1100,7 +1100,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
             // special values ... at least null is handled...
-            if (strtolower($this->$k) === 'null') {
+            if ((strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
                 $settings .= "$kSql = NULL ";
                 continue;
             }
@@ -2139,7 +2139,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            if (strtolower($this->$k) === 'null') {
+            if ((strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
                 $this->whereAdd(" $kSql  IS NULL");
                 continue;
             }
