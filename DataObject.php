@@ -2032,9 +2032,8 @@ class DB_DataObject extends DB_DataObject_Overload
        
 
         if (DB::isError($result)) {
-            if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
-                $this->debug($string, "SENT");
-                
+            if (@$_DB_DATAOBJECT['CONFIG']['debug']) { 
+                $this->debug($result->toString(), "Query Error",1 );
             }
             return $result;
         }
@@ -2618,7 +2617,7 @@ class DB_DataObject extends DB_DataObject_Overload
  
         $links = array();
         if (isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
-            $links = &$_DB_DATAOBJECT['LINKS'][$this->_database];
+            $links = $_DB_DATAOBJECT['LINKS'][$this->_database];
         }
 
         
@@ -2888,6 +2887,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $ar = isset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid]) ?
             $_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid] :
             $this->table();
+
         foreach($ar as $k=>$v) {
              
             if (!isset($this->$k)) {
