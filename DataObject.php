@@ -387,13 +387,15 @@ Class DB_DataObject
             DB_DataObject::_loadConfig();
         }
         if (!@$this->N) {
-            DB_DataObject::raiseError("fetch: No Data Available", DB_DATAOBJECT_ERROR_NODATA);
+            if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+                $this->debug("No data returned from FIND (eg. N is 0)","FETCH", 3);
+            }
             return false;
         }
         $result = &$_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid];
         $array = $result->fetchRow(DB_FETCHMODE_ASSOC);
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
-            $this->debug(serialize($array),"FETCH", 3);
+            $this->debug(serialize($array),"FETCH");
         }
 
         if (!is_array($array)) {
