@@ -943,9 +943,9 @@ class DB_DataObject extends DB_DataObject_Overload
               
             
             if ($v & DB_DATAOBJECT_STR) {
-                $rightq .= $DB->quote(
+                $rightq .= $DB->quoteSmart((string) (
                         ($v & DB_DATAOBJECT_BOOL) ? (bool)$this->$k : $this->$k
-                    ) . " ";
+                    )) . " ";
                 continue;
             }
             if (is_numeric($this->$k)) {
@@ -1160,9 +1160,9 @@ class DB_DataObject extends DB_DataObject_Overload
             
 
             if ($v & DB_DATAOBJECT_STR) {
-                $settings .= "$kSql = ". $DB->quote(
+                $settings .= "$kSql = ". $DB->quoteSmart((string) (
                         ($v & DB_DATAOBJECT_BOOL) ? (bool)$this->$k : $this->$k
-                    ) . ' ';
+                    )) . ' ';
                 continue;
             }
             if (is_numeric($this->$k)) {
@@ -2243,9 +2243,9 @@ class DB_DataObject extends DB_DataObject_Overload
             
 
             if ($v & DB_DATAOBJECT_STR) {
-                $this->whereAdd(" $kSql  = " . $DB->quote(
+                $this->whereAdd(" $kSql  = " . $DB->quoteSmart((string) (
                         ($v & DB_DATAOBJECT_BOOL) ? (bool)$this->$k : $this->$k
-                    ) );
+                    )) );
                 continue;
             }
             if (is_numeric($this->$k)) {
@@ -2952,9 +2952,9 @@ class DB_DataObject extends DB_DataObject_Overload
             
             
             if ($v & DB_DATAOBJECT_STR) {
-                $this->whereAdd("{$joinAs}.{$kSql} = " . $DB->quote(
+                $this->whereAdd("{$joinAs}.{$kSql} = " . $DB->quoteSmart((string) (
                         ($v & DB_DATAOBJECT_BOOL) ? (bool)$obj->$k : $obj->$k
-                    ));
+                    )));
                 continue;
             }
             if (is_numeric($obj->$k)) {
