@@ -74,6 +74,7 @@ define('DB_DATAOBJECT_WHEREADD_ONLY', true);
  *   - links       = mapping of database to links file
  *   - lasterror   = pear error objects for last error event.
  *   - config      = aliased view of PEAR::getStaticPropery('DB_DataObject','options') * done for performance.
+ *   - array of loaded classes by autoload method - to stop it doing file access request over and over again!
  */
 $GLOBALS['_DB_DATAOBJECT']['RESULTS'] = array();
 $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'] = array();
@@ -82,6 +83,7 @@ $GLOBALS['_DB_DATAOBJECT']['LINKS'] = array();
 $GLOBALS['_DB_DATAOBJECT']['LASTERROR'] = null;
 $GLOBALS['_DB_DATAOBJECT']['CONFIG'] = array();
 $GLOBALS['_DB_DATAOBJECT']['CACHE'] = array();
+$GLOBALS['_DB_DATAOBJECT']['LOADED'] = array();
 
 /**
  * The main "DB_DataObject" class is really a base class for your own tables classes
@@ -1373,12 +1375,14 @@ Class DB_DataObject
         $table   = substr($class,strlen($_DB_DATAOBJECT['CONFIG']['class_prefix']));
 
         // only include the file if it exists - and barf badly if it has parse errors :)
-         
-        if ($fh = @fopen($_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).".php",'r',1)) {
+        
+        $file = $_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).'.php';
+        if (!isset($_DB_DATAOBJECT['LOADED'][$file]) && $fh = @fopen($file,'r',1)) {
             fclose($fh);
             include_once $_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).".php";
         }
         
+        $_DB_DATAOBJECT['LOADED'][$file] = true;
         
         if (!class_exists($class)) {
             DB_DataObject::raiseError("autoload:Could not autoload {$class}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
