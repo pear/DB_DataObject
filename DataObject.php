@@ -701,8 +701,9 @@ class DB_DataObject extends DB_DataObject_Overload
             
         } else {
             $this->raiseError(
-                "DB_DataObjects only supports mysql and postgres limit queries at present, \n".
-                "Refer to your Database manual to find out how to do limit queries manually.\n",
+                "DB_DataObjects only supports limit queries on some databases,\n".
+                "Check with pear bugs for the package, or the dataobjects manual.\n",
+                "or Refer to your Database manual to find out how to do limit queries manually.\n",
                 DB_DATAOBJECT_ERROR_NOTSUPPORTED, PEAR_ERROR_DIE);
         }
     }
