@@ -2273,7 +2273,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->_loadConfig();
         }
         if (!$this->_database) {
-            $this->connect();
+            $this->_connect();
         }
         
         if (isset($_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table])) {
