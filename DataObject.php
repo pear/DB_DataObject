@@ -487,7 +487,7 @@ Class DB_DataObject
      * echo $object->insert();
      *
      * @access public
-     * @return  int
+     * @return  mixed|false key value or false on failure
      */
     function insert()
     {
@@ -556,11 +556,19 @@ Class DB_DataObject
                 DB_DataObject::raiseError($r);
                 return false;
             }
-            if ($key && ($dbtype == 'mysql') && (@$options['ignore_sequence_keys'] != 'ALL')) {
-                if (!@$options['ignore_sequence_keys'] || in_array($this->__table,@$options['ignore_sequence_keys'])) {
-                    $this->$key = mysql_insert_id($connections[$this->_database_dsn_md5]->connection);
-                }
+            
+            if ($key && 
+                ($items[$key] & DB_DATAOBJECT_INT) &&
+                ($dbtype == 'mysql') && 
+                (@$options['ignore_sequence_keys'] != 'ALL') &&
+                (   
+                    !@$options['ignore_sequence_keys'] || 
+                    in_array($this->__table,@$options['ignore_sequence_keys'])
+                ))
+            {
+                $this->$key = mysql_insert_id($connections[$this->_database_dsn_md5]->connection);
             }
+        
             $this->_clear_cache();
             return $this->$key;
         }
