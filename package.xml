@@ -30,7 +30,7 @@
         - modified find(1), so that it calls fetch rather than fetchrow
           so that overriding fetch will affect get() calls.
           (probably depreciates fetchrow now .. shout if anyone is using it)
-        - added quote method as a quick wrapper into pear::DB - useful for
+        - added escape method as a quasi quote wrapper into pear::DB - useful for
           building your own queries.
           
         

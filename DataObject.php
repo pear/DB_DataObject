@@ -864,7 +864,7 @@ Class DB_DataObject
 
 
     /**
-     * relay quote (eg. addslashes) to database.
+     * an escape wrapper around quote .. 
      * can be used when adding manual queries =
      * eg. 
      * $object->query("select * from xyz where abc like '". $object->quote($_GET['name']) . "'");
@@ -873,12 +873,12 @@ Class DB_DataObject
      * @access public
      * @return none or PEAR_Error
      */
-    function quote($string) 
+    function escape($string) 
     {
         $this->_connect();
          
         $__DB  = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
-        return $__DB->quote($string);
+        return substr($__DB->quote($string),1,-1);
     }
 
     /* ==================================================== */
