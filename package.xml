@@ -21,10 +21,13 @@
     </maintainer>
   </maintainers>
   <release>
-      <version>0.4</version>
-      <date>2002-08-21</date>
+      <version>0.5</version>
+      <date>2002-08-28</date>
       <notes>
-      - Bug fix release - createTables used wrong argv
+        - fixed database.links.ini file loading in wrong location (Jens Fischer)
+        - fixed type on extends (Jens Fischer)
+        - added clone support to pre- php5 classes
+        - added multiple linked table support
       </notes>
       <state>beta</state>
     <filelist>
@@ -39,6 +42,28 @@
     </filelist>
   </release>
   <changelog>
+    <release>
+      <version>0.5</version>
+      <date>2002-08-28</date>
+      <notes>
+        - fixed database.links.ini file loading in wrong location (Jens Fischer)
+        - fixed type on extends (Jens Fischer)
+        - added clone support to pre- php5 classes
+        - added multiple linked table support
+      </notes>
+      <state>beta</state>
+    <filelist>
+        <dir name="/" baseinstalldir="DB" role="php">
+            <file>DataObject.php</file>
+            <dir name="DataObject" role="php">
+                <file>Generator.php</file>
+                <file>createTables.php</file>
+                <file>example.ini</file>
+            </dir>
+        </dir>
+    </filelist>
+     </release>
+    </release>
       <release>
         <version>0.4</version>
       <date>2002-08-21</date>

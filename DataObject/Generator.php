@@ -352,6 +352,16 @@ class DB_DataObject_Generator extends DB_DataObject {
             //    $sets[$t->Field] = "array".substr($t->Type,3);
             
         }
+        
+        /* FC/BC compatible with ZE2 */
+        $x = new StdClass;
+        if (!method_exists($x,'__clone')) {
+            $body .= "\n\n";
+            $body .= "    /* ZE2 compatibility trick*/\n";
+            $body .= "    function __clone() { return \$this;}\n\n";
+        }
+        
+        
         // simple creation tools ! (static stuff!)
         $body .= "\n\n";
         $body .= "    /* Static get */\n";
