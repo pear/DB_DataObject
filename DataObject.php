@@ -1186,6 +1186,10 @@ Class DB_DataObject {
         }
         $cols = $this->_get_table();
         $links = &PEAR::getStaticProperty('DB_DataObject',"{$this->_database}.links");
+        /* if you define it in the links.ini file with no entries */
+        if (isset($links[$this->__table]) && (!@$links[$this->__table])) {
+            return;
+        }
         if (@$links[$this->__table]) {
             foreach($links[$this->__table] as $key=>$match) {
                 list($table,$link) = explode(':',$match);
@@ -1237,15 +1241,15 @@ Class DB_DataObject {
         */
         if ($table === NULL) {
             $links = &PEAR::getStaticProperty('DB_DataObject',"{$this->_database}.links");
-            if (@$links[$this->__table]) {
-                if ( @$links[$this->__table][$row]) {
+            if (isset($links[$this->__table])) {
+                if (@$links[$this->__table][$row]) {
                     list($table,$link) = explode(':',$links[$this->__table][$row]);
                     if ($p = strpos($row,".")) {
                         $row = substr($row,0,$p);
                     }
                     return $this->getLink($row,$table,$link);
                 } else {
-                    DB_DataObject::raiseError("getLink: $row is not defined as a link", DB_DATAOBJECT_ERROR_NODATA);
+                    DB_DataObject::raiseError("getLink: $row is not defined as a link (normally this is ok)", DB_DATAOBJECT_ERROR_NODATA);
                     return false; // technically a possible error condition?
                 }
             } else { // use the old _ method
