@@ -717,7 +717,7 @@ Class DB_DataObject
                 $seq = $this->__table;
             }
             // we are using sequences !!!!!
-            $usedSequence = false;
+            $usedSequence = true;
             $this->$key = $__DB->nextId($seq);
         }
 
