@@ -1,4 +1,118 @@
 
+2005-03-12 Saturday  alan_k
+
+	* fix bug #3764  PostgreSQL Boolean Doesnt Work (lets see how much
+	code that breaks!)
+	* keep everyone happy with disabling overload for the default
+	generator script bug #3763
+	* fix (or try again to) bug #3768  quoteIdentifier not used
+	correctly with database_prefix
+	* fix bug #3761 - messed up datetime setting code in cast.
+	* fix bug/feature #3783 allow distinct as the argument to count to
+	prefix table key.
+
+2005-03-07 Monday  alan_k
+
+	* fix joins again.. (Thanks to Mark Mitchenall for fix) - oops
+	pulled last release..
+	* fix joins again.. (Thanks to Mark Mitchenall for fix)
+
+2005-03-05 Saturday  alan_k
+
+	* prep for release
+	* fix bug #3708 - new tables accidentally include previous files
+	code
+	* fix bug #3706 - Database prefixes are not supported in postgres
+	(and probably alot of other dbs)
+
+2005-03-03 Thursday  alan_k
+
+	* fix bug#228 / bug#3674 - cast boolean values before quoting. -
+	necessary for postgresql.
+
+2005-03-02 Wednesday  alan_k
+
+	* fix bugs with 4.3.10, and implement consistant clone()
+
+2005-02-28 Monday  alan_k
+
+	* add datetime and time support to cast (therion_5 at hotmail),
+	fixes bug #3584
+
+2005-02-24 Thursday  alan_k
+
+	* fix bug#2740 - allow class_location to use %s formating, eg.
+	/path/to/myfiles/someprefix_%s.php
+	* fix bug #3568 - joins with tables that do not have classes
+	* fix bug #3540 - not checking the database was connected before
+	emptying
+
+2005-02-22 Tuesday  alan_k
+
+	* cosmetic fixes + support for multidatabase joins. (Dmitry
+	Nosovitsky)
+	* fix bug#3359, missing break in Cast::date()
+	* test for bug#2116, this test file needs sorting out..!
+	* fix bug #3294 - write DB_DATAOBJECT_TXT as a type.. - not really
+	sure if it is useful.., but its a pretty harmless change.
+
+2005-01-27 Thursday  alan_k
+
+	* bug #3302 call connect when using joinadd with an array
+	* fix validate again - should read the bug report closer..
+	* fix validate = N typo, fix setFrom(), with objects and arrays
+	will be sent to setters
+
+2005-01-25 Tuesday  alan_k
+
+	* slight typo
+
+2005-01-24 Monday  alan_k
+
+	* more checking, and debugging support for link/ini loading
+	* add debugging to show where links are loaded from
+
+2005-01-22 Saturday  alan_k
+
+	* fix example for update
+	* possible fix to #1795 - update accepts WHEREADD_ONLY, and does
+	checks to stop you wiping out your database...
+	* fix bug #3010 incorrectly carrying on after finding an empty
+	date.
+	* skip validation on empty sequence key columns bug #3187
+	* add generate_setters/getters patch by Torsten Roehr (bug#3001)
+	* fix bug #3058 - getLinkArray() correctly checks return value
+	(probably broken completely before)
+	* fix bug #3098 -
+	&PEAR::getStaticProperty("DB_DataObject",lastError"); works as per
+	documentation
+	* fix bug #3201 - get_class_vars() with privates. ** although this
+	now segfaults :) - see PHP bug #31651
+	* fix bug #3264 - warning running joinAdd on an object with
+	results.
+
+2005-01-21 Friday  alan_k
+
+	* fix bug #3225 double writing of ini entries
+
+2005-01-18 Tuesday  alan_k
+
+	* make mysqli native for insert
+	* fix bug #3079 missing escape in generate_add_validate_stubs
+	option code
+
+2004-12-25 Saturday  alan_k
+
+	* fix package.xml - needs fix to pear installer ( #3027 to build
+	this now)
+	* fix package.xml - needs fix to pear installer ( #3027 to build
+	this now)
+
+2004-12-24 Friday  alan_k
+
+	*  use correct negative test
+	* prep for christmas release
+
 2004-12-11 Saturday  alan_k
 
 	* fix bug #2928 - store last error when query bugs out.
