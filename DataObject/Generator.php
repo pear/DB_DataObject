@@ -107,6 +107,7 @@ class DB_DataObject_Generator extends DB_DataObject
         }
 
         if (@$options['database']) {
+            require_once 'DB.php';
             $dsn = DB::parseDSN($options['database']);
             if (!isset($database[$dsn['database']])) {
                 $databases[$dsn['database']] = $options['database'];
