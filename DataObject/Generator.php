@@ -158,6 +158,10 @@ class DB_DataObject_Generator extends DB_DataObject
 
         $this->tables = $__DB->getListOf('tables');
 
+        // declare a temporary table to be filled with matching tables names
+        $tmp_table = array();
+
+
         foreach($this->tables as $table) {
             if (isset($options['generator_include_regex']) &&
                 !preg_match($options['generator_include_regex'],$table)) {
@@ -166,6 +170,10 @@ class DB_DataObject_Generator extends DB_DataObject
                 preg_match($options['generator_exclude_regex'],$table)) {
                     continue;
             }
+            
+            // we find a matching table, just  store it into a temporary array
+            $tmp_table[] = $table;            
+ 
             $defs =  $__DB->tableInfo($table);
             if (is_a($defs,'PEAR_Error')) {
                 echo $defs->toString();
@@ -178,6 +186,9 @@ class DB_DataObject_Generator extends DB_DataObject
                 }
             }
         }
+        // the temporary table array is now the right one (tables names matching 
+        // with regex expressions have been removed)
+        $this->tables = $tmp_table;         
         //print_r($this->_definitions);
     }
 
