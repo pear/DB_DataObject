@@ -144,6 +144,7 @@ define('DB_DATAOBJECT_WHEREADD_ONLY', true);
  * - includes sub arrays
  *   - connections = md5 sum mapp to pear db object
  *   - results     = [id] => map to pear db object
+ *   - resultfields = [id] => list of fields return from query (for use with toArray())
  *   - ini         = mapping of database to ini file results
  *   - links       = mapping of database to links file
  *   - lasterror   = pear error objects for last error event.
@@ -151,6 +152,7 @@ define('DB_DATAOBJECT_WHEREADD_ONLY', true);
  *   - array of loaded classes by autoload method - to stop it doing file access request over and over again!
  */
 $GLOBALS['_DB_DATAOBJECT']['RESULTS'] = array();
+$GLOBALS['_DB_DATAOBJECT']['RESULTFIELDS'] = array();
 $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'] = array();
 $GLOBALS['_DB_DATAOBJECT']['INI'] = array();
 $GLOBALS['_DB_DATAOBJECT']['LINKS'] = array();
@@ -485,9 +487,9 @@ class DB_DataObject extends DB_DataObject_Overload
             return false;
         }
         
-        if (!isset($result->_dataobjectResultFields)) {
+        if (!isset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid])) {
             // note: we dont declare this to keep the print_r size down.
-            $result->_dataobjectResultFields = array_flip(array_keys($array));
+            $_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid]= array_flip(array_keys($array));
         }
         
         foreach($array as $k=>$v) {
@@ -2882,9 +2884,9 @@ class DB_DataObject extends DB_DataObject_Overload
     function toArray($format = '%s')
     {
         global $_DB_DATAOBJECT;
-        $ret = array();
-        $ar = isset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]->_dataobjectResultFields) ?
-            $_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]->_dataobjectResultFields :
+        $ret = array( ');
+        $ar = isset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid]) ?
+            $_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid] :
             $this->table();
         foreach($ar as $k=>$v) {
              
