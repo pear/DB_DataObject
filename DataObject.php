@@ -3156,7 +3156,6 @@ Class DB_DataObject extends DB_DataObject_Overload
                     return '';
                 } 
                 $guess = strtotime($this->$col);
-                var_dump($guess);
                 if ($guess != -1) {
                     return strftime($format,$guess);
                 }
