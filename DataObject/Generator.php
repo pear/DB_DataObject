@@ -219,7 +219,8 @@ class DB_DataObject_Generator extends DB_DataObject {
                 case "DECIMAL":
                 case "NUMERIC":
                     $type=DB_DATAOBJECT_INT;
-                    break;                
+                    break;  
+                case "STRING":
                 case "CHAR":
                 case "VARCHAR":
                 case "TINYTEXT":

@@ -584,7 +584,7 @@ Class DB_DataObject {
             $this->_condition=""; // default behaviour not to use where condition
         }
         $this->_build_condition($this->_get_table()); 
- 
+         
         if ($this->_condition) {
             $this->_query("DELETE FROM {$this->__table} {$this->_condition}");  
             $this->_clear_cache();
@@ -933,7 +933,7 @@ Class DB_DataObject {
         $this->_connect();
         $__DB = &$connections[$this->_database_dsn_md5];
        
-        if (DB_DataObject::debugLevel() && 
+        if ((DB_DataObject::debugLevel() > 1) && 
             (strtolower(substr(trim($string),0,6)) != "select") && 
             (strtolower(substr(trim($string),0,4)) != "show") &&
             (strtolower(substr(trim($string),0,8)) != "describe")) {
@@ -1134,7 +1134,7 @@ Class DB_DataObject {
         $c = new $class;
         // if the user defined method list exists - use it...
         if (method_exists($c,'list')) {
-            $c->list();
+            $c->list($this->id);
         } else {
             $c->find();
         }
