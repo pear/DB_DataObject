@@ -8,7 +8,7 @@
   2. acts as a datastore for a table row.
   The core class is designed to be extended for each of your tables so that you put the 
   data logic inside the data classes.
-  included is a Generator to make your configuraiton files and your base classes.
+  included is a Generator to make your configuration files and your base classes.
   
 </description>
   <license>PHP License</license>
@@ -22,8 +22,8 @@
   </maintainers>
   <release>
     <version>0.1</version>
-    <date>2002-06-21</date>
-    <notes>PEARified</notes>
+    <date>2002-06-25</date>
+    <notes>PEARified - documentation are temporarly on http://docs.akbkhome.com/DB_DataObject/</notes>
     <state>stable</state>
     <filelist>
         <dir name="/" baseinstalldir="DB" role="php">
@@ -39,7 +39,7 @@
   <changelog>
     <release>
       <version>0.1</version>
-      <date>2002-06-21</date>
+      <date>2002-06-25</date>
       <notes>PEARified - documentation are temporarly on http://docs.akbkhome.com/DB_DataObject/</notes>
       <state>stable</state>
     </release>
