@@ -105,6 +105,7 @@ $GLOBALS['_DB_DATAOBJECT']['RESULTS'] = array();
 $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'] = array();
 $GLOBALS['_DB_DATAOBJECT']['INI'] = array();
 $GLOBALS['_DB_DATAOBJECT']['LINKS'] = array();
+$GLOBALS['_DB_DATAOBJECT']['SEQUENCE'] = array();
 $GLOBALS['_DB_DATAOBJECT']['LASTERROR'] = null;
 $GLOBALS['_DB_DATAOBJECT']['CONFIG'] = array();
 $GLOBALS['_DB_DATAOBJECT']['CACHE'] = array();
@@ -376,7 +377,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         $this->_build_condition($this->table()) ;
         
         $quoteEntities = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
-        $DB =& $this->getDatabaseConnection();
+        $this->_connect();
+        $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
+       
 
         $this->_query('SELECT ' .
             $this->_query['data_select'] .
@@ -671,16 +674,17 @@ Class DB_DataObject extends DB_DataObject_Overload
             || (($b !== null) && (!is_int($b) && ((string)((int)$b) !== (string)$b)))) {
             return $this->raiseError("limit: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
         }
-
-        $db = $this->getDatabaseConnection();
-
-        if (($db->features['limit'] == 'alter') && ($db->phptype != 'oci8')) {
+        global $_DB_DATAOBJECT;
+        $this->_connect();
+        $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
+       
+        if (($DB->features['limit'] == 'alter') && ($DB->phptype != 'oci8')) {
             if ($b === null) {
                $this->_query['limit'] = " LIMIT $a";
                return;
             }
              
-            $this->_query['limit'] = $db->modifyLimitQuery('',$a,$b);
+            $this->_query['limit'] = $DB->modifyLimitQuery('',$a,$b);
             
         } else {
             $this->raiseError(
@@ -769,7 +773,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         $s = '%s';
         if (@$_DB_DATAOBJECT['CONFIG']['quote_entities']) {
-            $DB     = &$this->getDatabaseConnection();
+            $this->_connect();
+            $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
+       
             $table  = $DB->quoteEntity($table);
             $s      = $DB->quoteEntity($k);
             $format = $DB->quoteEntity($format);
@@ -802,10 +808,14 @@ Class DB_DataObject extends DB_DataObject_Overload
         // we need to write to the connection (For nextid) - so us the real
         // one not, a copyied on (as ret-by-ref fails with overload!)
         
-        $this->getDatabaseConnection(); 
+        if (!isset($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
+            $this->_connect();
+        }
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
          
-        $items = $this->table();
+        $items =  isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table]) ?   
+            $_DB_DATAOBJECT['INI'][$this->_database][$this->__table] : $this->table();
+            
         if (!$items) {
             $this->raiseError("insert:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
@@ -817,7 +827,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         $leftq     = '';
         $rightq    = '';
      
-        @list($key,$useNative,$seq) = $this->sequenceKey();
+        @list($key,$useNative,$seq) = isset($_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table]) ?
+            $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] : $this->sequenceKey();
+            
         $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["phptype"];
          
          
@@ -897,7 +909,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             $table = ($quoteEntities ? $DB->quoteEntity($this->__table)    : $this->__table);
             
             $r = $this->_query("INSERT INTO {$table} ($leftq) VALUES ($rightq) ");
-            
+ 
             
             
             if (PEAR::isError($r)) {
@@ -950,7 +962,9 @@ Class DB_DataObject extends DB_DataObject_Overload
                         
             }
 
-            $this->_clear_cache();
+            if (@$_DB_DATAOBJECT['CACHE'][$class]) {
+                $this->_clear_cache();
+            }
             if ($key) {
                 return $this->$key;
             }
@@ -995,7 +1009,8 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         $original_query = isset($this->_query) ? $this->_query : null;
         
-        $items = $this->table();
+        $items =  isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table]) ?   
+            $_DB_DATAOBJECT['INI'][$this->_database][$this->__table] : $this->table();
         $keys  = $this->keys();
         
          
@@ -1005,8 +1020,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         $datasaved = 1;
         $settings  = '';
-
-        $DB            = &$this->getDatabaseConnection();
+        $this->_connect();
+        
+        $DB            = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
         $dbtype        = $DB->dsn["phptype"];
         $quoteEntities = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
         
@@ -1130,7 +1146,8 @@ Class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
         // connect will load the config!
-        $DB             = &$this->getDatabaseConnection();
+        $this->_connect();
+        $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
         $quoteEntities  = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
         
         if (!$useWhere) {
@@ -1259,7 +1276,9 @@ Class DB_DataObject extends DB_DataObject_Overload
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
         }
-        $DB    = $t->getDatabaseConnection();
+        $this->_connect();
+        $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
+       
 
         if (!$whereAddOnly && $items)  {
             $this->_build_condition($items);
@@ -1317,7 +1336,9 @@ Class DB_DataObject extends DB_DataObject_Overload
     function escape($string)
     {
         global $_DB_DATAOBJECT;
-        $DB = &$this->getDatabaseConnection();
+        $this->_connect();
+        $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
+       
         return substr($DB->quote($string),1,-1);
     }
 
@@ -1426,7 +1447,9 @@ Class DB_DataObject extends DB_DataObject_Overload
                 
                 $x = new DB_DataObject;
                 $x->_database = $args[0];
-                $DB  = $x->getDatabaseConnection();
+                $this->_connect();
+                $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
+       
                 $tables = $DB->getListOf('tables');
                 require_once 'DB/DataObject/Generator.php';
                 foreach($tables as $table) {
@@ -1564,8 +1587,12 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         
         global $_DB_DATAOBJECT;
-        if (!@$this->_database) {
+        if (!isset($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
             $this->_connect();
+        }
+        
+        if (isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
+            return $_DB_DATAOBJECT['INI'][$this->_database][$this->__table];
         }
         
         $this->databaseStructure();
@@ -1604,8 +1631,11 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         
         global $_DB_DATAOBJECT;
-        if (!@$this->_database) {
+        if (!isset($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
             $this->_connect();
+        }
+        if (isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table."__keys"])) {
+            return array_keys($_DB_DATAOBJECT['INI'][$this->_database][$this->__table."__keys"]);
         }
         $this->databaseStructure();
         
@@ -1642,12 +1672,17 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (isset($this->_databaseSequenceKeys )) {
             return $this->_databaseSequenceKeys;
         }
-        
+        if (!isset($_DB_DATAOBJECT['SEQUENCE'][$this->_database])) {
+            $_DB_DATAOBJECT['SEQUENCE'][$this->_database] = array();
+        }
         $keys = $this->keys();
         if (!$keys) {
-            return array(false,false,false);;
+            return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array(false,false,false);;
         }
-        $table = $this->table();
+        
+        $table =  isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table]) ?   
+            $_DB_DATAOBJECT['INI'][$this->_database][$this->__table] : $this->table();
+       
         $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'];
         
         $usekey = $keys[0];
@@ -1666,19 +1701,19 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         // if the key is not an integer - then it's not a sequence or native
         if (!($table[$usekey] & DB_DATAOBJECT_INT)) {
-                return array(false,false,false);
+                return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array(false,false,false);
         }
 
         if (@$_DB_DATAOBJECT['CONFIG']['ignore_sequence_keys']) {
             $ignore =  $_DB_DATAOBJECT['CONFIG']['ignore_sequence_keys'];
             if (is_string($ignore) && (strtoupper($ignore) == 'ALL')) {
-                return array(false,false,$seqname);
+                return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array(false,false,$seqname);
             }
             if (is_string($ignore)) {
                 $ignore = $_DB_DATAOBJECT['CONFIG']['ignore_sequence_keys'] = explode(',',$ignore);
             }
             if (in_array($this->__table,$ignore)) {
-                return array(false,false,$seqname);
+                return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array(false,false,$seqname);
             }
         }
         
@@ -1697,7 +1732,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         // multiple unique primary keys without a native sequence...
         if (($realkeys[$usekey] == 'K') && (count($keys) > 1)) {
-            return array(false,false,$seqname);
+            return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array(false,false,$seqname);
         }
         // use native sequence keys...
         // technically postgres native here...
@@ -1707,11 +1742,11 @@ Class DB_DataObject extends DB_DataObject_Overload
                 ($table[$usekey] & DB_DATAOBJECT_INT) && 
                 (@$realkeys[$usekey] == 'N')
                 ) {
-            return array($usekey,true,$seqname);
+            return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array($usekey,true,$seqname);
         }
         // I assume it's going to try and be a nextval DB sequence.. (not native)
         
-        return array($usekey,false,$seqname);
+        return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array($usekey,false,$seqname);
     }
     
     
@@ -1960,7 +1995,9 @@ Class DB_DataObject extends DB_DataObject_Overload
     function _build_condition($keys, $filter = array(),$negative_filter=array())
     {
         global $_DB_DATAOBJECT;
-        $DB             = &$this->getDatabaseConnection();
+        $this->_connect();
+        $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
+       
         $quoteEntities  = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
         // if we dont have query vars.. - reset them.
         if (!isset($this->_query)) {
@@ -2480,7 +2517,9 @@ Class DB_DataObject extends DB_DataObject_Overload
             $this->raiseError("joinAdd: called without an object", DB_DATAOBJECT_ERROR_NODATA,PEAR_ERROR_DIE);
         }
         /*  make sure $this->_database is set.  */
-        $DB = &$this->getDatabaseConnection();
+        $this->_connect();
+        $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
+       
 
         $this->table(); /* make sure the links are loaded */
  
@@ -2793,7 +2832,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     function validate()
     {
         require_once 'Validate.php';
-        $table = &$this->table();
+        $table = $this->table();
         $ret   = array();
 
         foreach($table as $key => $val) {

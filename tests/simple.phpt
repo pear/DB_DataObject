@@ -279,10 +279,11 @@ class test extends DB_DataObject {
 	for($i = 0; $i < 10000; $i++) {
 		
 		$org->name =$r;
+		//$rslt = $org->query("INSERT INTO test (name) VALUES ('$r')");
 		$rslt = $org->insert();
 		if (!($i % 100)) {
 			echo "$i:".strlen(serialize($GLOBALS['_DB_DATAOBJECT']))."\n";
-			print_r($GLOBALS['_PEAR_error_handler_stack']);
+			//print_r($GLOBALS['_PEAR_error_handler_stack']);
 			echo `cat /proc/$p/status | grep VmData`;
 			//print_r($org);
 		}
