@@ -17,7 +17,7 @@
 // $Id$
 
 /**
- * Generation tools for DB_DataObjectp
+ * Generation tools for DB_DataObject
  *
  * Config _$ptions
  * [DB_DataObject_Generator]
