@@ -379,7 +379,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             $this->debug("CHECK autofetchd $n", "__find", 1);
         }
         // unset the 
-        unset($this->_query);
+        
         
         if ($n && $this->N > 0 ) {
              if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
@@ -469,7 +469,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug("{$this->__table} DONE", "fetchrow",2);
         }
-
+        if (isset($this->_query)) {
+            unset($this->_query);
+        }
         return true;
     }
 
@@ -1159,14 +1161,22 @@ Class DB_DataObject extends DB_DataObject_Overload
     function count($whereAddOnly = false)
     {
         global $_DB_DATAOBJECT;
-        $items   = $this->table();
-        $tmpcond = $this->_query['condition'];
-        $__DB    = $this->getDatabaseConnection();
+        $t = $this->__clone();
+        
+        
+        $items   = $t->table();
+        if (!isset($t->_query)) {
+            DB_DataObject::raiseError(
+                "You cannot do run count after you have run fetch()", 
+                DB_DATAOBJECT_ERROR_INVALIDARGS);
+            return false;
+        }
+        $__DB    = $t->getDatabaseConnection();
 
         if (!$whereAddOnly && $items)  {
             foreach ($items as $key => $val) {
-                if (isset($this->$key))  {
-                    $this->whereAdd($key . ' = ' . $__DB->quote($this->$key));
+                if (isset($t->$key))  {
+                    $t->whereAdd($key . ' = ' . $__DB->quote($t->$key));
                 }
             }
         }
@@ -1178,13 +1188,13 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
 
         $r = $this->_query(
-            "SELECT count({$this->__table}.{$keys[0]}) as DATAOBJECT_NUM
-                FROM {$this->__table} {$this->_join} {$this->_query['condition']}");
+            "SELECT count({$t->__table}.{$keys[0]}) as DATAOBJECT_NUM
+                FROM {$t->__table} {$t->_join} {$t->_query['condition']}");
         if (PEAR::isError($r)) {
             return false;
         }
-        $this->_query['condition'] = $tmpcond;
-        $result  = &$_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid];
+         
+        $result  = &$_DB_DATAOBJECT['RESULTS'][$t->_DB_resultid];
         $l = $result->fetchRow();
         return $l[0];
     }
