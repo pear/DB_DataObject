@@ -838,9 +838,10 @@ Class DB_DataObject {
         $location = $options['schema_location'];
         $definitions[$database] = parse_ini_file($location."/{$database}.ini",TRUE);
         /* load the link table if it exists. */
-        if (file_exists($location."/{$database}.links.ini")) {
+        if (file_exists("{$location}/{$database}.links.ini")) {
             $links = &PEAR::getStaticProperty('DB_DataObject', "{$database}.links");
-            $linkConfig = parse_ini_file("config/{$database}.links.ini", true);
+            /* not sure why $links = ... here  - TODO check if that works */
+            $linkConfig = parse_ini_file("{$location}/{$database}.links.ini", true);
             $links = $linkConfig;
         }
         return $definitions[$database][$table];
