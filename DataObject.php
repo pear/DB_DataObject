@@ -911,6 +911,18 @@ Class DB_DataObject extends DB_DataObject_Overload
                         }
                         $this->$key = $mssql_key;
                         break; 
+                        
+                    case 'pgsql':
+                        if (!($seq = @$options['sequence_'. $this->__table])) {
+                            $seq = $this->__table . '_seq';
+                        }
+                    	$pgsql_key = $DB->getOne("SELECT last_value FROM ".$seq);
+                        if (PEAR::isError($pgsql_key)) {
+                            DB_DataObject::raiseError($r);
+                            return false;
+                        }
+                        $this->$key = $pgsql_key;
+                    	break;
                 }
                         
             }
@@ -1602,6 +1614,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         
          
         // use native sequence keys...
+        // technically postgres native here...
+        // we need to get the new improved tabledata sorted out first.
+        
         if (in_array($dbtype , array( 'mysql', 'mssql')) && ($table[$usekey] & DB_DATAOBJECT_INT)) {
             return array($usekey,true);
         }
