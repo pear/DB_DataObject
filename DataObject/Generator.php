@@ -353,7 +353,7 @@ class DB_DataObject_Generator extends DB_DataObject {
             // can not do set as PEAR::DB table info doesnt support it.
             //if (substr($t->Type,0,3) == "set")
             //    $sets[$t->Field] = "array".substr($t->Type,3);
-            
+            $body .= $this->derivedHookVar($t,$padding);
         }
         
         /* FC/BC compatible with ZE2 */
@@ -382,6 +382,7 @@ class DB_DataObject_Generator extends DB_DataObject {
         //    $kk = strtoupper($k);
         //    $body .="    function getSets{$k}() { return {$v}; }\n";
         //}
+        $body .= $this->derivedHookFunctions();
         
         $body .= "\n    /* the code above is auto generated do not remove the tag below */";
         $body .= "\n    ###END_AUTOCODE\n";
@@ -403,8 +404,38 @@ class DB_DataObject_Generator extends DB_DataObject {
             $body,$input);
     }
     
-   
-     
+    /**
+    * hook to add extra methods to all classes
+    *
+    * called once for each class, use with $this->table and 
+    * $this->_definitions[$this->table], to get data out of the current table,
+    * use it to add extra methods to the default classes.
+    * 
+    * @access	 public
+    * @return  string added to class eg. functions.
+    */
+    function derivedHookFunctions()
+	{
+		// This is so derived generator classes can generate functions
+		// It MUST NOT be changed here!!! 
+		return ""; 
+	}	   
+    /**
+    * hook for var lines
+    * called each time a var line is generated, override to add extra var
+    * lines 
+    * 
+    * @param object t containing type,len,flags etc. from tableInfo call
+    * @param int padding number of spaces 
+    * @access	 public
+    * @return  string added to class eg. functions.
+    */
+ 	function derivedHookVar(&$t,$padding)
+	{
+		// This is so derived generator classes can generate variabels
+		// It MUST NOT be changed here!!! 
+		return "";
+	} 
     
 }
 ?>

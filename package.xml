@@ -20,14 +20,26 @@
       <email>alan@akbkhome.com</email>
     </maintainer>
   </maintainers>
+  
+  
+  
   <release>
-      <version>0.6</version>
-      <date>2002-09-10</date>
+      <version>0.7</version>
+      <date>2002-09-21</date>
       <notes>
-        - bug fix release on insert (broke due to compatibility fixes)
+        - update and insert now return FALSE on error conditions (Peter Gebauer)
+          which can be checked using === FALSE, and the error obtained using $object->_lastError
+        - delete will only use primary keys if they are set, otherwise it will use all object 
+          variables to build the condition. (Daniel Ferreira)
+        - Added derivedHookFunctions(), and derivedHookVar() to enable extensions to generator to
+          make user defined methods. (Michael Lund Rasmussen)
+          
       </notes>
       <state>beta</state>
      </release>
+     
+     
+     
     <filelist>
         <dir name="/" baseinstalldir="DB" role="php">
             <file>DataObject.php</file>
@@ -39,7 +51,13 @@
         </dir>
     </filelist>
    
+   
+   
+   
   <changelog>
+  
+  
+  
   <release>
       <version>0.6</version>
       <date>2002-09-10</date>
