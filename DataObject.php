@@ -319,7 +319,7 @@ Class DB_DataObject
         $results = &PEAR::getStaticProperty('DB_DataObject','results');
 
         if (!@$this->N) {
-            DB_DataObject::raiseError("fetch: No Data Availabe", DB_DATAOBJECT_ERROR_NODATA);
+            DB_DataObject::raiseError("fetch: No Data Available", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
         $result = &$results[$this->_DB_resultid];
