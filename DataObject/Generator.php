@@ -220,6 +220,7 @@ class DB_DataObject_Generator extends DB_DataObject
         $this->_newConfig .= "\n[{$this->table}]\n";
         $keys_out =  "\n[{$this->table}__keys]\n";
         foreach($defs as $t) {
+            print_r($t);   
             $n=0;
 
             switch (strtoupper($t->type)) {
@@ -276,7 +277,7 @@ class DB_DataObject_Generator extends DB_DataObject
             // i've no idea if this will work well on other databases?
             // only use primary key, cause the setFrom blocks you setting all key items...
 
-            if (preg_match("/(primary|unique)/i",$t->flags)) {
+            if (preg_match("/(primary|unique|nextval\()/i",$t->flags)) {
                 $keys_out .= "{$t->name} = $type\n";
                 //$this->_newConfig->setValue("/{$this->table}__keys",$t->name, $type);
             }

@@ -31,8 +31,8 @@
           (Daniel Von Fange)
         - change update and delete to return the number of rows affected or false on failure
         - various code tidy ups - standards etc. (Arnaud Limbourg)
-        - fix generator for postgres and mdb - use unique keys as keys.
-      
+        - fix generator for postgres and mdb - use unique keys and look for 'nextval' as keys.
+        
       </notes>
       <state>stable</state>
     </release>
