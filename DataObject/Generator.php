@@ -146,7 +146,9 @@ class DB_DataObject_Generator extends DB_DataObject {
             $defs =  $__DB->tableInfo($table);
             // cast all definitions to objects - as we deal with that better.
             foreach($defs as $def) {
-                $this->_definitions[$table][] = (object) $def;
+                if (is_array($def)) {
+                    $this->_definitions[$table][] = (object) $def;
+                }
             }
         }
         //print_r($this->_definitions);
@@ -223,6 +225,7 @@ class DB_DataObject_Generator extends DB_DataObject {
                 case "STRING":
                 case "CHAR":
                 case "VARCHAR":
+                case "VARCHAR2":               
                 case "TINYTEXT":
                 case "TEXT":
                 case "MEDIUMTEXT":
