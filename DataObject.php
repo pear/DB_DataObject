@@ -500,7 +500,7 @@ Class DB_DataObject
      * @access public
      * @return void
      */
-    function limit($a = NULL, $b = NULL)
+    function limit($a = null, $b = null)
     {
         if ($a === NULL) {
            $this->_limit = '';
@@ -538,7 +538,7 @@ Class DB_DataObject
      * @access public
      * @return void
      */
-    function selectAdd($k = NULL)
+    function selectAdd($k = null)
     {
         if ($k === NULL) {
             $this->_data_select = '';
@@ -548,7 +548,36 @@ Class DB_DataObject
             $this->_data_select .= ', ';
         $this->_data_select .= " $k ";
     }
-
+    /**
+     * Adds multiple Columns or objects to select with formating.
+     *
+     * $object->selectAs(null); // adds "table.colnameA as colnameA,table.colnameB as colnameB,......"
+     *                      // note with null it will also clear the '*' default select
+     * $object->selectAs(array('a','b'),'%s_x'); // adds "a as a_x, b as b_x"
+     * $object->selectAdd($object,'prefix_%s'); // calls $object->get_table and adds it all as
+     *                  objectTableName.colnameA as prefix_colnameA
+     *
+     * @param  array|object|null the array or object to take column names from.
+     * @param  string format in sprintf format (use %s for the colname)
+     * @access public
+     * @return void
+     */
+    function selectAs($from = null,$format = '%s')
+    {
+        if ($from === null) {
+            // blank the '*' 
+            $this->selectAdd();
+            $from = $this;
+        }
+        $table = $this->__table;
+        if (is_object($from)) {
+            $table = $from->__table;
+            $from = array_keys($from->_get_table());
+        }
+        foreach ($from as $k) {
+            $this->selectAdd(sprintf("%s.%s as {$format}",$table,$k,$k));
+        }
+    }
     /**
      * Insert the current objects variables into the database
      *
@@ -1742,7 +1771,7 @@ Class DB_DataObject
             if (!$k) {
                 continue; // ignore empty keys!!! what
             }
-            if (is_object($from) && @isset($from->$k)) {
+            if (is_object($from) && isset($from->$k)) {
                 if ($_DB_DATAOBJECT['OVERLOADED'] && (strtolower($k) != 'from') ) {
                     $ret = $this->{'set'.$k}($from->$k);
                     if (is_string($ret)) {
@@ -1753,7 +1782,12 @@ Class DB_DataObject
                 $this->$k = $from->$k;
                 continue;
             }
-            if (!@isset($from[$k])) {
+            
+            if (is_object($from)) {
+                continue;
+            }
+            
+            if (!isset($from[$k])) {
                 continue;
             }
             if (is_object($from[$k])) {
