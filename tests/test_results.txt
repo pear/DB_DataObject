@@ -212,7 +212,7 @@ Array
 
 ****** limited queries 1
 test   : __find       : 
-test   : QUERY       : SELECT * FROM test      LIMIT 1
+test   : QUERY       : SELECT * FROM test      LIMIT 0, 1
 test   : __find       : CHECK autofetchd 
 test   : __find       : DONE
 test   : FETCH       : a:6:{s:2:"id";s:1:"2";s:4:"name";s:4:"test";s:8:"username";s:8:"username";s:8:"password";s:0:"";s:9:"firstname";s:5:"jones";s:8:"lastname";s:0:"";}
@@ -396,7 +396,8 @@ myproject_dataobject_player_has_stats Object
             [group_by] => 
             [order_by] => 
             [having] => 
-            [limit] => 
+            [limit_start] => 
+            [limit_count] => 
             [data_select] => *
         )
 
@@ -755,9 +756,9 @@ Array
 
 )
 test2   : CONNECT       : USING CACHED CONNECTION
-test2   : QUERY       : INSERT INTO test2 (id , username ) VALUES ( 240 , 'yyyy' ) 
+test2   : QUERY       : INSERT INTO test2 (id , username ) VALUES ( 241 , 'yyyy' ) 
 
-RET: 240
+RET: 241
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : fillTable       : getting def for test/test2
@@ -909,8 +910,8 @@ myproject_dataobject_test2   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_test2   : QUERY       : SELECT * FROM test2     
 myproject_dataobject_test2   : __find       : CHECK autofetchd 
 myproject_dataobject_test2   : __find       : DONE
-myproject_dataobject_test2   : FETCH       : a:6:{s:2:"id";s:3:"240";s:4:"name";s:0:"";s:8:"username";s:4:"yyyy";s:8:"password";s:0:"";s:9:"firstname";s:0:"";s:8:"lastname";s:0:"";}
-myproject_dataobject_test2   : fetchrow LINE       : id = 240
+myproject_dataobject_test2   : FETCH       : a:6:{s:2:"id";s:3:"241";s:4:"name";s:0:"";s:8:"username";s:4:"yyyy";s:8:"password";s:0:"";s:9:"firstname";s:0:"";s:8:"lastname";s:0:"";}
+myproject_dataobject_test2   : fetchrow LINE       : id = 241
 myproject_dataobject_test2   : fetchrow LINE       : name = 
 myproject_dataobject_test2   : fetchrow LINE       : username = yyyy
 myproject_dataobject_test2   : fetchrow LINE       : password = 
@@ -920,7 +921,7 @@ myproject_dataobject_test2   : fetchrow       : test2 DONE
 myproject_dataobject_test2 Object
 (
     [N] => 1
-    [id] => 240
+    [id] => 241
     [name] => 
     [username] => yyyy
     [password] => 
@@ -1085,7 +1086,8 @@ myproject_dataobject_testproxy Object
             [group_by] => 
             [order_by] => 
             [having] => 
-            [limit] => 
+            [limit_start] => 
+            [limit_count] => 
             [data_select] => *
         )
 
@@ -1434,7 +1436,8 @@ myproject_dataobject_typetest Object
             [group_by] => 
             [order_by] => 
             [having] => 
-            [limit] => 
+            [limit_start] => 
+            [limit_count] => 
             [data_select] => *
         )
 
@@ -1445,12 +1448,12 @@ myproject_dataobject_typetest Object
     [id] => 
     [a_date] => 2003-01-01
     [a_time] => 12:00:00
-    [a_datetime] => 2004-10-13 01:00:00
+    [a_datetime] => 2004-10-15 01:00:00
     [b_date] => null
     [ts] => 
 )
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_typetest   : QUERY       : INSERT INTO typetest (a_date , a_time , a_datetime , b_date ) VALUES ('2003-01-01' , '12:00:00' , '2004-10-13 01:00:00' ,  NULL ) 
+myproject_dataobject_typetest   : QUERY       : INSERT INTO typetest (a_date , a_time , a_datetime , b_date ) VALUES ('2003-01-01' , '12:00:00' , '2004-10-15 01:00:00' ,  NULL ) 
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : GET       : id 1 Array
 (
@@ -1464,13 +1467,13 @@ myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : QUERY       : SELECT * FROM typetest  WHERE  typetest.id = 1    
 myproject_dataobject_typetest   : __find       : CHECK autofetchd 1
 myproject_dataobject_typetest   : __find       : ABOUT TO AUTOFETCH
-myproject_dataobject_typetest   : FETCH       : a:6:{s:2:"id";s:1:"1";s:6:"a_date";s:10:"2003-01-01";s:6:"a_time";s:8:"12:00:00";s:10:"a_datetime";s:19:"2004-10-13 01:00:00";s:6:"b_date";N;s:2:"ts";s:14:"20041014104403";}
+myproject_dataobject_typetest   : FETCH       : a:6:{s:2:"id";s:1:"1";s:6:"a_date";s:10:"2003-01-01";s:6:"a_time";s:8:"12:00:00";s:10:"a_datetime";s:19:"2004-10-15 01:00:00";s:6:"b_date";N;s:2:"ts";s:14:"20041016103855";}
 myproject_dataobject_typetest   : fetchrow LINE       : id = 1
 myproject_dataobject_typetest   : fetchrow LINE       : a_date = 2003-01-01
 myproject_dataobject_typetest   : fetchrow LINE       : a_time = 12:00:00
-myproject_dataobject_typetest   : fetchrow LINE       : a_datetime = 2004-10-13 01:00:00
+myproject_dataobject_typetest   : fetchrow LINE       : a_datetime = 2004-10-15 01:00:00
 myproject_dataobject_typetest   : fetchrow LINE       : b_date = 
-myproject_dataobject_typetest   : fetchrow LINE       : ts = 20041014104403
+myproject_dataobject_typetest   : fetchrow LINE       : ts = 20041016103855
 myproject_dataobject_typetest   : fetchrow       : typetest DONE
 myproject_dataobject_typetest   : __find       : DONE
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
@@ -1478,9 +1481,9 @@ myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : 3       : got keys as a:1:{i:0;s:2:"id";}
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_typetest   : QUERY       : UPDATE  typetest  SET a_date = '2003-01-01' , a_time = '12:00:00' , a_datetime = '2004-10-13 01:00:00' , b_date = '1970-01-01 07:59:59'   WHERE  typetest.id = 1 
+myproject_dataobject_typetest   : QUERY       : UPDATE  typetest  SET a_date = '2003-01-01' , a_time = '12:00:00' , a_datetime = '2004-10-15 01:00:00' , b_date = '1970-01-01 07:59:59'   WHERE  typetest.id = 1 
 myproject_dataobject_typetest   : 1       : Clearing Cache for myproject_dataobject_typetest
-TIMESTAMP = 14/10/2004 10:44:03
+TIMESTAMP = 16/10/2004 10:38:55
 myproject_dataobject_typetest Object
 (
     [_DB_DataObject_version] => @version@
@@ -1496,16 +1499,17 @@ myproject_dataobject_typetest Object
     [id] => 1
     [a_date] => 2003-01-01
     [a_time] => 12:00:00
-    [a_datetime] => 2004-10-13 01:00:00
+    [a_datetime] => 2004-10-15 01:00:00
     [b_date] => 1970-01-01 07:59:59
-    [ts] => 20041014104403
+    [ts] => 20041016103855
     [_query] => Array
         (
             [condition] => 
             [group_by] => 
             [order_by] => 
             [having] => 
-            [limit] => 
+            [limit_start] => 
+            [limit_count] => 
             [data_select] => *
         )
 
@@ -1640,7 +1644,7 @@ Array
     [2] => 
 )
 myproject_dataobject_itemtest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_itemtest   : QUERY       : INSERT INTO itemtest (id , word ) VALUES ( 42 , 'test' ) 
+myproject_dataobject_itemtest   : QUERY       : INSERT INTO itemtest (id , word ) VALUES ( 43 , 'test' ) 
 myproject_dataobject_itemtest   : CONNECT       : USING CACHED CONNECTION
 Array
 (
@@ -1759,7 +1763,7 @@ myproject_dataobject_booltest   : QUERY       : SELECT * FROM booltest  WHERE  b
 myproject_dataobject_booltest   : __find       : CHECK autofetchd 
 myproject_dataobject_booltest   : __find       : DONE
 myproject_dataobject_booltest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_booltest   : QUERY       : INSERT INTO booltest (id , bo_test , bo_int ) VALUES ( 5 , TRUE ,  1 ) 
+myproject_dataobject_booltest   : QUERY       : INSERT INTO booltest (id , bo_test , bo_int ) VALUES ( 6 , TRUE ,  1 ) 
 --GET--
 --POST--
 --EXPECT--
