@@ -31,7 +31,8 @@
 
         #---- - Joins incorrectly prefect database name for mysql/mysqli
              (Thanks to Mark Mitchenall for spotting this) 
-        
+        #---- used wrong variable for checking prefixes.
+            (Stephane Gully)
         
  
       ]]></notes>

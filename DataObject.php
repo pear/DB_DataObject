@@ -2833,7 +2833,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         
-        $database_prefix = in_array($DB->type,array('mysql','mysqli')) ?
+        $database_prefix = in_array($DB->dsn["phptype"],array('mysql','mysqli')) ?
             $obj->_database . '.' : '';
         
         // not sure  how portable adding database prefixes is..
