@@ -162,7 +162,11 @@ class DB_DataObject_Generator extends DB_DataObject
         if (is_a($this->tables , 'PEAR_Error')) {
             return PEAR::raiseError($this->tables->toString(), null, PEAR_ERROR_DIE);
         }
-            
+        // build views as well if asked to.
+        if (!empty($options['build_views'])) {
+            $this->tables = array_merge ($this->tables, $__DB->getListOf('views'));
+        }
+        
         
         // declare a temporary table to be filled with matching tables names
         $tmp_table = array();
