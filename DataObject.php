@@ -911,7 +911,16 @@ class DB_DataObject extends DB_DataObject_Overload
                 $rightq .= " NULL ";
                 continue;
             }
-
+            // DATE is empty... on a col. that can be null.. 
+            // note: this may be usefull for time as well..
+            if (!$this->$k && 
+                    (($v & DB_DATAOBJECT_DATE) || ($v & DB_DATAOBJECT_TIME)) && 
+                    !($v & DB_DATAOBJECT_NOTNULL)) {
+                    
+                $rightq .= " NULL ";
+                continue;
+            }
+            
             if ($v & DB_DATAOBJECT_STR) {
                 $rightq .= $DB->quote($this->$k) . " ";
                 continue;
@@ -1087,11 +1096,21 @@ class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            /* special values ... at least null is handled...*/
+            // special values ... at least null is handled...
             if (strtolower($this->$k) === 'null') {
                 $settings .= "$kSql = NULL ";
                 continue;
             }
+            // DATE is empty... on a col. that can be null.. 
+            // note: this may be usefull for time as well..
+            if (!$this->$k && 
+                    (($v & DB_DATAOBJECT_DATE) || ($v & DB_DATAOBJECT_TIME)) && 
+                    !($v & DB_DATAOBJECT_NOTNULL)) {
+                    
+                $settings .= "$kSql = NULL ";
+                continue;
+            }
+            
 
             if ($v & DB_DATAOBJECT_STR) {
                 $settings .= "$kSql = ". $DB->quote($this->$k) . ' ';
@@ -3106,6 +3125,11 @@ class DB_DataObject extends DB_DataObject_Overload
                 return false;
         
             case (($cols[$col] & DB_DATAOBJECT_DATE) &&  ($cols[$col] & DB_DATAOBJECT_TIME)):
+                // empty values get set to '' (which is inserted/updated as NULl
+                if (!$value) {
+                    $this->$col = '';
+                }
+            
                 if (is_numeric($value)) {
                     $this->$col = date('Y-m-d H:i:s', $value);
                     return true;
@@ -3116,6 +3140,11 @@ class DB_DataObject extends DB_DataObject_Overload
                 return true;
             
             case ($cols[$col] & DB_DATAOBJECT_DATE):
+                // empty values get set to '' (which is inserted/updated as NULl
+                if (!$value) {
+                    $this->$col = '';
+                }
+            
                 if (is_numeric($value)) {
                     $this->$col = date('Y-m-d',$value);
                     return true;
@@ -3128,7 +3157,11 @@ class DB_DataObject extends DB_DataObject_Overload
                 return true;
             
             case ($cols[$col] & DB_DATAOBJECT_TIME):
-               
+                // empty values get set to '' (which is inserted/updated as NULl
+                if (!$value) {
+                    $this->$col = '';
+                }
+            
                 $guess = strtotime($value);
                 if ($guess != -1) {
                      $this->$col = date('H:i:s', $guess);
