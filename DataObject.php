@@ -1066,8 +1066,10 @@ class DB_DataObject extends DB_DataObject_Overload
             if (!isset($this->$k)) {
                 continue;
             }
+            // ignore stuff thats 
+          
             // dont write things that havent changed..
-            if (($dataObject !== false) && (@$dataObject->$k == $this->$k)) {
+            if (($dataObject !== false) && isset($dataObject->$k) && ($dataObject->$k == $this->$k)) {
                 continue;
             }
             
@@ -1129,7 +1131,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
 
         
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("got keys as ".serialize($keys),3);
         }
         
@@ -1254,7 +1256,7 @@ class DB_DataObject extends DB_DataObject_Overload
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             $this->_loadConfig();
         }
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("{$this->__table} $row of {$this->N}", "fetchrow",3);
         }
         if (!$this->__table) {
@@ -1269,7 +1271,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->raiseError("fetchrow: No results avaiable", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("{$this->__table} $row of {$this->N}", "fetchrow",3);
         }
 
@@ -1283,13 +1285,13 @@ class DB_DataObject extends DB_DataObject_Overload
 
         foreach($array as $k => $v) {
             $kk = str_replace(".", "_", $k);
-            if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+            if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                 $this->debug("$kk = ". $array[$k], "fetchrow LINE", 3);
             }
             $this->$kk = $array[$k];
         }
 
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("{$this->__table} DONE", "fetchrow", 3);
         }
         return true;
@@ -1776,7 +1778,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $seqname = false;
         
-        if (@$_DB_DATAOBJECT['CONFIG']['sequence_'.$this->__table]) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['sequence_'.$this->__table])) {
             $usekey = $_DB_DATAOBJECT['CONFIG']['sequence_'.$this->__table];
             if (strpos($usekey,':') !== false) {
                 list($usekey,$seqname) = explode(':',$usekey);
@@ -1790,7 +1792,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         
         
-        if (@$_DB_DATAOBJECT['CONFIG']['ignore_sequence_keys']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['ignore_sequence_keys'])) {
             $ignore =  $_DB_DATAOBJECT['CONFIG']['ignore_sequence_keys'];
             if (is_string($ignore) && (strtoupper($ignore) == 'ALL')) {
                 return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array(false,false,$seqname);
@@ -1821,13 +1823,13 @@ class DB_DataObject extends DB_DataObject_Overload
         
         if (    in_array($dbtype , array( 'mysql', 'mssql')) && 
                 ($table[$usekey] & DB_DATAOBJECT_INT) && 
-                (@$realkeys[$usekey] == 'N')
+                isset($realkeys[$usekey]) && ($realkeys[$usekey] == 'N')
                 ) {
             return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array($usekey,true,$seqname);
         }
         // if not a native autoinc, and we have not assumed all primary keys are sequence
         if (($realkeys[$usekey] != 'N') && 
-            @$_DB_DATAOBJECT['CONFIG']['dont_use_pear_sequences']) {
+            !empty($_DB_DATAOBJECT['CONFIG']['dont_use_pear_sequences'])) {
             return array(false,false,false);
         }
         // I assume it's going to try and be a nextval DB sequence.. (not native)
@@ -1854,11 +1856,11 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $class = get_class($this);
         
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("Clearing Cache for ".$class,1);
         }
         
-        if (@$_DB_DATAOBJECT['CACHE'][$class]) {
+        if (!empty($_DB_DATAOBJECT['CACHE'][$class])) {
             unset($_DB_DATAOBJECT['CACHE'][$class]);
         }
     }
@@ -1884,7 +1886,7 @@ class DB_DataObject extends DB_DataObject_Overload
 
         // is it already connected ?
 
-        if ($this->_database_dsn_md5 && @$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]) {
+        if ($this->_database_dsn_md5 && !empty($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
             if (PEAR::isError($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
                 return $this->raiseError(
                         $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->message,
@@ -1903,15 +1905,15 @@ class DB_DataObject extends DB_DataObject_Overload
         // try and work out what to use for the dsn !
 
         $options= &$_DB_DATAOBJECT['CONFIG'];
-        $dsn = @$this->_database_dsn;
+        $dsn = isset($this->_database_dsn) ? $this->_database_dsn : null;
 
         if (!$dsn) {
             if (!$this->_database) {
-                $this->_database = @$options["table_{$this->__table}"];
+                $this->_database = isset($options["table_{$this->__table}"]) ?$options["table_{$this->__table}"] : null;
             }
-            if (@$this->_database && @$options["database_{$this->_database}"])  {
+            if ($this->_database && !empty($options["database_{$this->_database}"]))  {
                 $dsn = $options["database_{$this->_database}"];
-            } else if (@$options['database']) {
+            } else if (!empty($options['database'])) {
                 $dsn = $options['database'];
             }
         }
@@ -1929,8 +1931,8 @@ class DB_DataObject extends DB_DataObject_Overload
 
         $this->_database_dsn_md5 = md5($dsn);
 
-        if (@$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]) {
-            if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
+            if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                 $this->debug("USING CACHED CONNECTION", "CONNECT",3);
             }
             if (!$this->_database) {
@@ -1938,7 +1940,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             return true;
         }
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("NEW CONNECTION", "CONNECT",3);
             /* actualy make a connection */
             $this->debug("{$dsn} {$this->_database_dsn_md5}", "CONNECT",3);
@@ -1950,7 +1952,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn);
         }
         
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug(serialize($_DB_DATAOBJECT['CONNECTIONS']), "CONNECT",5);
         }
         if (PEAR::isError($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
@@ -1995,7 +1997,7 @@ class DB_DataObject extends DB_DataObject_Overload
 
         $options = &$_DB_DATAOBJECT['CONFIG'];
 
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug($string,$log="QUERY");
             
         }
@@ -2018,7 +2020,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         
 
-        if (@$options['debug_ignore_updates'] &&
+        if (!empty($options['debug_ignore_updates']) &&
             (strtolower(substr(trim($string), 0, 6)) != 'select') &&
             (strtolower(substr(trim($string), 0, 4)) != 'show') &&
             (strtolower(substr(trim($string), 0, 8)) != 'describe')) {
@@ -2042,12 +2044,12 @@ class DB_DataObject extends DB_DataObject_Overload
        
 
         if (DB::isError($result)) {
-            if (@$_DB_DATAOBJECT['CONFIG']['debug']) { 
+            if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) { 
                 $this->debug($result->toString(), "Query Error",1 );
             }
             return $result;
         }
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $t= explode(' ',microtime());
             $_DB_DATAOBJECT['QUERYENDTIME'] = $t[0]+$t[1];
             $this->debug('QUERY DONE IN  '.($t[0]+$t[1]-$time)." seconds", 'query',1);
@@ -2065,7 +2067,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->_DB_resultid = $_DB_resultid;
         }
         $this->N = 0;
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug(serialize($result), 'RESULT',5);
         }
         if (method_exists($result, 'numrows')) {
@@ -2245,7 +2247,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $table   = substr($class,strlen($_DB_DATAOBJECT['CONFIG']['class_prefix']));
 
         // only include the file if it exists - and barf badly if it has parse errors :)
-        if (@$_DB_DATAOBJECT['CONFIG']['proxy'] && empty($_DB_DATAOBJECT['CONFIG']['class_location'])) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['proxy']) && empty($_DB_DATAOBJECT['CONFIG']['class_location'])) {
             return false;
         }
         
@@ -2978,7 +2980,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            if ((strtolower(@$this->$key) == 'null') && ($val & DB_DATAOBJECT_NOTNULL)) {
+            if (is_string($this->$key) && (strtolower($this->$key) == 'null') && ($val & DB_DATAOBJECT_NOTNULL)) {
                 $ret[$key] = false;
                 continue;
             }
@@ -2989,7 +2991,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
             // if the string is empty.. assume it is ok..
-            if (!strlen(@$this->$key)) {
+            if (!is_object($this->$key) && !is_array($this->$key) && !strlen((string) $this->$key)) {
                 continue;
             }
             
@@ -2998,10 +3000,10 @@ class DB_DataObject extends DB_DataObject_Overload
                 
             
                 case  ($val & DB_DATAOBJECT_STR):
-                    $ret[$key] = Validate::string(@$this->$key, VALIDATE_PUNCTUATION . VALIDATE_NAME);
+                    $ret[$key] = Validate::string($this->$key, VALIDATE_PUNCTUATION . VALIDATE_NAME);
                     continue;
                 case  ($val & DB_DATAOBJECT_INT):
-                    $ret[$key] = Validate::number(@$this->$key, array('decimal'=>'.'));
+                    $ret[$key] = Validate::number($this->$key, array('decimal'=>'.'));
                     continue;
             }
         }
@@ -3338,8 +3340,8 @@ class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
 
-        if (@!$_DB_DATAOBJECT['CONFIG']['debug']  || 
-            (is_int($_DB_DATAOBJECT['CONFIG']['debug']) &&  @$_DB_DATAOBJECT['CONFIG']['debug'] < $level)) {
+        if (empty($_DB_DATAOBJECT['CONFIG']['debug'])  || 
+            (is_int($_DB_DATAOBJECT['CONFIG']['debug']) &&  $_DB_DATAOBJECT['CONFIG']['debug'] < $level)) {
             return;
         }
         // this is a bit flaky due to php's wonderfull class passing around crap..
@@ -3380,11 +3382,11 @@ class DB_DataObject extends DB_DataObject_Overload
             DB_DataObject::_loadConfig();
         }
         if ($v !== null) {
-            $r = @$_DB_DATAOBJECT['CONFIG']['debug'];
+            $r = isset($_DB_DATAOBJECT['CONFIG']['debug']) ? $_DB_DATAOBJECT['CONFIG']['debug'] : 0;
             $_DB_DATAOBJECT['CONFIG']['debug']  = $v;
             return $r;
         }
-        return @$_DB_DATAOBJECT['CONFIG']['debug'];
+        return isset($_DB_DATAOBJECT['CONFIG']['debug']) ? $_DB_DATAOBJECT['CONFIG']['debug'] : 0;
     }
 
     /**
@@ -3412,7 +3414,7 @@ class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
         
-        if ($behaviour == PEAR_ERROR_DIE && @$_DB_DATAOBJECT['CONFIG']['dont_die']) {
+        if ($behaviour == PEAR_ERROR_DIE && !empty($_DB_DATAOBJECT['CONFIG']['dont_die'])) {
             $behaviour = null;
         }
         
