@@ -515,7 +515,7 @@ class DB_DataObject_Generator extends DB_DataObject
         }
         
         $var = (substr(phpversion(),0,1) > 4) ? 'public' : 'var';
-        if (empty($options['generator_novars'])) {
+        if (!empty($options['generator_novars'])) {
             $var = '//'.$var;
         }
         
