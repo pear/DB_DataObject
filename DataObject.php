@@ -968,10 +968,13 @@ class DB_DataObject extends DB_DataObject_Overload
             if ($key && $useNative) {
                 switch ($dbtype) {
                     case 'mysql':
-                        $this->$key = mysql_insert_id(
+                    case 'mysqli':
+                        $method = "{$dbtype}_insert_id";
+                        $this->$key = $method(
                             $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->connection
                         );
                         break;
+                    
                     case 'mssql':
                         // note this is not really thread safe - you should wrapp it with 
                         // transactions = eg.
@@ -1840,7 +1843,7 @@ class DB_DataObject extends DB_DataObject_Overload
         // technically postgres native here...
         // we need to get the new improved tabledata sorted out first.
         
-        if (    in_array($dbtype , array( 'mysql', 'mssql')) && 
+        if (    in_array($dbtype , array( 'mysql', 'mysqli', 'mssql')) && 
                 ($table[$usekey] & DB_DATAOBJECT_INT) && 
                 isset($realkeys[$usekey]) && ($realkeys[$usekey] == 'N')
                 ) {
