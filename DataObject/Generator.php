@@ -148,7 +148,16 @@ class DB_DataObject_Generator extends DB_DataObject
         }
         // build views as well if asked to.
         if (!empty($options['build_views'])) {
-            $this->tables = array_merge ($this->tables, $__DB->getListOf('views'));
+            $views = $__DB->getListOf('views');
+            if (is_a($views,'PEAR_Error')) {
+                return PEAR::raiseError(
+                    'Error getting Views (check the PEAR bug database for the fix to DB), ' .
+                    $views->toString(), 
+                    null, 
+                    PEAR_ERROR_DIE
+                );
+            }
+            $this->tables = array_merge ($this->tables, $views);
         }
         
         
