@@ -3469,7 +3469,7 @@ class DB_DataObject extends DB_DataObject_Overload
         // this will never work totally with PHP's object model.
         // as this is passed on static calls (like staticGet in our case)
 
-        if (@is_object($this) && is_subclass_of($this,'db_dataobject')) {
+        if (isset($this) && is_object($this) && is_subclass_of($this,'db_dataobject')) {
             $this->_lastError = $error;
         }
 
