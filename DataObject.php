@@ -184,14 +184,18 @@ if ( substr(phpversion(),0,1) == 5) {
     if (!function_exists('clone')) {
         eval('function clone($t) { return $t; }');
     }
-
-    class DB_DataObject_Overload {
-        function __call($method,$args,&$return) {
-            return $this->_call($method,$args,$return);;
+    eval('
+        class DB_DataObject_Overload {
+            function __call($method,$args,&$return) {
+                return $this->_call($method,$args,$return);;
+            }
         }
-    }
-
+    ');
 }
+
+    
+
+
  
 
  /*
