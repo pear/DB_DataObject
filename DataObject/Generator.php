@@ -456,6 +456,11 @@ class DB_DataObject_Generator extends DB_DataObject
         //echo "Generating Class files:        \n";
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         $base = $options['class_location'];
+        if (strpos($base,'%s') !== false) {
+            $base = dirname($base);
+        } 
+        
+        
         if (!file_exists($base)) {
             require_once 'System.php';
             System::mkdir(array('-p',$base));
@@ -470,10 +475,17 @@ class DB_DataObject_Generator extends DB_DataObject
             $this->table = trim($this->table);
             $this->classname = $class_prefix.preg_replace('/[^A-Z0-9]/i','_',ucfirst($this->table));
             $i = '';
-            $outfilename = "{$base}/".preg_replace('/[^A-Z0-9]/i','_',ucfirst($this->table)).".php";
-            if (file_exists($outfilename))
-                $i = implode('',file($outfilename));
-            $out = $this->_generateClassTable($i);
+            
+            if (strpos($options['class_location'],'%s') !== false) {
+                $outfilename   = sprintf($options['class_location'], preg_replace('/[^A-Z0-9]/i','_',ucfirst($this->table)));
+            } else { 
+                $outfilename = "{$base}/".preg_replace('/[^A-Z0-9]/i','_',ucfirst($this->table)).".php";
+            }
+            if (file_exists($outfilename)) {
+                // file_get_contents???
+                $oldcontents = implode('',file($outfilename));
+            }
+            $out = $this->_generateClassTable($oldcontents);
             $this->debug( "writing $this->classname\n");
             $fh = fopen($outfilename, "w");
             fputs($fh,$out);

@@ -2339,8 +2339,11 @@ class DB_DataObject extends DB_DataObject_Overload
         if (!empty($_DB_DATAOBJECT['CONFIG']['proxy']) && empty($_DB_DATAOBJECT['CONFIG']['class_location'])) {
             return false;
         }
-        
-        $file = $_DB_DATAOBJECT['CONFIG']['class_location'].'/'.preg_replace('/[^A-Z0-9]/i','_',ucfirst($table)).".php";
+        if (strpos($_DB_DATAOBJECT['CONFIG']['class_location'],'%s') !== false) {
+            $file = sprintf($_DB_DATAOBJECT['CONFIG']['class_location'], preg_replace('/[^A-Z0-9]/i','_',ucfirst($table)));
+        } else {
+            $file = $_DB_DATAOBJECT['CONFIG']['class_location'].'/'.preg_replace('/[^A-Z0-9]/i','_',ucfirst($table)).".php";
+        }
         
         if (!file_exists($file)) {
             $found = false;
