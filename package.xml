@@ -28,7 +28,7 @@
       <date>2003-08-07</date>
       <notes>
          
-        New Features
+        New Features:
         - A Number of the private methods have been made Public,
         
           changes:
@@ -40,10 +40,13 @@
           
           changes by Markus Wolff
         
-        POSSIBLE BC Implications:   If you define _get_table or _get_keys manually (rather than using the ini file)
+        POSSIBLE BC IMPLICATIONS: If you define _get_table or _get_keys manually (rather than using the ini file)
           you should rename your methods table() and keys()
         
-        
+        Fixes:
+        - Generator is now more tollerant of editors that alter the spaces before
+          the autocode markers ### (Andreas Ljunggren)
+          
       </notes>
       <state>stable</state>
     </release>
