@@ -240,17 +240,22 @@ class DB_DataObject_Generator extends DB_DataObject
                 case "SMALLINT":
                 case "MEDIUMINT":
                 case "BIGINT":
-                    $type= DB_DATAOBJECT_INT;
+                    $type = DB_DATAOBJECT_INT;
                     if ($t->len == 1) {
                         $type +=  DB_DATAOBJECT_BOOL;
                     }
-
+                    break;
+               
                 case "REAL":
                 case "DOUBLE":
                 case "FLOAT":
                 case "DECIMAL":
                 case "NUMERIC":
-                    $type=DB_DATAOBJECT_INT;
+                    $type = DB_DATAOBJECT_INT;
+                    break;
+                    
+                 case "BOOL": // postgres needs to quote '0'
+                    $type = DB_DATAOBJECT_STR + DB_DATAOBJECT_BOOL;
                     break;
                     
                 case "STRING":
