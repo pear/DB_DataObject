@@ -498,18 +498,23 @@ class DB_DataObject_Generator extends DB_DataObject
         $padding = (30 - strlen($this->table));
         if ($padding < 2) $padding =2;
         $p =  str_repeat(' ',$padding) ;
-        $body .= "    var \$__table = '{$this->table}';  {$p}// table name\n";
         
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        
+        
+        $var = (substr(phpversion(),0,1) > 4) ? 'private' : 'var';
+        $body .= "    {$var} \$__table = '{$this->table}';  {$p}// table name\n";
+    
         
         // if we are using the option database_{databasename} = dsn
         // then we should add var $_database = here
         // as database names may not always match.. 
-        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        
         if (isset($options["database_{$this->_database}"])) {
-            $body .= "    var \$_database = '{$this->_database}';  {$p}// database name (used with database_{*} config)\n";
+            $body .= "    {$var} \$_database = '{$this->_database}';  {$p}// database name (used with database_{*} config)\n";
         }
         
-        
+        $var = (substr(phpversion(),0,1) > 4) ? 'public' : 'var';
         
         
         $defs = $this->_definitions[$this->table];
@@ -524,7 +529,9 @@ class DB_DataObject_Generator extends DB_DataObject
             $padding = (30 - strlen($t->name));
             if ($padding < 2) $padding =2;
             $p =  str_repeat(' ',$padding) ;
-            $body .="    var \${$t->name};  {$p}// {$t->type}({$t->len})  {$t->flags}\n";
+            if (empty($options['generator_novars'])) {
+                $body .="    {$var} \${$t->name};  {$p}// {$t->type}({$t->len})  {$t->flags}\n";
+            }
             // can not do set as PEAR::DB table info doesnt support it.
             //if (substr($t->Type,0,3) == "set")
             //    $sets[$t->Field] = "array".substr($t->Type,3);
