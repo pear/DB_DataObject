@@ -2253,7 +2253,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         if (!file_exists($file)) {
             $found = false;
-            foreach(explode(PATH_SEPERATOR, ini_get('include_path')) as $p) {
+            foreach(explode(PATH_SEPARATOR, ini_get('include_path')) as $p) {
                 if (file_exists("$p/$file")) {
                     $file = "$p/$file";
                     $found = true;
