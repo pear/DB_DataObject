@@ -1272,18 +1272,30 @@ Class DB_DataObject extends DB_DataObject_Overload
      * $object = new mytable();
      * $object->name = "fred";
      * echo $object->count();
+     * echo $object->count(true);   // 
+     * echo $object->count('distinct mycol'); // dont use object vars.
+     * echo $object->count('distinct mycol',true); // dont use object vars.
      *
-     * @param bool $whereAddOnly (optional) If DB_DATAOBJECT_WHEREADD_ONLY is passed in then
-     *             we will build the condition only using the whereAdd's.  Default is to
-     *             build the condition using the object parameters as well.
      *
+     * @param bool|string  (optional)
+     *                  (true|false = see below not on whereAddonly)
+     *                  (string)
+     *                  $countWhat (optional) normally it counts primary keys - you can use 
+     *                  this to do things like $do->count('distinct mycol');
+     * @param bool      $whereAddOnly (optional) If DB_DATAOBJECT_WHEREADD_ONLY is passed in then
+     *                  we will build the condition only using the whereAdd's.  Default is to
+     *                  build the condition using the object parameters as well.
+     *                  
      * @access public
      * @return int
      */
-    function count($whereAddOnly = false)
+    function count($countWhat = false,$whereAddOnly = false)
     {
         global $_DB_DATAOBJECT;
         
+        if (is_bool($countWhat)) {
+            $whereAddOnly = $countWhat;
+        }
         
         $t = clone($this);
         
@@ -1301,23 +1313,28 @@ Class DB_DataObject extends DB_DataObject_Overload
        
 
         if (!$whereAddOnly && $items)  {
-            $this->_build_condition($items);
+            $t->_build_condition($items);
         }
         $keys = $this->keys();
 
-        if (!$keys[0]) {
+        if (!$keys[0] && !is_string($countWhat)) {
             $this->raiseError(
                 "You cannot do run count without keys - use \$do->keys('id');", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS,PEAR_ERROR_DIE);
             return false;
             
         }
+        if (!is_string($countWhat)) {
+            $table   = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
+            $key_col = ($quoteIdentifiers ? $DB->quoteIdentifier($keys[0]) : $keys[0]);
+        }
         
-        $table   = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
-        $key_col = ($quoteIdentifiers ? $DB->quoteIdentifier($keys[0]) : $keys[0]);
         $as      = ($quoteIdentifiers ? $DB->quoteIdentifier('DATAOBJECT_NUM') : 'DATAOBJECT_NUM');
+        
+        $countWhat = is_string($countWhat) ? $countWhat : "{$table}.{$key_col}";
+        
         $r = $t->_query(
-            "SELECT count({$table}.{$key_col}) as $as
+            "SELECT count({$countWhat}) as $as
                 FROM $table {$t->_join} {$t->_query['condition']}");
         if (PEAR::isError($r)) {
             return false;
