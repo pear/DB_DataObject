@@ -783,8 +783,11 @@ Class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
         $quoteEntities  = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
-        // connect will load the config!
-        $DB = &$this->getDatabaseConnection(); 
+        // we need to write to the connection (For nextid) - so us the real
+        // one not, a copyied on (as ret-by-ref fails with overload!)
+        
+        $this->getDatabaseConnection(); 
+        $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
          
         $items = $this->table();
         if (!$items) {
@@ -1760,20 +1763,18 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         if (strtoupper($string) == 'BEGIN') {
             $DB->autoCommit(false);
-            echo "\nAUTOCOMMIT?";   var_dump($DB->autocommit);
-           
+            // db backend adds begin anyway from now on..
+            return true;
         }
         if (strtoupper($string) == 'COMMIT') {
             $DB->commit();
             $DB->autoCommit(true);
-            echo "\nAUTOCOMMIT?";var_dump($DB->autocommit);
             return true;
         }
         
         if (strtoupper($string) == 'ROLLBACK') {
             $DB->rollback();
             $DB->autoCommit(true);
-            echo "\nAUTOCOMMIT?";var_dump($DB->autocommit);
             return true;
         }
         

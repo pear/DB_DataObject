@@ -40,7 +40,8 @@ class test extends DB_DataObject {
         $this->query('DROP TABLE IF EXISTS test2');
         $this->query('DROP TABLE IF EXISTS testproxy');
         $this->query('DROP TABLE IF EXISTS testproxy2');
-        
+        $this->query('DROP TABLE IF EXISTS testproxy2_seq');
+       
         $this->query(
             "CREATE TABLE test (
               id int(11) NOT NULL auto_increment PRIMARY KEY,
@@ -79,7 +80,12 @@ class test extends DB_DataObject {
               firstname varchar(255) NOT NULL default '',
               lastname varchar(255) NOT NULL default '' 
             ) TYPE = InnoDB");     
-	
+         $this->query(
+             'CREATE TABLE testproxy2_seq
+                (id INTEGER UNSIGNED NOT NULL, PRIMARY KEY(id)) 
+                TYPE = InnoDB');
+        
+         $this->query("INSERT INTO testproxy2_seq VALUES(0)");
     }
     
     function test1() {
