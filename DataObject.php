@@ -721,7 +721,36 @@ Class DB_DataObject
             $this->$key = $__DB->nextId($seq);
         }
 
+        // this whole logic is very confusing...
+        // if we ignored sequences before..  the we will try autoincrement
+        $tryAutoIncrement = !$usedSequence;
+        
+        // then check again to see if we manually said NO TO ALL SEQUENCES...
+        if (@$options['ignore_sequence_keys'] == 'ALL') {
+            $tryAutoIncrement = false;
+        }
+        
+        // how about if we specified no sequences for this table....
+        
+        if (@is_array($options['ignore_sequence_keys']) && 
+            in_array($this->__table,$options['ignore_sequence_keys'])) 
+        {
+            $tryAutoIncrement = false;
+        }
+        
+
+
+
+
+
         foreach($items as $k => $v) {
+            
+            // if we are using autoincrement - skip the column...
+            if ($tryAutoIncrement && $key && ($k == $key)) {
+                continue;
+            }
+        
+        
             if (!isset($this->$k)) {
                 continue;
             }
@@ -749,6 +778,8 @@ Class DB_DataObject
             $rightq .= ' ' . intval($this->$k) . ' ';
 
         }
+        
+        
         if ($leftq) {
             $r = $this->_query("INSERT INTO {$this->__table} ($leftq) VALUES ($rightq) ");
             if (PEAR::isError($r)) {
@@ -760,22 +791,6 @@ Class DB_DataObject
                 return false;
             }
            
-            // this whole logic is very confusing...
-            // if we ignored sequences before..  the we will try autoincrement
-            $tryAutoIncrement = !$usedSequence;
-            
-            // then check again to see if we manually said NO TO ALL SEQUENCES...
-            if (@$options['ignore_sequence_keys'] == 'ALL') {
-                $tryAutoIncrement = false;
-            }
-            
-            // how about if we specified no sequences for this table....
-            
-            if (@is_array($options['ignore_sequence_keys']) && 
-                in_array($this->__table,$options['ignore_sequence_keys'])) {
-                $tryAutoIncrement = false;
-            }
-            
             // now do we have an integer key!
             
             if ($key && ($items[$key] & DB_DATAOBJECT_INT) && $tryAutoIncrement) {
@@ -847,7 +862,8 @@ Class DB_DataObject
 
         $items = $this->table();
         $keys  = $this->keys();
-
+        
+         
         if (!$items) {
             DB_DataObject::raiseError("update:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
@@ -863,11 +879,17 @@ Class DB_DataObject
             if (!isset($this->$k)) {
                 continue;
             }
+            // dont write things that havent changed..
             if (($dataObject !== false) && (@$dataObject->$k == $this->$k)) {
                 continue;
             }
-
-
+            
+            // beta testing.. - dont write keys to left.!!!
+            if (in_array($k,$keys)) {
+                continue;
+            }
+            
+            
             if ($settings)  {
                 $settings .= ', ';
             }
