@@ -39,10 +39,10 @@
           - set*() will also call strtotime and PEAR::Date to try and read dates.\
           setFrom will relay into fromValue() - hence auto fixing date entries
         * make native key recognision a little better - changes ini file
-	  format (key=N|K) - native or key. - BC protected... - ignores it
-	  when it finds a number.. (Fixes bug #532)
+          format (key=N|K) - native or key. - BC protected... - ignores it
+          when it finds a number.. (Fixes bug #532)
         * allow multiple updates on the same object - without adding lots
-	  of id=.... on the end..
+          of id=.... on the end..
         * transactions support works transparently by sending
           $do->query('BEGIN'), $do->query('COMMIT'),$do->query('ROLLBACK')
           will automatically relay into the DB methods.
@@ -50,12 +50,12 @@
           overriding sequenceKey, and returning correct values.
         
         Bug Fixes
-	* fix bug #595 - replace non letters in class names with underscore..
-	* fix bug #532 - better recoginsion of sequence keys
+        * fix bug #595 - replace non letters in class names with underscore..
+        * fix bug #532 - better recoginsion of sequence keys
         * fix bug #528/#476 - typo fix (E_NOTICE error on $valu)
-	* fix bug #473 - query can return a DB_Error 
-	* fix bug #501 - autoload/factory  now uses full path (not require path)
-	* fix bug #507 - sequences broken
+        * fix bug #473 - query can return a DB_Error 
+        * fix bug #501 - autoload/factory  now uses full path (not require path)
+        * fix bug #507 - sequences broken
 
       
       ]]></notes>
@@ -85,6 +85,7 @@
       <dep type="php" rel="ge" version="4.1"/>
       <dep type="pkg" rel="ge" version="1.3">DB</dep>
       <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
+      <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Date</dep>
     </deps>
 
   <changelog>
