@@ -3485,6 +3485,7 @@ class DB_DataObject extends DB_DataObject_Overload
         if ($behaviour == PEAR_ERROR_DIE && !empty($_DB_DATAOBJECT['CONFIG']['dont_die'])) {
             $behaviour = null;
         }
+        $error = &PEAR::getStaticProperty('DB_DataObject','lastError');
         
         if (PEAR::isError($message)) {
             $error = $message;
