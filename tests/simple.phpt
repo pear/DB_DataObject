@@ -246,15 +246,16 @@ class test extends DB_DataObject {
                 id int(11) NOT NULL auto_increment PRIMARY KEY,
                 a_date date default '',
                 a_time time NOT NULL default '',
-                a_datetime  datetime default ''
+                a_datetime  datetime default '',
+                b_date  datetime default ''
             ) TYPE=MyISAM;");
             
         $x = DB_DataObject::factory('typetest');
         print_r($x->table());
-        $x->seta_date('1 jan 2003'); // 
+        $x->seta_date(strtotime('1 jan 2003')); // 
         $x->seta_time('12pm');
-        $x->seta_datetime('1am yesterday');
-        $x->seta_date('null'); // 
+        $x->seta_datetime(strtotime('1am yesterday'));
+        $x->setb_date('null'); // 
         print_R($x);
         
         
