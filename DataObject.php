@@ -1474,7 +1474,7 @@ Class DB_DataObject
         $options = &$_DB_DATAOBJECT['CONFIG'];
 
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
-            $this->debug("QUERY".$string,$log="sql");
+            $this->debug($string,$log="QUERY");
             
         }
         $__DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
@@ -2433,7 +2433,7 @@ Class DB_DataObject
         if (is_array($message)) {
             $message = print_r($message,true);
         }
-        echo "<PRE><B>$logtype</B> $message</PRE>\n";
+        echo "<code><B>$logtype:</B> $message</code><BR>\n";
         flush();
     }
 
