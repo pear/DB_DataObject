@@ -580,7 +580,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 if (!strlen(trim($t->name))) {
                     continue;
                 }
-                $validate_fname = sprintf('validate%s', ucfirst(strtolower($t->name)));
+                $validate_fname = 'validate' . ucfirst(strtolower($t->name));
                 // dont re-add it..
                 if (preg_match('/\s+function\s+' . $validate_fname . '\s*(/i', $input)) {
                     continue;
