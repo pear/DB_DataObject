@@ -512,9 +512,9 @@ Class DB_DataObject
                $this->_limit = " LIMIT $a";
                return;
             }
-
+             
             $this->_limit = $db->modifyLimitQuery('',$a,$b);
-
+            
         } else {
             PEAR::raiseError(
                 "DB_DataObjects only supports mysql and postgres limit queries at present, \n".
@@ -1770,6 +1770,7 @@ Class DB_DataObject
         $ret = array();
         foreach($this->_get_table() as $k=>$v) {
             if (!isset($this->$k)) {
+                $ret[sprintf($format,$k)] = '';
                 continue;
             }
             $ret[sprintf($format,$k)] = $this->$k;
@@ -1803,7 +1804,7 @@ Class DB_DataObject
             }
             switch ($val) {
                 case  DB_DATAOBJECT_STR:
-                    $ret[$key] = Validate::string($this->$key, VAL_PUNCTUATION . VAL_NAME);
+                    $ret[$key] = Validate::string($this->$key, VALIDATE_PUNCTUATION . VALIDATE_NAME);
                     continue;
                 case  DB_DATAOBJECT_INT:
                     $ret[$key] = Validate::number($this->$key, ".");
