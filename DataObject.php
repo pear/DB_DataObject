@@ -484,9 +484,10 @@ class DB_DataObject extends DB_DataObject_Overload
             //DB_DataObject::raiseError("fetch: no data returned", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
-        if (@$this->_join && !isset($this->_joinFields)) {
+        
+        if (!isset($result->_dataobjectResultFields)) {
             // note: we dont declare this to keep the print_r size down.
-            $this->_joinFields = array_flip(array_keys($array));
+            $result->_dataobjectResultFields = array_flip(array_keys($array));
         }
         
         foreach($array as $k=>$v) {
@@ -2882,7 +2883,9 @@ class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
         $ret = array();
-        $ar = isset($this->_joinFields) ? $this->_joinFields : $this->table();
+        $ar = isset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]->_dataobjectResultFields) ?
+            $_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]->_dataobjectResultFields :
+            $this->table();
         foreach($ar as $k=>$v) {
              
             if (!isset($this->$k)) {

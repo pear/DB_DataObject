@@ -93,7 +93,7 @@ class test extends DB_DataObject {
          $this->query("INSERT INTO testproxy2_seq VALUES(0)");
     }
     
-    function test1() {
+    function test10() {
        	echo "\n\n\n******create database' \n";
         $this->createRecordWithName('test');
         $this->dumpTest(); 
@@ -106,7 +106,7 @@ class test extends DB_DataObject {
         $t->delete();
         $this->dumpTest(); 
     }
-	function test3() {
+	function test30() {
 	
         echo "\n\n\n***** update everything with username to firstname = 'fred' *\n";
         $this->createRecordWithName('test');
@@ -117,7 +117,7 @@ class test extends DB_DataObject {
         $this->dumpTest(); 
 	
     }
-	function test4() {
+	function test40() {
 
         echo "\n\n\n****** now update based on key\n";
         $t= new test;
@@ -126,7 +126,20 @@ class test extends DB_DataObject {
         $t->update();
         $this->dumpTest();  
     }
-	function test5() {
+    function test41() {
+        DB_DataObject::debuglevel(1);
+        
+
+        echo "\n\n\n****** toArray on only fetched keys.\n";
+        $t= new test;
+        $t->id = 2;
+        $t->selectAdd();
+        $t->selectAdd('firstname,lastname');
+        $t->find(true);
+        print_R($t->toArray());
+    }
+    
+	function test50() {
 	
         echo "\n\n\n****** now update using changed items only\n";
         $t= new test;
@@ -139,7 +152,7 @@ class test extends DB_DataObject {
 
         print_r($t->toArray('user[%s]'));
     }
-	function test6() {
+	function test60() {
 
         echo "\n\n\n****** limited queries 1\n";
         $t= new test;
@@ -149,7 +162,7 @@ class test extends DB_DataObject {
         $t->fetch();
 	
     }
-	function test7() {
+	function test70() {
 	
         echo "\n\n\n****** limited queries 1,1\n";
         $t= new test;
@@ -162,7 +175,7 @@ class test extends DB_DataObject {
         print_r($t->toArray('user[%s]'));
 	
     }
-	function test8() {
+	function test80() {
 
         echo "\n\n\n******get and delete an object key\n";
         $t = new test;
@@ -199,7 +212,7 @@ class test extends DB_DataObject {
        
           
     }
-	function test9() {
+	function test90() {
   
         
         echo "\n\n\n******sequences.\n";
@@ -220,7 +233,7 @@ class test extends DB_DataObject {
         
         
     }
-	function test10() {
+	function test91() {
     
         
         //bug #532
@@ -259,7 +272,7 @@ class test extends DB_DataObject {
         $page_module->insert();
         
     }
-	function test11() {
+	function test92() {
     
         
         // type casting...
@@ -292,7 +305,7 @@ class test extends DB_DataObject {
         }
         print_r($x);
     }
-	function test12_disabled() {
+	function test93_disabled() {
         
             // bug #753
         DB_DataObject::debugLevel(0);
@@ -331,7 +344,11 @@ class test extends DB_DataObject {
      
     
     }
-	function test20() {
+    
+    
+    
+    
+	function test94() {
 
     
     
@@ -413,7 +430,7 @@ class test extends DB_DataObject {
        
         
     }
-    function test92() {
+    function test81() {
         // bug #992
         DB_DataObject::debugLevel(3);
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
