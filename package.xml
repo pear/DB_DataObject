@@ -27,6 +27,9 @@
       <version>0.19</version>
       <date>2003-05-18</date>
       <notes>
+        - fix bug #23712 - deleting (and probably updating as well) an object while 
+          being fetched. (Michael McCarthy for spotting this)
+      
         - fix generator overwriting code when file was edited in a Windows editor           (Robert Janeczek)
           
         - validation will not produce errors on empty numeric data by default.
