@@ -219,7 +219,7 @@ class DB_DataObject_Cast {
     * @access   public
     */
   
-    function toString($to,$db) {
+    function toString($to=DB_DATAOBJECT_STR,$db='mysql') {
         // if $this->type is not set, we are in serious trouble!!!!
         // values for to:
         $method = 'toStringFrom'.$this->type;
@@ -244,7 +244,7 @@ class DB_DataObject_Cast {
         // perhaps we should support TEXT fields???
         
         if (!($to & DB_DATAOBJECT_BLOB)) {
-            return PEAR::Error('Invalid Cast from a DB_DataObject_Cast::blob to something other than a blob!');
+            return PEAR::raiseError('Invalid Cast from a DB_DataObject_Cast::blob to something other than a blob!');
         }
         
         switch ($db) {
@@ -252,7 +252,7 @@ class DB_DataObject_Cast {
                 return "'".pg_escape_bytea($this->value)."'::bytea";
             
             default:
-                return PEAR::Error("DB_DataObject_Cast cant handle blobs for Database:$db Yet");
+                return PEAR::raiseError("DB_DataObject_Cast cant handle blobs for Database:$db Yet");
         }
     
     }
@@ -277,7 +277,7 @@ class DB_DataObject_Cast {
         // 
         
         if (!($to & DB_DATAOBJECT_BLOB)) {
-            return PEAR::Error('Invalid Cast from a DB_DataObject_Cast::string to something other than a blob!'.
+            return PEAR::raiseError('Invalid Cast from a DB_DataObject_Cast::string to something other than a blob!'.
                 ' (why not just use native features)');
         }
         
@@ -286,7 +286,7 @@ class DB_DataObject_Cast {
                 return "'".pg_escape_string($this->value)."'::bytea";
             
             default:
-                return PEAR::Error("DB_DataObject_Cast cant handle blobs for Database:$db Yet");
+                return PEAR::raiseError("DB_DataObject_Cast cant handle blobs for Database:$db Yet");
         }
     
     }
@@ -311,7 +311,7 @@ class DB_DataObject_Cast {
         // 
         
         if (!($to & DB_DATAOBJECT_DATE)) {
-            return PEAR::Error('Invalid Cast from a DB_DataObject_Cast::string to something other than a date!'.
+            return PEAR::raiseError('Invalid Cast from a DB_DataObject_Cast::string to something other than a date!'.
                 ' (why not just use native features)');
         }
         return "'{$this->year}-{$this->month}-{$this->date}'";
