@@ -819,13 +819,16 @@ Class DB_DataObject extends DB_DataObject_Overload
     function insert()
     {
         global $_DB_DATAOBJECT;
-        $quoteIdentifiers  = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
+        
         // we need to write to the connection (For nextid) - so us the real
         // one not, a copyied on (as ret-by-ref fails with overload!)
         
         if (!isset($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
             $this->_connect();
         }
+        
+        $quoteIdentifiers  = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
+        
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
          
         $items =  isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table]) ?   
