@@ -71,6 +71,7 @@ myproject_dataobject_test Object
     [lastname] => 
 )
 myproject_dataobject_test   : FETCH       : N;
+myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.0036880970001221 seconds
 
 
 
@@ -107,6 +108,7 @@ myproject_dataobject_test Object
     [lastname] => 
 )
 myproject_dataobject_test   : FETCH       : N;
+myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.003525972366333 seconds
 
 
 
@@ -141,6 +143,7 @@ myproject_dataobject_test Object
     [lastname] => 
 )
 myproject_dataobject_test   : FETCH       : N;
+myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.0038559436798096 seconds
 
 
 
@@ -194,6 +197,7 @@ myproject_dataobject_test Object
     [lastname] => 
 )
 myproject_dataobject_test   : FETCH       : N;
+myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.0036089420318604 seconds
 
 
 
@@ -434,7 +438,7 @@ db_dataobject   : QUERY       : INSERT INTO `Client` VALUES (30, 'Internet', 'An
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject   : QUERY       : INSERT INTO `Client` VALUES (26, 'Grupos', 'Agência', 'Gian',
             'gian@email.com', '2004-09-01');
-db_dataobject   : CONNECT       : USING CACHED CONNECTION
+client   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : fillTable       : getting def for test/Client
 db_dataobject_generator   : defs       : Array
@@ -577,34 +581,29 @@ Array
         )
 
 )
-myproject_dataobject_client   : __find       : 
-myproject_dataobject_client   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_client   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_client   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_client   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_client   : QUERY       : SELECT * FROM Client     
-myproject_dataobject_client   : __find       : CHECK autofetchd 
-myproject_dataobject_client   : __find       : DONE
-myproject_dataobject_client   : FETCH       : a:6:{s:8:"clientID";s:2:"30";s:6:"client";s:8:"Internet";s:4:"type";s:10:"Anunciante";s:7:"contact";s:10:"Leandro S.";s:5:"email";s:13:"leandro@s.com";s:6:"signup";s:10:"2004-09-01";}
-myproject_dataobject_client   : fetchrow LINE       : clientID = 30
-myproject_dataobject_client   : fetchrow LINE       : client = Internet
-myproject_dataobject_client   : fetchrow LINE       : type = Anunciante
-myproject_dataobject_client   : fetchrow LINE       : contact = Leandro S.
-myproject_dataobject_client   : fetchrow LINE       : email = leandro@s.com
-myproject_dataobject_client   : fetchrow LINE       : signup = 2004-09-01
-myproject_dataobject_client   : fetchrow       : Client DONE
-myproject_dataobject_client Object
+client   : GET       : clientID 30 Array
 (
-    [_DB_DataObject_version] => @version@
-    [__table] => Client
-    [N] => 2
-    [_database_dsn] => 
-    [_database_dsn_md5] => 2f3fb5552c1aaa2a1ddef961a3506ebc
-    [_database] => test
-    [_DB_resultid] => 14
-    [_link_loaded] => 
-    [_join] => 
-    [_lastError] => 
+    [0] => clientID
+)
+
+client   : __find       : 1
+client   : CONNECT       : USING CACHED CONNECTION
+client   : CONNECT       : USING CACHED CONNECTION
+client   : CONNECT       : USING CACHED CONNECTION
+client   : QUERY       : SELECT * FROM Client  WHERE  Client.clientID = 30    
+client   : __find       : CHECK autofetchd 1
+client   : __find       : ABOUT TO AUTOFETCH
+client   : FETCH       : a:6:{s:8:"clientID";s:2:"30";s:6:"client";s:8:"Internet";s:4:"type";s:10:"Anunciante";s:7:"contact";s:10:"Leandro S.";s:5:"email";s:13:"leandro@s.com";s:6:"signup";s:10:"2004-09-01";}
+client   : fetchrow LINE       : clientID = 30
+client   : fetchrow LINE       : client = Internet
+client   : fetchrow LINE       : type = Anunciante
+client   : fetchrow LINE       : contact = Leandro S.
+client   : fetchrow LINE       : email = leandro@s.com
+client   : fetchrow LINE       : signup = 2004-09-01
+client   : fetchrow       : Client DONE
+client   : __find       : DONE
+Array
+(
     [clientID] => 30
     [client] => Internet
     [type] => Anunciante
@@ -612,34 +611,6 @@ myproject_dataobject_client Object
     [email] => leandro@s.com
     [signup] => 2004-09-01
 )
-myproject_dataobject_client   : FETCH       : a:6:{s:8:"clientID";s:2:"26";s:6:"client";s:6:"Grupos";s:4:"type";s:7:"Agência";s:7:"contact";s:4:"Gian";s:5:"email";s:14:"gian@email.com";s:6:"signup";s:10:"2004-09-01";}
-myproject_dataobject_client   : fetchrow LINE       : clientID = 26
-myproject_dataobject_client   : fetchrow LINE       : client = Grupos
-myproject_dataobject_client   : fetchrow LINE       : type = Agência
-myproject_dataobject_client   : fetchrow LINE       : contact = Gian
-myproject_dataobject_client   : fetchrow LINE       : email = gian@email.com
-myproject_dataobject_client   : fetchrow LINE       : signup = 2004-09-01
-myproject_dataobject_client   : fetchrow       : Client DONE
-myproject_dataobject_client Object
-(
-    [_DB_DataObject_version] => @version@
-    [__table] => Client
-    [N] => 2
-    [_database_dsn] => 
-    [_database_dsn_md5] => 2f3fb5552c1aaa2a1ddef961a3506ebc
-    [_database] => test
-    [_DB_resultid] => 14
-    [_link_loaded] => 
-    [_join] => 
-    [_lastError] => 
-    [clientID] => 26
-    [client] => Grupos
-    [type] => Agência
-    [contact] => Gian
-    [email] => gian@email.com
-    [signup] => 2004-09-01
-)
-myproject_dataobject_client   : FETCH       : N;
 
 
 
@@ -788,9 +759,9 @@ Array
 
 )
 test2   : CONNECT       : USING CACHED CONNECTION
-test2   : QUERY       : INSERT INTO test2 (id , username ) VALUES ( 236 , 'yyyy' ) 
+test2   : QUERY       : INSERT INTO test2 (id , username ) VALUES ( 238 , 'yyyy' ) 
 
-RET: 236
+RET: 238
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : fillTable       : getting def for test/test2
@@ -942,8 +913,8 @@ myproject_dataobject_test2   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_test2   : QUERY       : SELECT * FROM test2     
 myproject_dataobject_test2   : __find       : CHECK autofetchd 
 myproject_dataobject_test2   : __find       : DONE
-myproject_dataobject_test2   : FETCH       : a:6:{s:2:"id";s:3:"236";s:4:"name";s:0:"";s:8:"username";s:4:"yyyy";s:8:"password";s:0:"";s:9:"firstname";s:0:"";s:8:"lastname";s:0:"";}
-myproject_dataobject_test2   : fetchrow LINE       : id = 236
+myproject_dataobject_test2   : FETCH       : a:6:{s:2:"id";s:3:"238";s:4:"name";s:0:"";s:8:"username";s:4:"yyyy";s:8:"password";s:0:"";s:9:"firstname";s:0:"";s:8:"lastname";s:0:"";}
+myproject_dataobject_test2   : fetchrow LINE       : id = 238
 myproject_dataobject_test2   : fetchrow LINE       : name = 
 myproject_dataobject_test2   : fetchrow LINE       : username = yyyy
 myproject_dataobject_test2   : fetchrow LINE       : password = 
@@ -953,7 +924,7 @@ myproject_dataobject_test2   : fetchrow       : test2 DONE
 myproject_dataobject_test2 Object
 (
     [N] => 1
-    [id] => 236
+    [id] => 238
     [name] => 
     [username] => yyyy
     [password] => 
@@ -961,6 +932,7 @@ myproject_dataobject_test2 Object
     [lastname] => 
 )
 myproject_dataobject_test2   : FETCH       : N;
+myproject_dataobject_test2   : FETCH       : Last Data Fetch'ed after 0.0042018890380859 seconds
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : fillTable       : getting def for test/testproxy
@@ -1478,12 +1450,12 @@ it's numberic?myproject_dataobject_typetest Object
     [id] => 
     [a_date] => 2003-01-01
     [a_time] => 12:00:00
-    [a_datetime] => 2004-09-02 01:00:00
+    [a_datetime] => 2004-09-13 01:00:00
     [b_date] => null
     [ts] => 
 )
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_typetest   : QUERY       : INSERT INTO typetest (a_date , a_time , a_datetime , b_date ) VALUES ('2003-01-01' , '12:00:00' , '2004-09-02 01:00:00' ,  NULL ) 
+myproject_dataobject_typetest   : QUERY       : INSERT INTO typetest (a_date , a_time , a_datetime , b_date ) VALUES ('2003-01-01' , '12:00:00' , '2004-09-13 01:00:00' ,  NULL ) 
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : GET       : id 1 Array
 (
@@ -1497,13 +1469,13 @@ myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : QUERY       : SELECT * FROM typetest  WHERE  typetest.id = 1    
 myproject_dataobject_typetest   : __find       : CHECK autofetchd 1
 myproject_dataobject_typetest   : __find       : ABOUT TO AUTOFETCH
-myproject_dataobject_typetest   : FETCH       : a:6:{s:2:"id";s:1:"1";s:6:"a_date";s:10:"2003-01-01";s:6:"a_time";s:8:"12:00:00";s:10:"a_datetime";s:19:"2004-09-02 01:00:00";s:6:"b_date";N;s:2:"ts";s:14:"20040903164540";}
+myproject_dataobject_typetest   : FETCH       : a:6:{s:2:"id";s:1:"1";s:6:"a_date";s:10:"2003-01-01";s:6:"a_time";s:8:"12:00:00";s:10:"a_datetime";s:19:"2004-09-13 01:00:00";s:6:"b_date";N;s:2:"ts";s:14:"20040914104421";}
 myproject_dataobject_typetest   : fetchrow LINE       : id = 1
 myproject_dataobject_typetest   : fetchrow LINE       : a_date = 2003-01-01
 myproject_dataobject_typetest   : fetchrow LINE       : a_time = 12:00:00
-myproject_dataobject_typetest   : fetchrow LINE       : a_datetime = 2004-09-02 01:00:00
+myproject_dataobject_typetest   : fetchrow LINE       : a_datetime = 2004-09-13 01:00:00
 myproject_dataobject_typetest   : fetchrow LINE       : b_date = 
-myproject_dataobject_typetest   : fetchrow LINE       : ts = 20040903164540
+myproject_dataobject_typetest   : fetchrow LINE       : ts = 20040914104421
 myproject_dataobject_typetest   : fetchrow       : typetest DONE
 myproject_dataobject_typetest   : __find       : DONE
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
@@ -1511,9 +1483,9 @@ myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : 3       : got keys as a:1:{i:0;s:2:"id";}
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_typetest   : QUERY       : UPDATE  typetest  SET a_date = '2003-01-01' , a_time = '12:00:00' , a_datetime = '2004-09-02 01:00:00' , b_date = '1970-01-01 07:59:59'   WHERE  typetest.id = 1 
+myproject_dataobject_typetest   : QUERY       : UPDATE  typetest  SET a_date = '2003-01-01' , a_time = '12:00:00' , a_datetime = '2004-09-13 01:00:00' , b_date = '1970-01-01 07:59:59'   WHERE  typetest.id = 1 
 myproject_dataobject_typetest   : 1       : Clearing Cache for myproject_dataobject_typetest
-TIMESTAMP = 03/09/2004 16:45:40
+TIMESTAMP = 14/09/2004 10:44:21
 myproject_dataobject_typetest Object
 (
     [_DB_DataObject_version] => @version@
@@ -1529,9 +1501,9 @@ myproject_dataobject_typetest Object
     [id] => 1
     [a_date] => 2003-01-01
     [a_time] => 12:00:00
-    [a_datetime] => 2004-09-02 01:00:00
+    [a_datetime] => 2004-09-13 01:00:00
     [b_date] => 1970-01-01 07:59:59
-    [ts] => 20040903164540
+    [ts] => 20040914104421
     [_query] => Array
         (
             [condition] => 
@@ -1673,7 +1645,7 @@ Array
     [2] => 
 )
 myproject_dataobject_itemtest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_itemtest   : QUERY       : INSERT INTO itemtest (id , word ) VALUES ( 30 , 'test' ) 
+myproject_dataobject_itemtest   : QUERY       : INSERT INTO itemtest (id , word ) VALUES ( 32 , 'test' ) 
 myproject_dataobject_itemtest   : CONNECT       : USING CACHED CONNECTION
 Array
 (
