@@ -1909,6 +1909,9 @@ Class DB_DataObject
      * setters return true on success. = strings on failure
      * getters return the value!
      *
+     * this fires off trigger_error - if any problems.. pear_error, 
+     * has problems with 4.3.2RC2 here
+     *
      * @access public
      * @return true?
      * @see overload
@@ -1916,17 +1919,15 @@ Class DB_DataObject
 
     
     function __call($method,$params,&$return) {
-        //echo $method;
+         
         // ignore constructors : - mm
         if ($method == get_class($this)) {
             return true;
         }
         $type = strtolower(substr($method,0,3));
-       
+        $class = get_class($this);
         if (($type != 'set') && ($type != 'get')) {
-            PEAR::raiseError(
-                "Call to Unknown method $method on overloaded DB_DataObject",
-                DB_DATAOBJECT_ERROR_INVALID_CALL, PEAR_ERROR_DIE); 
+            trigger_error ("Call to Unknown method $method on overloaded $class (not get or set)", E_USER_ERROR);
             return true;
         }
          
@@ -1934,22 +1935,18 @@ Class DB_DataObject
         
         $element = substr($method,3);
         if ($element{0} == '_') {
-            PEAR::raiseError(
-                "Call to Unknown method $method on overloaded DB_DataObject",
-                DB_DATAOBJECT_ERROR_INVALID_CALL, PEAR_ERROR_DIE); 
+            trigger_error ("Call to Unknown method $method on overloaded $class (can not set privates)", E_USER_ERROR);
             return true;
         }
-        // at present - blindly just do this?
+         
         // it appear to cause problems for some reason...
         
-        //$class = get_class($this);
-        //$array =  array_keys(get_class_vars($class));
-        //if (in_array($element,$array)) {
-        //    PEAR::raiseError(
-        //        "Call to Unknown method $method on overloaded DB_DataObject",
-        //        DB_DATAOBJECT_ERROR_INVALID_CALL, PEAR_ERROR_DIE);
-        //    return true;
-        // }
+        $array =  array_keys(get_class_vars($class));
+         
+        if (!in_array($element,$array)) {
+            trigger_error ("Could not find variable '$element' on overloaded $class", E_USER_ERROR);
+            return true;
+        }
         
         
         if ($type == 'get') {
