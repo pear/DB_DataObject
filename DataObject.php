@@ -262,17 +262,12 @@ Class DB_DataObject
             DB_DataObject::debug("$class $key","STATIC GET");
         }
 
-        $newclass = DB_DataObject::_autoloadClass($class);
-        if (!$newclass) {
+        $obj = DB_DataObject::factory($class);
+        if (!PEAR::isError($newclass)) {
             DB_DataObject::raiseError("could not autoload $class", DB_DATAOBJECT_ERROR_NOCLASS);
             return false;
         }
-        $obj = &new $newclass;
-        if (!$obj) {
-            DB_DataObject::raiseError("Error creating $newclass", DB_DATAOBJECT_ERROR_NOCLASS);
-            return false;
-        }
-
+        
         if (!@$_DB_DATAOBJECT['CACHE'][$class]) {
             $_DB_DATAOBJECT['CACHE'][$class] = array();
         }
@@ -1417,6 +1412,7 @@ Class DB_DataObject
 
     /**
      * autoload Class relating to a table
+     * (depreciated - use ::factory)
      *
      * @param  string  $table  table
      * @access private
@@ -1431,7 +1427,32 @@ Class DB_DataObject
         $class   = DB_DataObject::_autoloadClass($_DB_DATAOBJECT['CONFIG']['class_prefix'] . ucfirst($table));
         return $class;
     }
+    
+    
+     /**
+     * classic factory method for loading a table class
+     *
+     * @param  string  $table  table
+     * @access private
+     * @return DataObject|PEAR_Error 
+     */
+    
+    
 
+    function factory($table) {
+        global $_DB_DATAOBJECT;
+        if (empty($_DB_DATAOBJECT['CONFIG'])) {
+            DB_DataObject::_loadConfig();
+        }
+        $class   = DB_DataObject::_autoloadClass($_DB_DATAOBJECT['CONFIG']['class_prefix'] . ucfirst($table));
+        
+        if (!$class) {
+            return DB_DataObject::raiseError("getLinkArray:Could not find class for row $row, table $table",
+                DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+        }
+
+        return new $class;
+    }
     /**
      * autoload Class
      *
@@ -1595,15 +1616,24 @@ Class DB_DataObject
             return false;
         }
 
-        $class = $this->staticAutoloadTable($table);
-        if (!$class) {
+        $obj = $this->factory($table);
+        
+        if (PEAR::isError($obj)) {
             DB_DataObject::raiseError("getLink:Could not find class for row $row, table $table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
         }
         if ($link) {
-            return DB_DataObject::staticGet($class, $link, $this->$row);
+            if ($obj->get($link, $this->$row)) {
+                return $obj;
+            } else {
+                return false;
+            }
         }
-        return DB_DataObject::staticGet($class, $this->$row);
+        
+        if ($obj->get($this->$row)) {
+            return $obj;
+        }
+        return false;
     }
 
     /**
@@ -1641,13 +1671,12 @@ Class DB_DataObject
                 $table = substr($row,0,$p);
             }
         }
-        $class = $this->staticAutoloadTable($table);
-        if (!$class) {
+        $c  = $this->factory($table);
+        if (PEAR::isError($c)) {
             DB_DataObject::raiseError("getLinkArray:Could not find class for row $row, table $table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return $ret;
         }
 
-        $c = new $class;
         // if the user defined method list exists - use it...
         if (method_exists($c, 'listFind')) {
             $c->listFind($this->id);
