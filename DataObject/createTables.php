@@ -19,7 +19,7 @@
 
 require_once("DB/DataObject/Generator.php");
 
-if (!$ini_get('register_argc_argv')) {
+if (!ini_get('register_argc_argv')) {
     PEAR::raiseError("\nERROR: You must turn register_argc_argv On in you php.ini file for this to work\neg.\n\nregister_argc_argv = On\n\n",null,PEAR_ERROR_DIE);
     exit;
 }
