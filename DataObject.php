@@ -320,6 +320,7 @@ Class DB_DataObject
             $this->_condition . ' '.
             $this->_group_by . ' '.
             $this->_order_by . ' '.
+            $this->_having . ' '.
             $this->_limit); // is select
         ////add by ming ... keep old condition .. so that find can reuse
         $this->_condition = $tmpcond;
@@ -492,6 +493,35 @@ Class DB_DataObject
             return;
         }
         $this->_group_by .= " , {$group}";
+    }
+
+    /**
+     * Adds a having clause
+     *
+     * $object->having(); //reset the grouping
+     * $object->having("sum(value) > 0 ");
+     *
+     * @param  string  $having  condition
+     * @access public
+     * @return none|PEAR::Error - invalid args only
+     */
+    function having($having = false)
+    {
+        if ($having === false) {
+            $this->_having = '';
+            return;
+        }
+        // check input...= 0 or '    ' == error!
+        if (!trim($having)) {
+            return DB_DataObject::raiseError("Having: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
+        }
+        
+        
+        if (!$this->_having) {
+            $this->_having = " HAVING {$having} ";
+            return;
+        }
+        $this->_having .= " , {$having}";
     }
 
     /**
@@ -1083,7 +1113,14 @@ Class DB_DataObject
      * @var     string
      */
     var $_order_by = '';
-
+    
+    /**
+     * The HAVING condition
+     *
+     * @access  private
+     * @var     string
+     */
+    var $_having = '';
     /**
      * The Limit by statement
      *
