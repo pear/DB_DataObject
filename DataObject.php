@@ -2895,7 +2895,7 @@ class DB_DataObject extends DB_DataObject_Overload
         global $_DB_DATAOBJECT;
         $ret = array();
         $ar = isset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid]) ?
-            $_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid] :
+            array_merge($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid],$this->table()) :
             $this->table();
 
         foreach($ar as $k=>$v) {
