@@ -364,9 +364,13 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         $this->N = 0;
         $this->_build_condition($this->table()) ;
+        
+        $quoteEntities = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
+        $DB =& $this->getDatabaseConnection();
+
         $this->_query('SELECT ' .
             $this->_query['data_select'] .
-            ' FROM ' . $this->__table . " " .
+            ' FROM ' . ($quoteEntities ? $DB->quoteEntity($this->__table) : $this->__table) . " " .
             $this->_join .
             $this->_query['condition'] . ' '.
             $this->_query['group_by']  . ' '.
@@ -722,6 +726,8 @@ Class DB_DataObject extends DB_DataObject_Overload
      */
     function selectAs($from = null,$format = '%s',$tableName=false)
     {
+        global $_DB_DATAOBJECT;
+        
         if (!isset($this->_query)) {
             DB_DataObject::raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
@@ -745,9 +751,15 @@ Class DB_DataObject extends DB_DataObject_Overload
         if ($tableName !== false) {
             $table = $tableName;
         }
-        
+        $s = '%s';
+        if (@$_DB_DATAOBJECT['CONFIG']['quote_entities']) {
+            $DB     = &$this->getDatabaseConnection();
+            $table  = $DB->quoteEntity($table);
+            $s      = $DB->quoteEntity($k);
+            $format = $DB->quoteEntity($format);
+        }
         foreach ($from as $k) {
-            $this->selectAdd(sprintf("%s.%s as {$format}",$table,$k,$k));
+            $this->selectAdd(sprintf("{$s}.{$s} as {$format}",$table,$k,$k));
         }
         $this->_query['data_select'] .= "\n";
     }
@@ -770,10 +782,10 @@ Class DB_DataObject extends DB_DataObject_Overload
     function insert()
     {
         global $_DB_DATAOBJECT;
+        $quoteEntities  = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
         // connect will load the config!
-        $this->_connect();
-
-        $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
+        $DB = &$this->getDatabaseConnection(); 
+         
         $items = $this->table();
         if (!$items) {
             DB_DataObject::raiseError("insert:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
@@ -798,7 +810,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             if (!($seq = @$options['sequence_'. $this->__table])) {
                 $seq = $this->__table;
             }
-            $this->$key = $__DB->nextId($seq);
+            $this->$key = $DB->nextId($seq);
         }
 
 
@@ -810,15 +822,18 @@ Class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
         
-        
+            
             if (!isset($this->$k)) {
                 continue;
             }
+            
+            
             if ($leftq) {
                 $leftq  .= ', ';
                 $rightq .= ', ';
             }
-            $leftq .= "$k ";
+            
+            $leftq .= ($quoteEntities ? ($DB->quoteEntity($k) . ' ')  : "$k ");
             
             if (is_a($this->$k,'db_dataobject_cast')) {
                 $value = $this->$k->toString($v,$dbtype);
@@ -837,7 +852,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             }
 
             if ($v & DB_DATAOBJECT_STR) {
-                $rightq .= $__DB->quote($this->$k) . " ";
+                $rightq .= $DB->quote($this->$k) . " ";
                 continue;
             }
             if (is_numeric($this->$k)) {
@@ -852,7 +867,10 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         
         if ($leftq) {
-            $r = $this->_query("INSERT INTO {$this->__table} ($leftq) VALUES ($rightq) ");
+            $table = ($quoteEntities ? $DB->quoteEntity($this->__table)    : $this->__table);
+            
+            $r = $this->_query("INSERT INTO {$table} ($leftq) VALUES ($rightq) ");
+            
             if (PEAR::isError($r)) {
                 DB_DataObject::raiseError($r);
                 return false;
@@ -878,7 +896,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                         // $db->insert();
                         // $db->query('COMMIT');
                         
-                        $mssql_key = $__DB->getOne("SELECT @@IDENTITY");
+                        $mssql_key = $DB->getOne("SELECT @@IDENTITY");
                         if (PEAR::isError($mssql_key)) {
                             DB_DataObject::raiseError($r);
                             return false;
@@ -942,10 +960,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         $datasaved = 1;
         $settings  = '';
 
-
-
-        $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-        $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["phptype"];
+        $DB            = &$this->getDatabaseConnection();
+        $dbtype        = $DB->dsn["phptype"];
+        $quoteEntities = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
         
         foreach($items as $k => $v) {
             if (!isset($this->$k)) {
@@ -965,36 +982,36 @@ Class DB_DataObject extends DB_DataObject_Overload
             if ($settings)  {
                 $settings .= ', ';
             }
-
+            
+            $kSql = ($quoteEntities ? $DB->quoteEntity($k) : $k);
+            
             if (is_a($this->$k,'db_dataobject_cast')) {
                 $value = $this->$k->toString($v,$dbtype);
                 if (PEAR::isError($vale)) {
                     DB_DataObject::raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
                     return false;
                 }
-                $settings .= "$k = ". $value;
+                $settings .= "$kSql = $value ";
                 continue;
             }
-
-            
             
             /* special values ... at least null is handled...*/
             if (strtolower($this->$k) === 'null') {
-                $settings .= "$k = NULL";
+                $settings .= "$kSql = NULL ";
                 continue;
             }
 
             if ($v & DB_DATAOBJECT_STR) {
-                $settings .= $k .' = '. $__DB->quote($this->$k) . ' ';
+                $settings .= "$kSql = ". $DB->quote($this->$k) . ' ';
                 continue;
             }
             if (is_numeric($this->$k)) {
-                $settings .= "$k = {$this->$k} ";
+                $settings .= "$kSql = {$this->$k} ";
                 continue;
             }
             // at present we only cast to integers
             // - V2 may store additional data about float/int
-            $settings .= "$k = " . intval($this->$k) . ' ';
+            $settings .= "$kSql = " . intval($this->$k) . ' ';
         }
 
         
@@ -1005,7 +1022,11 @@ Class DB_DataObject extends DB_DataObject_Overload
         $this->_build_condition($items,$keys);
         //  echo " $settings, $this->condition ";
         if ($settings && isset($this->_query) && $this->_query['condition']) {
-            $r = $this->_query("UPDATE  {$this->__table}  SET {$settings} {$this->_query['condition']} ");
+            
+            $table = ($quoteEntities ? $DB->quoteEntity($this->__table) : $this->__table);
+        
+            $r = $this->_query("UPDATE  {$ttable}  SET {$settings} {$this->_query['condition']} ");
+            
             if (PEAR::isError($r)) {
                 $this->raiseError($r);
                 return false;
@@ -1051,8 +1072,9 @@ Class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
         // connect will load the config!
-        $this->_connect();
-
+        $DB             = &$this->getDatabaseConnection();
+        $quoteEntities  = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
+        
         if (!$useWhere) {
 
             $keys = $this->keys();
@@ -1067,7 +1089,11 @@ Class DB_DataObject extends DB_DataObject_Overload
 
         // don't delete without a condition
         if (isset($this->_query) && $this->_query['condition']) {
-            $r = $this->_query("DELETE FROM {$this->__table} {$this->_query['condition']}");
+        
+            $table = ($quoteEntities ? $DB->quoteEntity($this->__table) : $this->__table);
+        
+            $r = $this->_query("DELETE FROM {$table} {$this->_query['condition']}");
+            
             if (PEAR::isError($r)) {
                 $this->raiseError($r);
                 return false;
@@ -1161,8 +1187,11 @@ Class DB_DataObject extends DB_DataObject_Overload
     function count($whereAddOnly = false)
     {
         global $_DB_DATAOBJECT;
+        
+        
         $t = $this->__clone();
         
+        $quoteEntities = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
         
         $items   = $t->table();
         if (!isset($t->_query)) {
@@ -1171,12 +1200,13 @@ Class DB_DataObject extends DB_DataObject_Overload
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
         }
-        $__DB    = $t->getDatabaseConnection();
+        $DB    = $t->getDatabaseConnection();
 
         if (!$whereAddOnly && $items)  {
             foreach ($items as $key => $val) {
                 if (isset($t->$key))  {
-                    $t->whereAdd($key . ' = ' . $__DB->quote($t->$key));
+                    $kSql = $quoteEntities ? $DB->quoteEntity($key) : $key;
+                    $t->whereAdd($kSql . ' = ' . $DB->quote($t->$key));
                 }
             }
         }
@@ -1186,10 +1216,13 @@ Class DB_DataObject extends DB_DataObject_Overload
             echo 'CAN NOT COUNT WITHOUT PRIMARY KEYS';
             exit;
         }
-
+        
+        $table   = ($quoteEntities ? $DB->quoteEntity($this->__table) : $this->__table);
+        $key_col = ($quoteEntities ? $DB->quoteEntity($keys[0]) : $keys[0]);
+        $as      = ($quoteEntities ? $DB->quoteEntity('DATAOBJECT_NUM') : 'DATAOBJECT_NUM');
         $r = $t->_query(
-            "SELECT count({$t->__table}.{$keys[0]}) as DATAOBJECT_NUM
-                FROM {$t->__table} {$t->_join} {$t->_query['condition']}");
+            "SELECT count({$table}.{$key_col}) as $as
+                FROM $table {$t->_join} {$t->_query['condition']}");
         if (PEAR::isError($r)) {
             return false;
         }
@@ -1227,10 +1260,8 @@ Class DB_DataObject extends DB_DataObject_Overload
     function escape($string)
     {
         global $_DB_DATAOBJECT;
-        $this->_connect();
-
-        $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-        return substr($__DB->quote($string),1,-1);
+        $DB = &$this->getDatabaseConnection();
+        return substr($DB->quote($string),1,-1);
     }
 
     /* ==================================================== */
@@ -1289,7 +1320,7 @@ Class DB_DataObject extends DB_DataObject_Overload
   
 
     /**
-     * Database result id (references global $__DB_DataObject_results
+     * Database result id (references global $_DB_DataObject[results]
      *
      * @access  private
      * @var     integer
@@ -1519,7 +1550,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             return array(false,false);;
         }
         $table = $this->table();
-        $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["phptype"];
+        $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'];
         
         // if the key is not an integer - then it's not a sequence or native
         if (!($table[$keys[0]] & DB_DATAOBJECT_INT)) {
@@ -1596,7 +1627,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             }
 
             if (!$this->_database) {
-                $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["database"];
+                $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['database'];
             }
             return;
         }
@@ -1679,7 +1710,7 @@ Class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
 
-        $this->_connect();
+        $DB = &$this->getDatabaseConnection();
 
         $options = &$_DB_DATAOBJECT['CONFIG'];
 
@@ -1687,7 +1718,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             $this->debug($string,$log="QUERY");
             
         }
-        $__DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
+        
 
         if (@$options['debug_ignore_updates'] &&
             (strtolower(substr(trim($string), 0, 6)) != 'select') &&
@@ -1700,14 +1731,14 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         if (@$_DB_DATAOBJECT['CONFIG']['debug'] > 1) {
             // this will only work when PEAR:DB supports it.
-            //$this->debug($__DB->getAll('explain ' .$string,DB_FETCHMODE_ASSOC), $log="sql",2);
+            //$this->debug($DB->getAll('explain ' .$string,DB_FETCHMODE_ASSOC), $log="sql",2);
         }
         
         // some sim
         $t= explode(' ',microtime());
         $_DB_DATAOBJECT['QUERYENDTIME'] = $time = $t[0]+$t[1];
          
-        $result = $__DB->query($string);
+        $result = $DB->query($string);
         
         
 
@@ -1727,7 +1758,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             case 'insert':
             case 'update':
             case 'delete':
-                return $__DB->affectedRows();;
+                return $DB->affectedRows();;
         }
         // lets hope that copying the result object is OK!
         $_DB_resultid  = count($_DB_DATAOBJECT['RESULTS']); // add to the results stuff...
@@ -1755,15 +1786,13 @@ Class DB_DataObject extends DB_DataObject_Overload
     function _build_condition($keys, $filter = array(),$negative_filter=array())
     {
         global $_DB_DATAOBJECT;
-        $this->_connect();
-
+        $DB             = &$this->getDatabaseConnection();
+        $quoteEntities  = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
         // if we dont have query vars.. - reset them.
         if (!isset($this->_query)) {
             $x = new DB_DataObject;
             $this->_query= $x->_query;
         }
-
-        $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
 
         foreach($keys as $k => $v) {
             // index keys is an indexed array
@@ -1783,7 +1812,13 @@ Class DB_DataObject extends DB_DataObject_Overload
             if (!isset($this->$k)) {
                 continue;
             }
+            
+            $kSql = $quoteEntities 
+                ? ( $DB->quoteEntity($this->__table) . '.' . $DB->quoteEntity($k) )  
+                : "{$this->__table}.{$k}";
              
+             
+            
             if (is_a($this->$k,'db_dataobject_cast')) {
                 $value = $this->$k->toString($v,$dbtype);
                 if (PEAR::isError($value)) {
@@ -1793,26 +1828,26 @@ Class DB_DataObject extends DB_DataObject_Overload
                 if ($value == 'NULL') {
                     $value = 'IS NULL';
                 }
-                $this->whereAdd(" {$this->__table}.{$k} = $value");
+                $this->whereAdd(" $kSql = $value");
                 continue;
             }
             
             if (strtolower($this->$k) === 'null') {
-                $this->whereAdd(" {$this->__table}.{$k}  IS NULL");
+                $this->whereAdd(" $kSql  IS NULL");
                 continue;
             }
             
 
             if ($v & DB_DATAOBJECT_STR) {
-                $this->whereAdd(" {$this->__table}.{$k}  = " . $__DB->quote($this->$k) );
+                $this->whereAdd(" $kSql  = " . $DB->quote($this->$k) );
                 continue;
             }
             if (is_numeric($this->$k)) {
-                $this->whereAdd(" {$this->__table}.{$k} = {$this->$k}");
+                $this->whereAdd(" $kSql = {$this->$k}");
                 continue;
             }
             /* this is probably an error condition! */
-            $this->whereAdd(" {$this->__table}.{$k} = 0");
+            $this->whereAdd(" $kSql = 0");
         }
     }
 
@@ -1986,7 +2021,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                 list($table,$link) = explode(':', $match);
                 $k = sprintf($format, str_replace('.', '_', $key));
                 // makes sure that '.' is the end of the key;
-                if ($p = strpos($key,".")) {
+                if ($p = strpos($key,'.')) {
                       $key = substr($key, 0, $p);
                 }
                 
@@ -2199,7 +2234,7 @@ Class DB_DataObject extends DB_DataObject_Overload
      *                                          links are added as where items.
      *
      * @param    optional $joinAs    string     if you want to select the table as anther name
-     *                                          usefull when you want to select multiple columsn
+     *                                          useful when you want to select multiple columsn
      *                                          from a secondary table.
      
      * @param    optional $joinCol   string     The column on This objects table to match (needed
@@ -2243,14 +2278,11 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (!is_object($obj)) {
             DB_DataObject::raiseError("joinAdd: called without an object", DB_DATAOBJECT_ERROR_NODATA,PEAR_ERROR_DIE);
         }
-        
-        $this->_connect(); /*  make sure $this->_database is set.  */
+        /*  make sure $this->_database is set.  */
+        $DB = &$this->getDatabaseConnection();
 
         $this->table(); /* make sure the links are loaded */
-
-        $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-
-
+ 
         $links = array();
         if (isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
             $links = &$_DB_DATAOBJECT['LINKS'][$this->_database];
@@ -2273,7 +2305,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                         DB_DataObject::raiseError( 
                             "joinAdd: You cannot target a join column in the " .
                             "'link from' table ({$obj->__table}). " . 
-                            "Either remove the forth argument to joinAdd() ".
+                            "Either remove the fourth argument to joinAdd() ".
                             "({$joinCol}), or alter your links.ini file.",
                             DB_DATAOBJECT_ERROR_NODATA);
                         return false;
@@ -2329,17 +2361,26 @@ Class DB_DataObject extends DB_DataObject_Overload
         if ($obj->__table != $joinAs) {
             $fullJoinAs = "AS {$joinAs}";
         }
+        $table = $this->__table;
+        
+        if ($quoteEntities) {
+            $joinAs   = $DB->quoteEntity($joinAs);
+            $objTable = $DB->quoteEntity($objTable)  ;
+            $table    = $DB->quoteEntity($table);     
+            $ofield   = $DB->quoteEntity($ofield);    
+            $tfield   = $DB->quoteEntity($tfield);    
+        }
         
         switch ($joinType) {
             case 'INNER':
             case 'LEFT': 
             case 'RIGHT': // others??? .. cross, left outer, right outer, natural..?
                 $this->_join .= "\n {$joinType} JOIN {$objTable}  {$fullJoinAs}".
-                                " ON {$joinAs}.{$ofield}={$this->__table}.{$tfield} ";
+                                " ON {$joinAs}.{$ofield}={$table}.{$tfield} ";
                 break;
             case '': // this is just a standard multitable select..
                 $this->_join .= "\n , {$objTable} {$fullJoinAs} ";
-                $this->whereAdd("{$joinAs}.{$ofield}={$this->__table}.{$tfield}");
+                $this->whereAdd("{$joinAs}.{$ofield}={$table}.{$tfield}");
         }
          
         // if obj only a dataobject - eg. no extended class has been defined..
@@ -2369,16 +2410,20 @@ Class DB_DataObject extends DB_DataObject_Overload
             if (!isset($obj->$k)) {
                 continue;
             }
+            
+            $kSql = ($quoteEntities ? $DB->quoteEntity($k) : $k);
+            
+            
             if ($v & DB_DATAOBJECT_STR) {
-                $this->whereAdd("{$joinAs}.{$k} = " . $__DB->quote($obj->$k));
+                $this->whereAdd("{$joinAs}.{$kSql} = " . $DB->quote($obj->$k));
                 continue;
             }
             if (is_numeric($obj->$k)) {
-                $this->whereAdd("{$joinAs}.{$k} = {$obj->$k}");
+                $this->whereAdd("{$joinAs}.{$kSql} = {$obj->$k}");
                 continue;
             }
             /* this is probably an error condition! */
-            $this->whereAdd("{$joinAs}.{$k} = 0");
+            $this->whereAdd("{$joinAs}.{$kSql} = 0");
         }
         
         // and finally merge the whereAdd from the child..
