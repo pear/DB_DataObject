@@ -779,67 +779,32 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         $options= &$_DB_DATAOBJECT['CONFIG'];
 
-        // turn the sequence keys into an array
-        if ((@$options['ignore_sequence_keys']) &&
-                (@$options['ignore_sequence_keys'] != 'ALL') &&
-                (!is_array($options['ignore_sequence_keys']))) {
-            $options['ignore_sequence_keys']  = explode(',', $options['ignore_sequence_keys']);
-        }
 
         $datasaved = 1;
         $leftq     = '';
         $rightq    = '';
-        $key       = false;
-        $keys      = $this->keys();
+     
+        list($key,$useNative) = $this->sequenceKey();
         $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["phptype"];
 
          
-             
+        // nativeSequences or Sequences..     
 
         // big check for using sequences
-        $usedSequence  = false;
-        if (    ($key = @$keys[0]) &&
-                (!in_array($dbtype , array( 'mysql', 'mssql'))) &&
-                (@$options['ignore_sequence_keys'] != 'ALL') &&
-                (!is_array(@$options['ignore_sequence_keys']) ||
-                    @!in_array($this->__table,$options['ignore_sequence_keys']))
-            )
-        {
-
+        
+        if (($key !== false) && !$useNative) { 
             if (!($seq = @$options['sequence_'. $this->__table])) {
                 $seq = $this->__table;
             }
-            // we are using sequences !!!!!
-            $usedSequence = true;
             $this->$key = $__DB->nextId($seq);
         }
-
-        // this whole logic is very confusing...
-        // if we ignored sequences before..  the we will try autoincrement
-        $tryAutoIncrement = !$usedSequence;
-        
-        // then check again to see if we manually said NO TO ALL SEQUENCES...
-        if (@$options['ignore_sequence_keys'] == 'ALL') {
-            $tryAutoIncrement = false;
-        }
-        
-        // how about if we specified no sequences for this table....
-        
-        if (@is_array($options['ignore_sequence_keys']) && 
-            in_array($this->__table,$options['ignore_sequence_keys'])) 
-        {
-            $tryAutoIncrement = false;
-        }
-        
-
-
 
 
 
         foreach($items as $k => $v) {
             
             // if we are using autoincrement - skip the column...
-            if ($tryAutoIncrement && $key && ($k == $key)) {
+            if ($key && ($k == $key)) {
                 continue;
             }
         
@@ -897,7 +862,7 @@ Class DB_DataObject extends DB_DataObject_Overload
            
             // now do we have an integer key!
             
-            if ($key && ($items[$key] & DB_DATAOBJECT_INT) && $tryAutoIncrement) {
+            if ($key && $useNative) {
                 switch ($dbtype) {
                     case 'mysql':
                         $this->$key = mysql_insert_id(
@@ -1439,7 +1404,8 @@ Class DB_DataObject extends DB_DataObject_Overload
      *
      * set usage: $do->keys('id','code');
      *
-     * This is defined in the table definition which should extend this class
+     * This is defined in the table definition if it gets it wrong,
+     * or you do not want to use ini tables, you can override this.
      * @param  string optional set the key
      * @param  *   optional  set more keys
      * @access private
@@ -1468,7 +1434,55 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         return array();
     }
+    /**
+     * get/set an  sequence key
+     *
+     * by default it returns the first key from keys()
+     * set usage: $do->sequenceKey('id',true);
+     *
+     * override this to return array(false,false) if table has no real sequence key.
+     *
+     * @param  string  optional the key sequence/autoinc. key
+     * @param  boolean optional use native increment. default false
+     * @access private
+     * @return array (column,use_native)
+     */
+    function sequenceKey()
+    {
+        global $_DB_DATAOBJECT;
+        
+        // for temporary storage of database fields..
+        // note this is not declared as we dont want to bloat the print_r output
+        $args = func_get_args();
+        if (count($args)) {
+            $args[1] = isset($args[1]) ? $args[1] : false;
+            $this->_databaseSequenceKeys = $args;
+        }
+        if (isset($this->_databaseSequenceKeys )) {
+            return $this->_databaseSequenceKeys;
+        }
+        
+        $keys = $this->keys();
+        if (!$keys) {
+            return array(false,false);;
+        }
+        $table = $this->table();
+        $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["phptype"];
+        
+        // if the key is not an integer - then it's not a sequence or native
+        if (!($table[$keys[0]] & DB_DATAOBJECT_INT)) {
+                return array(false,false);
+        }
 
+        
+        // use native sequence keys...
+        if (in_array($dbtype , array( 'mysql', 'mssql')) && ($table[$keys[0]] & DB_DATAOBJECT_INT)) {
+            return array($keys[0],true);
+        }
+        // I assume it's going to try and be a nextval DB sequence.. (not native)
+        
+        return array($keys[0],false);
+    }
     /**
      * clear the cache values for this class  - normally done on insert/update etc.
      *
