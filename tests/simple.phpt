@@ -157,7 +157,7 @@ class test extends DB_DataObject {
         
         echo "\n\n\n******sequences.\n";
             
-         $t = new test2;
+        $t = new test2;
     
         $t->username = 'yyyy';
         $id = $t->insert();
@@ -170,6 +170,17 @@ class test extends DB_DataObject {
         print_R($t);
         $t = DB_DataObject::factory('testproxy2');
         print_r($t->table());
+        
+        
+        
+        
+        //bug #532
+        DB_DataObject::debugLevel(3);
+        $item = DB_DataObject::factory('testproxy2'); 
+        $item->id = 0; //id is the key with auto_increment flag on
+        $newid = $item->insert();
+        print_r($newid);
+        
 	
         
     }
