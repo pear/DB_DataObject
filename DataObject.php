@@ -1404,6 +1404,7 @@ Class DB_DataObject
 
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug("QUERY".$string,$log="sql");
+            
         }
         $__DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
 
@@ -1416,7 +1417,11 @@ Class DB_DataObject
             return DB_DataObject::raiseError("Disabling Update as you are in debug mode", null) ;
 
         }
-        
+        if (@$_DB_DATAOBJECT['CONFIG']['debug'] > 1) {
+            // this will only work when PEAR:DB supports it.
+            //$this->debug($__DB->getAll('explain ' .$string,DB_FETCHMODE_ASSOC), $log="sql",2);
+        }
+
         
          
         $result = $__DB->query($string);
@@ -2286,6 +2291,9 @@ Class DB_DataObject
             echo "$logtype       : $message\n";
             flush();
             return;
+        }
+        if (is_array($message)) {
+            $message = print_r($message,true);
         }
         echo "<PRE><B>$logtype</B> $message</PRE>\n";
         flush();
