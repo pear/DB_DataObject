@@ -505,7 +505,7 @@ Class DB_DataObject
         $keys      = $this->_get_keys();
         $dbtype    = $connections[$this->_database_dsn_md5]->dsn["phptype"];
         if (($key = @$keys[0]) && ($dbtype != 'mysql')) {
-            $this->$key = $__DB->nextId();
+            $this->$key = $__DB->nextId($this->__table.'_seq');
         }
 
         foreach($items as $k => $v) {
