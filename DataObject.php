@@ -45,6 +45,7 @@ define("DB_DATAOBJECT_ERROR_NODATA",          -2);  // no data available
 define("DB_DATAOBJECT_ERROR_INVALIDCONFIG",   -3);  // something wrong with the config
 define("DB_DATAOBJECT_ERROR_NOCLASS",         -4);  // no class exists
 
+
 /**
  * The main "DB_DataObject" class is really a base class for your own tables classes
  * 
@@ -123,6 +124,15 @@ Class DB_DataObject {
     */
 
     var $__table = "";  // database table
+    
+    /**
+    * The Number of rows returned from a query
+    *
+    * @access 	public
+    * @var  int
+    */
+
+    var $N = 0;  // Number of rows returned from a query
 
     /* =========================================================== */
     /*  Major Public Methods (designed to be optionally then called with parent::method())*/
@@ -150,8 +160,7 @@ Class DB_DataObject {
     * @return 	int No. of rows
     */
     
-    function get($k,$v=NULL) 
-    { 
+    function get($k,$v=NULL) { 
         if ($v === NULL) {
             $v= $k;
             $keys = $this->_get_keys();
@@ -161,7 +170,9 @@ Class DB_DataObject {
             }
             $k = $keys[0];
         }
-        $this->debug("$k $v " .serialize(@$keys), "GET");
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            $this->debug("$k $v " .serialize(@$keys), "GET");
+        }
         if (!$v) {
             DB_DataObject::raiseError("No Value specified for get", DB_DATAOBJECT_ERROR_INVALIDARGS);
             return;
@@ -188,8 +199,7 @@ Class DB_DataObject {
     * @return 	object
     */ 
     
-    function &staticGet($class,$k,$v=NULL) 
-    {
+    function &staticGet($class,$k,$v=NULL) {
         
         $cache = &PEAR::getStaticProperty('DB_DataObject','cache');
 
@@ -197,12 +207,15 @@ Class DB_DataObject {
         if ($v===NULL) {
             $key = $k;
         }
-        
-        DB_DataObject::debug("$class $key","STATIC GET");
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            DB_DataObject::debug("$class $key","STATIC GET");
+        }
         if (@$cache[$class][$key]) {
             return $cache[$class][$key];
         }
-        DB_DataObject::debug("$class $key","STATIC GET");
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            DB_DataObject::debug("$class $key","STATIC GET");
+        }
         
         $newclass = DB_DataObject::_autoloadClass($class);
         if (!$newclass) {
@@ -244,9 +257,10 @@ Class DB_DataObject {
     */
     
     
-    function find($n=FALSE) 
-    {
-        $this->debug($n, "__find",1);       
+    function find($n=FALSE) {          
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            $this->debug($n, "__find",1);       
+        }
         if (!$this->__table) { 
             echo "NO \$__table SPECIFIED in class definition";
             exit;
@@ -263,13 +277,18 @@ Class DB_DataObject {
             $this->_limit); // is select
         ////add by ming ... keep old condition .. so that find can reuse
         $this->_condition = $tmpcond;
-      
-        $this->debug("CHECK autofetchd $n", "__find",1);  
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            $this->debug("CHECK autofetchd $n", "__find",1);  
+        }
         if ($n && $this->N > 0 ) {
-            $this->debug("ABOUT TO AUTOFETCH", "__find",1);  
+            if (!DB_DATAOBJECT_PRODUCTION) {
+                $this->debug("ABOUT TO AUTOFETCH", "__find",1);  
+            }
             $this->fetchRow(0) ;
         }
-        $this->debug("DONE", "__find",1);
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            $this->debug("DONE", "__find",1);
+        }
         return $this->N;
     }
 
@@ -302,8 +321,7 @@ Class DB_DataObject {
     * @return 	boolean on success 
     */
 
-    function fetch() 
-    { 
+    function fetch() { 
         $results = &PEAR::getStaticProperty('DB_DataObject','results');
         
         if (!@$this->N) {
@@ -312,7 +330,9 @@ Class DB_DataObject {
         }
         $result = &$results[$this->_DB_resultid];
         $array = $result->fetchRow(DB_FETCHMODE_ASSOC);
-        $this->debug(serialize($array),"FETCH",3);
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            $this->debug(serialize($array),"FETCH",3);
+        }
       
         if (!is_array($array)) {
             // this is probably end of data!!
@@ -323,14 +343,17 @@ Class DB_DataObject {
         foreach($array as $k=>$v) {
             $kk = str_replace(".", "_",$k);
             $kk = str_replace(" ", "_",$kk);
-            $this->debug("$kk = ". $array[$k], "fetchrow LINE",3);
+            if (!DB_DATAOBJECT_PRODUCTION) {
+                $this->debug("$kk = ". $array[$k], "fetchrow LINE",3);
+            }
             $this->$kk = $array[$k];
         } 
          
         // set link flag
         $this->_link_loaded=FALSE;
-        
-        $this->debug("{$this->__table} DONE", "fetchrow");
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            $this->debug("{$this->__table} DONE", "fetchrow");
+        }
      
         return TRUE;
     }
@@ -347,8 +370,7 @@ Class DB_DataObject {
     * @return 	none
     */
 
-    function whereAdd($cond=FALSE,$logic="AND") 
-    {
+    function whereAdd($cond=FALSE,$logic="AND") {
         if ($cond === FALSE) {
             $this->_condition = '';
             return;
@@ -373,8 +395,7 @@ Class DB_DataObject {
     * @access	public
     * @return 	none
     */
-    function orderBy($order=FALSE) 
-    {
+    function orderBy($order=FALSE) {
         if ($order === FALSE) {
             $this->_order_by = "";
             return;
@@ -397,8 +418,7 @@ Class DB_DataObject {
     * @access	public
     * @return 	none
     */
-    function groupBy($group=FALSE) 
-    {
+    function groupBy($group=FALSE) {
         if ($group === FALSE) {
             $this->_group_by = "";
             return;
@@ -423,8 +443,7 @@ Class DB_DataObject {
     * @return 	none
     */
     
-    function limit($a=NULL,$b=NULL) 
-    {
+    function limit($a=NULL,$b=NULL) {
         if ($a===NULL) {
            $this->_limit = "";
            return;
@@ -451,8 +470,7 @@ Class DB_DataObject {
     */
     
     
-    function selectAdd($k=NULL) 
-    {
+    function selectAdd($k=NULL) {
         if ($k===NULL) {
             $this->_data_select ='';
             return;
@@ -480,8 +498,7 @@ Class DB_DataObject {
     * @return 	int 
     */
     
-    function insert() 
-    { 
+    function insert() { 
         $this->_connect();
         $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
         $__DB= &$connections[$this->_database_dsn_md5];
@@ -538,8 +555,7 @@ Class DB_DataObject {
     * @return 	boolean TRUE = success 
     */
     
-    function update() 
-    {       
+    function update() {       
         $items = $this->_get_table();
         $keys = $this->_get_keys();
         
@@ -559,7 +575,9 @@ Class DB_DataObject {
         }
           
         //$this->_condition=""; // dont clear condition
-        $this->debug("got keys as ".serialize($keys),3);
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            $this->debug("got keys as ".serialize($keys),3);
+        }
         $this->_build_condition($items,$keys);
         //  echo " $settings, $this->condition ";
         if ($settings && $this->_condition) {
@@ -589,8 +607,7 @@ Class DB_DataObject {
     * @param boolean use the whereAdd conditions (default = no - use current values.)
     * @return 	boolean TRUE on success
     */  
-    function delete($use_where=FALSE) 
-    {     
+    function delete($use_where=FALSE) {     
         $keys = $this->_get_keys();
         if (!$use_where) {
             $this->_condition=""; // default behaviour not to use where condition
@@ -618,9 +635,10 @@ Class DB_DataObject {
   
     
        
-    function fetchRow($row=NULL) 
-    {
-        $this->debug("{$this->__table} $row of {$this->N}", "fetchrow",3);       
+    function fetchRow($row=NULL) {
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            $this->debug("{$this->__table} $row of {$this->N}", "fetchrow",3);       
+        }
         if (!$this->__table) {
             DB_DataObject::raiseError("fetchrow: No table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return;
@@ -633,8 +651,9 @@ Class DB_DataObject {
             DB_DataObject::raiseError("fetchrow: No results avaiable", DB_DATAOBJECT_ERROR_NODATA);
             return;
         }
-           
-        $this->debug("{$this->__table} $row of {$this->N}", "fetchrow",3);       
+        if (!DB_DATAOBJECT_PRODUCTION) {  
+            $this->debug("{$this->__table} $row of {$this->N}", "fetchrow",3);       
+        }
         $results = &PEAR::getStaticProperty('DB_DataObject','results');
         
         $result = &$results[$this->_DB_resultid];
@@ -646,13 +665,15 @@ Class DB_DataObject {
         
         foreach($array as $k=>$v) {
             $kk = str_replace(".", "_",$k);
-            $this->debug("$kk = ". $array[$k], "fetchrow LINE",3);
+            if (!DB_DATAOBJECT_PRODUCTION) {
+                $this->debug("$kk = ". $array[$k], "fetchrow LINE",3);
+            }
             $this->$kk = $array[$k];
         } 
                    
-       
-        $this->debug("{$this->__table} DONE", "fetchrow",3);
-
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            $this->debug("{$this->__table} DONE", "fetchrow",3);
+        }
         return TRUE;
      
         
@@ -673,8 +694,7 @@ Class DB_DataObject {
 
 
 
-    function count() 
-    {
+    function count() {
     
         $items = $this->_get_table();
         $tmpcond = $this->_condition;
@@ -710,8 +730,7 @@ Class DB_DataObject {
     * @return 	none
     */
   
-    function query($string) 
-    { 
+    function query($string) { 
         $this->_query($string);  
     }
     
@@ -809,8 +828,7 @@ Class DB_DataObject {
     * @return array
     */
    
-    function &_staticGetDefinitions($database,$table) 
-    {
+    function &_staticGetDefinitions($database,$table) {
     
         static $definitions = array();
         if (@$definitions[$database][$table]) {
@@ -819,6 +837,12 @@ Class DB_DataObject {
         $options= &PEAR::getStaticProperty('DB_DataObject','options');
         $location = $options['schema_location'];
         $definitions[$database] = parse_ini_file($location."/{$database}.ini",TRUE);
+        /* load the link table if it exists. */
+        if (file_exists($location."/{$database}.links.ini")) {
+            $links = &PEAR::getStaticProperty('DB_DataObject', "{$database}.links");
+            $linkConfig = parse_ini_file("config/{$db_name}.links.ini", true);
+            $links = $linkConfig;
+        }
         return $definitions[$database][$table];
          
     }
@@ -831,8 +855,7 @@ Class DB_DataObject {
     * @access	private
     * @return 	array (associative)
     */
-    function &_get_table() 
-    { 
+    function &_get_table() { 
         if (!@$this->_database) {
             $this->_connect();
         }
@@ -852,8 +875,7 @@ Class DB_DataObject {
     */   
     
     
-    function &_get_keys() 
-    { 
+    function &_get_keys() { 
         if (!@$this->_database) {
             $this->_connect();
         }
@@ -868,8 +890,7 @@ Class DB_DataObject {
     * @return 	none
     */
     
-    function _clear_cache() 
-    {
+    function _clear_cache() {
         $cache = &PEAR::getStaticProperty('DB_DataObject','cache');
         $class = get_class($this);
         if (@$cache[$class]) {
@@ -885,8 +906,7 @@ Class DB_DataObject {
     * @return 	none
     */
        
-    function _connect () 
-    {
+    function _connect () {
         $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
         
         
@@ -915,16 +935,22 @@ Class DB_DataObject {
         $this->_database_dsn_md5 = md5($dsn);
           
         if (@$connections[$this->_database_dsn_md5]) {
-            $this->debug("USING CACHE", "CONNECT",3);
+            if (!DB_DATAOBJECT_PRODUCTION) {
+                $this->debug("USING CACHE", "CONNECT",3);
+            }
             $this->_database = $connections[$this->_database_dsn_md5]->dsn["database"];
             return;
         }
-        $this->debug("NEW CONNECTION", "CONNECT",3);
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            $this->debug("NEW CONNECTION", "CONNECT",3);
         /* actualy make a connection */
-        $this->debug("{$dsn} {$this->_database_dsn_md5}", "CONNECT",3);
+        
+            $this->debug("{$dsn} {$this->_database_dsn_md5}", "CONNECT",3);
+        }
         $connections[$this->_database_dsn_md5] = DB::connect($dsn); 
-        $this->debug(serialize($connections), "CONNECT",3);
-         
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            $this->debug(serialize($connections), "CONNECT",3);
+        }
         if (PEAR::isError($connections[$this->_database_dsn_md5])) {
             DB_DataObject::raiseError(
                         $connections[$this->_database_dsn_md5]->message, 
@@ -943,21 +969,21 @@ Class DB_DataObject {
     * @return 	none
     */
  
-    function _query($string) 
-    {
+    function _query($string) {
         $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
         $results = &PEAR::getStaticProperty('DB_DataObject','results');
      
         
-        
-        $this->debug("QUERY".$string,$log="sql");
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            $this->debug("QUERY".$string,$log="sql");
+        }
         $this->_connect();
         $__DB = &$connections[$this->_database_dsn_md5];
-       
-        if ((DB_DataObject::debugLevel() > 1) && 
+        if (!DB_DATAOBJECT_PRODUCTION && (DB_DataObject::debugLevel() > 1) && 
             (strtolower(substr(trim($string),0,6)) != "select") && 
             (strtolower(substr(trim($string),0,4)) != "show") &&
             (strtolower(substr(trim($string),0,8)) != "describe")) {
+        
             $this->debug("Disabling Update as you are in debug mode");
             return;
         }
@@ -965,12 +991,16 @@ Class DB_DataObject {
         $results[$this->_DB_resultid] = $__DB->query($string);
         $result = &$results[$this->_DB_resultid];
         if (DB::isError($result)) {
-            DB_DataObject::debug($string, "SENT");
+            if (!DB_DATAOBJECT_PRODUCTION) {
+                DB_DataObject::debug($string, "SENT");
+            }
             
             DB_DataObject::raiseError($result->message, $result->code);
             return;
         }
-        $this->debug("DONE QUERY", "query");
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            $this->debug("DONE QUERY", "query");
+        }
         if (strtolower(substr(trim($string),0,6)) == "insert") {
             return;
         }
@@ -978,7 +1008,9 @@ Class DB_DataObject {
             return;
         }
         $this->N = 0;
-        $this->debug(serialize($result), "RESULT",3);
+        if (!DB_DATAOBJECT_PRODUCTION) {
+            $this->debug(serialize($result), "RESULT",3);
+        }
         if (method_exists($result, "numrows")) {
             $this->N = $result->numrows();
         }
@@ -997,8 +1029,7 @@ Class DB_DataObject {
     * @access	private
     * @return 	string
     */  
-    function _build_condition(&$keys,$filter=array()) 
-    {
+    function _build_condition(&$keys,$filter=array()) {
        
         foreach($keys as $k=>$v) {
             if ($filter) {
@@ -1030,8 +1061,7 @@ Class DB_DataObject {
     * @return string classname on Success
     */
    
-    function _autoloadTable($table) 
-    {
+    function staticAutoloadTable($table) {
         $options= &PEAR::getStaticProperty('DB_DataObject','options');
         $class = DB_DataObject::_autoloadClass($options['class_prefix'].ucfirst($table));
         return $class;
@@ -1045,8 +1075,7 @@ Class DB_DataObject {
     * @return string classname on Success
     */
  
-    function _autoloadClass($class) 
-    {
+    function _autoloadClass($class) {
         $options= &PEAR::getStaticProperty('DB_DataObject','options');
         $table = substr($class,strlen($options['class_prefix']));
         
@@ -1066,71 +1095,92 @@ Class DB_DataObject {
     */  
    
     var $_link_loaded=FALSE; 
-    /**
-    * load related objects 
+       /**
+    * load related objects
     *
-    * This is highly dependant on naming columns 'correctly' :)
+    * There are two ways to use this, one is to set up a <dbname>.links.ini file
+    * into a static property named <dbname>.links and specifies the table joins,
+    * the other highly dependent on naming columns 'correctly' :)
     * using colname = xxxxx_yyyyyy
-    * xxxxxx = related table; (yyyyy = user defined..) 
+    * xxxxxx = related table; (yyyyy = user defined..)
     * looks up table xxxxx, for value id=$this->xxxxx
     * stores it in $this->_xxxxx_yyyyy
     *
+    * @author Time White <tlwhit2@qwest.com>
     * @access	public
     * @return 	boolean , TRUE on success
     */
-    function getLinks() 
-    {
-       
-        if ($this->_link_loaded) {
-            return;
-        }
-        $cols = $this->_get_table();      
-        foreach (array_keys($cols) as $key) {
-            
-            if (!($p = strpos($key,'_'))) {
-                continue;
-            }
-            // does the table exist. 
-            $k = "_{$key}";
-            $this->$k = $this->getLink($key);
-        }    
-        $this->_link_loaded=TRUE;
-    }
+	function getLinks() {
+		if ($this->_link_loaded) {
+			return;
+		}
+		$cols = $this->_get_table();
+		$links = &PEAR::getStaticProperty('DB_DataObject',"{$this->_database}.links");
+		if ($links) {
+			foreach(array_keys($links[$this->__table]) as $key) {
+				$k = "_{$key}";
+				$this->$k = $this->getLink($key);
+			}
+			return;
+		}
+		foreach (array_keys($cols) as $key) {
+			if (!($p = strpos($key,'_'))) {
+				continue;
+			}
+			// does the table exist.
+			$k = "_{$key}";
+			$this->$k = $this->getLink($key);
+		}
+		$this->_link_loaded=TRUE;
+	}
      /**
     * return name from related object
     *
-    * This is highly dependant on naming columns 'correctly' :)
+    * There are two ways to use this, one is to set up a <dbname>.links.ini file
+    * into a static property named <dbname>.links and specifies the table joins,
+    * the other is highly dependant on naming columns 'correctly' :)
     * using colname = xxxxx_yyyyyy
-    * xxxxxx = related table; (yyyyy = user defined..) 
+    * xxxxxx = related table; (yyyyy = user defined..)
     * looks up table xxxxx, for value id=$this->xxxxx
     * stores it in $this->_xxxxx_yyyyy
     *
+    * @author Time White <tlwhit2@qwest.com>
     * @access	public
     * @return mixed object on success
     */
-    function &getLink($row, $table=NULL) 
-    {
-        if ($table === NULL) {
-            if (!($p = strpos($row,'_'))) { 
-                return;
-            }
-            $table = substr($row,0,$p);
-        }
-        if (!isset($this->$row)) {
-            DB_DataObject::raiseError("getLink: row not set $row", DB_DATAOBJECT_ERROR_NODATA);
-            return;
-        }
-        
-        
-        $class = $this->_autoloadTable($table);
-        if (!$class) {
-            DB_DataObject::raiseError("getLink:Could not find class for row $row, table $table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            return;
-        }
-        
-        
-        return DB_DataObject::staticGet($class,$this->$row);
-    }
+    function &getLink($row, $table=NULL) {
+		$links = &PEAR::getStaticProperty('DB_DataObject',"{$this->_database}.links");
+		$link = FALSE;
+		if ($table === NULL) {
+			if (@$links[$this->__table]) {
+				if ( @$links[$this->__table][$row]) {
+					list($table,$link) = explode(':',$links[$this->__table][$row]);
+				} else {
+					DB_DataObject::raiseError("getLink: $row is not defined as a link", DB_DATAOBJECT_ERROR_NODATA);
+					return; // technically a possible error condition?
+				}
+			} else { // use the old _ method
+				if (!($p = strpos($row,'_'))) {
+					return;
+				}
+				$table = substr($row,0,$p);
+			}
+		}
+		if (!isset($this->$row)) {
+			DB_DataObject::raiseError("getLink: row not set $row", DB_DATAOBJECT_ERROR_NODATA);
+			return;
+		}
+
+		$class = $this->_autoloadTable($table);
+		if (!$class) {
+			DB_DataObject::raiseError("getLink:Could not find class for row $row, table $table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+			return;
+		}
+		if ($link) {
+			return DB_DataObject::staticGet($class,$link,$this->$row);
+		}
+		return DB_DataObject::staticGet($class,$this->$row);
+	}
     /*
      * return a list of options for a linked table
     *
@@ -1144,8 +1194,7 @@ Class DB_DataObject {
     * @return array of results (empty array on failure)
     */
 
-    function &getLinkArray($row,$table = NULL) 
-    {
+    function &getLinkArray($row,$table = NULL) {
         $ret = array();
         if (!$table) {
             if (!($p = strpos($row,'_'))) {
@@ -1153,7 +1202,7 @@ Class DB_DataObject {
             }
             $table = substr($row,0,$p);
         }
-        $class = $this->_autoloadTable($table);
+        $class = $this->staticAutoloadTable($table);
         if (!$class) {
             DB_DataObject::raiseError("getLinkArray:Could not find class for row $row, table $table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return $ret;
@@ -1183,8 +1232,7 @@ Class DB_DataObject {
   
     
     
-    function setFrom(&$from) 
-    {
+    function setFrom(&$from) {
         $keys = $this->_get_keys();
         $items = $this->_get_table();
         if (!$items) {
@@ -1199,7 +1247,7 @@ Class DB_DataObject {
                 continue; // ignore empty keys!!! what
             }
             if (is_object($from) && @isset($from->$k)) {
-                $this->$k = $from->$k;    
+                $this->$k = $this->$k;    
                 continue;
             }
             if (!@isset($from[$k])) {
@@ -1216,56 +1264,6 @@ Class DB_DataObject {
         return TRUE;
     }  
   
-    
-    
-    
-   
-    /**
-    * getValidateArray - override this to set up your validation rules
-    * 
-    * validate the current objects values either just testing strings/numbers or
-    * using the user defined getValidateArray() methods.
-    * will attempt to call $this->validate{column_name}() - expects TRUE = ok  FALSE = ERROR
-    * you can the use the validate Class from your own methods.  
-    *      
-    * @access	public
-    * @return 	array of validation results
-    */
-    function validate() 
-    {
-        require_once("Validate.php");
-        $table = &$this->_get_table();
-        $ret = array();
-        
-       
-            
-         
-        foreach($table as $key=>$val) {
-            if (!isset($this->$key)) continue;
-            $method = "Validate".ucfirst($key);
-            if (method_exists($this,$method)) {
-                $ret[$key] = $this->$method();
-                continue;
-            }
-            switch ($val) {
-                case  DB_DATAOBJECT_STR:
-                    $ret[$key] = Validate::string($this->$key, VAL_PUNCTUATION . VAL_NAME);
-                    continue;
-                case  DB_DATAOBJECT_INT: 
-                    $ret[$key] = Validate::number($this->$key, ".");
-                    continue;
-            }
-        }
-        
-        foreach ($ret as $key=>$val) {
-            if ($val == FALSE) return $ret;
-        }
-        return TRUE; // everything is OK.
-    }
-    
-    
-     
-    
     /* ----------------------- Debugger ------------------ */
     /**
     * Debugger. - use this in your extended classes to output debugging information.
@@ -1279,8 +1277,7 @@ Class DB_DataObject {
     * @return 	none
     */
     
-    function debug($message,$logtype=0, $level=1) 
-    {
+    function debug($message,$logtype=0, $level=1) {
         if (DB_DataObject::debugLevel()<$level) {
             return;
         }
@@ -1301,8 +1298,10 @@ Class DB_DataObject {
     * @access	public
     * @return 	none
     */
-    function debugLevel($v=NULL) 
-    {
+    function debugLevel($v=NULL) {
+        if (DB_DATAOBJECT_PRODUCTION) {
+            PEAR::raiseError("DB_DataObject in Production Mode",NULL,PEAR_ERROR_DIE);
+        }
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         if ($v !== NULL) {
             $options['debug']  = $v;
@@ -1332,8 +1331,7 @@ Class DB_DataObject {
     * @access	  public
     * @return   error object
     */
-    function raiseError($message,$type,$behaviour=NULL) 
-    {
+    function raiseError($message,$type,$behaviour=NULL) {
         $error = PEAR::raiseError($message,$type,$behaviour);
         if (is_object($this)) {
             $this->_lastError = $error;
@@ -1343,9 +1341,35 @@ Class DB_DataObject {
         
         DB_DataObject::debug($message,"ERROR",1);
     }
-   
+
+    /**
+    * Define the DB_DATAOBJECT_PRODUCTION variable
+    *
+    * After Profiling DB_DataObject, I discoved that the debug calls where taking
+    * considerable time (well 0.1 ms), so this should stop those calls happening.
+    * by setting production =1 in the config, you disable all debug calls..
+    *
+    * @access	  public
+    * @return   error object
+    */
+    function staticDefineProduction() {
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        if (@$options['production']) {
+            define('DB_DATAOBJECT_PRODUCTION', 1);
+            return;
+        }
+        define('DB_DATAOBJECT_PRODUCTION', 0);
+    }
+
+
+
+
 
 }
-       
+
+DB_DataObject::staticDefineProduction();
+
+
+
  
 ?>
