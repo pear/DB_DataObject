@@ -33,7 +33,57 @@
 *  ===========================================================================
 */
 
-
+/**
+ * The main "DB_DataObject" class is really a base class for your own tables classes
+ *
+ * // Set up the class by creating an ini file (refer to the manual for more details
+ * [DB_DataObject]
+ * database         = mysql:/username:password@host/database
+ * schema_location = /home/myapplication/database
+ * class_location  = /home/myapplication/DBTables/
+ * clase_prefix    = DBTables_
+ *
+ *
+ * //Start and initialize...................... - dont forget the &
+ * $config = parse_ini_file('example.ini',true);
+ * $options = &PEAR::getStaticProperty('DB_DataObject','options');
+ * $options = $config['DB_DataObject'];
+ *
+ * // example of a class (that does not use the 'auto generated tables data')
+ * class mytable extends DB_DataObject {
+ *     // mandatory - set the table
+ *     var $_database_dsn = "mysql://username:password@localhost/database";
+ *     var $__table = "mytable";
+ *     function table() {
+ *         return array(
+ *             'id' => 1, // integer or number
+ *             'name' => 2, // string
+ *        );
+ *     }
+ *     function keys() {
+ *         return array('id');
+ *     }
+ * }
+ *
+ * // use in the application
+ *
+ *
+ * Simple get one row
+ *
+ * $instance = new mytable;
+ * $instance->get("id",12);
+ * echo $instance->somedata;
+ *
+ *
+ * Get multiple rows
+ *
+ * $instance = new mytable;
+ * $instance->whereAdd("ID > 12");
+ * $instance->whereAdd("ID < 14");
+ * $instance->find();
+ * while ($instance->fetch()) {
+ *     echo $instance->somedata;
+ * }
 
 
 /**
@@ -138,57 +188,8 @@ if ( substr(phpversion(),0,1) == 5) {
 
 }
  
- /**
- * The main "DB_DataObject" class is really a base class for your own tables classes
- *
- * // Set up the class by creating an ini file (refer to the manual for more details
- * [DB_DataObject]
- * database         = mysql:/username:password@host/database
- * schema_location = /home/myapplication/database
- * class_location  = /home/myapplication/DBTables/
- * clase_prefix    = DBTables_
- *
- *
- * //Start and initialize...................... - dont forget the &
- * $config = parse_ini_file('example.ini',true);
- * $options = &PEAR::getStaticProperty('DB_DataObject','options');
- * $options = $config['DB_DataObject'];
- *
- * // example of a class (that does not use the 'auto generated tables data')
- * class mytable extends DB_DataObject {
- *     // mandatory - set the table
- *     var $_database_dsn = "mysql://username:password@localhost/database";
- *     var $__table = "mytable";
- *     function table() {
- *         return array(
- *             'id' => 1, // integer or number
- *             'name' => 2, // string
- *        );
- *     }
- *     function keys() {
- *         return array('id');
- *     }
- * }
- *
- * // use in the application
- *
- *
- * Simple get one row
- *
- * $instance = new mytable;
- * $instance->get("id",12);
- * echo $instance->somedata;
- *
- *
- * Get multiple rows
- *
- * $instance = new mytable;
- * $instance->whereAdd("ID > 12");
- * $instance->whereAdd("ID < 14");
- * $instance->find();
- * while ($instance->fetch()) {
- *     echo $instance->somedata;
- * }
+
+ /*
  *
  * @package  DB_DataObject
  * @author   Alan Knowles <alan@akbkhome.com>
@@ -3375,7 +3376,10 @@ class DB_DataObject extends DB_DataObject_Overload
         if (PEAR::isError($message)) {
             $error = $message;
         } else {
-            $error = PEAR::raiseError($message, $type, $behaviour);
+            require_once 'DB/DataObject/Error.php';
+            $error = PEAR::raiseError($message, $type, $behaviour,
+                            $opts=null, $userinfo=null, 'DB_DataObject_Error'
+                        );
         }
         // this will never work totally with PHP's object model.
         // as this is passed on static calls (like staticGet in our case)
