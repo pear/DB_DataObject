@@ -11,6 +11,17 @@ if the 'production' option is off, then it should rebuild the table information 
 the table description. and compare the current definition to the new generated one...
 
 -----------------------------------
+Issue: More detailed cached table information
+
+make available an extra ini file database.details.ini, which contains
+[table]
+column = type:size:notnull: etc. 
+from the tableInfo() call
+
+to allow quick lookup/retrieval of this data for any purpose...
+
+
+-----------------------------------
 Issue: Replace 
 
 Mysql has a nice replace feature, It would be nice to have in dataObjects
