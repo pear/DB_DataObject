@@ -267,7 +267,7 @@ class DB_DataObject_Cast {
             return false;
         }
         
-        $r = DB_DataObject_Cast($bits[0], $bits[1], $bits[2]);
+        $r = DB_DataObject_Cast::date($bits[0], $bits[1], $bits[2]);
         if (!$r) {
             return $r; // pass thru error (False) - doesnt happen at present!
         }
