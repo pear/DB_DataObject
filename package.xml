@@ -24,6 +24,30 @@
   
   
     <release>
+      <version>0.17</version>
+      <date>2003-03-12</date>
+      <notes>
+        - Usual post feature bug fix release
+        - fix loading of links.ini for joinAdd, getLinks etc. (Geoff Hopson)
+          
+      </notes>
+      <state>stable</state>
+    </release>
+     
+     
+     
+    <filelist>
+        <dir name="/" baseinstalldir="DB" role="php">
+            <file>DataObject.php</file>
+            <dir name="DataObject" role="php">
+                <file>Generator.php</file>
+                <file>createTables.php</file>
+                <file>example.ini</file>
+            </dir>
+        </dir>
+    </filelist>
+    
+    <release>
       <version>0.16</version>
       <date>2003-03-06</date>
       <notes>
@@ -43,19 +67,6 @@
       <state>stable</state>
     </release>
      
-     
-     
-    <filelist>
-        <dir name="/" baseinstalldir="DB" role="php">
-            <file>DataObject.php</file>
-            <dir name="DataObject" role="php">
-                <file>Generator.php</file>
-                <file>createTables.php</file>
-                <file>example.ini</file>
-            </dir>
-        </dir>
-    </filelist>
-   
    
    
    
