@@ -94,7 +94,7 @@ class DB_DataObject_Generator extends DB_DataObject
         $databases = array();
         foreach($options as $k=>$v) {
             if (substr($k,0,9) == 'database_') {
-                $databases[] = substr($k,9);
+                $databases[] = $v;
             }
         }
 

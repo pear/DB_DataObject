@@ -19,7 +19,9 @@
 // $Id$
 //
 
-require_once 'DB/DataObject/Generator.php';
+// require once will include relative paths!!!
+require_once dirname(__FILE__) . '/../DataObject.php';
+require_once dirname(__FILE__) . '/Generator.php';
 
 if (!ini_get('register_argc_argv')) {
     PEAR::raiseError("\nERROR: You must turn register_argc_argv On in you php.ini file for this to work\neg.\n\nregister_argc_argv = On\n\n", null, PEAR_ERROR_DIE);
