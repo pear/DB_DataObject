@@ -659,7 +659,7 @@ Class DB_DataObject
             }
 
             $this->_clear_cache();
-            if (isset($key)) {
+            if ($key) {
                 return $this->$key;
             }
             return true;

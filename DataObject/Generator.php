@@ -156,6 +156,7 @@ class DB_DataObject_Generator extends DB_DataObject
 
         foreach($this->tables as $table) {
             $defs =  $__DB->tableInfo($table);
+            
             // cast all definitions to objects - as we deal with that better.
             foreach($defs as $def) {
                 if (is_array($def)) {
@@ -220,7 +221,7 @@ class DB_DataObject_Generator extends DB_DataObject
         $this->_newConfig .= "\n[{$this->table}]\n";
         $keys_out =  "\n[{$this->table}__keys]\n";
         foreach($defs as $t) {
-            print_r($t);   
+             
             $n=0;
 
             switch (strtoupper($t->type)) {
