@@ -1747,7 +1747,8 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $keys = $this->keys();
         if (!$keys) {
-            return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array(false,false,false);;
+            return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] 
+                = array(false,false,false);;
         }
  
 
@@ -1811,8 +1812,12 @@ class DB_DataObject extends DB_DataObject_Overload
                 ) {
             return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array($usekey,true,$seqname);
         }
+        // if not a native autoinc, and we have not assumed all primary keys are sequence
+        if (($realkeys[$usekey] != 'N') && 
+            @$_DB_DATAOBJECT['CONFIG']['dont_use_pear_sequences']) {
+            return array(false,false,false);
+        }
         // I assume it's going to try and be a nextval DB sequence.. (not native)
-        
         return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array($usekey,false,$seqname);
     }
     
@@ -3157,11 +3162,13 @@ class DB_DataObject extends DB_DataObject_Overload
             
             case ($cols[$col] & DB_DATAOBJECT_DATE):
                 // empty values get set to '' (which is inserted/updated as NULl
+                 
                 if (!$value) {
                     $this->$col = '';
                 }
             
                 if (is_numeric($value)) {
+                    echo "it's numberic?";
                     $this->$col = date('Y-m-d',$value);
                     return true;
                 }
@@ -3245,7 +3252,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 }
                 // try date!!!!
                 require_once 'Date.php';
-                $x = new Date($this->$col. ' 01:01:01');
+                $x = new Date($this->$col);
                 return $x->format($format);
                 
             case ($cols[$col] & DB_DATAOBJECT_TIME):

@@ -32,6 +32,7 @@ class test extends DB_DataObject {
 	 
     function doTests() {
         $this->createDB();
+       
         for($i=0;$i<100;$i++) {
             if (method_exists($this,'test'.$i)) {
                 $this->{'test'.$i}();
@@ -412,6 +413,38 @@ class test extends DB_DataObject {
        
         
     }
+    function test92() {
+        // bug #992
+        DB_DataObject::debugLevel(3);
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        $options['dont_use_pear_sequences'] = true;
+        $x  = new DB_DataObject;
+        
+        $x->query("DROP TABLE  IF EXISTS player_has_stats");
+        
+        
+       
+         $x->query("
+            CREATE TABLE `player_has_stats` (
+                  `player_id` int(10) unsigned NOT NULL default '0',
+                  `deaths` int(10) unsigned NOT NULL default '0',
+                  `kills` int(10) unsigned NOT NULL default '0',
+                  PRIMARY KEY  (`player_id`)
+                ) TYPE=MyISAM
+                
+             ");
+        
+         
+        $player_has_stats = DB_DataObject::factory('player_has_stats');
+        var_dump($player_has_stats->sequenceKey());
+        print_R($player_has_stats );
+        $player_has_stats-> player_id = 13;
+        $player_has_stats-> insert();
+    }
+
+
+        
+        
 
 
 

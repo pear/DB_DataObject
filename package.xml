@@ -28,7 +28,7 @@
         Minor Feature Release.
         
         * DB_DataObject_Error added to enable testing for dataobject errors
-        * 
+        * Date fixes - needs latest date package.
         
       
       ]]></notes>
@@ -59,7 +59,7 @@
       <dep type="php" rel="ge" version="4.2"/>
       <dep type="pkg" rel="ge" version="1.6">DB</dep>
       <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
-      <dep type="pkg" rel="ge" version="1.4">Date</dep>
+      <dep type="pkg" rel="ge" version="1.4.3">Date</dep>
     </deps>
 
   <changelog>
