@@ -594,7 +594,7 @@ Class DB_DataObject
         if (    ($key = @$keys[0]) &&
                 ($dbtype != 'mysql') &&
                 (@$options['ignore_sequence_keys'] != 'ALL') &&
-                (is_array(@$options['ignore_sequence_keys']) &&
+                (!is_array(@$options['ignore_sequence_keys']) ||
                     @!in_array($this->__table,$options['ignore_sequence_keys']))
             )
         {
@@ -602,7 +602,7 @@ Class DB_DataObject
             if (!($seq = @$options['sequence_'. $this->__table])) {
                 $seq = $this->__table;
             }
-            $this->$key = $__DB->nextId($this->__table);
+            $this->$key = $__DB->nextId($seq);
         }
 
         foreach($items as $k => $v) {
