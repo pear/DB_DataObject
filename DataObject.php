@@ -53,6 +53,7 @@ define('DB_DATAOBJECT_ERROR_INVALIDCONFIG', -3);  // something wrong with the co
 define('DB_DATAOBJECT_ERROR_NOCLASS',       -4);  // no class exists
 define('DB_DATAOBJECT_ERROR_NOAFFECTEDROWS',-5);  // no rows where affected by update/insert/delete
 define('DB_DATAOBJECT_ERROR_NOTSUPPORTED'  ,-6);  // limit queries on unsuppored databases
+define('DB_DATAOBJECT_ERROR_INVALID_CALL'  ,-7);  // overlad getter/setter failure
 
 /**
  * Used in methods like delete() and count() to specify that the method should
@@ -84,7 +85,7 @@ $GLOBALS['_DB_DATAOBJECT']['LASTERROR'] = null;
 $GLOBALS['_DB_DATAOBJECT']['CONFIG'] = array();
 $GLOBALS['_DB_DATAOBJECT']['CACHE'] = array();
 $GLOBALS['_DB_DATAOBJECT']['LOADED'] = array();
-
+$GLOBALS['_DB_DATAOBJECT']['OVERLOADED'] = false;
 /**
  * The main "DB_DataObject" class is really a base class for your own tables classes
  *
@@ -1094,12 +1095,13 @@ Class DB_DataObject
      * @access private
      * @return array (associative)
      */
-    function &_get_table()
+    function _get_table()
     {
         global $_DB_DATAOBJECT;
         if (!@$this->_database) {
             $this->_connect();
         }
+        
         $this->_loadDefinitions();
 
 
@@ -1107,6 +1109,7 @@ Class DB_DataObject
         if (isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
             $ret =  $_DB_DATAOBJECT['INI'][$this->_database][$this->__table];
         }
+        
         return $ret;
     }
 
@@ -1118,7 +1121,7 @@ Class DB_DataObject
      * @access private
      * @return array
      */
-    function &_get_keys()
+    function _get_keys()
     {
         global $_DB_DATAOBJECT;
         if (!@$this->_database) {
@@ -1683,8 +1686,8 @@ Class DB_DataObject
         }
 
         $this->_join .= "INNER JOIN {$obj->__table} ON {$obj->__table}.{$ofield}={$this->__table}.{$tfield} ";
-
-
+         
+         
         /* now add where conditions for anything that is set in the object */
 
         $items = $obj->_get_table();
@@ -1720,7 +1723,7 @@ Class DB_DataObject
      *
      * @param    array | object  $from
      * @access   public
-     * @return   boolean , true on success
+     * @return   true on success or array of key=>setValue error message
      */
     function setFrom(&$from)
     {
@@ -1730,6 +1733,7 @@ Class DB_DataObject
             DB_DataObject::raiseError("setFrom:Could not find table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return;
         }
+        $overload_return = array();
         foreach (array_keys($items) as $k) {
             if (in_array($k,$keys)) {
                 continue; // dont overwrite keys
@@ -1738,6 +1742,13 @@ Class DB_DataObject
                 continue; // ignore empty keys!!! what
             }
             if (is_object($from) && @isset($from->$k)) {
+                if ($_DB_DATAOBJECT['OVERLOADED'] && (strtolower($k) != 'from') ) {
+                    $ret = $this->{'set'.$k}($from->$k);
+                    if (is_string($ret)) {
+                        $overload_return[$k] = $ret;
+                    }
+                    continue;
+                }
                 $this->$k = $from->$k;
                 continue;
             }
@@ -1750,7 +1761,17 @@ Class DB_DataObject
             if (is_array($from[$k])) {
                 continue;
             }
+            if ($_DB_DATAOBJECT['OVERLOADED'] && (strtolower($k) != 'from') ) {
+                $ret =  $this->{'set'.$k}($from[$k]);
+                if (is_string($ret)) {
+                    $overload_return[$k] = $ret;
+                }
+                continue;
+            }
             $this->$k = $from[$k];
+        }
+        if ($overload_return) {
+            return $overload_return;
         }
         return true;
     }
@@ -1771,10 +1792,18 @@ Class DB_DataObject
 
     function toArray($format = '%s')
     {
+        global $_DB_DATAOBJECT;
         $ret = array();
+ 
         foreach($this->_get_table() as $k=>$v) {
+             
             if (!isset($this->$k)) {
                 $ret[sprintf($format,$k)] = '';
+                continue;
+            }
+            // call the overloaded getXXXX() method.
+            if ($_DB_DATAOBJECT['OVERLOADED']) {
+                $ret[sprintf($format,$k)] = $this->{'get'.$k}();
                 continue;
             }
             $ret[sprintf($format,$k)] = $this->$k;
@@ -1864,6 +1893,76 @@ Class DB_DataObject
         }
         return $_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid];
     }
+
+    /**
+     * Overload Extension support
+     *  - enables setCOLNAME/getCOLNAME
+     *  if you define a set/get method for the item it will be called.
+     * otherwise it will just return/set the value.
+     * NOTE this currently means that a few Names are NO-NO's 
+     * eg. links,link,linksarray, from, Databaseconnection,databaseresult
+     *
+     * note 
+     *  - set is automatically called by setFrom.
+     *   - get is automatically called by toArray()
+     *  
+     * setters return true on success. = strings on failure
+     * getters return the value!
+     *
+     * @access public
+     * @return true?
+     * @see overload
+     */
+
+    
+    function __call($method,$params,&$return) {
+        //echo $method;
+        // ignore constructors : - mm
+        if ($method == get_class($this)) {
+            return true;
+        }
+        $type = strtolower(substr($method,0,3));
+       
+        if (($type != 'set') && ($type != 'get')) {
+            PEAR::raiseError(
+                "Call to Unknown method $method on overloaded DB_DataObject",
+                DB_DATAOBJECT_ERROR_INVALID_CALL, PEAR_ERROR_DIE); 
+            return true;
+        }
+         
+        
+        
+        $element = substr($method,3);
+        if ($element{0} == '_') {
+            PEAR::raiseError(
+                "Call to Unknown method $method on overloaded DB_DataObject",
+                DB_DATAOBJECT_ERROR_INVALID_CALL, PEAR_ERROR_DIE); 
+            return true;
+        }
+        // at present - blindly just do this?
+        // it appear to cause problems for some reason...
+        
+        //$class = get_class($this);
+        //$array =  array_keys(get_class_vars($class));
+        //if (in_array($element,$array)) {
+        //    PEAR::raiseError(
+        //        "Call to Unknown method $method on overloaded DB_DataObject",
+        //        DB_DATAOBJECT_ERROR_INVALID_CALL, PEAR_ERROR_DIE);
+        //    return true;
+        // }
+        
+        
+        if ($type == 'get') {
+            $return = $this->$element;
+            return true;
+        }
+        $this->$element = $params[0];
+        return $return = true;
+    }
+        
+    
+    
+
 
     /* ----------------------- Debugger ------------------ */
 
@@ -1978,4 +2077,10 @@ Class DB_DataObject
 
     }
 }
+// technially 4.3.2RC1 was broken!!
+if ((phpversion() != '4.3.2-RC1') && (version_compare( phpversion(), "4.3.1") > 0)) {
+   overload('DB_DataObject');
+   $GLOBALS['_DB_DATAOBJECT']['OVERLOADED'] = true;
+}
+
 ?>
