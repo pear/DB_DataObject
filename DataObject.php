@@ -28,7 +28,7 @@
 *        !!!!!!!!!!!!!               W A R N I N G                !!!!!!!!!!!
 *
 *     THIS MAY SEGFAULT PHP IF YOU ARE USING THE ZEND OPTIMIZER (to fix it, just add 
-*     "define('DB_DATAOBJECT_NO_OVERLOAD');" before you include this file.
+*     "define('DB_DATAOBJECT_NO_OVERLOAD',true);" before you include this file.
 *  =====================================================================================
 */
 
@@ -2816,10 +2816,6 @@ Class DB_DataObject extends DB_DataObject_Overload
      * @access public
      * @return object The DB result object
      */
-     
-   
-     
-     
      
     function &getDatabaseResult()
     {
