@@ -219,7 +219,7 @@ class DB_DataObject_Cast {
     * @access   public
     */
   
-    function toString($to=DB_DATAOBJECT_STR,$db='mysql') {
+    function toString($to=false,$db='mysql') {
         // if $this->type is not set, we are in serious trouble!!!!
         // values for to:
         $method = 'toStringFrom'.$this->type;
@@ -310,11 +310,11 @@ class DB_DataObject_Cast {
          // perhaps we should support TEXT fields???
         // 
         
-        if (!($to & DB_DATAOBJECT_DATE)) {
+        if (($to !== false) && !($to & DB_DATAOBJECT_DATE)) {
             return PEAR::raiseError('Invalid Cast from a DB_DataObject_Cast::string to something other than a date!'.
                 ' (why not just use native features)');
         }
-        return "'{$this->year}-{$this->month}-{$this->date}'";
+        return "'{$this->year}-{$this->month}-{$this->day}'";
     }
     
    
