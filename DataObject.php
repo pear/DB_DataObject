@@ -1144,16 +1144,16 @@ Class DB_DataObject {
 		}
 		$cols = $this->_get_table();
 		$links = &PEAR::getStaticProperty('DB_DataObject',"{$this->_database}.links");
-		if ($links) {
-			foreach($links[$this->__table] as $key=>$match) {
-                list($table,$link) = explode(':',$match);
-				$k = "_".str_replace('.','_',$key);
-				if ($p = strpos($row,".")) {
-                    $key = substr($key,0,$p);
-                }
-                $this->$k = $this->getLink($key,$table,$link);
-			}
-			return;
+		if (@$links[$this->__table]) {
+                    foreach($links[$this->__table] as $key=>$match) {
+                        list($table,$link) = explode(':',$match);
+                        $k = "_".str_replace('.','_',$key);
+		        if ($p = strpos($key,".")) {
+                              $key = substr($key,0,$p);
+                        }
+                        $this->$k = $this->getLink($key,$table,$link);
+                    }
+                   return;
 		}
 		foreach (array_keys($cols) as $key) {
 			if (!($p = strpos($key,'_'))) {
