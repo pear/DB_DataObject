@@ -518,15 +518,26 @@ Class DB_DataObject {
         }
 
         foreach($items as $k=>$v) {
-            if (isset($this->$k)) {
-                if ($leftq) {
-                    $leftq .= ", $k ";
-                    $rightq .=", '".addslashes($this->$k)."' ";
-                } else {
-                    $leftq = "$k ";
-                    $rightq .="'".addslashes($this->$k)."' ";
-                }
+            if (!isset($this->$k)) {
+                continue;
             }
+            if ($leftq) {
+                $leftq .= ", ";
+                $rightq .=", ";
+            }
+            $leftq = "$k ";
+            if ($v & DB_DATAOBJECT_STR) {
+                $rightq .="'".addslashes($this->$k)."' ";
+                continue;
+            }
+            if (is_numeric($this->$k)) {
+                $rightq .=" {$this->$k} ";
+                continue;
+            }
+            // at present we only cast to integers 
+            // - V2 may store additional data about float/int 
+            $rightq .=" " . intval($this->$k) . " ";
+            
         }
         if ($leftq) {
             $this->_query("INSERT INTO {$this->__table} ($leftq) VALUES ($rightq) ");
@@ -565,14 +576,30 @@ Class DB_DataObject {
         }
         $datasaved=1;
         $settings ="";
+        
+        
         foreach($items as $k=>$v) {
-            if (isset($this->$k) && !in_array($k, $keys)) {
-                if ($settings)  {
-                    $settings .=", ";
-                }
+            if (!isset($this->$k)) {
+                continue;
+            }
+            if ($settings)  {
+                $settings .=", ";
+            }
+            if ($v & DB_DATAOBJECT_STR) {
                 $settings .="$k = '".addslashes($this->$k)."' ";
-  	    }
+                continue;
+            }
+            if (is_numeric($this->$k)) {
+                $settings .="$k = {$this->$k} ";
+                continue;
+            }
+            // at present we only cast to integers 
+            // - V2 may store additional data about float/int 
+            $settings .="$k = ". intval($this->$k) . " ";
+            
         }
+        
+         
 
         //$this->_condition=""; // dont clear condition
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
