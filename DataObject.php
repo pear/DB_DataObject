@@ -45,6 +45,7 @@ define('DB_DATAOBJECT_ERROR_NODATA',        -2);  // no data available
 define('DB_DATAOBJECT_ERROR_INVALIDCONFIG', -3);  // something wrong with the config
 define('DB_DATAOBJECT_ERROR_NOCLASS',       -4);  // no class exists
 define('DB_DATAOBJECT_ERROR_NOAFFECTEDROWS',-5);  // no rows where affected by update/insert/delete
+define('DB_DATAOBJECT_ERROR_NOTSUPPORTED'  ,-6);  // limit queries on unsuppored databases
 
 /**
  * Used in methods like delete() and count() to specify that the method should
@@ -482,6 +483,10 @@ Class DB_DataObject
      * $object->limit(12);
      * $object->limit(12,10);
      *
+     * Note this will emit an error on databases other than mysql/postgress
+     * as there is no 'clean way' to implement it. - you should consider refering to 
+     * your database manual to decide how you want to implement it.
+     *
      * @param  string $a  limit start (or number), or blank to reset
      * @param  string $b  number
      * @access public
@@ -493,11 +498,24 @@ Class DB_DataObject
            $this->_limit = '';
            return;
         }
-        if ($b === NULL) {
-           $this->_limit = " LIMIT $a ";
-           return;
+        
+        
+        $db = $this->getDatabaseConnection();
+        
+        if (($db->features['limit'] == 'alter') && ($db->phptype != 'oci8')) {
+            if ($b === NULL) {
+               $this->_limit = " LIMIT $a";
+               return;
+            }
+            
+            $this->_limit = $db->modifyLimitQuery('',$a,$b);
+        
+        } else {
+            PEAR::raiseError(
+                "DB_DataObjects only supports mysql and postgres limit queries at present, \n".
+                "Refer to your Database manual to find out how to do limit queries manually.\n",
+                DB_DATAOBJECT_ERROR_NOTSUPPORTED, PEAR_ERROR_DIE);
         }
-        $this->_limit = " LIMIT $a,$b ";
     }
 
     /**
@@ -1736,7 +1754,11 @@ Class DB_DataObject
 
     function toArray($format = '%s')
     {
+        $ret = array();
         foreach($this->_get_table() as $k=>$v) {
+            if (!isset($this->$k)) {
+                continue;
+            }
             $ret[sprintf($format,$k)] = $this->$k;
         }
         return $ret;

@@ -35,7 +35,10 @@
         - add optional dataobject as variable to update(), so you can update will 
           only create an update based on what has changed. (Geoff Hopson)
         - add join condition to count() (Daniel Von Fange)
-        
+        - modify limit() to work with postgresql and make it emit a fatal error if you 
+          try this on databases that do not directly support limit queries. (Geoff Hopson)
+          * I'm open on better ideas for this - probably wrapping the find() select call
+          
       </notes>
       <state>stable</state>
     </release>

@@ -79,6 +79,25 @@ class test extends DB_DataObject {
 
 	print_r($t->toArray('user[%s]'));
 
+	echo "\n\n\n****** limited queries 1\n";
+        $t= new test;
+
+        $t->limit(1);
+	$t->find();
+	$t->fetch();
+	
+	
+	echo "\n\n\n****** limited queries 1,1\n";
+	$t= new test;
+
+        $t->limit(1,1);
+	$t->find();
+	$t->fetch(); 
+	
+	echo "\n\n\n****** to Array on empty result\n";
+	print_r($t->toArray('user[%s]'));
+	
+
 	echo "\n\n\n******get and delete an object key\n";
 	$t = new test;
 	$t->get(2);
