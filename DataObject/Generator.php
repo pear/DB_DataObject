@@ -494,7 +494,7 @@ class DB_DataObject_Generator extends DB_DataObject
         $head .= "require_once '{$this->_extendsFile}';\n\n";
         // add dummy class header in...
         // class
-        $head .= "class {$this->classname} extends {$this->_extends} \n{\n";
+        $head .= "class {$this->classname} extends {$this->_extends} \n{";
 
         $body =  "\n    ###START_AUTOCODE\n";
         $body .= "    /* the code below is auto generated do not remove the above tag */\n\n";
