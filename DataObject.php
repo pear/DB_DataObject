@@ -525,7 +525,7 @@ Class DB_DataObject {
     *   echo "UPDATE FAILED";
     *
     * @access	public
-    * @return 	boolearn TRUE = success 
+    * @return 	boolean TRUE = success 
     */
     
     function update() {       

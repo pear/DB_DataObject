@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- $Revision: 1.1 $ --> 
+<!-- $Revision: 1.2 $ --> 
 <reference id="packages.DB.DataObject">
   <title>SQL Builder and Data Modeling Layer</title>
   <titleabbrev>DB_DataObject</titleabbrev>
@@ -56,11 +56,8 @@
         // use one of the extended classes.
         
         require_once('DataObjects/Person.php');
-        
         $person = new DataObjects_Person;
-     
         $person->get(12);
-     
         echo $person->name;
         
         
@@ -70,13 +67,14 @@
       </example>
       <para>
         The above example illustrates the two components of the DataManager, By setting the options, all 
-        The core objects will autoload the data definitons from a generated ini file. and know how to access 
-        the database. (multiple databases are supported - see section on configuration)
+        the core objects will be able to autoload the data definitons from a generated ini file, and know 
+        how to access the database. (multiple databases are supported - see section on configuration)
       </para>
       <para>
-        The later half illustrates how to query and get the result for a single row. the $person-&gt;get() would connect
-        to the database, perform the query, fetch the result and assign the objects variables to the values from 
-        the row returned.
+        The later half illustrates how to query and get the result for a single row. The $person-&gt;get() would connect
+        to the database, perform the query, fetch the result and assign the objects variables to the data returned
+        from the query.
+        
       </para>
       <para>
         In the above example, this query would be performed.
@@ -87,8 +85,8 @@
       </programlisting>
        
       <para>
-        to Make a change to the Object you would just change the value of the objects variables and call
-        the update method
+        To make a change to the Database you would just change the value of the objects variables and call
+        the update method.
       </para>
        
       <programlisting role="php">
@@ -96,11 +94,8 @@
     <?
         
         $person = new DataObjects_Person;
-        
         $person->get(12);
-         
         $person->name = 'Fred';
-         
         $person->update();
         
 ?>    
@@ -164,9 +159,9 @@ Configuraton file
     <refsect1>
       <title>Configuration</title>
       <para>
-      DB_DataObject needs to be configured before using it and auto generating classes and definitions,
-      the easiest way to configure DB_DataObject is to use ini files (although you may also like to consider
-      the PEAR::Config class.
+      DB_DataObject needs to be configured before using it and auto generating classes and definitions.
+      The easiest way to configure DB_DataObject is to use ini files (although you may also like to consider
+      the PEAR::Config class, or your own configuration system)
       </para>
       
      <example>
@@ -191,9 +186,9 @@ class_prefix    = DataObjects_
         <programlisting role="php"><![CDATA[
 <?php
 $config = parse_ini_file('example.ini',TRUE);
-foreach($config as $key=>$value) {
-  $options = &PEAR::getStaticProperty($key,'options');
-  $options = $value;
+foreach($config as $class=>$values) {
+  $options = &PEAR::getStaticProperty($class,'options');
+  $options = $values;
 }
 ?>
 ]]>
@@ -209,7 +204,7 @@ Config Options
 
     
     <refsect1>
-      <title>Configuration Options - Standard</title>
+      <title>Configuration Options - Required</title>
     
       <variablelist>
       
@@ -239,8 +234,8 @@ Config Options
             The Directory where the DB_DataObject database schema file is store.
             </para>
             <para>
-            DB_DataObject Stores the Description of the database (Tables and Columns) in an .ini file, in this directory
-            this information is used to determine if the column is a string and needs quotes, or should be a number (and is checked)
+            DB_DataObject stores the description of the database (Tables and Columns) in an .ini file, 
+            in this directory. This information is used to determine if the column is a string and needs quotes, or should be a number (and is checked)
             at SQL building time. It is quite common to store the schema in the same directory as your DataObject
             Classes.
             </para>
@@ -256,8 +251,8 @@ Config Options
           </term>
           <listitem>
             <para>
-            The Path absoloute, or relative to your default include path(s), where your 
-            extended classes can be found.
+            The Path absolute, or relative to your default include path(s), where your 
+            extended classes can be found. 
             </para>
             <para>
             This is used by the staticGet() method and the getLinks() method to auto load classes, 
@@ -277,6 +272,21 @@ Config Options
             </para>
           </listitem>
         </varlistentry>
+
+
+
+        <varlistentry>
+          <term>
+            <parameter>debug</parameter>
+            <type>integer</type>
+          </term>
+          <listitem>
+            <para>
+            The default debugging level (default 0=off), 1= basic sql logging,2=result logging, 3=everything
+            </para>
+          </listitem>
+        </varlistentry>
+
 
       </variablelist>
      
@@ -387,7 +397,7 @@ table_stock     = sales
             The Directory where your DataObject extended Classes are.
             </para>
             <para>
-            It is also used by the Class AutoBuilder when updating/writing to your class definitions.
+             Used by the Class AutoBuilder when updating/writing to your class definitions.
             </para>
           </listitem>
         </varlistentry>
@@ -457,21 +467,21 @@ AutoBuilding of Classes and Database schema
       </refpurpose>
     </refnamediv>
     <refsect1>
-      <title>What the AutoBuilder Does</title>
+      <title>What the AutoBuilder (createTables.php) Does</title>
         <para>
           One of the essential features of an SQL building tool is to to have some understanding of the
           database structure, So that Integers can be checked, and strings can be escaped. There a few ways
-          this could be accomplished
+          that Quering the database for the table structre could be accomplished
         
         <itemizedlist>
           <listitem>
-            <simpara>Request the database description from the database, on each database build</simpara>
+            <simpara>on every SQL query</simpara>
           </listitem>
           <listitem>
-            <simpara>Request the database description from the database, at the initialization of every web page.</simpara>
+            <simpara>At the initialization of every web page.</simpara>
           </listitem>
           <listitem>
-            <simpara>Request the database description from the database, once, and store it in a file</simpara>
+            <simpara>Once, while setting up the application, and store it in a file</simpara>
           </listitem>
          </itemizedlist>
          DB_DataObject uses the last of these, it utilizes the parse_ini_file function to read the file, so it should be 
@@ -479,11 +489,11 @@ AutoBuilding of Classes and Database schema
       </para>  
       <para>
         The other key concept of DB_DataObject is that you work with extended classes of DB_DataObject, which
-        do all the 'table' related work. Setting these tables up for a large database can be time consuming, so 
-        the createTables.php file is included to assist in creating these files.
+        do all the 'table' related work. Setting up these classes for a large database can be time consuming, so 
+        the createTables.php file will automatically bulid the skeletons for all these class files.
       </para>
       <para>  
-        To start the autobulider simple go to the pear/DB/DataObject/ directory, and type
+        To start the autobuilder simply go to the pear/DB/DataObject/ directory, and type
         <command>c:\php4\php.exe createTables.php myconfig.ini</command> this will read your configuration file
         and generate all the base classes, along with the data definition file.
       </para>
@@ -509,16 +519,16 @@ class DataObjects_Grp extends DB_DataObject {
     /* the code below is auto generated do not remove the above tag */
 
     var $__table='group';                             // table name
-    var $id;                              // int(11)
-    var $name;                            // varchar(255)
-    var $grp_owner;                       // int(11)
-    var $official;                        // varchar(255)
-    var $street;                          // varchar(255)
-    var $postcode;                        // varchar(255)
-    var $city;                            // varchar(255)
-    var $homepage;                        // varchar(255)
-    var $email;                           // varchar(255)
-    var $extra;                           // longtext
+    var $id;                              // int primary_key
+    var $name;                            // string
+    var $grp_owner;                       // int
+    var $official;                        // string
+    var $street;                          // string
+    var $postcode;                        // string
+    var $city;                            // string
+    var $homepage;                        // string
+    var $email;                           // string
+    var $extra;                           // blob
 
 
     /* Static get */
@@ -531,6 +541,9 @@ class DataObjects_Grp extends DB_DataObject {
 ?>]]>
           </programlisting>
         </example>
+      </para>
+      <para>
+
         The class defines the table name, and comments some of table columns for your reference,
         It also adds the staticGet() method, which can be used to quickly get single rows as Objects.
         You should add your table related code after the ###END_AUTOCODE.
@@ -564,9 +577,11 @@ id = 1
 ]]> 
           </programlisting>
         </example>
+      </para>
+      <para>
+
         The blocks indicate either tables and the type of field (1=integer,2=string), 
-        or a list of keys for each table.  You should not need to edit or create this file, unless
-        the createTables.php does not support your database.
+        or a list of keys for each table.  You should not need to edit file.
         
       </para>
 
@@ -594,16 +609,16 @@ Simple Finding and fetching
     <refnamediv>
       <refname>Finding and fetching</refname>
       <refpurpose>
-        Simple Querying methods ::staticGet ::get ::find ::fetch
+        Simple Querying methods ::staticGet() ::get() ::find() ::fetch()
       </refpurpose>
     </refnamediv>
     
     
     
     <refsect1>
-      <title>get</title>
+      <title>::get()</title>
     <para>
-      Simple Get (Select) request, are achieved using the get methods
+      Simple Get (Select) request, are achieved using the get method
       </para>
       <funcsynopsis>
         <funcprototype>
@@ -626,6 +641,9 @@ print_r($person);
         ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
+
       This would execute the following SQL statement and fetch the results into the objects variables
         <example>
          <title> Resulting SQL </title>
@@ -636,9 +654,11 @@ SELECT * FROM person WHERE id=12
           ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
         To use another field other than the primary key, you would use it with two parameters
         <example>
-          <title> Simple fetch of data based on Primary Key</title>
+          <title> Simple fetch of data based on Key and Value</title>
           <programlisting role="php"><![CDATA[
 <?
 $person = new DataObjects_Person;
@@ -648,6 +668,9 @@ print_r($person);
         ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
+
         This would execute the following SQL statement and fetch the results into the objects variables
         <example>
         <title> Resulting SQL </title>
@@ -658,9 +681,10 @@ SELECT * FROM person WHERE email='test@example.com'
           ]]>
           </programlisting>
         </example>
-        
+      </para>
+      <para>
         The result of these two queries would be that all the objects variables would contain the matched row's 
-        data and the variable $person->N would contain the number of matches.
+        data and the variable $person-&gt;N would contain the number of matches.
         <example>
           <title> Results of example code</title>
           <programlisting role="ini"><![CDATA[
@@ -681,7 +705,7 @@ Object (DataObjects_Person) =>
     
       
     <refsect1>
-      <title>staticGet</title>
+      <title>::staticGet()</title>
     <para>
       Simple Get (Select) request, abreviated get request.
       </para>
@@ -694,7 +718,7 @@ Object (DataObjects_Person) =>
       </funcsynopsis>
       <para>
         The static method is similar to the get request, however it does not require the 
-        initial instantation of the class
+        initial instantation of the class. staticGet also caches the result.
         <example>
           <title> Simple fetch of data based on Primary Key</title>
           <programlisting role="php"><![CDATA[
@@ -705,9 +729,11 @@ print_r($person);
         ]]>
           </programlisting>
         </example>
-      
+      </para>
+      <para>
+
         You may also use the DB_DataObject staticGet method directly, however you need to specify which
-        class you wish to use.
+        class you wish to use. In this case, the Class file will be automatically loaded.
         <example>
           <title> Simple fetch of data based on Primary Key</title>
           <programlisting role="php"><![CDATA[
@@ -727,21 +753,21 @@ print_r($person);
     
     
     <refsect1>
-      <title>find</title>
+      <title>::find()</title>
       <para>
       Searching for Items
       </para>
       <funcsynopsis>
         <funcprototype>
           <funcdef>integer <function>::find</function></funcdef>
-          <paramdef>boolean <parameter><optional>Auto Fetch</optional></parameter></paramdef>
+          <paramdef>boolean <parameter><optional>AutoFetch</optional></parameter></paramdef>
         </funcprototype>
       </funcsynopsis>
       <para>
-        The find method can be used to execute, and optionally fetch data based on the values of
-        the object
+        The find method builds and executes the current Query, based on the object variables and any 'WhereAdd' conditions
+        , If the AutoFetch is TRUE, then it will also call the fetch method automatically.
         <example>
-          <title> Simple fetch of data based on Object Vars</title>
+          <title> Simple find of data based on Object Vars</title>
           <programlisting role="php"><![CDATA[
 <?
 $person = new DataObjects_Person;
@@ -752,7 +778,9 @@ $number_of_rows = $person->find();
         ]]>
           </programlisting>
         </example>
-  
+      </para>
+      <para>
+
        This would execute the following SQL statement and fetch the results into the objects variables
         <example>
         <title> Resulting SQL </title>
@@ -769,7 +797,7 @@ SELECT * FROM person WHERE hair='red' and has_glasses = 1
     
       
     <refsect1>
-      <title>fetch</title>
+      <title>::fetch()</title>
       <para>
       Getting the data.
       </para>
@@ -780,9 +808,10 @@ SELECT * FROM person WHERE hair='red' and has_glasses = 1
         </funcprototype>
       </funcsynopsis>
       <para>
-        The fetch method gets the next row and  sets the objects variables to the rows data.
+        The fetch method gets the next row and  sets the objects variables to the rows data. It returns true if data
+        has been collected, and false when there is no more data.
         <example>
-          <title> Simple fetch of data based on Object Vars</title>
+          <title> Simple find and fetch of data based on Object Vars</title>
           <programlisting role="php"><![CDATA[
 <?
 $person = new DataObjects_Person;
@@ -822,7 +851,7 @@ update, insert, delete, replace (TODO) , setFrom,
     <refnamediv>
       <refname>Modifying the database</refname>
       <refpurpose>
-        ::update, ::insert, ::delete,
+        ::update(), ::insert(), ::delete(),
       </refpurpose>
     </refnamediv>
     
@@ -830,7 +859,7 @@ update, insert, delete, replace (TODO) , setFrom,
     
     
      <refsect1>
-      <title>Update</title>
+      <title>::update()</title>
       <para>
       Updating the data.
       </para>
@@ -841,9 +870,10 @@ update, insert, delete, replace (TODO) , setFrom,
         </funcprototype>
       </funcsynopsis>
       <para>
-        updates the database using the objects variables
+        updates the database using the objects variables, returns TRUE on success
+        
         <example>
-          <title> Simple fetch and updated</title>
+          <title> Simple fetch and update</title>
           <programlisting role="php"><![CDATA[
 <?
 $person = new DataObjects_Person;
@@ -854,6 +884,8 @@ $person->update();
         ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
         
        This would execute the following SQL statements, both fetching and updating the database.
         <example>
@@ -866,6 +898,8 @@ UPDATE person SET name='fred', age='21', eyes='blue' WHERE id = 12
 ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
         To perform a general update on a table, use the WhereAdd() method
         <example>
           <title> Simple fetch and updated</title>
@@ -879,6 +913,8 @@ $person->update();
         ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
         
         This would execute the following SQL statements, both fetching and updating the database.
        <example>
@@ -899,7 +935,7 @@ UPDATE person SET removed=1 WHERE age > 21
      
     
      <refsect1>
-      <title>Insert</title>
+      <title>::insert()</title>
       <para>
       Inserting data.
       </para>
@@ -922,6 +958,8 @@ $id = $person->insert();
         ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
         
        This would execute the following SQL statements, (It may also do sequences on some databases, it
        uses mysql_next_id on mysql)
@@ -939,21 +977,23 @@ INSERT INTO person (name) VALUES ('fred');
     
     
     <refsect1>
-      <title>Delete</title>
+      <title>::delete()</title>
       <para>
       Deleting data.
       </para>
       <funcsynopsis>
         <funcprototype>
           <funcdef><function>::delete</function></funcdef>
-          <paramdef><parameter></parameter></paramdef>
+          <paramdef>boolean <parameter><optional>UseWhere</optional></parameter></paramdef>
         </funcprototype>
       </funcsynopsis>
       <para>
-        Deletes data from the data, either using primary key or based on a WhereAdd() method call.
+        Deletes data from the database, either using primary key or based on a WhereAdd() method call.
+        by default the delete will base it's query on the set variables, however if you wish to use the WhereAdd
+        method you should set the UseWhere parameter to TRUE
         <example>
         
-          <title> Simple insert </title>
+          <title> Simple Delete </title>
           <programlisting role="php"><![CDATA[
 <?
 $person = new DataObjects_Person;
@@ -963,13 +1003,15 @@ $person->delete();
 
 $person = new DataObjects_Person;
 $person->whereAdd('age < 21');
-$person->delete();
+$person->delete(TRUE);
 
 
 ?>
         ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
         
        This would execute the following SQL statements, 
         <example>
@@ -1009,7 +1051,7 @@ Advanced Filters
     <refnamediv>
       <refname>Advanced Filters</refname>
       <refpurpose>
-       Advanced Filters - ::query, ::SelectAdd, ::whereAdd, ::Limit, ::OrderBy, ::GroupBy, 
+       Advanced Filters - ::query(), ::SelectAdd(), ::whereAdd(), ::Limit(), ::OrderBy(), ::GroupBy(), 
       </refpurpose>
     </refnamediv>
     
@@ -1035,7 +1077,7 @@ Advanced Filters
     
     
     <refsect1>
-      <title>Query</title>
+      <title>::query()</title>
       <para>
       Raw Database Queries
       </para>
@@ -1066,7 +1108,7 @@ while ($person->fetch()) {
     
       
     <refsect1>
-      <title>selectAdd</title>
+      <title>::selectAdd()</title>
       <para>
       Adding and removing Items from select query
       </para>
@@ -1077,8 +1119,9 @@ while ($person->fetch()) {
         </funcprototype>
       </funcsynopsis>
       <para>
-        By default a select query will request all items '*', to change this behaviour you must first call
-        selectAdd() without any arguments and the add the specific items you require.
+        By default a select query will request all items '*', to change this behaviour you can first call
+        selectAdd() without any arguments to clear the current request and then add the specific items 
+        you require.
         <example>
         <title> Adding select statements</title>
           <programlisting role="php"><![CDATA[
@@ -1102,7 +1145,8 @@ echo "$person->name} {$person->birthday_formated}<BR>";
         ]]>
           </programlisting>
         </example>
-        
+      </para>
+      <para>
         This would execute the following SQL statements, 
        <example>
          <title> Resulting SQL </title>
@@ -1114,7 +1158,10 @@ SELECT *, birthday_formated as date('%d %M %y') FROM person WHERE id=12
 ]]>
           </programlisting>
         </example>
-        
+      </para>
+      <para>
+        You can also set up a default selection query by adding SelectAdd() method calls in the object
+        initialization method (the one with the same name as the class)
         
       </para>
     </refsect1>    
@@ -1123,20 +1170,21 @@ SELECT *, birthday_formated as date('%d %M %y') FROM person WHERE id=12
     
     
     <refsect1>
-      <title>whereAdd</title>
+      <title>::whereAdd()</title>
       <para>
       Adds conditions to the Where part of the query
       </para>
       <funcsynopsis>
         <funcprototype>
           <funcdef><function>::whereAdd</function></funcdef>
-          <paramdef>string <parameter><optional>Where Items</optional></parameter></paramdef>
-          <paramdef>string <parameter><optional>Condition (eg. OR)</optional></parameter></paramdef>
+          <paramdef>string <parameter><optional>Where</optional></parameter></paramdef>
+          <paramdef>string <parameter><optional>OR</optional></parameter></paramdef>
         </funcprototype>
       </funcsynopsis>
       <para>
-        Adds items to the where part of a SQL query.
-        Calling this without any arguments clears the where condition.
+        Adds items to the where part of a SQL query. Calling this without any arguments clears, 
+        the where condition. The default behaviour is to add 'AND' queries, send the string 'OR' to 
+        append OR conditions.
         <example>
         <title> Adding Where Statements</title>
           <programlisting role="php"><![CDATA[
@@ -1158,12 +1206,12 @@ while ($person->fetch()) {
     echo "$person->id} {$person->name}<BR>";
 }
  
-
-
 ?>
         ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
         
         This would execute the following SQL statements, 
        <example>
@@ -1178,7 +1226,6 @@ SELECT * FROM person WHERE age < 12 OR age > 30
           </programlisting>
         </example>
         
-        
       </para>
     </refsect1>    
     
@@ -1191,15 +1238,15 @@ SELECT * FROM person WHERE age < 12 OR age > 30
     
     
     <refsect1>
-      <title>limit</title>
+      <title>::limit()</title>
       <para>
       Sets the limit of a query
       </para>
       <funcsynopsis>
         <funcprototype>
           <funcdef><function>::limit</function></funcdef>
-          <paramdef>int <parameter><optional>Limit Range Start or Number</optional></parameter></paramdef>
-          <paramdef>int <parameter><optional>Limit Range Number</optional></parameter></paramdef>
+          <paramdef>int <parameter><optional>(Limit Range Start or Number)</optional></parameter></paramdef>
+          <paramdef>int <parameter><optional>(Limit Range Number)</optional></parameter></paramdef>
         </funcprototype>
       </funcsynopsis>
       <para>
@@ -1231,6 +1278,8 @@ while ($person->fetch()) {
         ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
         
         This would execute the following SQL statements, 
        <example><title> Resulting SQL </title>
@@ -1257,7 +1306,7 @@ SELECT * FROM person LIMIT 2,4
     
       
     <refsect1>
-      <title>orderBy</title>
+      <title>::orderBy()</title>
       <para>
       Appends to the 'order by' part of the query
       </para>
@@ -1268,23 +1317,24 @@ SELECT * FROM person LIMIT 2,4
         </funcprototype>
       </funcsynopsis>
       <para>
-        Appends an Order condition
+        Appends an Order condition.
         Calling this without any arguments clears the order
         <example>
         <title> setting the order by</title>
           <programlisting role="php"><![CDATA[
 <?
+
 $person = new DataObjects_Person;
 $person->orderBy('name');
 $person->orderBy('age, eye');
 $person->find();
  
-
-
 ?>
         ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
         
         This would execute the following SQL statement, 
        <example>
@@ -1304,7 +1354,7 @@ SELECT * FROM person ORDER BY name, age, eye
     
     
     <refsect1>
-      <title>groupBy</title>
+      <title>::groupBy()</title>
       <para>
       Appends a to the 'group by' part of the query
       </para>
@@ -1315,23 +1365,24 @@ SELECT * FROM person ORDER BY name, age, eye
         </funcprototype>
       </funcsynopsis>
       <para>
-        Appends a Group condition
+        Appends a Group condition.
         Calling this without any arguments clears the Group Condition
         <example>
           <title> Settin the Group by </title>
           <programlisting role="php"><![CDATA[
 <?
+
 $person = new DataObjects_Person;
 $person->groupBy('name');
 $person->groupBy('age, eye');
 $person->find();
  
-
-
 ?>
         ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
         
         This would execute the following SQL statement, 
        <example>
@@ -1396,7 +1447,7 @@ Links
     <refnamediv>
       <refname>Automatic Table Linking</refname>
       <refpurpose>
-       Automatic Table Linking - getLink, getLinks
+       Automatic Table Linking - ::getLink(), ::getLinks()
       </refpurpose>
     </refnamediv>
     
@@ -1410,21 +1461,20 @@ Links
         can automatically fetch objects into the parents variables.
       </para>
       <para>
-        The method of doing this is heavily dependant on naming columns relating to databases, for example in the
-        membership described above, you would have to have a column called person_id, group_id for the Link methods
-        to understand which table to fetch the data from. The principle is TABLENAME_ANYTHING, and it will always
-        attempt to find primary keys that match the value of field, and load the related object into $object->_tablename_anything
+        The Automated method of doing this is heavily dependant on naming columns relating to databases, for example in the
+        membership described above, you would have to have a column called person_id, group_id for the automated Link 
+        methods to understand which table to fetch the data from. The principle is TABLENAME_ANYTHING, and it 
+        will always attempt to find primary keys that match the value of field, the getLinks() methods will autoload 
+        the related object into $object->_tablename_anything
       </para>
       
       <para>
-        The linking feature is not essential to the core operation of DB_DataObject, and can be ignored if you
-        do not wish to set up or revise your database structure. - It just saves alot of work next time you
-        set up an application.
+       The other way of using getLink() is to use it with the second parameter which is the table name of the related
+       table, it will then query the primary key on that table to see if it matches the value of the requested row.
+       In this method however the getLinks() method will not work, as it will not know the related table names.
       </para>
       
-      <para>
         
-      </para>
     </refsect1>
     
       
@@ -1434,38 +1484,44 @@ Links
       
       
     <refsect1>
-      <title>getLink</title>
+      <title>::getLink()</title>
       <para>
-      Loads the related object into the main object, with a variable name prefixed with _
+      Gets the Related Row Object from the Related Table
       </para>
       <funcsynopsis>
         <funcprototype>
           <funcdef><function>::getLink</function></funcdef>
           <paramdef>string <parameter>Row </parameter></paramdef>
+          <paramdef>string <parameter><optional>Table</optional></parameter></paramdef>
         </funcprototype>
       </funcsynopsis>
       <para>
-        Loads the related Object 
+        Gets the related Object 
         <example>
-        <title> loading the related object </title>
+        <title> Getting the related object </title>
           <programlisting role="php"><![CDATA[
 <?
 $person = new DataObjects_Person;
 $person->get(12);
-$person->getLink('group_owner');
-print_r($_person_group);
+$group = $person->getLink('group_owner');
+echo $group->name;
+$group = $person->getLink('colourid','hair');
+
 ?>
         ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
         
-        This would execute the following SQL statement, and fetch the data
+        This would execute the following SQL statements, and fetch the data
        <example>
        <title> Resulting SQL </title>
           <programlisting role="sql"><![CDATA[
           
 SELECT * FROM person WHERE id=12
 SELECT * FROM group WHERE id=3
+SELECT * FROM hair WHERE id=4
 
 ]]>
           </programlisting>
@@ -1481,9 +1537,10 @@ SELECT * FROM group WHERE id=3
     
     
      <refsect1>
-      <title>getLinks</title>
+      <title>::getLinks()</title>
       <para>
-      Loads the all the related objects into the main object, with a variable name prefixed with _
+      Loads the all the related objects into the main object, based on the naming of columns using the tablename_xxx 
+      naming method, and sets   the main objects variables with the row name prefixed with a _
       </para>
       <funcsynopsis>
         <funcprototype>
@@ -1500,12 +1557,14 @@ SELECT * FROM group WHERE id=3
 $person = new DataObjects_Person;
 $person->get(12);
 $person->getLinks();
-print_r($_person_group);
-print_r($_person_eyes);
+print_r($person->_group);
+print_r($person->_eyes);
 ?>
         ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
         
         This would execute the following SQL statement, and fetch the data
        <example>
@@ -1551,25 +1610,25 @@ AutoForm Utilities and Debugging
     <refnamediv>
       <refname>AutoForm Utilities and Debugging</refname>
       <refpurpose>
-        setFrom(), debugLevel()
+        ::setFrom(), ::debugLevel()
       </refpurpose>
     </refnamediv>
     
     
     
     <refsect1>
-      <title>setFrom</title>
+      <title>::setFrom()</title>
       <para>
       Copies data from an Array or object into the current object
       </para>
       <funcsynopsis>
         <funcprototype>
           <funcdef><function>::setFrom</function></funcdef>
-          <paramdef>Array or Object <parameter>from</parameter></paramdef>
+          <paramdef>(Array or Object) <parameter>from</parameter></paramdef>
         </funcprototype>
       </funcsynopsis>
       <para>
-        copies all that relates to this table (Except keys) into the current object
+        copies all the data that relates to this table (Except keys) into the current object
         <example>
         <title> Copying data from post or object</title>
           <programlisting role="php"><![CDATA[
@@ -1595,6 +1654,8 @@ $person->update();
         ]]>
           </programlisting>
         </example>
+      </para>
+      <para>
         
         Copies all the data (with names the of this objects columns) from another object or array into 
         this one.
@@ -1607,9 +1668,9 @@ $person->update();
        
     
     <refsect1>
-      <title>DB_DataObject::debugLevel</title>
+      <title>DB_DataObject::debugLevel()</title>
       <para>
-      Sets the debugging level - so you can see the Queries Being build and executed
+      Sets the debugging level - so you can see the queries being built and executed
       </para>
       <funcsynopsis>
         <funcprototype>
@@ -1619,6 +1680,7 @@ $person->update();
       </funcsynopsis>
       <para>
         Sets the debugging level (without any parameters it will disable the debugging output)
+        See the configuration page for details on the various levels.
         <example>
         <title> Setting the debugging level </title>
           <programlisting role="php"><![CDATA[

@@ -45,7 +45,7 @@
 */
 
 require_once('DB/DataObject.php');
-require_once('Config.php');
+//require_once('Config.php');
 
 
 class DB_DataObject_Generator extends DB_DataObject {
@@ -118,10 +118,10 @@ class DB_DataObject_Generator extends DB_DataObject {
         echo "DONE\n\n";
     }
     /**
-    * Output File (Config object)
+    * Output File was config object, now just string 
     * Used to generate the Tables
     *
-    * @var object Config
+    * @var string outputbuffer for table definitions
     * @access private
     */
     
@@ -136,7 +136,7 @@ class DB_DataObject_Generator extends DB_DataObject {
     */
     function _createTableList() {
         $this->_connect();
-        $connections = &PEAR::getStaticProperty('DB_DataObject','connnections');
+        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
           
         $__DB= &$connections[$this->_database_dsn_md5];
         
@@ -169,7 +169,8 @@ class DB_DataObject_Generator extends DB_DataObject {
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         
         
-        $this->_newConfig = new Config('IniFile');
+        //$this->_newConfig = new Config('IniFile');
+        $this->_newConfig = '';
         foreach($this->tables as $this->table)
             $this->_generateDefinitionsTable();
         $this->_connect();
@@ -181,10 +182,14 @@ class DB_DataObject_Generator extends DB_DataObject {
         echo "{$file}\n";
         touch($file);
         //print_r($this->_newConfig);
-        $ret = $this->_newConfig->writeInput($file,false);
+        $fh = fopen($file,'w');
+        fwrite($fh,$this->_newConfig);
+        fclose($fh);
+        //$ret = $this->_newConfig->writeInput($file,false);
         
-        if (PEAR::isError($ret) )
-            return PEAR::raiseError($ret->message,null,PEAR_ERROR_DIE);
+        //if (PEAR::isError($ret) ) {
+        //    return PEAR::raiseError($ret->message,null,PEAR_ERROR_DIE);
+        // }
     }
     /**
     * The table geneation part
@@ -194,6 +199,8 @@ class DB_DataObject_Generator extends DB_DataObject {
     */
     function _generateDefinitionsTable() {
         $defs = $this->_definitions[$this->table];
+        $this->_newConfig .= "\n[{$this->table}]\n";
+        $keys_out =  "\n[{$this->table}__keys]\n";
         foreach($defs as $t) {
             $n=0;
             
@@ -232,16 +239,19 @@ class DB_DataObject_Generator extends DB_DataObject {
                     $type=DB_DATAOBJECT_STR;
                     break;
             }
-            $this->_newConfig->setValue("/{$this->table}",$t->name, $type);
+            $this->_newConfig .= "{$t->name} = $type\n";
+            //$this->_newConfig->setValue("/{$this->table}",$t->name, $type);
             
             // i've no idea if this will work well on other databases?
             // only use primary key, cause the setFrom blocks you setting all key items...
             
             if (preg_match("/primary_key/i",$t->flags)) {
-                $this->_newConfig->setValue("/{$this->table}__keys",$t->name, $type);
+                $keys_out .= "{$t->name} = $type\n";
+                //$this->_newConfig->setValue("/{$this->table}__keys",$t->name, $type);
             }
             
         }
+            $this->_newConfig .= $keys_out;
         
     }
 
