@@ -24,12 +24,11 @@
   
  
     <release>
-      <version>1.0.1</version>
-      <date>2003-07-18</date>
+      <version>1.0.2</version>
+      <date>2003-08-01</date>
       <notes>
         Minor Bugfix Release
-        - Fix Select defaults back to * after an update
-        - Fix Update with NULL values
+        - Fix static Get call, case sensitivity properly.
         
       </notes>
       <state>stable</state>
@@ -62,6 +61,23 @@
 
    
   <changelog>
+  
+  
+  
+ 
+    <release>
+      <version>1.0.1</version>
+      <date>2003-07-18</date>
+      <notes>
+        Minor Bugfix Release
+        - Fix Select defaults back to * after an fetch
+        - Fix Update with NULL values
+        
+      </notes>
+      <state>stable</state>
+    </release>
+     
+  
   <release>
       <version>1.0</version>
       <date>2003-07-16</date>

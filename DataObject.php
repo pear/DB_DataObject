@@ -213,6 +213,7 @@ Class DB_DataObject
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug("$k $v " .serialize(@$keys), "GET");
         }
+        
         if ($v === null) {
             DB_DataObject::raiseError("No Value specified for get", DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
@@ -240,7 +241,7 @@ Class DB_DataObject
      */
     function &staticGet($class, $k, $v = null)
     {
-        $class = strtolower($class);
+        $lclass = strtolower($class);
         global $_DB_DATAOBJECT;
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
@@ -253,13 +254,13 @@ Class DB_DataObject
             $key = $k;
         }
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
-            DB_DataObject::debug("$class $key","STATIC GET");
+            DB_DataObject::debug("$class $key","STATIC GET - TRY CACHE");
         }
-        if (@$_DB_DATAOBJECT['CACHE'][$class][$key]) {
-            return $_DB_DATAOBJECT['CACHE'][$class][$key];
+        if (@$_DB_DATAOBJECT['CACHE'][$lclass][$key]) {
+            return $_DB_DATAOBJECT['CACHE'][$lclass][$key];
         }
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
-            DB_DataObject::debug("$class $key","STATIC GET");
+            DB_DataObject::debug("$class $key","STATIC GET - NOT IN CACHE");
         }
 
         $obj = DB_DataObject::factory(substr($class,strlen($_DB_DATAOBJECT['CONFIG']['class_prefix'])));
@@ -268,15 +269,15 @@ Class DB_DataObject
             return false;
         }
         
-        if (!@$_DB_DATAOBJECT['CACHE'][$class]) {
-            $_DB_DATAOBJECT['CACHE'][$class] = array();
+        if (!@$_DB_DATAOBJECT['CACHE'][$lclass]) {
+            $_DB_DATAOBJECT['CACHE'][$lclass] = array();
         }
         if (!$obj->get($k,$v)) {
             DB_DataObject::raiseError("No Data return from get $k $v", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
-        $_DB_DATAOBJECT['CACHE'][$class][$key] = $obj;
-        return $_DB_DATAOBJECT['CACHE'][$class][$key];
+        $_DB_DATAOBJECT['CACHE'][$lclass][$key] = $obj;
+        return $_DB_DATAOBJECT['CACHE'][$lclass][$key];
     }
 
     /**
