@@ -1,9 +1,14 @@
 --TEST--
 DB::DataObject test
 --SKIPIF--
-<?php if (!@include(dirname(__FILE__)."/../DataObject.php")) print "skip"; ?>
+<?php
+//define('DB_DATAOBJECT_NO_OVERLOAD',true);  
+
+if (!@include(dirname(__FILE__)."/../DataObject.php")) print "skip"; ?>
 --FILE--
 <?php // -*- C++ -*-
+
+
 
 // Test for: DB::parseDSN()
 include_once dirname(__FILE__)."/../DataObject.php";
@@ -16,6 +21,10 @@ $options['debug_force_updates'] = TRUE;
  
 DB_DataObject::debugLevel(3);
 // create a record
+
+
+
+
 class test extends DB_DataObject {
 	var $__table = 'test';
 	 
@@ -26,6 +35,7 @@ class test extends DB_DataObject {
     
     function createDB() {
         $this->query('DROP TABLE IF EXISTS test');
+        $this->query('DROP TABLE IF EXISTS test2');
     
     
         $this->query(
@@ -37,6 +47,18 @@ class test extends DB_DataObject {
               firstname varchar(255) NOT NULL default '',
               lastname varchar(255) NOT NULL default '' 
             )"); 
+	
+	// table 2 = manual sequences.
+	$this->query(
+            "CREATE TABLE test2 (
+              id int(11) NOT NULL PRIMARY KEY,
+              name varchar(255) NOT NULL default '',
+              username varchar(32) NOT NULL default '',
+              password varchar(13) binary NOT NULL default '',
+              firstname varchar(255) NOT NULL default '',
+              lastname varchar(255) NOT NULL default '' 
+            )");     
+	
     }
     
     function test1() {
@@ -107,11 +129,26 @@ class test extends DB_DataObject {
         echo "\n\n\n******changing database stuff.\n";
         
         $t = new test;
-        $x = & $t->getDatabaseConnection();
+        $t->query('BEGIN');
+        $t->username = 'xxx';
+        $t->insert();
+        $t->query('COMMIT');
         
-        $x->autocommit = 0;
-        $y = & $t->getDatabaseConnection();
-        print_r($y);
+        echo "\n\n\n******sequences.\n";
+            
+         $t = new test2;
+    
+        $t->username = 'yyyy';
+        $id = $t->insert();
+        echo "\nRET: $id\n";
+        
+        
+        $t->dumpTest('test2');
+        
+        
+	
+	
+	
         
     }
     
@@ -123,8 +160,8 @@ class test extends DB_DataObject {
         echo "INSERT got $r\n";
     }
     
-    function dumpTest() {
-        $t = new test;
+    function dumpTest($table = 'test') {
+        $t = new $table;
         $t->find();
         if (!$t->N)  {
             echo "NO RESULTS!\n";
@@ -146,6 +183,14 @@ class test extends DB_DataObject {
     }
     
     
+}
+
+
+class test2 extends test { 
+    var $__table = 'test2';
+	function sequenceKey() {
+		return array('id',false);
+	}
 }
 
 

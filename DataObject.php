@@ -56,7 +56,7 @@ define('DB_DATAOBJECT_BLOB', 64); // is blob type
 /*
  * Define this before you include DataObjects.php to  disable overload - if it segfaults due to Zend optimizer..
  */
-//define('DB_DATAOBJECT_NO_OVERLOAD')  
+//define('DB_DATAOBJECT_NO_OVERLOAD',true)  
 
 
 /**
@@ -818,7 +818,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         foreach($items as $k => $v) {
             
             // if we are using autoincrement - skip the column...
-            if ($key && ($k == $key)) {
+            if ($key && ($k == $key) && $useNative) {
                 continue;
             }
         

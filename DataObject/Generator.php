@@ -224,7 +224,7 @@ class DB_DataObject_Generator extends DB_DataObject
         $keys_out =  "\n[{$this->table}__keys]\n";
         $keys_out_primary = '';
         $keys_out_secondary = '';
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (@$_DB_DATAOBJECT['CONFIG']['debug'] > 2) {
             echo "TABLE STRUCTURE FOR {$this->table}\n";
             print_r($defs);
         }
