@@ -15,10 +15,17 @@
 // | Author:  Alan Knowles <alan@akbkhome.com>
 // +----------------------------------------------------------------------+
 //
+// $Id$
+//
+// Object Based Database Query Builder and data store
+//
 require_once( 'DB.php' );
 require_once( 'PEAR.php' );
 
-
+/**
+ * these are constants for the get_table array 
+ * user to determine what type of escaping is required around the object vars.
+ */
 define("DB_DATAOBJECT_INT",      1);  // does not require ''
 define("DB_DATAOBJECT_STR",      2);  // requires ''
 define("DB_DATAOBJECT_DATE",     4);  // is date #TODO
@@ -26,70 +33,77 @@ define("DB_DATAOBJECT_TIME",     8);  // is time #TODO
 define("DB_DATAOBJECT_BOOL",    16);  // is boolean #TODO
 define("DB_DATAOBJECT_TXT",     32);  // is long text #TODO
 
-/* error defines */
-define("DB_DATAOBJECT_ERROR_INVALIDARGS",     1);  // wrong args to function
-define("DB_DATAOBJECT_ERROR_NODATA",          2);  // no data available
-define("DB_DATAOBJECT_ERROR_INVALIDCONFIG",   3);  // something wrong with the config
-define("DB_DATAOBJECT_ERROR_NOCLASS",         4);  // no class exists
+/*  
+ * Theses are the standard error codes, most methods will fail silently - and return false
+ * to access the error message either use $table->_lastError 
+ * or $last_error = PEAR::getStaticProperty('DB_DataObject','lastError');
+ * the code is $last_error->code, and the message is $last_error->message (a standard PEAR error)
+ */
 
+define("DB_DATAOBJECT_ERROR_INVALIDARGS",     -1);  // wrong args to function
+define("DB_DATAOBJECT_ERROR_NODATA",          -2);  // no data available
+define("DB_DATAOBJECT_ERROR_INVALIDCONFIG",   -3);  // something wrong with the config
+define("DB_DATAOBJECT_ERROR_NOCLASS",         -4);  // no class exists
 
-/* Object Based DB class - extend this for using with specific tables!
-// Example INI File
-[DB_DataObject]
-database         = mysql:/username:password@host/database
-schema_location = /home/myapplication/database
-class_location  = /home/myapplication/DBTables/
-clase_prefix    = DBTables_
+/**
+ * The main "DB_DataObject" class is really a base class for your own tables classes
+ * 
+ * // Set up the class by creating an ini file (refer to the manual for more details
+ * [DB_DataObject]
+ * database         = mysql:/username:password@host/database
+ * schema_location = /home/myapplication/database
+ * class_location  = /home/myapplication/DBTables/
+ * clase_prefix    = DBTables_
+ * 
+ * 
+ * 
+ * //Start and initialize...................... - dont forget the &
+ * $config = parse_ini_file('example.ini',TRUE);
+ * $options = &PEAR::setStaticProperty('DB_DataObject','options');
+ * $options = $config['DB_DataObject'];
+ * 
+ * // example of a class (that does not use the 'auto generated tables data')
+ * class mytable extends DB_DataObject { 
+ *     // mandatory - set the table
+ *     var $_database_dsn = "mysql://username:password@localhost/database";
+ *     var $__table = "mytable";
+ *     function _get_table() {
+ *         return array(
+ *             'id' => 1, // integer or number
+ *             'name' => 2, // string
+ *        );
+ *     }
+ *     function _get_keys() {
+ *         return array('id');
+ *     }
+ * }
+ * 
+ * // use in the application
+ * 
+ * 
+ * Simple get one row
+ * 
+ * $instance = new mytable;
+ * $instance->get("id",12);
+ * echo $instance->somedata;
+ * 
+ * 
+ * Get multiple rows
+ * 
+ * $instance = new mytable;
+ * $instance->whereAdd("ID > 12");
+ * $instance->whereAdd("ID < 14");
+ * $instance->find();
+ * while ($instance->fetch()) {
+ *     echo $instance->somedata;
+ * }
+ * 
+ * 
+ * @package  DB_DataObject
+ * @author   Alan Knowles <alan@akbkhome.com>
+ * @since    PHP 4.0
+ */
 
-
-
-//Start and initialize......................
-$config = parse_ini_file('example.ini');
-$options = &PEAR::setStaticProperty('DB_DataObject','options');
-$options = $config->getValues('/DB_DataObject');
-
-
-class mytable extends db_oo { 
-    // mandatory - set the table
-    var $_database_dsn = "mysql://username:password@localhost/database";
-    var $__table = "mytable";
-    function _get_table() {
-        return array(
-            'id' => 1, // integer or number
-            'name' => 2, // string
-        );
-    }
-    
-}
-
-// use in the applicat
-
-
-Simple get one row
-
-$instance = new mytable;
-$instance->get("id",12);
-echo $instance->somedata;
-
-
-Get multiple rows
-
-$instance = new mytable;
-$instance->whereAdd("ID > 12");
-$instance->whereAdd("ID < 14");
-$instance->find();
-while ($instance->fetch()) {
-    echo $instance->somedata;
-}
-
-
-*/
-  
-/* 
-* @package DB_DataObject
-* The db_oo class - do not generally use this directly but extend it for each table
-* 
-*/
 
 Class DB_DataObject {
 
@@ -458,9 +472,8 @@ Class DB_DataObject {
     */
     
     function insert() { 
-    
+        $this->_connect();
         $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
-    
         $__DB= &$connections[$this->_database_dsn_md5];
         $items = $this->_get_table();
         if (!$items) {
@@ -854,7 +867,7 @@ Class DB_DataObject {
     */
        
     function _connect () {
-        $connections = &PEAR::getStaticProperty('DB_DataObject','connnections');
+        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
         
         
         if ($this->_database_dsn_md5) {// already connected
@@ -911,7 +924,7 @@ Class DB_DataObject {
     */
  
     function _query($string) {
-        $connections = &PEAR::getStaticProperty('DB_DataObject','connnections');
+        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
         $results = &PEAR::getStaticProperty('DB_DataObject','results');
      
         
@@ -1217,6 +1230,17 @@ Class DB_DataObject {
         return @$options['debug'];
     }
     
+    /**
+    * Last Error that has occured
+    * - use $this->_lastError or 
+    * $last_error = &PEAR::getStaticProperty('DB_DataObject','lastError');
+    * 
+    * @access 	public
+    * @var  object PEAR_Error (or FALSE)
+    */  
+   
+    var $_lastError=FALSE; 
+    
      /**
     * Default error handling is to create a pear error, but never return it. 
     * if you need to handle errors you should look at setting the PEAR_Error callback
@@ -1229,7 +1253,13 @@ Class DB_DataObject {
     * @return   error object
     */
     function raiseError($message,$type,$behaviour=NULL) {
-        PEAR::raiseError($message,$type,$behaviour);
+        $error = PEAR::raiseError($message,$type,$behaviour);
+        if (is_object($this)) {
+            $this->_lastError = $error;
+        } 
+        $last_error = &PEAR::getStaticProperty('DB_DataObject','lastError');
+        $last_error = $error;
+        
         DB_DataObject::debug($message,"ERROR",1);
     }
    
@@ -1237,6 +1267,4 @@ Class DB_DataObject {
 }
        
  
- 
-
 ?>
