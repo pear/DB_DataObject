@@ -572,6 +572,26 @@ class DB_DataObject_Generator extends DB_DataObject
         $body .= "\n    /* the code above is auto generated do not remove the tag below */";
         $body .= "\n    ###END_AUTOCODE\n";
 
+
+        // stubs..
+        
+        if (!empty($options['generator_add_validate_stubs'])) {
+            foreach($defs as $t) {
+                if (!strlen(trim($t->name))) {
+                    continue;
+                }
+                $validate_fname = sprintf('validate%s', ucfirst(strtolower($t->name)));
+                // dont re-add it..
+                if (preg_match('/\s+function\s+' . $validate_fname . '\s*(/i', $input)) {
+                    continue;
+                }
+                $body .= "\n    function {$validate_fname}()\n    {\n        return false;\n    }\n";
+            }
+        }
+
+
+
+
         $foot .= "}\n";
         $full = $head . $body . $foot;
 
