@@ -152,13 +152,20 @@ class DB_DataObject_Generator extends DB_DataObject
     function _createTableList()
     {
         $this->_connect();
-
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
 
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
 
         $this->tables = $__DB->getListOf('tables');
 
         foreach($this->tables as $table) {
+            if (isset($options['generator_include_regex']) &&
+                !preg_match($options['generator_include_regex'],$table)) {
+                    continue;
+            } else if (isset($options['generator_exclude_regex']) &&
+                preg_match($options['generator_exclude_regex'],$table)) {
+                    continue;
+            }
             $defs =  $__DB->tableInfo($table);
             
             // cast all definitions to objects - as we deal with that better.
