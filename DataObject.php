@@ -3241,7 +3241,9 @@ class DB_DataObject extends DB_DataObject_Overload
         if (is_int( $_DB_DATAOBJECT['CONFIG']['debug']) &&  $_DB_DATAOBJECT['CONFIG']['debug']<$level) {
             return;
         }
-        $class = isset($this) ? get_class($this) : __CLASS__;
+        // this is a bit flaky due to php's wonderfull class passing around crap..
+        // but it's about as good as it gets..
+        $class = (isset($this) && is_a($this,__CLASS__)) ? get_class($this) : __CLASS__;
         
         if (!is_string($message)) {
             $message = print_r($message,true);
