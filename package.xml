@@ -24,13 +24,17 @@
   
   
     <release>
-      <version>0.10</version>
-      <date>2002-12-09</date>
+      <version>0.11</version>
+      <date>2002-12-31</date>
       <notes>
-        - bug fix - Generator incorrectly set _database, causing generation of database.ini files to fail
-        - change addslashes to PEAR::DB::quote()
-        - generator now only replaces DB_DataObjects with extends variable if set, 
-          you can use generator_rewrite_class to set what is a valid replacement.
+      	- changed connecition and result caching to use global private variable, rather
+          than getStaticProperty
+        - results objects are not stored on insert/update/delete (speed increase 
+         on large inserts can be as much as 10x faster)
+        - bug fix - Checks that primary keys are integers (Anthony Juou)
+        - typo on No data returned warning
+        - unit tests in CVS
+        - new configuration option for whether to use insert id's and sequences.
         
       </notes>
       <state>stable</state>
@@ -53,7 +57,23 @@
    
    
   <changelog>
-  
+  <release>
+      <version>0.11</version>
+      <date>2002-12-31</date>
+      <notes>
+      	- changed connecition and result caching to use global private variable, rather
+          than getStaticProperty
+        - results objects are not stored on insert/update/delete (speed increase 
+         on large inserts can be as much as 10x faster)
+        - bug fix - Checks that primary keys are integers (Anthony Juou)
+        - typo on No data returned warning
+        - unit tests in CVS
+        - new configuration option for whether to use insert id's and sequences.
+        
+      </notes>
+      <state>stable</state>
+    </release>
+     
    <release>
       <version>0.10</version>
       <date>2002-12-09</date>

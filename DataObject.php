@@ -45,6 +45,20 @@ define('DB_DATAOBJECT_ERROR_NODATA',        -2);  // no data available
 define('DB_DATAOBJECT_ERROR_INVALIDCONFIG', -3);  // something wrong with the config
 define('DB_DATAOBJECT_ERROR_NOCLASS',       -4);  // no class exists
 
+/*
+ *
+ * storage for connection and result objects, 
+ * it is done this way so that print_r()'ing the is smaller, and 
+ * it reduces the memory size of the object.
+ * -- future versions may use $this->_connection = & PEAR object..
+ *   although will need speed tests to see how this affects it. 
+ * - includes sub arrays
+ *   - connections = md5 sum mapp to pear db object
+ *   - results     = [id] => map to pear db object
+*/
+$GLOBALS['_DB_DATAOBJECT'] = array();
+
+
 /**
  * The main "DB_DataObject" class is really a base class for your own tables classes
  *
@@ -316,13 +330,13 @@ Class DB_DataObject
      */
     function fetch()
     {
-        $results = &PEAR::getStaticProperty('DB_DataObject','results');
+
 
         if (!@$this->N) {
             DB_DataObject::raiseError("fetch: No Data Available", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
-        $result = &$results[$this->_DB_resultid];
+        $result = &$GLOBALS['_DB_DATAOBJECT']['RESULTS'][$this->_DB_resultid];
         $array = $result->fetchRow(DB_FETCHMODE_ASSOC);
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug(serialize($array),"FETCH", 3);
@@ -493,7 +507,7 @@ Class DB_DataObject
     {
         $this->_connect();
         $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
-        $__DB  = &$connections[$this->_database_dsn_md5];
+        $__DB  = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
         $items = $this->_get_table();
         if (!$items) {
             DB_DataObject::raiseError("insert:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
@@ -513,7 +527,7 @@ Class DB_DataObject
         $rightq    = '';
         $key       = false;
         $keys      = $this->_get_keys();
-        $dbtype    = $connections[$this->_database_dsn_md5]->dsn["phptype"];
+        $dbtype    = $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5]->dsn["phptype"];
         
         // big check for using sequences
         if (    ($key = @$keys[0]) && 
@@ -566,7 +580,7 @@ Class DB_DataObject
                     in_array($this->__table,@$options['ignore_sequence_keys'])
                 ))
             {
-                $this->$key = mysql_insert_id($connections[$this->_database_dsn_md5]->connection);
+                $this->$key = mysql_insert_id($GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5]->connection);
             }
         
             $this->_clear_cache();
@@ -605,8 +619,8 @@ Class DB_DataObject
         $settings  = '';
      
         $this->_connect();
-        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
-        $__DB  = &$connections[$this->_database_dsn_md5];
+
+        $__DB  = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
      
         foreach($items as $k => $v) {
             if (!isset($this->$k)) {
@@ -722,9 +736,9 @@ Class DB_DataObject
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("{$this->__table} $row of {$this->N}", "fetchrow",3);
         }
-        $results = &PEAR::getStaticProperty('DB_DataObject','results');
 
-        $result = &$results[$this->_DB_resultid];
+
+        $result = &$GLOBALS['_DB_DATAOBJECT']['RESULTS'][$this->_DB_resultid];
         $array  = $result->fetchrow(DB_FETCHMODE_ASSOC,$row);
         if (!is_array($array)) {
             DB_DataObject::raiseError("fetchrow: No results available", DB_DATAOBJECT_ERROR_NODATA);
@@ -762,8 +776,8 @@ Class DB_DataObject
         $items   = $this->_get_table();
         $tmpcond = $this->_condition;
         $this->_connect();
-        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
-        $__DB  = &$connections[$this->_database_dsn_md5];
+        
+        $__DB  = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
      
         if ($items)  {
             while (list ($k, $v) = each($items)) {
@@ -784,8 +798,7 @@ Class DB_DataObject
             return false;
         }
         $this->_condition = $tmpcond;
-        $results = &PEAR::getStaticProperty('DB_DataObject','results');
-        $result  = &$results[$this->_DB_resultid];
+        $result  = &$GLOBALS['_DB_DATAOBJECT']['RESULTS'][$this->_DB_resultid];
         $l = $result->fetchRow(DB_FETCHMODE_ASSOC,0);
         return $l["num"];
     }
@@ -976,21 +989,21 @@ Class DB_DataObject
      */
     function _connect()
     {
-        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
+
         
         // is it already connected ?
         
-        if ($this->_database_dsn_md5 && @$connections[$this->_database_dsn_md5]) { 
-            if (PEAR::isError($connections[$this->_database_dsn_md5])) {
+        if ($this->_database_dsn_md5 && @$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5]) { 
+            if (PEAR::isError($GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5])) {
                 DB_DataObject::raiseError(
-                        $connections[$this->_database_dsn_md5]->message,
-                        $connections[$this->_database_dsn_md5]->code, PEAR_ERROR_DIE
+                        $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5]->message,
+                        $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5]->code, PEAR_ERROR_DIE
                 );
                 return;
             }
             
             if (!$this->_database) {
-                $this->_database = $connections[$this->_database_dsn_md5]->dsn["database"];
+                $this->_database = $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5]->dsn["database"];
             }
             return;
         }
@@ -1014,12 +1027,12 @@ Class DB_DataObject
         
         $this->_database_dsn_md5 = md5($dsn);
 
-        if (@$connections[$this->_database_dsn_md5]) {
+        if (@$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5]) {
             if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
                 $this->debug("USING CACHE", "CONNECT",3);
             }
             if (!$this->_database) {
-                $this->_database = $connections[$this->_database_dsn_md5]->dsn["database"];
+                $this->_database = $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5]->dsn["database"];
             }
             return;
         }
@@ -1029,21 +1042,21 @@ Class DB_DataObject
             $this->debug("{$dsn} {$this->_database_dsn_md5}", "CONNECT",3);
         }
         
-        $connections[$this->_database_dsn_md5] = DB::connect($dsn);
+        $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn);
         
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
-            $this->debug(serialize($connections), "CONNECT",5);
+            $this->debug(serialize($GLOBALS['_DB_DATAOBJECT']['CONNECTIONS']), "CONNECT",5);
         }
-        if (PEAR::isError($connections[$this->_database_dsn_md5])) {
+        if (PEAR::isError($GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5])) {
             DB_DataObject::raiseError(
-                        $connections[$this->_database_dsn_md5]->message,
-                        $connections[$this->_database_dsn_md5]->code, PEAR_ERROR_DIE
+                        $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5]->message,
+                        $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5]->code, PEAR_ERROR_DIE
             );
 
         }
         
         if (!$this->_database) {
-            $this->_database = $connections[$this->_database_dsn_md5]->dsn["database"];
+            $this->_database = $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5]->dsn["database"];
         }
         
         return true;
@@ -1058,14 +1071,16 @@ Class DB_DataObject
      */
     function _query($string)
     {
-        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
-        $results     = &PEAR::getStaticProperty('DB_DataObject','results');
+        
 
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("QUERY".$string,$log="sql");
         }
         $this->_connect();
-        $__DB = &$connections[$this->_database_dsn_md5];
+        $__DB = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
+	/* this needs to be turned into a config option - rather than magically doing it
+ 	  when debugleveg > 1
+	  */
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION'] && (DB_DataObject::debugLevel() > 1) &&
             (strtolower(substr(trim($string), 0, 6)) != 'select') &&
             (strtolower(substr(trim($string), 0, 4)) != 'show') &&
@@ -1076,9 +1091,9 @@ Class DB_DataObject
                 return DB_DataObject::raiseError("Disabling Update as you are in debug mode", NULL) ;
             }
         }
-        $this->_DB_resultid = count($results); // add to the results stuff...
-        $results[$this->_DB_resultid] = $__DB->query($string);
-        $result = &$results[$this->_DB_resultid];
+        $this->_DB_resultid = count($GLOBALS['_DB_DATAOBJECT']['RESULTS']); // add to the results stuff...
+        $GLOBALS['_DB_DATAOBJECT']['RESULTS'][$this->_DB_resultid] = $__DB->query($string);
+        $result = &$GLOBALS['_DB_DATAOBJECT']['RESULTS'][$this->_DB_resultid];
         if (DB::isError($result)) {
             if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
                 DB_DataObject::debug($string, "SENT");
@@ -1088,11 +1103,13 @@ Class DB_DataObject
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug('DONE QUERY', 'query');
         }
-        if (strtolower(substr(trim($string),0,6)) == 'insert') {
-            return;
-        }
-        if (strtolower(substr(trim($string),0,6)) == 'update') {
-            return;
+	switch (strtolower(substr(trim($string),0,6))) {
+		case 'insert':
+		case 'update':
+		case 'delete':
+		    unset($GLOBALS['_DB_DATAOBJECT']['RESULTS'][$this->_DB_resultid]);
+        	    return;
+		  
         }
         $this->N = 0;
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
@@ -1115,8 +1132,8 @@ Class DB_DataObject
     function _build_condition(&$keys, $filter = array(),$negative_filter=array())
     {
         $this->_connect();
-        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
-        $__DB  = &$connections[$this->_database_dsn_md5];
+        
+        $__DB  = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
      
         foreach($keys as $k => $v) {
         
@@ -1399,8 +1416,8 @@ Class DB_DataObject
         
         $this->_connect(); /*  make sure $this->_database is set.  */
         
-        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
-        $__DB  = &$connections[$this->_database_dsn_md5];
+        
+        $__DB  = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
      
         $links = PEAR::getStaticProperty('DB_DataObject', "{$this->_database}.links");
        
