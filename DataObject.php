@@ -202,7 +202,8 @@ Class DB_DataObject
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-
+        $keys = array();
+        
         if ($v === null) {
             $v = $k;
             $keys = $this->keys();
@@ -213,7 +214,7 @@ Class DB_DataObject
             $k = $keys[0];
         }
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
-            $this->debug("$k $v " .serialize(@$keys), "GET");
+            $this->debug("$k $v " .print_r($keys,true), "GET");
         }
         
         if ($v === null) {
