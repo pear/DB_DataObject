@@ -3078,7 +3078,6 @@ class DB_DataObject extends DB_DataObject_Overload
     *
     * @param   string       column of database
     * @param   mixed        value to assign
-    
     *
     * @return   true| false     (False on error)
     * @access   public 
