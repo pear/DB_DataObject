@@ -1249,10 +1249,10 @@ Class DB_DataObject {
             }
             switch ($val) {
                 case  DB_DATAOBJECT_STR:
-                    $ret[$key] = Validate::string($val, VAL_PUNCTUATION . VAL_NAME);
+                    $ret[$key] = Validate::string($this->$key, VAL_PUNCTUATION . VAL_NAME);
                     continue;
                 case  DB_DATAOBJECT_INT: 
-                    $ret[$key] = Validate::number($val, ".");
+                    $ret[$key] = Validate::number($this->$key, ".");
                     continue;
             }
         }
