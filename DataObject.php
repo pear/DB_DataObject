@@ -55,9 +55,13 @@ define('DB_DATAOBJECT_ERROR_NOCLASS',       -4);  // no class exists
  * - includes sub arrays
  *   - connections = md5 sum mapp to pear db object
  *   - results     = [id] => map to pear db object
+ *   - ini         = mapping of database to ini file results
+ *   - links       = mapping of database to links file
 */
 $GLOBALS['_DB_DATAOBJECT']['RESULTS'] = array();
 $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'] = array();
+$GLOBALS['_DB_DATAOBJECT']['INI'] = array();
+$GLOBALS['_DB_DATAOBJECT']['LINKS'] = array();
 
 /**
  * The main "DB_DataObject" class is really a base class for your own tables classes
@@ -506,7 +510,7 @@ Class DB_DataObject
     function insert()
     {
         $this->_connect();
-        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
+         
         $__DB  = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
         $items = $this->_get_table();
         if (!$items) {
@@ -908,25 +912,34 @@ Class DB_DataObject
      * @param  string $database  database name
      * @param  string $table     table name
      * @access private
-     * @return array
+     * @return boolean 
      */
-    function &_staticGetDefinitions($database, $table)
+    function _staticGetDefinitions($database)
     {
-        static $definitions = array();
-        if (@$definitions[$database][$table]) {
-            return $definitions[$database][$table];
+         
+        
+        
+        
+        if (isset($GLOBALS['_DB_DATAOBJECT']['INI'][$database])) {
+            return true;
         }
         $options  = &PEAR::getStaticProperty('DB_DataObject','options');
         $location = $options['schema_location'];
-        $definitions[$database] = parse_ini_file($location . "/{$database}.ini", true);
-        /* load the link table if it exists. */
-        if (file_exists("{$location}/{$database}.links.ini")) {
-            $links = &PEAR::getStaticProperty('DB_DataObject', "{$database}.links");
-            /* not sure why $links = ... here  - TODO check if that works */
-            $linkConfig = parse_ini_file("{$location}/{$database}.links.ini", true);
-            $links = $linkConfig;
+        
+        $ini   = $location . "/{$database}.ini";
+        
+        if (isset($options["ini_{$database}"])) {
+            $ini = $options["ini_{$database}"];
         }
-        return $definitions[$database][$table];
+        $links = str_replace('.ini','.links',$ini);
+        
+        $GLOBALS['_DB_DATAOBJECT']['INI'][$database] = parse_ini_file($ini, true);
+        /* load the link table if it exists. */
+        if (file_exists($links)) {
+            /* not sure why $links = ... here  - TODO check if that works */
+            $GLOBALS['_DB_DATAOBJECT']['LINKS'][$database] = parse_ini_file($links, true);
+        }
+        return true;
     }
 
     /**
@@ -940,7 +953,13 @@ Class DB_DataObject
         if (!@$this->_database) {
             $this->_connect();
         }
-        $ret = &DB_DataObject::_staticGetDefinitions($this->_database,$this->__table);
+        DB_DataObject::_staticGetDefinitions($this->_database);
+        
+        
+        $ret = array();
+        if (isset($GLOBALS['_DB_DATAOBJECT']['INI'][$this->_database][$this->__table])) {
+            $ret =  $GLOBALS['_DB_DATAOBJECT']['INI'][$this->_database][$this->__table];
+        }
         return $ret;
     }
 
@@ -957,7 +976,12 @@ Class DB_DataObject
         if (!@$this->_database) {
             $this->_connect();
         }
-        return array_keys(DB_DataObject::_staticGetDefinitions($this->_database,$this->__table."__keys"));
+        DB_DataObject::_staticGetDefinitions($this->_database);
+        
+        if (isset($GLOBALS['_DB_DATAOBJECT']['INI'][$this->_database][$this->__table."__keys"])) {
+            return array_keys($GLOBALS['_DB_DATAOBJECT']['INI'][$this->_database][$this->__table."__keys"]);
+        }
+        return array();
     }
 
     /**
@@ -1071,25 +1095,22 @@ Class DB_DataObject
      */
     function _query($string)
     {
-        
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
 
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("QUERY".$string,$log="sql");
         }
         $this->_connect();
         $__DB = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
-	/* this needs to be turned into a config option - rather than magically doing it
- 	  when debugleveg > 1
-	  */
-        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION'] && (DB_DataObject::debugLevel() > 1) &&
+        
+        if (!@$options['debug_ignore_updates'] &&
             (strtolower(substr(trim($string), 0, 6)) != 'select') &&
             (strtolower(substr(trim($string), 0, 4)) != 'show') &&
             (strtolower(substr(trim($string), 0, 8)) != 'describe')) {
-            $options = &PEAR::getStaticProperty('DB_DataObject','options');
-            if (!@$options['debug_force_updates']) {
-                $this->debug('Disabling Update as you are in debug mode');
-                return DB_DataObject::raiseError("Disabling Update as you are in debug mode", NULL) ;
-            }
+                
+            $this->debug('Disabling Update as you are in debug mode');
+            return DB_DataObject::raiseError("Disabling Update as you are in debug mode", NULL) ;
+
         }
         $this->_DB_resultid = count($GLOBALS['_DB_DATAOBJECT']['RESULTS']); // add to the results stuff...
         $GLOBALS['_DB_DATAOBJECT']['RESULTS'][$this->_DB_resultid] = $__DB->query($string);
@@ -1103,13 +1124,12 @@ Class DB_DataObject
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug('DONE QUERY', 'query');
         }
-	switch (strtolower(substr(trim($string),0,6))) {
-		case 'insert':
-		case 'update':
-		case 'delete':
-		    unset($GLOBALS['_DB_DATAOBJECT']['RESULTS'][$this->_DB_resultid]);
-        	    return;
-		  
+        switch (strtolower(substr(trim($string),0,6))) {
+            case 'insert':
+            case 'update':
+            case 'delete':
+                unset($GLOBALS['_DB_DATAOBJECT']['RESULTS'][$this->_DB_resultid]);
+                return;
         }
         $this->N = 0;
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
@@ -1231,7 +1251,10 @@ Class DB_DataObject
             return;
         }
         $cols  = $this->_get_table();
-        $links = &PEAR::getStaticProperty('DB_DataObject',"{$this->_database}.links");
+        if (!isset($GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database])) {
+            return;
+        }
+        $links = &$GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database];
         /* if you define it in the links.ini file with no entries */
         if (isset($links[$this->__table]) && (!@$links[$this->__table])) {
             return;
@@ -1284,8 +1307,13 @@ Class DB_DataObject
         /* see if autolinking is available
          * This will do a recursive call!
          */
+         
         if ($table === NULL) {
-            $links = &PEAR::getStaticProperty('DB_DataObject', "{$this->_database}.links");
+            $links = array();
+            if (isset($GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database])) {
+                $links = &$GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database];
+            }
+            
             if (isset($links[$this->__table])) {
                 if (@$links[$this->__table][$row]) {
                     list($table,$link) = explode(':', $links[$this->__table][$row]);
@@ -1337,7 +1365,11 @@ Class DB_DataObject
     {
         $ret = array();
         if (!$table) {
-            $links = &PEAR::getStaticProperty('DB_DataObject', "{$this->_database}.links");
+            $links = array();
+            if (isset($GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database])) {
+                $links = &$GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database];
+            }
+            
             if (@$links[$this->__table][$row]) {
                 list($table,$link) = explode(':',$links[$this->__table][$row]);
             } else {
@@ -1419,8 +1451,11 @@ Class DB_DataObject
         
         $__DB  = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
      
-        $links = PEAR::getStaticProperty('DB_DataObject', "{$this->_database}.links");
-       
+
+        $links = array();
+        if (isset($GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database])) {
+            $links = &$GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database];
+        }
         
         $ofield = false; // object field
         $tfield = false; // this field
@@ -1670,6 +1705,7 @@ Class DB_DataObject
      * After Profiling DB_DataObject, I discoved that the debug calls where taking
      * considerable time (well 0.1 ms), so this should stop those calls happening.
      * by setting production =1 in the config, you disable all debug calls..
+     * THIS STILL NEEDS FURTHER INVESTIGATION
      *
      * @access   public
      * @return   error object
