@@ -470,7 +470,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         if (@$this->_join && !isset($this->_joinFields)) {
             // note: we dont declare this to keep the print_r size down.
-            $this->_joinFields = array_keys($array);
+            $this->_joinFields = array_flip(array_keys($array));
         }
         
         foreach($array as $k=>$v) {
