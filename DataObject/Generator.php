@@ -106,7 +106,7 @@ class DB_DataObject_Generator extends DB_DataObject
             echo "CREATING FOR $database\n";
             $class = get_class($this);
             $t = new $class;
-            $t->_database = $database;
+            $t->_database_dsn = $database;
 
             $t->_createTableList();
 
