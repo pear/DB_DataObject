@@ -19,14 +19,12 @@
 
 require_once("DB/DataObject/Generator.php");
 
-if (!ini_get('register_argc_argv')) {
-    PEAR::raiseError("\nERROR: createTable.php requires register_argc_argv to be set in you php.ini\n\n",null,PEAR_ERROR_DIE);
-}
-if (!@$_SERVER['argv'][1]) {
+
+if (!@$argv[1]) {
     PEAR::raiseError("\nERROR: createTable.php usage:\n\ncreateTable example.ini\n\n",null,PEAR_ERROR_DIE);
     exit;
 }
-$config = parse_ini_file($_SERVER['argv'][1],TRUE);
+$config = parse_ini_file($argv[1],TRUE);
 $options = &PEAR::getStaticProperty('DB_DataObject','options');
 $options = $config['DB_DataObject'];
 //DB_DataObject::debugLevel(5);
