@@ -39,7 +39,7 @@
 	- experimental addJoin method (Stijn de Reede)
 	- Allow active options array (eg. dynamic changing of database config) (Sergey Lipnevich)
       </notes>
-      <state>Stable</state>
+      <state>stable</state>
      </release>
      
      
@@ -76,7 +76,7 @@
 	- experimental addJoin method (Stijn de Reede)
 	- Allow active options array (eg. dynamic changing of database config) (Sergey Lipnevich)
       </notes>
-      <state>Stable</state>
+      <state>stable</state>
      </release>
      
      
