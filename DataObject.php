@@ -1943,8 +1943,8 @@ Class DB_DataObject
                 continue; // ignore empty keys!!! what
             }
             if (is_object($from) && isset($from->{sprintf($format,$k)})) {
-                if ($_DB_DATAOBJECT['OVERLOADED'] ) {
-                    $kk = (strtolower($k) == 'from') ? '_from' : $k;
+                $kk = (strtolower($k) == 'from') ? '_from' : $k;
+                if (method_exists($this,'set'.$kk)) {
                     $ret = $this->{'set'.$kk}($from->{sprintf($format,$k)});
                     if (is_string($ret)) {
                         $overload_return[$k] = $ret;
@@ -1968,8 +1968,8 @@ Class DB_DataObject
             if (is_array($from[sprintf($format,$k)])) {
                 continue;
             }
-            if ($_DB_DATAOBJECT['OVERLOADED']) {
-                $kk = (strtolower($k) == 'from') ? '_from' : $k;
+            $kk = (strtolower($k) == 'from') ? '_from' : $k;
+            if (method_exists($this,'set'. $kk)) {
                 $ret =  $this->{'set'.$kk}($from[sprintf($format,$k)]);
                 if (is_string($ret)) {
                     $overload_return[$k] = $ret;
@@ -2010,7 +2010,7 @@ Class DB_DataObject
                 continue;
             }
             // call the overloaded getXXXX() method.
-            if ($_DB_DATAOBJECT['OVERLOADED']) {
+            if (method_exists($this,'get'.$k)) {
                 $ret[sprintf($format,$k)] = $this->{'get'.$k}();
                 continue;
             }
@@ -2302,6 +2302,7 @@ Class DB_DataObject
     }
 }
 // technially 4.3.2RC1 was broken!!
+// looks like 4.3.3 may have problems too....
 if ((phpversion() != '4.3.2-RC1') && (version_compare( phpversion(), "4.3.1") > 0)) {
    overload('DB_DataObject');
    $GLOBALS['_DB_DATAOBJECT']['OVERLOADED'] = true;
