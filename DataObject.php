@@ -516,7 +516,7 @@ Class DB_DataObject {
         if (($key = @$keys[0]) && ($dbtype != 'mysql')) {
             $this->$key = $__DB->nextId();
         }
-
+         
         foreach($items as $k=>$v) {
             if (!isset($this->$k)) {
                 continue;
@@ -525,7 +525,7 @@ Class DB_DataObject {
                 $leftq .= ", ";
                 $rightq .=", ";
             }
-            $leftq = "$k ";
+            $leftq .= "$k ";
             if ($v & DB_DATAOBJECT_STR) {
                 $rightq .="'".addslashes($this->$k)."' ";
                 continue;
