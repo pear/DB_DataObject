@@ -44,7 +44,8 @@
      
     <filelist>
         <dir name="/" baseinstalldir="DB" role="php">
-            <file>DataObject.php</file>
+            <file name="DataObject.php" role="php">              <replace from="@version@" to="version" type="package-info"/>
+            </file>
             <dir name="DataObject" role="php">
                 <file>Generator.php</file>
                 <file>createTables.php</file>
