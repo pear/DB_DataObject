@@ -22,19 +22,27 @@
   </maintainers>
 
   <release>
-      <version>1.5.1</version>
-      <date>2004-01-22</date>
+      <version>1.5.2</version>
+      <date>2004-01-24</date>
       <notes><![CDATA[
         Bug fix release.
-    
-        Fixes
-        * fixed fromValue had problems with null and DataOBject_Cast objects
-        * NOT NULL checking enabled in fromValue (eg. setters)
-        * fix bug #605 - ability to specify sequence names
-          option sequence_{tablename} = {column} // default {tablename}_seq
-          option sequence_{tablename} = {column}:{sequence_name}
-        * Dependancy on Date added. (it is used by the setter/getters)
         
+        Changes:
+          - removed automatic strtotime() in setters and setFrom
+           ** this is closer to the previous behaviour (it caused too many problems with strange dates
+           ** if you set a date/time column with a number, it assumes it is a unixtimestamp
+           -- enables you to write setters like 
+            function setSome_Date($value) { $this->fromValue('some_date',strtotime($value)); }
+          
+      
+        Fixes
+        * $DB_DataObject->getDatabaseConnection() will return a pear error if dont_die is set,
+        so it can be used to test connections.
+        * note changed on databaseStructure, it can be called statically and dynamically.
+        * fix bug #612 databaseStructure('databasename') will output the ini file structure array , with __keys
+        * fix bug #611 corrected comment about NO_OVERLOAD
+        * fix bug #603 to prevent clearing of queries after fetch, use the option keep_query_after_fetch = 1
+        * fix bug #359 (again) - _link_loaded array should only contain links that where sucessfully loaded
       
       ]]></notes>
       <state>stable</state>
@@ -67,7 +75,24 @@
     </deps>
 
   <changelog>
- 
+ <release>
+      <version>1.5.</version>
+      <date>2004-01-22</date>
+      <notes><![CDATA[
+        Bug fix release.
+    
+        Fixes
+        * fixed fromValue had problems with null and DataOBject_Cast objects
+        * NOT NULL checking enabled in fromValue (eg. setters)
+        * fix bug #605 - ability to specify sequence names
+          option sequence_{tablename} = {column} // default {tablename}_seq
+          option sequence_{tablename} = {column}:{sequence_name}
+        * Dependancy on Date added. (it is used by the setter/getters)
+        
+      
+      ]]></notes>
+      <state>stable</state>
+    </release>
   <release>
       <version>1.5</version>
       <date>2004-01-20</date>

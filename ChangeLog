@@ -1,4 +1,32 @@
 
+2004-01-24 Saturday  alan_k
+
+	* small update to test script
+	* update test to reflect change to date time setters
+	* remove strtotime autoconversion - it causes far to many problems
+	in most cases... eg. 0000-00-00 == 1999-11-30 :)
+	* fix bug #611 = change note about NO_OVERLOAD
+	* fix bug #612 - databaseStructure can be called statically, and
+	with a single argument (databasename) will return the database
+	struture as read from the database.. (with __keys)
+	* make DB_DataObject::getDatabaseConnection() return a pear error
+	if dont_die is set to true.. - so you can test connections..
+
+2004-01-22 Thursday  alan_k
+
+	* add keep_query_after_fetch option, document the sequence option
+	in the ini file.
+	* fix bug #605, prep for release
+	* allow option sequence_{tablename}={column}:{sequence_name} to
+	work...
+	* fix null, and cast objects used with setters and setFrom()
+
+2004-01-20 Tuesday  alan_k
+
+	* oops Date is now an optional dependancy...
+	* prepping for realease
+	* prepping for realease
+
 2004-01-19 Monday  alan_k
 
 	* typo in setFrom

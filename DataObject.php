@@ -2168,6 +2168,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         if ($this->_link_loaded) {
             return true;
         }
+        $this->_link_loaded = false;
         $cols  = $this->table();
         if (!isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
             return false;
@@ -2189,7 +2190,9 @@ Class DB_DataObject extends DB_DataObject_Overload
                 }
                 
                 $this->$k = $this->getLink($key, $table, $link);
-                $loaded[] = $k;
+                if (is_object($this->$k)) {
+                    $loaded[] = $k; 
+                }
             }
             $this->_link_loaded = $loaded;
             return true;
@@ -2201,7 +2204,9 @@ Class DB_DataObject extends DB_DataObject_Overload
             // does the table exist.
             $k =sprintf($format, $key);
             $this->$k = $this->getLink($key);
-            $loaded[] = $k;
+            if (is_object($this->$k)) {
+                $loaded[] = $k; 
+            }
         }
         $this->_link_loaded = $loaded;
         return true;
