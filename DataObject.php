@@ -265,6 +265,7 @@ Class DB_DataObject
         $this->_query("SELECT " .
             $this->_data_select .
             " FROM " . $this->__table . " " .
+            $this->_join .
             $this->_condition . " ".
             $this->_group_by . " ".
             $this->_order_by . " ".
@@ -1270,6 +1271,118 @@ Class DB_DataObject
         return $ret;
     }
 
+    /**
+     * The JOIN condition
+     *
+     * @access  private
+     * @var     string
+     */
+    var $_join = ''; 
+    /**
+     * joinAdd - adds another dataobject to this, building a joined query.
+     *
+     * example (requires links.ini to be set up correctly)
+     * $pi = new DataObjects_Product_images;
+     * $p = new DataObjects_Product;
+     * $i = new DataObject_Images;
+     * $p->id = 24; // set the product id to 24
+     * $pi->joinAdd($p); // add the product connection
+     * $pi->joinAdd($i); // add the image connectoin
+     * $pi->find();
+     * while ($pi->fetch()) {
+     *     // do stuff
+     * }
+     *
+     * @param    optional $obj    object      the joining object (no value resets the join)
+     * @return   none
+     * @access   public
+     * @author   Stijn de Reede      <sjr@gmx.co.uk>
+     */
+    function joinAdd($obj = false)
+    {
+        if ($obj === false) {
+            $this->_join = '';
+            return;
+        }
+        if (!is_object($obj)) {
+            DB_DataObject::raiseError("joinAdd: called without an object", DB_DATAOBJECT_ERROR_NODATA,PEAR_ERROR_DIE);
+        }
+        
+        $this->_get_table(); /* ??? eh - load this tables config? = eg. links if req.*/
+        
+        $links = PEAR::getStaticProperty('DB_DataObject', "{$this->_database}.links");
+       
+        
+        $ofield = false; // object field
+        $tfield = false; // this field
+        
+         /* look up the links for obj table */
+         
+        if (isset($links[$obj->__table])) {
+            foreach ($links[$obj->__table] as $k => $v) {
+                /* link contains {this column} = {linked table}:{linked column} */
+                $ar = explode(':', $v);
+                if ($ar[0] == $this->__table) {
+                    $ofield = $k;
+                    $tfield = $ar[1];
+                    break;
+                }
+            }
+        }
+        
+        /* otherwise see if there are any links from this table to the obj. */    
+        
+        if (($field === false) &&isset($links[$this->__table])) {
+            foreach ($links[$this->__table] as $k => $v) {
+                /* link contains {this column} = {linked table}:{linked column} */
+                $ar = explode(':', $v);
+                if ($ar[0] == $obj->__table) {
+                    $tfield = $k;
+                    $ofield = $ar[1];
+                    break;
+                }
+            }
+        }
+        
+        /* did I find a conneciton between them? */
+            
+        if ($ofield === false) {
+            DB_DataObject::raiseError("joinAdd: {$obj->__table} has no link with {$this->__table}", DB_DATAOBJECT_ERROR_NODATA);
+            return false;
+        }
+        
+        $this->_join .= "INNER JOIN {$obj->__table} ON {$obj->__table}.{$ofield}={$this->__table}.{$tfield} ";
+        
+        
+        /* now add where conditions for anything that is set in the object */
+        
+        $items = $obj->_get_table();
+        if (!$items) {
+            DB_DataObject::raiseError("joinAdd: No table definition for {$obj->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+            return false;
+        }
+        
+        foreach($items as $k => $v) {
+            if (!isset($obj->$k)) {
+                continue;
+            }
+            if ($v & DB_DATAOBJECT_STR) {
+                $this->whereAdd("{$obj->__table}.{$k} = '" . addslashes($obj->$k) . "'");
+                continue;
+            }
+            if (is_numeric($obj->$k)) {
+                $this->whereAdd("{$obj->__table}.{$k} = {$obj->$k}");
+                continue;
+            }
+            /* this is probably an error condition! */
+            $this->whereAdd("{$obj->__table}.{$k} = 0");
+        }
+        
+        
+    }
+    
+    
+    
     /**
      * Copies items that are in the table definitions from an
      * array or object into the current object
