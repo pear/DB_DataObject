@@ -60,7 +60,7 @@
     </filelist>
     
    <deps>
-      <dep type="php" rel="ge" version="4.3"/>
+      <dep type="php" rel="ge" version="4.1"/>
       <dep type="pkg" rel="ge" version="1.3">DB</dep>
       <dep type="pkg" rel="ge" version="0.1.1">Validate</dep>
     </deps>
