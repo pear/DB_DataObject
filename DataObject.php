@@ -659,7 +659,10 @@ Class DB_DataObject
             }
 
             $this->_clear_cache();
-            return $this->$key;
+            if (isset($key)) {
+                return $this->$key;
+            }
+            return true;
         }
         DB_DataObject::raiseError("insert: No Data specifed for query", DB_DATAOBJECT_ERROR_NODATA);
         return false;
