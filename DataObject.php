@@ -3168,6 +3168,11 @@ class DB_DataObject extends DB_DataObject_Overload
         // dont you just love php's case insensitivity!!!!
         
         $array =  array_keys(get_class_vars($class));
+        /* php5 version which segfaults on 5.0.3 */
+        if (class_exists('ReflectionClass')) {
+            $reflection = new ReflectionClass($class);
+            $array = array_keys($reflection->getdefaultProperties());
+        }
         
         if (!in_array($element,$array)) {
             // munge case
