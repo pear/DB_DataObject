@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- $Revision: 1.2 $ --> 
+<!-- $Revision: 1.3 $ --> 
 <reference id="packages.DB.DataObject">
   <title>SQL Builder and Data Modeling Layer</title>
   <titleabbrev>DB_DataObject</titleabbrev>
@@ -20,7 +20,7 @@
     <refsect1> 
       <title>Introduction</title>
       <para>
-      Db_DataObject is a SQL Builder and Data Modeling Layer built ontop of PEAR DB, It main purpose is to
+      Db_DataObject is a SQL Builder and Data Modeling Layer built on top of PEAR DB, It main purpose is to
       </para>
       <para>
         <itemizedlist>
@@ -31,13 +31,13 @@
             <simpara>Group source code around the Data that they relate to.</simpara>
           </listitem>
           <listitem>
-            <simpara>Provide a simple consistant API to access and manipulate that data.</simpara>
+            <simpara>Provide a simple consistent API to access and manipulate that data.</simpara>
           </listitem>
          </itemizedlist>
       </para>
       <para>
         The DB_DataObject is rarely accessed directly, it is intended to be the base class which you can
-        extend to put the code specificly relating to a particular database table. Below is an example of how you 
+        extend to put the code specifically relating to a particular database table. Below is an example of how you 
         can use the end result (and extended class), 
       </para>
       <example>
@@ -67,7 +67,7 @@
       </example>
       <para>
         The above example illustrates the two components of the DataManager, By setting the options, all 
-        the core objects will be able to autoload the data definitons from a generated ini file, and know 
+        the core objects will be able to auto load the data definitions from a generated ini file, and know 
         how to access the database. (multiple databases are supported - see section on configuration)
       </para>
       <para>
@@ -105,7 +105,7 @@
        
       <para>
         The Package includes a number of tools to make building the extended classes and configuration file,
-        Once you have made your extended classes, the idea is that any data maniplation/calculation that relates
+        Once you have made your extended classes, the idea is that any data manipulation/calculation that relates
         to this table, or how this table interacts with other data is placed inside the extended class.
       </para>
       <programlisting role="php">
@@ -300,7 +300,7 @@ Config Options - Multi Database
 -->    
 
     <refsect1>
-      <title>Configuration Options - Mulitiple Databases (optional)</title>
+      <title>Configuration Options - Multiple Databases (optional)</title>
     
       <variablelist>
      
@@ -311,7 +311,7 @@ Config Options - Multi Database
           </term>
           <listitem>
             <para>
-            When you have multiple databases you can use the database_* to specifiy the dsn for each
+            When you have multiple databases you can use the database_* to specify the dsn for each
             database
             </para>
             <para>
@@ -397,7 +397,7 @@ table_stock     = sales
             The Directory where your DataObject extended Classes are.
             </para>
             <para>
-             Used by the Class AutoBuilder when updating/writing to your class definitions.
+             Used by the Class Auto Builder when updating/writing to your class definitions.
             </para>
           </listitem>
         </varlistentry>
@@ -450,7 +450,7 @@ table_stock     = sales
    <!-- 
 
 ******************************************                           
-AutoBuilding of Classes and Database schema
+Auto Building of Classes and Database schema
 
 *******************************************
 
@@ -461,17 +461,17 @@ AutoBuilding of Classes and Database schema
  
   <refentry  id="packages.DB.DataObject.autobuilding">
     <refnamediv>
-      <refname>AutoBuilding</refname>
+      <refname>Auto Building</refname>
       <refpurpose>
         creating the base Classes and Database schema
       </refpurpose>
     </refnamediv>
     <refsect1>
-      <title>What the AutoBuilder (createTables.php) Does</title>
+      <title>What the Auto Builder (createTables.php) Does</title>
         <para>
           One of the essential features of an SQL building tool is to to have some understanding of the
           database structure, So that Integers can be checked, and strings can be escaped. There a few ways
-          that Quering the database for the table structre could be accomplished
+          that Querying the database for the table structure could be accomplished
         
         <itemizedlist>
           <listitem>
@@ -490,10 +490,10 @@ AutoBuilding of Classes and Database schema
       <para>
         The other key concept of DB_DataObject is that you work with extended classes of DB_DataObject, which
         do all the 'table' related work. Setting up these classes for a large database can be time consuming, so 
-        the createTables.php file will automatically bulid the skeletons for all these class files.
+        the createTables.php file will automatically build the skeletons for all these class files.
       </para>
       <para>  
-        To start the autobuilder simply go to the pear/DB/DataObject/ directory, and type
+        To start the auto builder simply go to the pear/DB/DataObject/ directory, and type
         <command>c:\php4\php.exe createTables.php myconfig.ini</command> this will read your configuration file
         and generate all the base classes, along with the data definition file.
       </para>
@@ -707,7 +707,7 @@ Object (DataObjects_Person) =>
     <refsect1>
       <title>::staticGet()</title>
     <para>
-      Simple Get (Select) request, abreviated get request.
+      Simple Get (Select) request, abbreviated get request.
       </para>
       <funcsynopsis>
         <funcprototype>
@@ -718,7 +718,7 @@ Object (DataObjects_Person) =>
       </funcsynopsis>
       <para>
         The static method is similar to the get request, however it does not require the 
-        initial instantation of the class. staticGet also caches the result.
+        initial instantiation of the class. staticGet also caches the result.
         <example>
           <title> Simple fetch of data based on Primary Key</title>
           <programlisting role="php"><![CDATA[
@@ -1017,7 +1017,7 @@ $person->delete(TRUE);
         <example>
         <title> Resulting SQL </title>
           <programlisting role="sql"><![CDATA[
-SELECT * FROM person WHERe id=12
+SELECT * FROM person WHERE id=12
 DELETE FROM person WHERE id=12 AND name='test' AND age=21
 DELETE FROM person WHERE age < 21
 
@@ -1065,9 +1065,9 @@ Advanced Filters
       <para>
         The DB_DataObject class does not handle JOIN queries directly for the simple reason that it is designed
         to simplify the use of databases, and make the code that access them clear and easy to read. Having
-        experimented with a Join Version, it became very clear that this did not fulfil either of these goals, and 
+        experimented with a Join Version, it became very clear that this did not fulfill either of these goals, and 
         made the resulting code more difficult to read, debug and understand. So in reality it is best to use the
-        raw query() method to do join'ed queries..
+        raw query() method to do joined queries..
       </para>
     </refsect1>
     
@@ -1119,7 +1119,7 @@ while ($person->fetch()) {
         </funcprototype>
       </funcsynopsis>
       <para>
-        By default a select query will request all items '*', to change this behaviour you can first call
+        By default a select query will request all items '*', to change this behavior you can first call
         selectAdd() without any arguments to clear the current request and then add the specific items 
         you require.
         <example>
@@ -1183,7 +1183,7 @@ SELECT *, birthday_formated as date('%d %M %y') FROM person WHERE id=12
       </funcsynopsis>
       <para>
         Adds items to the where part of a SQL query. Calling this without any arguments clears, 
-        the where condition. The default behaviour is to add 'AND' queries, send the string 'OR' to 
+        the where condition. The default behavior is to add 'AND' queries, send the string 'OR' to 
         append OR conditions.
         <example>
         <title> Adding Where Statements</title>
@@ -1368,7 +1368,7 @@ SELECT * FROM person ORDER BY name, age, eye
         Appends a Group condition.
         Calling this without any arguments clears the Group Condition
         <example>
-          <title> Settin the Group by </title>
+          <title> Setting the Group by </title>
           <programlisting role="php"><![CDATA[
 <?
 
@@ -1454,17 +1454,17 @@ Links
     
     
     <refsect1>
-      <title>Automating the colleciton of related data</title>
+      <title>Automating the collection of related data</title>
       <para>
         When designing a database, often some tables are related to others - a membership table would contain
         a reference to a person's id and the group id that they are a member of. Using the Link methods, you 
         can automatically fetch objects into the parents variables.
       </para>
       <para>
-        The Automated method of doing this is heavily dependant on naming columns relating to databases, for example in the
+        The Automated method of doing this is heavily dependent on naming columns relating to databases, for example in the
         membership described above, you would have to have a column called person_id, group_id for the automated Link 
         methods to understand which table to fetch the data from. The principle is TABLENAME_ANYTHING, and it 
-        will always attempt to find primary keys that match the value of field, the getLinks() methods will autoload 
+        will always attempt to find primary keys that match the value of field, the getLinks() methods will auto load 
         the related object into $object->_tablename_anything
       </para>
       
