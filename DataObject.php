@@ -1373,15 +1373,18 @@ class DB_DataObject extends DB_DataObject_Overload
      * $object->name = "fred";
      * echo $object->count();
      * echo $object->count(true);  // dont use object vars.
-     * echo $object->count('distinct mycol'); 
+     * echo $object->count('distinct mycol');   count distinct mycol.
      * echo $object->count('distinct mycol',true); // dont use object vars.
+     * echo $object->count('distinct');      // count distinct id (eg. the primary key)
      *
      *
      * @param bool|string  (optional)
-     *                  (true|false = see below not on whereAddonly)
+     *                  (true|false => see below not on whereAddonly)
      *                  (string)
-     *                  $countWhat (optional) normally it counts primary keys - you can use 
-     *                  this to do things like $do->count('distinct mycol');
+     *                      "DISTINCT" => does a distinct count on the tables 'key' column
+     *                      otherwise  => normally it counts primary keys - you can use 
+     *                                    this to do things like $do->count('distinct mycol');
+     *                  
      * @param bool      $whereAddOnly (optional) If DB_DATAOBJECT_WHEREADD_ONLY is passed in then
      *                  we will build the condition only using the whereAdd's.  Default is to
      *                  build the condition using the object parameters as well.
@@ -1430,6 +1433,10 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         
         $as      = ($quoteIdentifiers ? $DB->quoteIdentifier('DATAOBJECT_NUM') : 'DATAOBJECT_NUM');
+        
+        // support distinct on default keys.
+        $countWhat = (false !== strcmp($countWhat,'DISTINCT')) ? 
+            "DISTINCT {$table}.{$key_col}" : $countWhat;
         
         $countWhat = is_string($countWhat) ? $countWhat : "{$table}.{$key_col}";
         
@@ -2833,19 +2840,18 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         
-        $database_prefix = in_array($DB->dsn["phptype"],array('mysql','mysqli')) ?
+        $database_prefix = in_array($DB->type,array('mysql','mysqli')) ?
             $obj->_database . '.' : '';
         
         // not sure  how portable adding database prefixes is..
         $objTable = $quoteIdentifiers ? 
                 $DB->quoteIdentifier($database_prefix  . '.' . $obj->__table) : 
-                $database_prefix  .   $obj->__table ;
+                $database_prefix  . '.' . $obj->__table ;
                 
         // add database prefix if they are different databases
         if ($database_prefix && ($obj->_database != $this->_database) && strlen($obj->_database )) {
             // ojbjTable is already quoted????
-            $objTable = ($quoteIdentifiers ? 
-                $DB->quoteIdentifier($obj->_database) : $obj->_database) . '.' . $objTable;
+            $objTable = ($quoteIdentifiers ? $DB->quoteIdentifier($obj->_database) : $obj->_database) . '.' . $objTable;
         }
         
         
