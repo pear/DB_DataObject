@@ -170,7 +170,7 @@ Class DB_DataObject {
             }
             $k = $keys[0];
         }
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("$k $v " .serialize(@$keys), "GET");
         }
         if (!$v) {
@@ -207,13 +207,13 @@ Class DB_DataObject {
         if ($v===NULL) {
             $key = $k;
         }
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             DB_DataObject::debug("$class $key","STATIC GET");
         }
         if (@$cache[$class][$key]) {
             return $cache[$class][$key];
         }
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             DB_DataObject::debug("$class $key","STATIC GET");
         }
         
@@ -258,7 +258,7 @@ Class DB_DataObject {
     
     
     function find($n=FALSE) {          
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug($n, "__find",1);       
         }
         if (!$this->__table) { 
@@ -277,16 +277,16 @@ Class DB_DataObject {
             $this->_limit); // is select
         ////add by ming ... keep old condition .. so that find can reuse
         $this->_condition = $tmpcond;
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("CHECK autofetchd $n", "__find",1);  
         }
         if ($n && $this->N > 0 ) {
-            if (!DB_DATAOBJECT_PRODUCTION) {
+            if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
                 $this->debug("ABOUT TO AUTOFETCH", "__find",1);  
             }
             $this->fetchRow(0) ;
         }
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("DONE", "__find",1);
         }
         return $this->N;
@@ -330,7 +330,7 @@ Class DB_DataObject {
         }
         $result = &$results[$this->_DB_resultid];
         $array = $result->fetchRow(DB_FETCHMODE_ASSOC);
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug(serialize($array),"FETCH",3);
         }
       
@@ -343,7 +343,7 @@ Class DB_DataObject {
         foreach($array as $k=>$v) {
             $kk = str_replace(".", "_",$k);
             $kk = str_replace(" ", "_",$kk);
-            if (!DB_DATAOBJECT_PRODUCTION) {
+            if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
                 $this->debug("$kk = ". $array[$k], "fetchrow LINE",3);
             }
             $this->$kk = $array[$k];
@@ -351,7 +351,7 @@ Class DB_DataObject {
          
         // set link flag
         $this->_link_loaded=FALSE;
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("{$this->__table} DONE", "fetchrow");
         }
      
@@ -575,7 +575,7 @@ Class DB_DataObject {
         }
           
         //$this->_condition=""; // dont clear condition
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("got keys as ".serialize($keys),3);
         }
         $this->_build_condition($items,$keys);
@@ -636,7 +636,7 @@ Class DB_DataObject {
     
        
     function fetchRow($row=NULL) {
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("{$this->__table} $row of {$this->N}", "fetchrow",3);       
         }
         if (!$this->__table) {
@@ -651,7 +651,7 @@ Class DB_DataObject {
             DB_DataObject::raiseError("fetchrow: No results avaiable", DB_DATAOBJECT_ERROR_NODATA);
             return;
         }
-        if (!DB_DATAOBJECT_PRODUCTION) {  
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {  
             $this->debug("{$this->__table} $row of {$this->N}", "fetchrow",3);       
         }
         $results = &PEAR::getStaticProperty('DB_DataObject','results');
@@ -665,13 +665,13 @@ Class DB_DataObject {
         
         foreach($array as $k=>$v) {
             $kk = str_replace(".", "_",$k);
-            if (!DB_DATAOBJECT_PRODUCTION) {
+            if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
                 $this->debug("$kk = ". $array[$k], "fetchrow LINE",3);
             }
             $this->$kk = $array[$k];
         } 
                    
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("{$this->__table} DONE", "fetchrow",3);
         }
         return TRUE;
@@ -935,20 +935,20 @@ Class DB_DataObject {
         $this->_database_dsn_md5 = md5($dsn);
           
         if (@$connections[$this->_database_dsn_md5]) {
-            if (!DB_DATAOBJECT_PRODUCTION) {
+            if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
                 $this->debug("USING CACHE", "CONNECT",3);
             }
             $this->_database = $connections[$this->_database_dsn_md5]->dsn["database"];
             return;
         }
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("NEW CONNECTION", "CONNECT",3);
         /* actualy make a connection */
         
             $this->debug("{$dsn} {$this->_database_dsn_md5}", "CONNECT",3);
         }
         $connections[$this->_database_dsn_md5] = DB::connect($dsn); 
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug(serialize($connections), "CONNECT",3);
         }
         if (PEAR::isError($connections[$this->_database_dsn_md5])) {
@@ -974,12 +974,12 @@ Class DB_DataObject {
         $results = &PEAR::getStaticProperty('DB_DataObject','results');
      
         
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("QUERY".$string,$log="sql");
         }
         $this->_connect();
         $__DB = &$connections[$this->_database_dsn_md5];
-        if (!DB_DATAOBJECT_PRODUCTION && (DB_DataObject::debugLevel() > 1) && 
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION'] && (DB_DataObject::debugLevel() > 1) && 
             (strtolower(substr(trim($string),0,6)) != "select") && 
             (strtolower(substr(trim($string),0,4)) != "show") &&
             (strtolower(substr(trim($string),0,8)) != "describe")) {
@@ -991,14 +991,14 @@ Class DB_DataObject {
         $results[$this->_DB_resultid] = $__DB->query($string);
         $result = &$results[$this->_DB_resultid];
         if (DB::isError($result)) {
-            if (!DB_DATAOBJECT_PRODUCTION) {
+            if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
                 DB_DataObject::debug($string, "SENT");
             }
             
             DB_DataObject::raiseError($result->message, $result->code);
             return;
         }
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("DONE QUERY", "query");
         }
         if (strtolower(substr(trim($string),0,6)) == "insert") {
@@ -1008,7 +1008,7 @@ Class DB_DataObject {
             return;
         }
         $this->N = 0;
-        if (!DB_DATAOBJECT_PRODUCTION) {
+        if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug(serialize($result), "RESULT",3);
         }
         if (method_exists($result, "numrows")) {
@@ -1299,7 +1299,7 @@ Class DB_DataObject {
     * @return 	none
     */
     function debugLevel($v=NULL) {
-        if (DB_DATAOBJECT_PRODUCTION) {
+        if ($GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             PEAR::raiseError("DB_DataObject in Production Mode",NULL,PEAR_ERROR_DIE);
         }
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
@@ -1343,7 +1343,7 @@ Class DB_DataObject {
     }
 
     /**
-    * Define the DB_DATAOBJECT_PRODUCTION variable
+    * Define the $GLOBALS['_DB_DATAOBJECT_PRODUCTION'] variable
     *
     * After Profiling DB_DataObject, I discoved that the debug calls where taking
     * considerable time (well 0.1 ms), so this should stop those calls happening.
@@ -1352,13 +1352,13 @@ Class DB_DataObject {
     * @access	  public
     * @return   error object
     */
-    function staticDefineProduction() {
+    function staticInitialize() {
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         if (@$options['production']) {
-            define('DB_DATAOBJECT_PRODUCTION', 1);
+            $GLOBALS['_DB_DATAOBJECT_PRODUCTION']= 1;
             return;
         }
-        define('DB_DATAOBJECT_PRODUCTION', 0);
+        $GLOBALS['_DB_DATAOBJECT_PRODUCTION']= 0;
     }
 
 
@@ -1367,7 +1367,7 @@ Class DB_DataObject {
 
 }
 
-DB_DataObject::staticDefineProduction();
+DB_DataObject::staticInitialize();
 
 
 
