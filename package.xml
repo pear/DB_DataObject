@@ -22,29 +22,43 @@
   </maintainers>
 
   <release>
-   
-     <version>1.7.2</version>
-      <date>2004-08-28</date>
+     <version>1.7.3</version>
+      <date>2004-12-23</date>
       <notes><![CDATA[
-      Minor bug fix / Minor feature addition release
+      Christmas Present release... - explicitly block 4.3.10 & 5.0.3 installations
         
-        
+      Due to bugs in the last PHP releases, this has been released in an attempt to 
+      prevent everyone trying to use those release..
+      
+      Please use snaps.php.net until 4.3.11 or 5.0.4 are release.
+      
       Bug Fixes:
-        #1835 - more fixes to ensure that joinAdd works correctly.
-        #2106 - Update with old object having no changes does not raise an error
-        #---- - fixed problem of call() code producing parse error on PHP5.0.1 
-        #2205 - fixed case sensitivity of PHP5 call() 
-        #---- - fixed undefined index in delete after a fetch()
+        #2928 - lastError contains the last error when query bugs out now.
+        #2674 - column names null / true /false etc. now halt createtables
+        #2778 - more informative warning shown when postgres bug is found.
+        #---- - experimental multidatabase join support
+        #2739 - sleep is relayed into __call - bug in PHP5
+        #2565 - oci8 NUMBER type recoginzed 
+        #---- - new option generate_add_validate_stubs = 1, creates validate stubs.
+        #---- - more comprehensive limit support (Lutz Thomas)
+        #---- - allow access to columns starting with _ eg. set_xxx() & get_xxx()
+                (Sandro)
+        #---- - Generator write E_STRICT code for PHP5 now
+        #2441 - Debugging code removed.
         
-      Features Added:
-        #2086 - Support for buliding dataobjects for Views (use option build_view=1)
-        #2240 - factory() called on a dataobject returns a new instance of that object.
+        #---- - multiple HAVING calls now supported.
+        #2468 - remove warning hider.
+        #2318 - update($do) when no changes detected returns true.
+        #2319 - joinAdd does not use AS when table and target have same name.
+        #---- - Dia diagram generation tools available in CVS (build diagrams from dataobjects)
+        
+        #2267 - additional debugging information available at connect time 
+        
+          
  
       ]]></notes>
       <state>stable</state>
-    </release>
-
-
+    </release> 
    
     <filelist>
         <dir name="/" baseinstalldir="DB" role="php">
@@ -68,12 +82,41 @@
 
    <deps>
       <dep type="php" rel="ge" version="4.2"/>
+      <dep type="php" rel="ne" version="4.3.10"/>
+      <dep type="php" rel="ne" version="5.0.3"/>
       <dep type="pkg" rel="ge" version="1.6">DB</dep>
       <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
       <dep type="pkg" rel="ge" version="1.4.3">Date</dep>
     </deps>
 
   <changelog>
+  
+   <release>
+     <version>1.7.2</version>
+      <date>2004-08-28</date>
+      <notes><![CDATA[
+      Minor bug fix / Minor feature addition release
+        
+        
+      Bug Fixes:
+        #1835 - more fixes to ensure that joinAdd works correctly.
+        #2106 - Update with old object having no changes does not raise an error
+        #---- - fixed problem of call() code producing parse error on PHP5.0.1 
+        #2205 - fixed case sensitivity of PHP5 call() 
+        #---- - fixed undefined index in delete after a fetch()
+        
+      Features Added:
+        #2086 - Support for buliding dataobjects for Views (use option build_view=1)
+        #2240 - factory() called on a dataobject returns a new instance of that object.
+ 
+      ]]></notes>
+      <state>stable</state>
+    </release>
+
+
+  
+  
+  
    <release>
    
      <version>1.7.1</version>

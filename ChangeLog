@@ -1,6 +1,103 @@
 
+2004-12-11 Saturday  alan_k
+
+	* fix bug #2928 - store last error when query bugs out.
+
+2004-11-30 Tuesday  alan_k
+
+	* wow, people actually read this rubish :)
+
+2004-11-20 Saturday  alan_k
+
+	* fix bug #2674 - wierd column names messing up .ini files.
+	* fix bug #2778 - show more informative warning when postgres bug
+	found..
+
+2004-11-16 Tuesday  alan_k
+
+	* add test for bug #2759 - which appears to work anyway.
+
+2004-11-13 Saturday  alan_k
+
+	* add experimental multidatabase join support
+	* fix bug #2739 - sleep serializing of objects is PHP5 - not sure
+	if this is really a PHP5 bug though..
+
+2004-10-20 Wednesday  alan_k
+
+	* #2565 - oci8 NUMBER recogized by generator
+
+2004-10-18 Monday  alan_k
+
+	* lets not abuse sprintf :)
+	* generator can now create stubs for validators : option
+	generator_add_validate_stubs=1
+	* add createTables test with regex usage
+
+2004-10-16 Saturday  alan_k
+
+	* updated results
+	* reduce error defines.
+	* add more comprehesive limit support - (Lutz Thomas)
+	* allow access to columns starting with _ using set*()/get*()..  -
+	as suggested by Sandro
+
+2004-10-14 Thursday  alan_k
+
+	* use numeric - as parse_ini_file might be setting that as a
+	string. - spotted by pokey
+	* #2519 - fixed - intval() numerics that arent numbers = eg.
+	booleans., on build_condition - to match behaviour on insert and
+	update.
+	* added check for #2519
+
+2004-10-12 Tuesday  alan_k
+
+	* fix logic for commenting out of var definitions
+	* private __table__ will likely break too much..
+
+2004-10-08 Friday  alan_k
+
+	* * disabling var writing just comments out, so code is still
+	readable..
+	* * make generator write PHP5 compatible code, * add option to
+	disable writing of vars * tidy up example.ini
+
+2004-10-05 Tuesday  alan_k
+
+	* fix bug #2441 - remove debugging code
+
+2004-09-27 Monday  alan_k
+
+	* fix having with mulitple calls (supprised no-one spotted that)
+
+2004-09-26 Sunday  alan_k
+
+	* remove references to an old template generator.
+
+2004-09-15 Wednesday  alan_k
+
+	* remove warning hider - bug #3468
+
+2004-09-14 Tuesday  alan_k
+
+	* results for previous commit
+	* update to test for unknown bug #2267
+	* fix bug #2318 - making update($do), when no changes are detected
+	not an failure (eg. returns true now)
+	* fix bug #2319 - joinAdd should not add AS when using same name.
+
+2004-09-09 Thursday  alan_k
+
+	* adding dia tools by J llarens
+
+2004-09-03 Friday  alan_k
+
+	* tests for bug #2267, more verbose connect reporting
+
 2004-08-28 Saturday  alan_k
 
+	* update package xml
 	* quick class instantation $newdo = $do->factory();
 
 2004-08-25 Wednesday  alan_k
