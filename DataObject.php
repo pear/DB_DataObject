@@ -125,6 +125,10 @@ if ( substr(phpversion(),0,1) == 5) {
         }
     }
 } else {
+    if (!function_exists('clone')) {
+        eval('function clone($t) { return $t; }');
+    }
+
     class DB_DataObject_Overload {
         function __call($method,$args,&$return) {
             return $this->_call($method,$args,$return);;
@@ -1232,7 +1236,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         global $_DB_DATAOBJECT;
         
         
-        $t = $this->__clone();
+        $t = clone($this);
         
         $quoteEntities = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
         
