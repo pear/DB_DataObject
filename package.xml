@@ -52,6 +52,9 @@
         <dir name="docs" role="doc">
             <file>example.ini</file>
         </dir>
+        <dir name="scripts" role="script">
+            <file>DB_DataObject_createTables.bat</file>
+        </dir>
     </filelist>
 
    <deps>
