@@ -519,7 +519,7 @@ Class DB_DataObject
             $this->_limit = $db->modifyLimitQuery('',$a,$b);
             
         } else {
-            PEAR::raiseError(
+            DB_DataObject::raiseError(
                 "DB_DataObjects only supports mysql and postgres limit queries at present, \n".
                 "Refer to your Database manual to find out how to do limit queries manually.\n",
                 DB_DATAOBJECT_ERROR_NOTSUPPORTED, PEAR_ERROR_DIE);
@@ -2093,6 +2093,11 @@ Class DB_DataObject
     function raiseError($message, $type = NULL, $behaviour = NULL)
     {
         global $_DB_DATAOBJECT;
+        
+        if ($behaviour == PEAR_ERROR_DIE && @$_DB_DATAOBJECT['CONFIG']['dont_die']) {
+            $behaviour = NULL;
+        }
+        
         if (PEAR::isError($message)) {
             $error = $message;
         } else {
