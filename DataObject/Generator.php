@@ -386,8 +386,9 @@ class DB_DataObject_Generator extends DB_DataObject
         $this->_newConfig .= $keys_out . (empty($keys_out_primary) ? $keys_out_secondary : $keys_out_primary);
         $ret['keys'] = empty($keys_out_primary) ? $ret_keys_secondary : $ret_keys_primary;
         
-        
-        //print_r(array("dump for {$this->table}", $ret));
+        if (@$_DB_DATAOBJECT['CONFIG']['debug'] > 2) {
+            print_r(array("dump for {$this->table}", $ret));
+        }
         
         return $ret;
         

@@ -32,7 +32,11 @@ class test extends DB_DataObject {
 	 
     function doTests() {
         $this->createDB();
-        $this->test1();
+        for($i=0;$i<100;$i++) {
+            if (method_exists($this,'test'.$i)) {
+                $this->{'test'.$i}();
+            }
+        }
     }
     
     function createDB() {
@@ -94,12 +98,14 @@ class test extends DB_DataObject {
         $this->dumpTest(); 
         $t = new test;
         //$t->id = 1;
-	
+   
        	echo "\n\n\n******delete everything with test and 'username' \n";
         $t->name = 'test';
         $t->username = 'username';
         $t->delete();
         $this->dumpTest(); 
+    }
+	function test3() {
 	
         echo "\n\n\n***** update everything with username to firstname = 'fred' *\n";
         $this->createRecordWithName('test');
@@ -109,6 +115,8 @@ class test extends DB_DataObject {
         $t->update(TRUE);
         $this->dumpTest(); 
 	
+    }
+	function test4() {
 
         echo "\n\n\n****** now update based on key\n";
         $t= new test;
@@ -116,6 +124,8 @@ class test extends DB_DataObject {
         $t->firstname='brian';
         $t->update();
         $this->dumpTest();  
+    }
+	function test5() {
 	
         echo "\n\n\n****** now update using changed items only\n";
         $t= new test;
@@ -127,6 +137,8 @@ class test extends DB_DataObject {
         echo "\n\n\n****** now update using changed items only\n";	
 
         print_r($t->toArray('user[%s]'));
+    }
+	function test6() {
 
         echo "\n\n\n****** limited queries 1\n";
         $t= new test;
@@ -135,6 +147,8 @@ class test extends DB_DataObject {
         $t->find();
         $t->fetch();
 	
+    }
+	function test7() {
 	
         echo "\n\n\n****** limited queries 1,1\n";
         $t= new test;
@@ -146,6 +160,8 @@ class test extends DB_DataObject {
         echo "\n\n\n****** to Array on empty result\n";
         print_r($t->toArray('user[%s]'));
 	
+    }
+	function test8() {
 
         echo "\n\n\n******get and delete an object key\n";
         $t = new test;
@@ -181,7 +197,9 @@ class test extends DB_DataObject {
         
        
           
-      
+    }
+	function test9() {
+  
         
         echo "\n\n\n******sequences.\n";
             
@@ -200,7 +218,9 @@ class test extends DB_DataObject {
         print_r($t->table());
         
         
-        
+    }
+	function test10() {
+    
         
         //bug #532
        
@@ -237,7 +257,9 @@ class test extends DB_DataObject {
         $page_module->position='top';
         $page_module->insert();
         
-        
+    }
+	function test11() {
+    
         
         // type casting...
         $this->query('DROP TABLE IF EXISTS  typetest');
@@ -266,9 +288,11 @@ class test extends DB_DataObject {
             $x->update();
         
             echo "TIMESTAMP = ".$x->getTs('%d/%m/%Y %H:%M:%S') . "\n";
-            }
+        }
         print_r($x);
-            
+    }
+	function test12_disabled() {
+        
             // bug #753
         DB_DataObject::debugLevel(0);
         $org= DB_DataObject::factory('test');
@@ -303,17 +327,12 @@ class test extends DB_DataObject {
         DB_DataObject::debugLevel(1);
             
         print_r(DB_DataObject::databaseStructure('test'));
-            
-        $this->postgresTest();
-            
+     
     
-    
-    
-        
     }
+	function test20() {
+
     
-    
-    function postgresTest() {
     
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         //$options['schema_location'] = dirname(__FILE__);
@@ -332,14 +351,14 @@ class test extends DB_DataObject {
         $r = $x->query("CREATE SEQUENCE response_response_id_seq INCREMENT 1 START 1");
         $r = $x->query("
             CREATE TABLE seqtest (
-                 id INT NOT NULL UNIQUE   default nextval( 'response_response_id_seq' ),
+                id INT NOT NULL UNIQUE   default nextval( 'response_response_id_seq' ),
                 xxx varchar(32),
-        price double precision
+                price double precision
             )");
-            
-    //DB_DataObject::debugLevel(0);
+        
+        //DB_DataObject::debugLevel(0);
         $x = DB_DataObject::factory('seqtest');
-    print_r($x->table());
+        print_r($x->table());
         $x->xxx = "Fred";
         var_dump($x->insert()); // will return id (based on response_response_id_seq)
         $x = DB_DataObject::factory('seqtest');
@@ -357,6 +376,37 @@ class test extends DB_DataObject {
         $options['ignore_sequence_keys'] = 'ALL';
         var_dump($x->insert());
         
+        
+        
+        $options['ignore_sequence_keys'] = false;
+        DB_DataObject::debugLevel(3);
+        
+        $x  = new DB_DataObject;
+        $x->query("DROP SEQUENCE items_seq");
+        $x->query("DROP TABLE itemtest");
+        
+        
+        $r = $x->query("CREATE SEQUENCE items_seq INCREMENT 1 START 1");
+        $r = $x->query("
+            create table itemtest (
+                id int not null primary key default nextval('items_seq'),
+                word varchar(100) not null constraint word_unique unique
+             )");
+        $x = DB_DataObject::factory('itemtest');
+          
+        //print_r($x);
+        print_r($x->table());
+        print_r($x->keys());
+        print_r($x->sequenceKey());
+        $x->word = 'test';
+        $x->insert();
+        
+        $x = DB_DataObject::factory('itemtest');
+        $x->sequenceKey('id',true,'items_seq');
+        print_r($x->sequenceKey());
+         $x->word = 'test2';
+        echo "insert ". $x->insert() . "\n";
+       
         
     }
 

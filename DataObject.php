@@ -852,13 +852,14 @@ class DB_DataObject extends DB_DataObject_Overload
             $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] : $this->sequenceKey();
             
         $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["phptype"];
-         
+        
          
         // nativeSequences or Sequences..     
 
         // big check for using sequences
         
         if (($key !== false) && !$useNative) { 
+        
             if (!$seq) {
                 $this->$key = $DB->nextId($this->__table);
             } else {
@@ -1701,25 +1702,37 @@ class DB_DataObject extends DB_DataObject_Overload
     function sequenceKey()
     {
         global $_DB_DATAOBJECT;
-        // for temporary storage of database fields..
-        // note this is not declared as we dont want to bloat the print_r output
+          
+        // call setting
+        if (!$this->_database) {
+            $this->_connect();
+        }
+        
+        if (!isset($_DB_DATAOBJECT['SEQUENCE'][$this->_database])) {
+            $_DB_DATAOBJECT['SEQUENCE'][$this->_database] = array();
+        }
+
+        
         $args = func_get_args();
         if (count($args)) {
             $args[1] = isset($args[1]) ? $args[1] : false;
             $args[2] = isset($args[2]) ? $args[2] : false;
-            $this->_databaseSequenceKeys = $args;
+            $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = $args;
         }
-        if (isset($this->_databaseSequenceKeys )) {
-            return $this->_databaseSequenceKeys;
+        if (isset($_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table])) {
+            return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table];
         }
-        if (!isset($_DB_DATAOBJECT['SEQUENCE'][$this->_database])) {
-            $_DB_DATAOBJECT['SEQUENCE'][$this->_database] = array();
-        }
+        // end call setting (eg. $do->sequenceKeys(a,b,c); )
+        
+       
+        
+        
         $keys = $this->keys();
         if (!$keys) {
             return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array(false,false,false);;
         }
-        
+ 
+
         $table =  isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table]) ?   
             $_DB_DATAOBJECT['INI'][$this->_database][$this->__table] : $this->table();
        
@@ -1743,7 +1756,8 @@ class DB_DataObject extends DB_DataObject_Overload
         if (!($table[$usekey] & DB_DATAOBJECT_INT)) {
                 return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array(false,false,false);
         }
-
+        
+        
         if (@$_DB_DATAOBJECT['CONFIG']['ignore_sequence_keys']) {
             $ignore =  $_DB_DATAOBJECT['CONFIG']['ignore_sequence_keys'];
             if (is_string($ignore) && (strtoupper($ignore) == 'ALL')) {
@@ -1759,11 +1773,6 @@ class DB_DataObject extends DB_DataObject_Overload
         
         
         $realkeys = $_DB_DATAOBJECT['INI'][$this->_database][$this->__table."__keys"];
-        
-        
-        //echo "--keys--\n";
-        //print_R(array($realkeys[$usekey], count($keys))) ;
-        //echo "\n-/keys--\n";
         
         // if you are using an old ini file - go back to old behaviour...
         if (is_numeric($realkeys[$usekey])) {
