@@ -21,73 +21,19 @@ if ($validate === TRUE) {
     }
 }
 
+Implementation - after first attempting to use Validate::multiple, it became very clear that
+alot of time each field has special validation that would be outside the scope of the Validate class
+so a callback method was used for each field eg. to validate email you would define a method like 
+this in your DataObjects_Person Class
 
-
-
-default validate method:
-
-<?
-function &getValidateArray() 
-{
-    /* over ride this to return something like this
-    - see the validate manual for more details
-    return array (
-        'name' => array(
-            'type'      => 'string',
-            'format'    =>  VAL_NUM . VAL_ALPHA,
-            'min_lenght'=>5,
-            'max_lenght'=>30),
-        page' => array(
-            'type'      => 'number',
-            'decimal'   => FALSE, 
-            'min'       => 18,
-            'max'       => 109),
-        'email' => array() {
-            'type'      => 'email',
-            'check_domain' => TRUE),
-        'homepage' => array(
-            'type' => 'url',
-            'domain_check' = 'true'
-        );
-        
-     
-    
-    */
-    $ret = FALSE;
-    return $ret;
-    
+function ValidateEmail () {
+	return Validate::email($this->email,TRUE);
 }
-    
 
-function validate() 
-{
-    require_once("Validate.php");
-    $table = &$this->_get_table();
-    $ret = array();
-    foreach($table as $key=>$val) {
-        $test[$key] = $this->$key;
-    }
-
-    if ($conditions = &$this->getValidateArray()) {
-        $ret = Validate::multiple($test,$conditions, TRUE);
-    } else {
-        foreach($table as $key=>$val) {
-            switch ($val) {
-                case  DB_DATAOBJECT_STR:
-                    $ret[$key] = Validate::string($val, VAL_NUM . VAL_ALPHA);
-                    continue;
-                case  DB_DATAOBJECT_INT: 
-                    $ret[$key] = Validate::number($val, ".");
-                    continue;
-            }
-        }
-    }
-    foreach ($ret as $key=>$val) {
-        if ($val == FALSE) return $ret;
-    }
-    return TRUE; // everything is OK.
+function ValidateCountry () {
+	$country = new I18N::country;
+	return in_array(array_keys($country->getAllCodes()));
 }
-?>
 
 
 

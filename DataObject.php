@@ -150,7 +150,8 @@ Class DB_DataObject {
     * @return 	int No. of rows
     */
     
-    function get($k,$v=NULL) { 
+    function get($k,$v=NULL) 
+    { 
         if ($v === NULL) {
             $v= $k;
             $keys = $this->_get_keys();
@@ -187,7 +188,8 @@ Class DB_DataObject {
     * @return 	object
     */ 
     
-    function &staticGet($class,$k,$v=NULL) {
+    function &staticGet($class,$k,$v=NULL) 
+    {
         
         $cache = &PEAR::getStaticProperty('DB_DataObject','cache');
 
@@ -242,7 +244,8 @@ Class DB_DataObject {
     */
     
     
-    function find($n=FALSE) {          
+    function find($n=FALSE) 
+    {
         $this->debug($n, "__find",1);       
         if (!$this->__table) { 
             echo "NO \$__table SPECIFIED in class definition";
@@ -299,7 +302,8 @@ Class DB_DataObject {
     * @return 	boolean on success 
     */
 
-    function fetch() { 
+    function fetch() 
+    { 
         $results = &PEAR::getStaticProperty('DB_DataObject','results');
         
         if (!@$this->N) {
@@ -343,7 +347,8 @@ Class DB_DataObject {
     * @return 	none
     */
 
-    function whereAdd($cond=FALSE,$logic="AND") {
+    function whereAdd($cond=FALSE,$logic="AND") 
+    {
         if ($cond === FALSE) {
             $this->_condition = '';
             return;
@@ -368,7 +373,8 @@ Class DB_DataObject {
     * @access	public
     * @return 	none
     */
-    function orderBy($order=FALSE) {
+    function orderBy($order=FALSE) 
+    {
         if ($order === FALSE) {
             $this->_order_by = "";
             return;
@@ -391,7 +397,8 @@ Class DB_DataObject {
     * @access	public
     * @return 	none
     */
-    function groupBy($group=FALSE) {
+    function groupBy($group=FALSE) 
+    {
         if ($group === FALSE) {
             $this->_group_by = "";
             return;
@@ -416,7 +423,8 @@ Class DB_DataObject {
     * @return 	none
     */
     
-    function limit($a=NULL,$b=NULL) {
+    function limit($a=NULL,$b=NULL) 
+    {
         if ($a===NULL) {
            $this->_limit = "";
            return;
@@ -443,7 +451,8 @@ Class DB_DataObject {
     */
     
     
-    function selectAdd($k=NULL) {
+    function selectAdd($k=NULL) 
+    {
         if ($k===NULL) {
             $this->_data_select ='';
             return;
@@ -471,7 +480,8 @@ Class DB_DataObject {
     * @return 	int 
     */
     
-    function insert() { 
+    function insert() 
+    { 
         $this->_connect();
         $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
         $__DB= &$connections[$this->_database_dsn_md5];
@@ -528,7 +538,8 @@ Class DB_DataObject {
     * @return 	boolean TRUE = success 
     */
     
-    function update() {       
+    function update() 
+    {       
         $items = $this->_get_table();
         $keys = $this->_get_keys();
         
@@ -578,7 +589,8 @@ Class DB_DataObject {
     * @param boolean use the whereAdd conditions (default = no - use current values.)
     * @return 	boolean TRUE on success
     */  
-    function delete($use_where=FALSE) {     
+    function delete($use_where=FALSE) 
+    {     
         $keys = $this->_get_keys();
         if (!$use_where) {
             $this->_condition=""; // default behaviour not to use where condition
@@ -606,7 +618,8 @@ Class DB_DataObject {
   
     
        
-    function fetchRow($row=NULL) {
+    function fetchRow($row=NULL) 
+    {
         $this->debug("{$this->__table} $row of {$this->N}", "fetchrow",3);       
         if (!$this->__table) {
             DB_DataObject::raiseError("fetchrow: No table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
@@ -660,7 +673,8 @@ Class DB_DataObject {
 
 
 
-    function count() {
+    function count() 
+    {
     
         $items = $this->_get_table();
         $tmpcond = $this->_condition;
@@ -696,7 +710,8 @@ Class DB_DataObject {
     * @return 	none
     */
   
-    function query($string) { 
+    function query($string) 
+    { 
         $this->_query($string);  
     }
     
@@ -794,7 +809,8 @@ Class DB_DataObject {
     * @return array
     */
    
-    function &_staticGetDefinitions($database,$table) {
+    function &_staticGetDefinitions($database,$table) 
+    {
     
         static $definitions = array();
         if (@$definitions[$database][$table]) {
@@ -815,7 +831,8 @@ Class DB_DataObject {
     * @access	private
     * @return 	array (associative)
     */
-    function &_get_table() { 
+    function &_get_table() 
+    { 
         if (!@$this->_database) {
             $this->_connect();
         }
@@ -835,7 +852,8 @@ Class DB_DataObject {
     */   
     
     
-    function &_get_keys() { 
+    function &_get_keys() 
+    { 
         if (!@$this->_database) {
             $this->_connect();
         }
@@ -850,7 +868,8 @@ Class DB_DataObject {
     * @return 	none
     */
     
-    function _clear_cache() {
+    function _clear_cache() 
+    {
         $cache = &PEAR::getStaticProperty('DB_DataObject','cache');
         $class = get_class($this);
         if (@$cache[$class]) {
@@ -866,7 +885,8 @@ Class DB_DataObject {
     * @return 	none
     */
        
-    function _connect () {
+    function _connect () 
+    {
         $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
         
         
@@ -923,7 +943,8 @@ Class DB_DataObject {
     * @return 	none
     */
  
-    function _query($string) {
+    function _query($string) 
+    {
         $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
         $results = &PEAR::getStaticProperty('DB_DataObject','results');
      
@@ -976,7 +997,8 @@ Class DB_DataObject {
     * @access	private
     * @return 	string
     */  
-    function _build_condition(&$keys,$filter=array()) {
+    function _build_condition(&$keys,$filter=array()) 
+    {
        
         foreach($keys as $k=>$v) {
             if ($filter) {
@@ -1008,7 +1030,8 @@ Class DB_DataObject {
     * @return string classname on Success
     */
    
-    function _autoloadTable($table) {
+    function _autoloadTable($table) 
+    {
         $options= &PEAR::getStaticProperty('DB_DataObject','options');
         $class = DB_DataObject::_autoloadClass($options['class_prefix'].ucfirst($table));
         return $class;
@@ -1022,7 +1045,8 @@ Class DB_DataObject {
     * @return string classname on Success
     */
  
-    function _autoloadClass($class) {
+    function _autoloadClass($class) 
+    {
         $options= &PEAR::getStaticProperty('DB_DataObject','options');
         $table = substr($class,strlen($options['class_prefix']));
         
@@ -1054,7 +1078,8 @@ Class DB_DataObject {
     * @access	public
     * @return 	boolean , TRUE on success
     */
-    function getLinks() {
+    function getLinks() 
+    {
        
         if ($this->_link_loaded) {
             return;
@@ -1083,7 +1108,8 @@ Class DB_DataObject {
     * @access	public
     * @return mixed object on success
     */
-    function &getLink($row, $table=NULL) {
+    function &getLink($row, $table=NULL) 
+    {
         if ($table === NULL) {
             if (!($p = strpos($row,'_'))) { 
                 return;
@@ -1118,7 +1144,8 @@ Class DB_DataObject {
     * @return array of results (empty array on failure)
     */
 
-    function &getLinkArray($row,$table = NULL) {
+    function &getLinkArray($row,$table = NULL) 
+    {
         $ret = array();
         if (!$table) {
             if (!($p = strpos($row,'_'))) {
@@ -1156,7 +1183,8 @@ Class DB_DataObject {
   
     
     
-    function setFrom(&$from) {
+    function setFrom(&$from) 
+    {
         $keys = $this->_get_keys();
         $items = $this->_get_table();
         if (!$items) {
@@ -1188,6 +1216,56 @@ Class DB_DataObject {
         return TRUE;
     }  
   
+    
+    
+    
+   
+    /**
+    * getValidateArray - override this to set up your validation rules
+    * 
+    * validate the current objects values either just testing strings/numbers or
+    * using the user defined getValidateArray() methods.
+    * will attempt to call $this->validate{column_name}() - expects TRUE = ok  FALSE = ERROR
+    * you can the use the validate Class from your own methods.  
+    *      
+    * @access	public
+    * @return 	array of validation results
+    */
+    function validate() 
+    {
+        require_once("Validate.php");
+        $table = &$this->_get_table();
+        $ret = array();
+        
+       
+            
+         
+        foreach($table as $key=>$val) {
+            if (!isset($this->$key)) continue;
+            $method = "Validate".ucfirst($key);
+            if (method_exists($this,$method)) {
+                $ret[$key] = $this->$method();
+                continue;
+            }
+            switch ($val) {
+                case  DB_DATAOBJECT_STR:
+                    $ret[$key] = Validate::string($val, VAL_PUNCTUATION . VAL_NAME);
+                    continue;
+                case  DB_DATAOBJECT_INT: 
+                    $ret[$key] = Validate::number($val, ".");
+                    continue;
+            }
+        }
+        
+        foreach ($ret as $key=>$val) {
+            if ($val == FALSE) return $ret;
+        }
+        return TRUE; // everything is OK.
+    }
+    
+    
+     
+    
     /* ----------------------- Debugger ------------------ */
     /**
     * Debugger. - use this in your extended classes to output debugging information.
@@ -1201,7 +1279,8 @@ Class DB_DataObject {
     * @return 	none
     */
     
-    function debug($message,$logtype=0, $level=1) {
+    function debug($message,$logtype=0, $level=1) 
+    {
         if (DB_DataObject::debugLevel()<$level) {
             return;
         }
@@ -1222,7 +1301,8 @@ Class DB_DataObject {
     * @access	public
     * @return 	none
     */
-    function debugLevel($v=NULL) {
+    function debugLevel($v=NULL) 
+    {
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         if ($v !== NULL) {
             $options['debug']  = $v;
@@ -1252,7 +1332,8 @@ Class DB_DataObject {
     * @access	  public
     * @return   error object
     */
-    function raiseError($message,$type,$behaviour=NULL) {
+    function raiseError($message,$type,$behaviour=NULL) 
+    {
         $error = PEAR::raiseError($message,$type,$behaviour);
         if (is_object($this)) {
             $this->_lastError = $error;
