@@ -1807,7 +1807,7 @@ Class DB_DataObject
                     $ret[$key] = Validate::string($this->$key, VALIDATE_PUNCTUATION . VALIDATE_NAME);
                     continue;
                 case  DB_DATAOBJECT_INT:
-                    $ret[$key] = Validate::number($this->$key, ".");
+                    $ret[$key] = Validate::number($this->$key, array('decimal'=>true));
                     continue;
             }
         }
