@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<config>
+  <language name="UML" stylesheet="/usr/share/dia/plugins/xslt/dia-uml.xsl">
+    <implementation name="htmlform" stylesheet="/usr/share/dia/plugins/xslt/dia-html-edit.xsl"/>
+    <implementation name="dbo" stylesheet="/usr/share/dia/plugins/xslt/dia-dbo.xsl"/>
+    <implementation name="sql" stylesheet="/usr/share/dia/plugins/xslt/dia-sql.xsl"/>
+    <implementation name="C++" stylesheet="/usr/share/dia/plugins/xslt/dia-uml2c++.xsl"/>
+    <implementation name="Java" stylesheet="/usr/share/dia/plugins/xslt/dia-uml2java.xsl"/>
+    <implementation name="IDL" stylesheet="/usr/share/dia/plugins/xslt/dia-uml2idl.xsl"/>        
+  </language>
+</config>
