@@ -400,7 +400,7 @@ class DB_DataObject_Generator extends DB_DataObject
             // only use primary key or nextval(), cause the setFrom blocks you setting all key items...
             // if no keys exist fall back to using unique
             //echo "\n{$t->name} => {$t->flags}\n";
-            if (preg_match("/(auto_increment|nextval\()/i",$t->flags)) {
+            if (preg_match("/(auto_increment|nextval\()/i",rawurldecode($t->flags))) {
                 // native sequences = 2
                 $keys_out_primary .= "{$t->name} = N\n";
                 $ret_keys_primary[$t->name] = 'N';
@@ -436,8 +436,10 @@ class DB_DataObject_Generator extends DB_DataObject
         //echo "Generating Class files:        \n";
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         $base = $options['class_location'];
-        if (!file_exists($base))
-            mkdir($base,0755);
+        if (!file_exists($base)) {
+            require_once 'System.php';
+            System::mkdir(array('-p',$base));
+        }
         $class_prefix  = $options['class_prefix'];
         if ($extends = @$options['extends']) {
             $this->_extends = $extends;
