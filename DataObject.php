@@ -2840,13 +2840,10 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         
-        $database_prefix = in_array($DB->type,array('mysql','mysqli')) ?
-            $obj->_database . '.' : '';
-        
         // not sure  how portable adding database prefixes is..
         $objTable = $quoteIdentifiers ? 
-                $DB->quoteIdentifier($database_prefix  . '.' . $obj->__table) : 
-                $database_prefix  . '.' . $obj->__table ;
+                $DB->quoteIdentifier($obj->__table) : 
+                 $obj->__table ;
                 
         // add database prefix if they are different databases
         if ($database_prefix && ($obj->_database != $this->_database) && strlen($obj->_database )) {
@@ -2879,10 +2876,20 @@ class DB_DataObject extends DB_DataObject_Overload
             $tfield   = $DB->quoteIdentifier($tfield);    
         }
         // add database prefix if they are different databases
-        if ($database_prefix && ($obj->_database != $this->_database) && strlen($this->_database )) {
-            $table = ($quoteIdentifiers ? $DB->quoteIdentifier($this->_database) : $this->_database) . '.' . $table;
-            
+        // as far as we know only mysql supports database prefixes..
+        if (    
+                in_array($DB->dsn['phptype'],array('mysql','mysqli')) &&
+                ($obj->_database != $this->_database) &&
+                strlen($obj->_database)
+            ) 
+        {
+            // prefix database (quoted if neccessary..)
+            $objTable = ($quoteIdentifiers
+                         ? $DB->quoteIdentifier($obj->_database)
+                         : $obj->_database)
+                    . '.' . $objTable;
         }
+         
         
         $fullJoinAs = '';
         $addJoinAs  = ($quoteIdentifiers ? $DB->quoteIdentifier($obj->__table) : $obj->__table) != $joinAs;
