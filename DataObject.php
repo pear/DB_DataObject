@@ -2722,7 +2722,7 @@ class DB_DataObject extends DB_DataObject_Overload
             list($toTable,$ofield) = explode(':',$obj[1]);
             $obj = DB_DataObject::factory($toTable);
             
-            if (!$obj) {
+            if (!$obj || is_a($obj,'PEAR_Error')) {
                 $obj = new DB_DataObject;
                 $obj->__table = $toTable;
             }
