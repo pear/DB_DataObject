@@ -474,6 +474,17 @@ class DB_DataObject_Generator extends DB_DataObject
         $body .= "    var \$__table = '{$this->table}';  {$p}// table name\n";
         
         
+        // if we are using the option database_{databasename} = dsn
+        // then we should add var $_database = here
+        // as database names may not always match.. 
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        if (isset($options["database_{$this->_database}"])) {
+            $body .= "    var \$_database = '{$this->_database}';  {$p}// database name (used with database_{*} config)\n";
+        }
+        
+        
+        
+        
         $defs = $this->_definitions[$this->table];
 
         // show nice information!
