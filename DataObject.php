@@ -246,7 +246,7 @@ Class DB_DataObject
             DB_DataObject::_loadConfig();
         }
 
-        $cache = &PEAR::getStaticProperty('DB_DataObject','cache');
+        
 
         $key = "$k:$v";
         if ($v === NULL) {
@@ -255,8 +255,8 @@ Class DB_DataObject
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             DB_DataObject::debug("$class $key","STATIC GET");
         }
-        if (@$cache[$class][$key]) {
-            return $cache[$class][$key];
+        if (@$_DB_DATAOBJECT['CACHE'][$class][$key]) {
+            return $_DB_DATAOBJECT['CACHE'][$class][$key];
         }
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             DB_DataObject::debug("$class $key","STATIC GET");
@@ -273,15 +273,15 @@ Class DB_DataObject
             return false;
         }
 
-        if (!@$cache[$class]) {
-            $cache[$class] = array();
+        if (!@$_DB_DATAOBJECT['CACHE'][$class]) {
+            $_DB_DATAOBJECT['CACHE'][$class] = array();
         }
         if (!$obj->get($k,$v)) {
             DB_DataObject::raiseError("No Data return from get $k $v", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
-        $cache[$class][$key] = $obj;
-        return $cache[$class][$key];
+        $_DB_DATAOBJECT['CACHE'][$class][$key] = $obj;
+        return $_DB_DATAOBJECT['CACHE'][$class][$key];
     }
 
     /**
@@ -1178,10 +1178,11 @@ Class DB_DataObject
      */
     function _clear_cache()
     {
-        $cache = &PEAR::getStaticProperty('DB_DataObject','cache');
+        global $_DB_DATAOBJECT;
+        
         $class = get_class($this);
-        if (@$cache[$class]) {
-            unset($cache[$class]);
+        if (@$_DB_DATAOBJECT['CACHE'][$class]) {
+            unset($_DB_DATAOBJECT['CACHE'][$class]);
         }
     }
 
@@ -1242,7 +1243,7 @@ Class DB_DataObject
 
         if (@$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]) {
             if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
-                $this->debug("USING CACHE", "CONNECT",3);
+                $this->debug("USING CACHED CONNECTION", "CONNECT",3);
             }
             if (!$this->_database) {
                 $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["database"];
