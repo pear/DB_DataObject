@@ -1349,7 +1349,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             return true;
         }
         // loaded already?
-        if (isset($_DB_DATAOBJECT['INI'][$this->_database])) {
+        if (!empty($_DB_DATAOBJECT['INI'][$this->_database])) {
             return true;
         }
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
