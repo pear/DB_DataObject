@@ -33,7 +33,8 @@
           variables to build the condition. (Daniel Ferreira)
         - Added derivedHookFunctions(), and derivedHookVar() to enable extensions to generator to
           make user defined methods. (Michael Lund Rasmussen)
-          
+        - support for INT4, BPCHAR, TIMESTAMPTZ  and postres Primary keys (Xavier)
+        - better PEAR CS complience (tabs and TRUE -> true)
       </notes>
       <state>beta</state>
      </release>
