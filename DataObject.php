@@ -3017,6 +3017,8 @@ class DB_DataObject extends DB_DataObject_Overload
      * will attempt to call $this->validate{column_name}() - expects true = ok  false = ERROR
      * you can the use the validate Class from your own methods.
      *
+     * This should really be in a extenal class - eg. DB_DataObject_Validate.
+     *
      * @access  public
      * @return  array of validation results or true
      */
@@ -3025,7 +3027,8 @@ class DB_DataObject extends DB_DataObject_Overload
         require_once 'Validate.php';
         $table = $this->table();
         $ret   = array();
-
+        $seq   = $this->sequenceKey();
+        
         foreach($table as $key => $val) {
             
             
@@ -3039,6 +3042,10 @@ class DB_DataObject extends DB_DataObject_Overload
             // if not null - and it's not set.......
             
             if (!isset($this->$key) && ($val & DB_DATAOBJECT_NOTNULL)) {
+                // dont check empty sequence key values..
+                if (($key == $seq[0]) && ($seq[1] = 'N')) {
+                    continue;
+                }
                 $ret[$key] = false;
                 continue;
             }
