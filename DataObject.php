@@ -1099,7 +1099,8 @@ Class DB_DataObject
      * Builds the WHERE based on the values of of this object
      *
      * @param   mixed   $keys
-     * @param   array   $filter
+     * @param   array   $filter (used by update to only uses keys in this filter list).
+     * @param   array   $negative_filter (used by delete to prevent deleting using the keys mentioned..)
      * @access  private
      * @return  string
      */
@@ -1110,6 +1111,10 @@ Class DB_DataObject
         $__DB  = &$connections[$this->_database_dsn_md5];
      
         foreach($keys as $k => $v) {
+        
+            /* these filter checks are a bit suspicious.. 
+                - need to check that update really wants to work this way */
+                
             if ($filter) {
                 if (!in_array($k, $filter)) {
                     continue;
