@@ -43,6 +43,8 @@
  * readOnlyFields = created|person_created|modified|person_modified
  * ; fields to flag as links (from lists->edit/view) (preg_match formate)
  * linkFields = id|username|name
+ * ; alter the extends field when updating a class (defaults to only replacing DB_DataObject)
+ * generator_class_rewrite = ANY|specific_name   // default is DB_DataObject
  *
 */
 
@@ -329,6 +331,13 @@ class DB_DataObject_Generator extends DB_DataObject
      * @access private
      */
     var $_className;
+    /**
+     * class being generated
+     *
+     * @var    string
+     * @access private
+     */
+    var $_className;
 
     /**
      * The table class geneation part - single file.
@@ -405,9 +414,22 @@ class DB_DataObject_Generator extends DB_DataObject
         if (!$input) return $full;
         if (!preg_match('/\n\s*###START_AUTOCODE\n/s',$input))  return $full;
         if (!preg_match('/\n\s*###END_AUTOCODE\n/s',$input))  return $full;
-
+        
+        
+        /* this will only replace extends DB_DataObject by default, 
+            unless use set generator_class_rewrite to ANY or a name*/
+        
+        $class_rewrite = 'DB_DataObject';
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        if (!($class_rewrite = @$options['generator_class_rewrite'])) {
+            $class_rewrite = 'DB_DataObject';
+        }
+        if ($class_rewrite = 'ANY') {
+            $class_rewrite = '[a-z_]+';
+        }
+        
         $input = preg_replace(
-            '/\nclass\s*[a-z_]+\s*extends\s*[a-z_]+\s*\{\n/si',
+            '/\nclass\s*[a-z_]+\s*extends\s*' .$class_rewrite . '\s*\{\n/si',
             "\nclass {$this->classname} extends {$this->_extends} {\n",
             $input);
 
