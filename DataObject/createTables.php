@@ -27,7 +27,7 @@ if (!@$argv[1]) {
 $config = parse_ini_file($argv[1],TRUE);
 $options = &PEAR::getStaticProperty('DB_DataObject','options');
 $options = $config['DB_DataObject'];
-DB_DataObject::debugLevel(5);
+//DB_DataObject::debugLevel(5);
 $generator = new DB_DataObject_Generator;
 $generator->start();
 
