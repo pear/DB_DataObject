@@ -9,7 +9,7 @@
   The core class is designed to be extended for each of your tables so that you put the
   data logic inside the data classes.
   included is a Generator to make your configuration files and your base classes.
-  nd
+ 
 </description>
   <license>PHP License</license>
   <maintainers>
@@ -20,7 +20,57 @@
       <email>alan@akbkhome.com</email>
     </maintainer>
   </maintainers>
+<release>
+     <version>1.7.6</version>
+      <date>2004-03-05</date>
+      <notes><![CDATA[
+      
+      Nothing like a big release to create bugs..
+      
+      Note: the last release also included method creation for setters and getters, 
+        which got missed out from the changelog.
+     
+      Bug Fixes:
+        #3708 - Generator did not clear last files contents when generating new files.
+        #3706 - Joins broke on everything except mysql (database prefix now only added to mysql)
+        
+        
+          
+ 
+      ]]></notes>
+      <state>stable</state>
+    </release> 
+   
+  
+    <filelist>
+        <dir name="/" baseinstalldir="DB" role="php">
+            <file name="DataObject.php" role="php">
+              <replace from="@version@" to="version" type="package-info"/>
+            </file>
+            <dir name="DataObject" role="php">
+                <file>Cast.php</file>            
+                <file>Generator.php</file>
+                <file>createTables.php</file>
+                <file>Error.php</file>
+            </dir>
+        </dir>
+        <dir name="docs" role="doc">
+            <file>example.ini</file>
+        </dir>
+        <dir name="scripts" role="script">
+            <file>DB_DataObject_createTables.bat</file>
+        </dir>
+    </filelist>
 
+   <deps>
+      <dep type="php" rel="ge" version="4.2"/>
+      <dep type="pkg" rel="ge" version="1.6">DB</dep>
+      <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
+      <dep type="pkg" rel="ge" version="1.4.3">Date</dep>
+    </deps>
+
+  <changelog>
+    
   <release>
      <version>1.7.5</version>
       <date>2004-03-02</date>
@@ -63,35 +113,6 @@
       <state>stable</state>
     </release> 
    
-    <filelist>
-        <dir name="/" baseinstalldir="DB" role="php">
-            <file name="DataObject.php" role="php">
-              <replace from="@version@" to="version" type="package-info"/>
-            </file>
-            <dir name="DataObject" role="php">
-                <file>Cast.php</file>            
-                <file>Generator.php</file>
-                <file>createTables.php</file>
-                <file>Error.php</file>
-            </dir>
-        </dir>
-        <dir name="docs" role="doc">
-            <file>example.ini</file>
-        </dir>
-        <dir name="scripts" role="script">
-            <file>DB_DataObject_createTables.bat</file>
-        </dir>
-    </filelist>
-
-   <deps>
-      <dep type="php" rel="ge" version="4.2"/>
-      <dep type="pkg" rel="ge" version="1.6">DB</dep>
-      <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
-      <dep type="pkg" rel="ge" version="1.4.3">Date</dep>
-    </deps>
-
-  <changelog>
-  
    <release>
      <version>1.7.2</version>
       <date>2004-08-28</date>
@@ -113,7 +134,6 @@
       ]]></notes>
       <state>stable</state>
     </release>
-
 
   
   
