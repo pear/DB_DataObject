@@ -26,6 +26,12 @@ define("DB_DATAOBJECT_TIME",     8);  // is time #TODO
 define("DB_DATAOBJECT_BOOL",    16);  // is boolean #TODO
 define("DB_DATAOBJECT_TXT",     32);  // is long text #TODO
 
+/* error defines */
+define("DB_DATAOBJECT_ERROR_INVALIDARGS",     1);  // wrong args to function
+define("DB_DATAOBJECT_ERROR_NODATA",          2);  // no data available
+define("DB_DATAOBJECT_ERROR_INVALIDCONFIG",   3);  // something wrong with the config
+define("DB_DATAOBJECT_ERROR_NOCLASS",         4);  // no class exists
+
 
 /* Object Based DB class - extend this for using with specific tables!
 // Example INI File
@@ -187,7 +193,7 @@ Class DB_DataObject {
             DB_DataObject::raiseError("could not autoload $class", DB_DATAOBJECT_ERROR_NOCLASS);
             return;
         }
-        $obj = &new $newclassclass;
+        $obj = &new $newclass;
         if (!$obj) {
             DB_DataObject::raiseError("Error creating $newclass", DB_DATAOBJECT_ERROR_NOCLASS);
             return;
@@ -1071,12 +1077,20 @@ Class DB_DataObject {
             }
             $table = substr($row,0,$p);
         }
+        if (!isset($this->$row)) {
+            DB_DataObject::raiseError("getLink: row not set $row", DB_DATAOBJECT_ERROR_NODATA);
+            return;
+        }
+        
+        
         $class = $this->_autoloadTable($table);
         if (!$class) {
             DB_DataObject::raiseError("getLink:Could not find class for row $row, table $table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            return FALSE;
+            return;
         }
-        return DB_DataObject::staticGet($class,$this->$key);
+        
+        
+        return DB_DataObject::staticGet($class,$this->$row);
     }
     /*
      * return a list of options for a linked table
@@ -1200,7 +1214,7 @@ Class DB_DataObject {
         if ($v !== NULL) {
             $options['debug']  = $v;
         }
-        return $options['debug'];
+        return @$options['debug'];
     }
     
      /**
