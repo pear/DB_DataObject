@@ -56,8 +56,8 @@ define('DB_DATAOBJECT_ERROR_NOCLASS',       -4);  // no class exists
  *   - connections = md5 sum mapp to pear db object
  *   - results     = [id] => map to pear db object
 */
-$GLOBALS['_DB_DATAOBJECT'] = array();
-
+$GLOBALS['_DB_DATAOBJECT']['RESULTS'] = array();
+$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'] = array();
 
 /**
  * The main "DB_DataObject" class is really a base class for your own tables classes
