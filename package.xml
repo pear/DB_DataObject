@@ -24,11 +24,14 @@
   
  
     <release>
-      <version>1.0.2</version>
-      <date>2003-08-01</date>
+      <version>1.1</version>
+      <date>2003-08-07</date>
       <notes>
-        Minor Bugfix Release
-        - Fix static Get call, case sensitivity properly.
+        New Features
+        - JoinAdd has additional Argument $joinCol, so you can specify 
+          multiple targets links of the  same table, eg. user->friend, 
+          user->parent both connect to the user table..  (Andy Crain)
+        
         
       </notes>
       <state>stable</state>
@@ -63,6 +66,19 @@
   <changelog>
   
   
+ 
+    <release>
+      <version>1.0.2</version>
+      <date>2003-07-31</date>
+      <notes>
+        Minor Bugfix Release
+        - Fix static Get call, case sensitivity properly.
+        
+        
+      </notes>
+      <state>stable</state>
+    </release>
+     
   
  
     <release>

@@ -1786,18 +1786,26 @@ Class DB_DataObject
      * }
      *
      *
-     * @param    optional $obj    object      the joining object (no value resets the join)
-     * @param    optional $joinType    string  'LEFT'|'INNER'|'RIGHT'|'' Inner is default, '' indicates 
-     *                                  just select ... from a,b,c with no join and 
-     *                                      links are added as where items.
-     * @param    optional $joinAs    string   if you want to select the table as anther name
-     *                                      usefull when you want to select multiple columsn
-     *                                      from a secondary table.
+     * @param    optional $obj       object     the joining object (no value resets the join)
+     * @param    optional $joinType  string     'LEFT'|'INNER'|'RIGHT'|'' Inner is default, '' indicates 
+     *                                          just select ... from a,b,c with no join and 
+     *                                          links are added as where items.
+     *
+     * @param    optional $joinAs    string     if you want to select the table as anther name
+     *                                          usefull when you want to select multiple columsn
+     *                                          from a secondary table.
+     
+     * @param    optional $joinCol   string     The column on This objects table to match (needed
+     *                                          if this table links to the child object in 
+     *                                          multiple places eg.
+     *                                          user->friend (is a link to another user)
+     *                                          user->mother (is a link to another user..)
+     *
      * @return   none
      * @access   public
      * @author   Stijn de Reede      <sjr@gmx.co.uk>
      */
-    function joinAdd($obj = false,$joinType='INNER',$joinAs=false)
+    function joinAdd($obj = false, $joinType='INNER', $joinAs=false, $joinCol=false)
     {
         global $_DB_DATAOBJECT;
         if ($obj === false) {
@@ -1830,6 +1838,21 @@ Class DB_DataObject
                 /* link contains {this column} = {linked table}:{linked column} */
                 $ar = explode(':', $v);
                 if ($ar[0] == $this->__table) {
+                    
+                    // you have explictly specified the column
+                    // and the col is listed here..
+                    // not sure if 1:1 table could cause probs here..
+                    
+                    if ($joinCol !== false) {
+                        DB_DataObject::raiseError( 
+                            "joinAdd: You cannot target a join column in the " .
+                            "'link from' table ({$obj->__table}). " . 
+                            "Either remove the forth argument to joinAdd() ".
+                            "({$joinCol}), or alter your links.ini file.",
+                            DB_DATAOBJECT_ERROR_NODATA);
+                        return false;
+                    }
+                
                     $ofield = $k;
                     $tfield = $ar[1];
                     break;
@@ -1844,9 +1867,19 @@ Class DB_DataObject
                 /* link contains {this column} = {linked table}:{linked column} */
                 $ar = explode(':', $v);
                 if ($ar[0] == $obj->__table) {
-                    $tfield = $k;
-                    $ofield = $ar[1];
-                    break;
+                    if ($joinCol !== false) {
+                        if ($k == $joinCol) {
+                            $tfield = $k;
+                            $ofield = $ar[1];
+                            break;
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        $tfield = $k;
+                        $ofield = $ar[1];
+                        break;
+                    }
                 }
             }
         }
