@@ -1246,12 +1246,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         $DB    = $t->getDatabaseConnection();
 
         if (!$whereAddOnly && $items)  {
-            foreach ($items as $key => $val) {
-                if (isset($t->$key))  {
-                    $kSql = $quoteEntities ? $DB->quoteEntity($key) : $key;
-                    $t->whereAdd($kSql . ' = ' . $DB->quote($t->$key));
-                }
-            }
+            $this->_build_condition($items);
         }
         $keys = $this->keys();
 
