@@ -1306,7 +1306,8 @@ Class DB_DataObject extends DB_DataObject_Overload
      *
      *
      * usage :
-     * DB_DataObject::databaseStructure(   parse_ini_file('mydb.ini',true), 
+     * DB_DataObject::databaseStructure(  'databasename',
+     *                                    parse_ini_file('mydb.ini',true), 
      *                                    parse_ini_file('mydb.link.ini',true)); 
      *
      * obviously you dont have to use ini files.. (just return array similar to ini files..)
@@ -1324,14 +1325,24 @@ Class DB_DataObject extends DB_DataObject_Overload
         global $_DB_DATAOBJECT;
         
         if ($args = func_get_args()) {
-            $_DB_DATAOBJECT['INI'][$this->_database] = isset($_DB_DATAOBJECT['INI'][$this->_database]) ?
-                $_DB_DATAOBJECT['INI'][$this->_database] + $args[0] : $args[0];
+        
+            if (count($args) == 1) {
+                // this an error condition!!!
+                return DB_DataObject::raiseError(
+                    "DB_DataObjects::databaseStructure() takes 2 or 3 arguments \n".
+                    "string databasename, array structure, array links.\n",
+                    DB_DATAOBJECT_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
+                
+            }
+        
+            $_DB_DATAOBJECT['INI'][$args[0]] = isset($_DB_DATAOBJECT['INI'][$args[0]]) ?
+                $_DB_DATAOBJECT['INI'][$args[0]] + $args[1] : $args[1];
             
             if (isset($args[1])) {
-                $_DB_DATAOBJECT['LINKS'][$this->_database] = isset($_DB_DATAOBJECT['LINKS'][$this->_database]) ?
-                    $_DB_DATAOBJECT['LINKS'][$this->_database] + $args[1] : $args[1];
+                $_DB_DATAOBJECT['LINKS'][$args[0]] = isset($_DB_DATAOBJECT['LINKS'][$args[0]]) ?
+                    $_DB_DATAOBJECT['LINKS'][$args[0]] + $args[2] : $args[2];
             }
-            return array($_DB_DATAOBJECT['INI'][$this->_database], $_DB_DATAOBJECT['LINKS'][$this->_database]);
+            return array($_DB_DATAOBJECT['INI'][$args[0]], $_DB_DATAOBJECT['LINKS'][$args[0]]);
         }
         // loaded already?
         if (isset($_DB_DATAOBJECT['INI'][$this->_database])) {
