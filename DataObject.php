@@ -1435,7 +1435,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $as      = ($quoteIdentifiers ? $DB->quoteIdentifier('DATAOBJECT_NUM') : 'DATAOBJECT_NUM');
         
         // support distinct on default keys.
-        $countWhat = (false !== strcmp($countWhat,'DISTINCT')) ? 
+        $countWhat = (strtoupper($countWhat) == 'DISTINCT') ? 
             "DISTINCT {$table}.{$key_col}" : $countWhat;
         
         $countWhat = is_string($countWhat) ? $countWhat : "{$table}.{$key_col}";
@@ -2228,8 +2228,9 @@ class DB_DataObject extends DB_DataObject_Overload
                     $this->raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
                     return false;
                 }
-                if ($value == 'NULL') {
-                    $value = 'IS NULL';
+                if ((strtolower($value) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
+                    $this->whereAdd(" $kSql IS NULL");
+                    continue;
                 }
                 $this->whereAdd(" $kSql = $value");
                 continue;
