@@ -1717,7 +1717,7 @@ Class DB_DataObject extends DB_DataObject_Overload
      *  c) session based storage.
      *
      * @access private
-     * @return void
+     * @return true | PEAR::error
      */
     function _connect()
     {
@@ -1730,17 +1730,17 @@ Class DB_DataObject extends DB_DataObject_Overload
 
         if ($this->_database_dsn_md5 && @$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]) {
             if (PEAR::isError($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
-                DB_DataObject::raiseError(
+                return DB_DataObject::raiseError(
                         $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->message,
                         $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->code, PEAR_ERROR_DIE
                 );
-                return;
+                 
             }
 
             if (!$this->_database) {
                 $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['database'];
             }
-            return;
+            
         }
 
         // it's not currently connected!
@@ -1769,7 +1769,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             if (!$this->_database) {
                 $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["database"];
             }
-            return;
+            return true;
         }
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug("NEW CONNECTION", "CONNECT",3);
@@ -1783,7 +1783,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             $this->debug(serialize($_DB_DATAOBJECT['CONNECTIONS']), "CONNECT",5);
         }
         if (PEAR::isError($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
-            DB_DataObject::raiseError(
+            return DB_DataObject::raiseError(
                         $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->message,
                         $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->code, PEAR_ERROR_DIE
             );
@@ -2790,7 +2790,9 @@ Class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
 
-        $this->_connect();
+        if (($e = $this->_connect()) !== true) {
+            return $e;
+        }
         if (!isset($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
             return  false;
         }
