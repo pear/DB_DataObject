@@ -481,6 +481,7 @@ class DB_DataObject_Generator extends DB_DataObject
             } else { 
                 $outfilename = "{$base}/".preg_replace('/[^A-Z0-9]/i','_',ucfirst($this->table)).".php";
             }
+            $oldcontents = '';
             if (file_exists($outfilename)) {
                 // file_get_contents???
                 $oldcontents = implode('',file($outfilename));
