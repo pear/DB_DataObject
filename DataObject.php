@@ -2665,7 +2665,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             $ret = $this->fromValue($k,$from[sprintf($format,$k)]);
-            if ($ret !== true)) {
+            if ($ret !== true)  {
                 $overload_return[$k] = 'Not A Valid Value';
             }
             //$this->$k = $from[sprintf($format,$k)];
