@@ -1962,16 +1962,14 @@ Class DB_DataObject
         $type = strtolower(substr($method,0,3));
         $class = get_class($this);
         if (($type != 'set') && ($type != 'get')) {
-            trigger_error ("Call to Unknown method $method on overloaded $class (not get or set)", E_USER_ERROR);
-            return true;
+            return false;
         }
          
         
         
         $element = substr($method,3);
         if ($element{0} == '_') {
-            trigger_error ("Call to Unknown method $method on overloaded $class (can not set privates)", E_USER_ERROR);
-            return true;
+            return false;
         }
          
         // it appear to cause problems for some reason...
@@ -1979,8 +1977,7 @@ Class DB_DataObject
         $array =  array_keys(get_class_vars($class));
          
         if (!in_array($element,$array)) {
-            trigger_error ("Could not find variable '$element' on overloaded $class", E_USER_ERROR);
-            return true;
+            return false;            
         }
         
         
