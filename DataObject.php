@@ -2981,18 +2981,19 @@ class DB_DataObject extends DB_DataObject_Overload
             if (!isset($from[sprintf($format,$k)])) {
                 continue;
             }
-            if (is_object($from[sprintf($format,$k)])) {
-                continue;
-            }
-            if (is_array($from[sprintf($format,$k)])) {
-                continue;
-            }
+           
             $kk = (strtolower($k) == 'from') ? '_from' : $k;
             if (method_exists($this,'set'. $kk)) {
                 $ret =  $this->{'set'.$kk}($from[sprintf($format,$k)]);
                 if (is_string($ret)) {
                     $overload_return[$k] = $ret;
                 }
+                continue;
+            }
+            if (is_object($from[sprintf($format,$k)])) {
+                continue;
+            }
+            if (is_array($from[sprintf($format,$k)])) {
                 continue;
             }
             $ret = $this->fromValue($k,$from[sprintf($format,$k)]);
@@ -3089,7 +3090,7 @@ class DB_DataObject extends DB_DataObject_Overload
             
             if (!isset($this->$key) && ($val & DB_DATAOBJECT_NOTNULL)) {
                 // dont check empty sequence key values..
-                if (($key == $seq[0]) && ($seq[1] = 'N')) {
+                if (($key == $seq[0]) && ($seq[1] == 'N')) {
                     continue;
                 }
                 $ret[$key] = false;
