@@ -684,7 +684,7 @@ Class DB_DataObject
      *
      * @param object dataobject (optional) - used to only update changed items.
      * @access public
-     * @return  boolean true = success
+     * @return  int rows affected or false on failure
      */
     function update($dataObject = false)
     {
@@ -754,7 +754,7 @@ Class DB_DataObject
             }
             
             $this->_clear_cache();
-            return true;
+            return $r;
         }
         DB_DataObject::raiseError("update: No Data specifed for query $settings , {$this->_condition}", DB_DATAOBJECT_ERROR_NODATA);
         return false;
@@ -812,7 +812,7 @@ Class DB_DataObject
                 return false;
             }
             $this->_clear_cache();
-            return true;
+            return $r;
         } else {
             DB_DataObject::raiseError("delete: No condition specifed for query", DB_DATAOBJECT_ERROR_NODATA);
             return false;
