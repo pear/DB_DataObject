@@ -22,7 +22,7 @@
   </maintainers>
   <release>
     <version>0.1</version>
-    <date>2002-06-19</date>
+    <date>2002-06-21</date>
     <notes>PEARified</notes>
     <state>stable</state>
     <filelist>
@@ -39,8 +39,8 @@
   <changelog>
     <release>
       <version>0.1</version>
-      <date>2002-06-19</date>
-      <notes>PEARified</notes>
+      <date>2002-06-21</date>
+      <notes>PEARified - documentation are temporarly on http://docs.akbkhome.com/DB_DataObject/</notes>
       <state>stable</state>
     </release>
   </changelog>

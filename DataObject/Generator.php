@@ -135,18 +135,21 @@ class DB_DataObject_Generator extends DB_DataObject {
     * @return 	none
     */
     function _createTableList() {
-        $this->query("show tables");
-        $database = $this->_database;
-        $var = "Tables_in_{$this->_database}";
-        while ($this->fetch()) 
-            $this->tables[] = $this->$var;
+        $this->_connect();
+        $connections = &PEAR::getStaticProperty('DB_DataObject','connnections');
+          
+        $__DB= &$connections[$this->_database_dsn_md5];
+        
+        $this->tables = $__DB->getListOf('tables');
+         
         foreach($this->tables as $table) {
-            $t = new DB_DataObject;
-            $t->query("describe {$table}");
-            $this->_definitions[$table]=array();
-            while ($t->fetch()) 
-                $this->_definitions[$table][] = $t;
+            $defs =  $__DB->tableInfo($table);
+            // cast all definitions to objects - as we deal with that better.
+            foreach($defs as $def) {
+                $this->_definitions[$table][] = (object) $def;
+            }
         }
+        //print_r($this->_definitions);
     }
     /**
     * Auto generation of table data.
@@ -165,15 +168,17 @@ class DB_DataObject_Generator extends DB_DataObject {
         
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         
+        
         $this->_newConfig = new Config('IniFile');
         foreach($this->tables as $this->table)
             $this->_generateDefinitionsTable();
-        
+        $this->_connect();
+         
         $base =  $options['schema_location'];
         $file = "{$base}/{$this->_database}.ini";
         if (!file_exists($base)) 
             mkdir($base,0755);
-        echo "{$options['schema_location']}\n";
+        echo "{$file}\n";
         touch($file);
         //print_r($this->_newConfig);
         $ret = $this->_newConfig->writeInput($file,false);
@@ -191,14 +196,11 @@ class DB_DataObject_Generator extends DB_DataObject {
         $defs = $this->_definitions[$this->table];
         foreach($defs as $t) {
             $n=0;
-            $ttype = $t->Type;
-            if ($p = strpos($t->Type,'(')) {
-                $ttype = substr($t->Type,0,$p);
-                $n = substr($t->Type,$p+1,strlen($t->Type) - $p -2);
-            }
-            switch (strtoupper($ttype)) {
+            
+            switch (strtoupper($t->type)) {
             
                 case "INT":
+                case "REAL":
                 case "INTEGER":
                 case "TINYINT":
                 case "SMALLINT":
@@ -218,7 +220,7 @@ class DB_DataObject_Generator extends DB_DataObject {
                 case "MEDIUMTEXT":
                 case "LONGTEXT":
                 case "TINYBLOB":
-                case "BLOB":
+                case "BLOB":       /// these should really be ignored!!!???
                 case "MEDIUMBLOB":
                 case "LONGBLOB":
                 case "DATE":
@@ -230,15 +232,18 @@ class DB_DataObject_Generator extends DB_DataObject {
                     $type=DB_DATAOBJECT_STR;
                     break;
             }
-            $this->_newConfig->setValue("/{$this->table}",$t->Field, $type);
+            $this->_newConfig->setValue("/{$this->table}",$t->name, $type);
             
-            if ($t->Key == "PRI") 
-                $this->_newConfig->setValue("/{$this->table}__keys",$t->Field, $type);
+            // i've no idea if this will work well on other databases?
+            // only use primary key, cause the setFrom blocks you setting all key items...
             
+            if (preg_match("/primary_key/i",$t->flags)) {
+                $this->_newConfig->setValue("/{$this->table}__keys",$t->name, $type);
+            }
             
         }
         
-    }    
+    }
 
     /* 
     * building the class files
@@ -327,12 +332,13 @@ class DB_DataObject_Generator extends DB_DataObject {
         $connections = array();
         $sets = array();
         foreach($defs as $t) {
-            $padding = (30 - strlen($t->Field));
+            $padding = (30 - strlen($t->name));
             if ($padding < 2) $padding =2;
             $p =  str_repeat(' ',$padding) ;    
-            $body .="    var \${$t->Field};  {$p}// {$t->Type}\n";
-            if (substr($t->Type,0,3) == "set")
-                $sets[$t->Field] = "array".substr($t->Type,3);
+            $body .="    var \${$t->name};  {$p}// {$t->type}({$t->len})  {$t->flags}\n";
+            // can not do set as PEAR::DB table info doesnt support it.
+            //if (substr($t->Type,0,3) == "set")
+            //    $sets[$t->Field] = "array".substr($t->Type,3);
             
         }
         // simple creation tools ! (static stuff!)
@@ -348,10 +354,10 @@ class DB_DataObject_Generator extends DB_DataObject {
        
        
         // set methods
-        foreach ($sets as $k=>$v) {
-            $kk = strtoupper($k);
-            $body .="    function getSets{$k}() { return {$v}; }\n";
-        }
+        //foreach ($sets as $k=>$v) {
+        //    $kk = strtoupper($k);
+        //    $body .="    function getSets{$k}() { return {$v}; }\n";
+        //}
         
         $body .= "\n    /* the code above is auto generated do not remove the tag below */";
         $body .= "\n    ###END_AUTOCODE\n";

@@ -145,7 +145,7 @@ Class DB_DataObject {
     }  
 
     /**
-    * a caching static get method  using key, value (based on get)
+    * a autoloading, caching static get method  using key, value (based on get)
     *
     * Usage:
     * $object = DB_DataObject::staticGet("DbTable_mytable",12);   
@@ -163,7 +163,8 @@ Class DB_DataObject {
     */ 
     
     function &staticGet($class,$k,$v=NULL) {
-        $cache = &PEAR::getStaticProperties('DB_DataObject','cache');
+        
+        $cache = &PEAR::getStaticProperty('DB_DataObject','cache');
 
         $key = "$k:$v";
         if ($v===NULL) $key = $k;
@@ -172,16 +173,24 @@ Class DB_DataObject {
         if (@$cache[$class][$key])
             return $cache[$class][$key];
             
-        DB_DataObject::debug("$class $key","STATIC GET");    
+        DB_DataObject::debug("$class $key","STATIC GET");
+        
+        $class = DB_DataObject::_autoloadClass($class);
+        if (!$class) {
+            return;
+        }
         $obj = &new $class;
         if (!$obj) {
             echo "ERROR CREATING CLASS $class";
             exit;
         }
         
-        if (!@$cache[$class])
+        if (!@$cache[$class]) {
             $cache[$class] = array();
-        if (!$obj->get($k,$v)) return;
+        }
+        if (!$obj->get($k,$v)) {
+            return;
+        }
         $cache[$class][$key] = $obj;
         return $cache[$class][$key];    
     }
@@ -262,7 +271,7 @@ Class DB_DataObject {
     */
 
     function fetch() { 
-        $results = &PEAR::getStaticProperties('DB_DataObject','results');
+        $results = &PEAR::getStaticProperty('DB_DataObject','results');
         
         if (!@$this->N) return;
         $result = &$results[$this->_DB_resultid];
@@ -279,7 +288,7 @@ Class DB_DataObject {
         } 
          
         // set link flag
-        $this->_link_loaded=0;
+        $this->_link_loaded=FALSE;
         
         $this->debug("{$this->__table} DONE", "fetchrow");
      
@@ -428,7 +437,7 @@ Class DB_DataObject {
     
     function insert() { 
     
-        $connections = &PEAR::getStaticProperties('DB_DataObject','connections');
+        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
     
         $__DB= &$connections[$this->_database_dsn_md5];
         $items = $this->_get_table();
@@ -562,7 +571,7 @@ Class DB_DataObject {
         if (!$this->N) return;
            
         $this->debug("{$this->__table} $row of {$this->N}", "fetchrow",3);       
-        $results = &PEAR::getStaticProperties('DB_DataObject','results');
+        $results = &PEAR::getStaticProperty('DB_DataObject','results');
         
         $result = &$results[$this->_DB_resultid];
         $array = $result->fetchrow(DB_FETCHMODE_ASSOC,$row);
@@ -615,7 +624,7 @@ Class DB_DataObject {
 
         $this->query("SELECT count({$keys[0]}) as num FROM {$this->__table} {$this->_condition}");
         $this->_condition = $tmpcond;
-        $results = &PEAR::getStaticProperties('DB_DataObject','results');
+        $results = &PEAR::getStaticProperty('DB_DataObject','results');
         $result = &$results[$this->_DB_resultid];
         $l=$result->fetchRow(DB_FETCHMODE_ASSOC,0);
         return $l["num"];
@@ -733,7 +742,7 @@ Class DB_DataObject {
         if (@$definitions[$database][$table]) 
             return $definitions[$database][$table];
     
-        $options= &PEAR::getStaticProperties('DB_DataObject','options');
+        $options= &PEAR::getStaticProperty('DB_DataObject','options');
         $location = $options['schema_location'];
         $definitions[$database] = parse_ini_file($location."/{$database}.ini",TRUE);
         return $definitions[$database][$table];
@@ -782,7 +791,7 @@ Class DB_DataObject {
     */
     
     function _clear_cache() {
-        $cache = &PEAR::getStaticProperties('DB_DataObject','cache');
+        $cache = &PEAR::getStaticProperty('DB_DataObject','cache');
         $class = get_class($this);
         if (@$cache[$class])
             unset($cache[$class]);
@@ -797,7 +806,7 @@ Class DB_DataObject {
     */
        
     function _connect () {
-        $connections = &PEAR::getStaticProperties('DB_DataObject','connnections');
+        $connections = &PEAR::getStaticProperty('DB_DataObject','connnections');
         
         
         if ($this->_database_dsn_md5) {// already connected
@@ -810,7 +819,7 @@ Class DB_DataObject {
             return;
         }
         
-        $options= &PEAR::getStaticProperties('DB_DataObject','options');
+        $options= &PEAR::getStaticProperty('DB_DataObject','options');
         $dsn = @$this->_database_dsn;
         
         if (!$dsn) {
@@ -829,9 +838,10 @@ Class DB_DataObject {
         }
         $this->debug("NEW CONNECTION", "CONNECT",3);
         /* actualy make a connection */
-        $this->debug($dsn, "CONNECT",3);
+        $this->debug("{$dsn} {$this->_database_dsn_md5}", "CONNECT",3);
         $connections[$this->_database_dsn_md5] = DB::connect($dsn); 
-       
+        $this->debug(serialize($connections), "CONNECT",3);
+         
         if (PEAR::isError($connections[$this->_database_dsn_md5])) {
             echo "ERROR CONNECTING:  {$this->_database}:{$this->__table}";
             $this->debug(serialize($connections[$this->_database_dsn_md5]),3);
@@ -839,6 +849,7 @@ Class DB_DataObject {
         }
         
         $this->_database = $connections[$this->_database_dsn_md5]->dsn["database"];
+        return TRUE;
     }
     /**
     * sends query to database - this is the private one that must work - internal functions use this rather than $this->query()
@@ -848,8 +859,8 @@ Class DB_DataObject {
     */
  
     function _query($string) {
-        $connections = &PEAR::getStaticProperties('DB_DataObject','connnections');
-        $results = &PEAR::getStaticProperties('DB_DataObject','results');
+        $connections = &PEAR::getStaticProperty('DB_DataObject','connnections');
+        $results = &PEAR::getStaticProperty('DB_DataObject','results');
      
         
         
@@ -913,17 +924,47 @@ Class DB_DataObject {
             $this->condition_append("$k = 0");
         }
     }
-
-
-
-    
-    
+    /**
+    * autoload Class relating to a table
+    *
+    * @param table
+    * @access	private
+    * @return string classname on Success
+    */
+   
+    function _autoloadTable($table) {
+        $options= &PEAR::getStaticProperty('DB_DataObject','options');
+        $class = $this->_autoloadClass($options['class_prefix'].ucfirst($table));
+        return $class;
+    }
        
-    
+     /**
+    * autoload Class 
+    *
+    * @param Class
+    * @access	private
+    * @return string classname on Success
+    */
+ 
+    function _autoloadClass($class) {
+        $options= &PEAR::getStaticProperty('DB_DataObject','options');
+        $table = substr($class,strlen($options['class_prefix']);
+        
+            // this should/could autoload
+        @include_once($options['require_prefix'].ucfirst($table).".php");
+        if (!class_exists($class)) {
+            return FALSE;
+        }
+        return $class;
+    }
 
+    /**
+    * Have the links been loaded?
+    * @access 	private
+    * @var  boolean
+    */  
    
-   
-    var $_link_loaded=0; 
+    var $_link_loaded=FALSE; 
     /**
     * load related objects 
     *
@@ -937,23 +978,17 @@ Class DB_DataObject {
     * @return 	boolean , TRUE on success
     */
     function getLinks() {
-        $options= &PEAR::getStaticProperties('DB_DataObject','options');
+       
         if ($this->_link_loaded) return;
         $cols = $this->_get_table();      
         foreach (array_keys($cols) as $key) {
             
             if (!($p = strpos($key,'_'))) continue;
-            // does the table exist.
-            $table = substr($key,0,$p);
-            $class = $options['class_prefix'].ucfirst($table);
-            // this should/could autoload
-            @include_once($options['require_prefix'].ucfirst($table).".php");
-            if (!class_exists($class)) continue;
+            // does the table exist. 
             $k = "_{$key}";
-            if (@$this->$k->id == @$this->$key) continue; // done double load!
-            $this->$k = DB_DataObject::staticGet($class,$this->$key);
-        }
-        $this->_link_loaded=1;
+            $this->$k = $this->getLink($key);
+        }    
+        $this->_link_loaded=TRUE;
     }
      /**
     * return name from related object
@@ -965,15 +1000,20 @@ Class DB_DataObject {
     * stores it in $this->_xxxxx_yyyyy
     *
     * @access	public
-    * @return 	boolean , TRUE on success
+    * @return mixed object on success
     */
-    function getLink($row) {
+    function &getLink($row, $table=NULL) {
+        if ($table === NULL) {
+            if (!($p = strpos($row,'_'))) { 
+                return;
+            }
+            $table = substr($row,0,$p);
+        }
         
-        $this->getLinks(); 
-        if (!($p = strpos($row,'_'))) return $this->$row;
-        $k = "_{$row}";
-        if (!@$this->$k) return @$this->$row;
-        return $this->$k->name;
+        if (!$class) {
+            return FALSE;
+        }
+        return DB_DataObject::staticGet($class,$this->$key);
     }
     /*
      * return a list of options for a linked table
@@ -985,25 +1025,29 @@ Class DB_DataObject {
     * stores it in $this->_xxxxx_yyyyy
     *
     * @access	public
-    * @return 	boolean , TRUE on success
+    * @return array of results (empty array on failure)
     */
 
-    function &getLinkArray($row) {
-        $options= &PEAR::getStaticProperties('DB_DataObject','options');
+    function &getLinkArray($row,$table = NULL) {
+        $options= &PEAR::getStaticProperty('DB_DataObject','options');
         $ret = array();
         if (!($p = strpos($row,'_'))) return $ret;
         $table = substr($row,0,$p);
-        $class = $options['class_prefix'].ucfirst($table);
-            // this should/could autoload
-        @include_once($options['require_prefix'].ucfirst($table).".php");
-        if (!class_exists($class)) {
+        $class = $this->_autoloadTable($table);
+        if (!$class) {
             return $ret;
         }
         
         $c = new $class;
-        $c->find();
-        while ($c->fetch()) 
+        // if the user defined method list exists - use it...
+        if (method_exists($c,'list')) {
+            $c->list();
+        } else {
+            $c->find();
+        }
+        while ($c->fetch()) {
             $ret[] = $c;
+        }
         return $ret;
     }
     /**
@@ -1071,9 +1115,9 @@ Class DB_DataObject {
     * @return 	none
     */
     function debugLevel($v=NULL) {
-        static $level =0;
-        if ($v !== NULL) $level = $v;
-        return $level;
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        if ($v !== NULL) $options['debug']  = $v;
+        return $options['debug'];
     }    
     
 
