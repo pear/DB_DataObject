@@ -220,6 +220,9 @@ class DB_DataObject_Generator extends DB_DataObject
         $defs = $this->_definitions[$this->table];
         $this->_newConfig .= "\n[{$this->table}]\n";
         $keys_out =  "\n[{$this->table}__keys]\n";
+        $keys_out_primary = '';
+        $keys_out_secondary = '';
+        
         foreach($defs as $t) {
              
             $n=0;
@@ -276,18 +279,20 @@ class DB_DataObject_Generator extends DB_DataObject
                 continue;
             }
             $this->_newConfig .= "{$t->name} = $type\n";
-            //$this->_newConfig->setValue("/{$this->table}",$t->name, $type);
 
             // i've no idea if this will work well on other databases?
-            // only use primary key, cause the setFrom blocks you setting all key items...
+            // only use primary key or nextval(), cause the setFrom blocks you setting all key items...
+            // if no keys exist fall back to using unique
 
-            if (preg_match("/(primary|unique|nextval\()/i",$t->flags)) {
-                $keys_out .= "{$t->name} = $type\n";
-                //$this->_newConfig->setValue("/{$this->table}__keys",$t->name, $type);
+            if (preg_match("/(primary|nextval\()/i",$t->flags)) {
+                $keys_out_primary .= "{$t->name} = $type\n";
+            } else if (preg_match("/\sunique\s/i",$t->flags)) {
+                $keys_out_secondary .= "{$t->name} = $type\n";
             }
 
         }
-        $this->_newConfig .= $keys_out;
+        
+        $this->_newConfig .= $keys_out . (empty($keys_out_primary) ? $keys_out_secondary : $keys_out_primary);
 
     }
 
