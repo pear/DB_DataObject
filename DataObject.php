@@ -1484,7 +1484,6 @@ Class DB_DataObject
         $class   = DB_DataObject::_autoloadClass($_DB_DATAOBJECT['CONFIG']['class_prefix'] . ucfirst($table));
         
         if (!$class) {
-            trigger_error( "factory could not find class $table");
             return DB_DataObject::raiseError("factory could not find class $class from $table",
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
         }
