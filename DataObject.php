@@ -3238,7 +3238,8 @@ class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
 
-        if (is_int( $_DB_DATAOBJECT['CONFIG']['debug']) &&  $_DB_DATAOBJECT['CONFIG']['debug']<$level) {
+        if (@!$_DB_DATAOBJECT['CONFIG']['debug']  || 
+            (is_int($_DB_DATAOBJECT['CONFIG']['debug']) &&  @$_DB_DATAOBJECT['CONFIG']['debug'] < $level)) {
             return;
         }
         // this is a bit flaky due to php's wonderfull class passing around crap..
