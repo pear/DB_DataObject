@@ -2302,7 +2302,7 @@ class DB_DataObject extends DB_DataObject_Overload
     *       [local_col_name] => "related_tablename:related_col_name"
     * 
     * 
-    * @return   array    key value of 
+    * @return   array   ass. array of links  
     * @access   public
     * @see      DB_DataObject::getLinks(), DB_DataObject::getLink()
     */
@@ -2326,7 +2326,7 @@ class DB_DataObject extends DB_DataObject_Overload
             return $_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table];
         }
         
-        return null;
+        return array();
     }
     /**
      * load related objects
