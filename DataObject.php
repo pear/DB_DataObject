@@ -2795,6 +2795,11 @@ Class DB_DataObject extends DB_DataObject_Overload
                 $ret[$key] = false;
                 continue;
             }
+            
+            if ((strtolower(@$this->$key) == 'null') && ($val & DB_DATAOBJECT_NOTNULL)) {
+                $ret[$key] = false;
+                continue;
+            }
             // ignore things that are not set. ?
            
             if (!isset($this->$key)) {
@@ -2802,7 +2807,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             }
             
             // if the string is empty.. assume it is ok..
-            if (!strlen($this->$key)) {
+            if (!strlen(@$this->$key)) {
                 continue;
             }
             
@@ -2811,10 +2816,10 @@ Class DB_DataObject extends DB_DataObject_Overload
                 
             
                 case  ($val & DB_DATAOBJECT_STR):
-                    $ret[$key] = Validate::string($this->$key, VALIDATE_PUNCTUATION . VALIDATE_NAME);
+                    $ret[$key] = Validate::string(@$this->$key, VALIDATE_PUNCTUATION . VALIDATE_NAME);
                     continue;
                 case  ($val & DB_DATAOBJECT_INT):
-                    $ret[$key] = Validate::number($this->$key, array('decimal'=>'.'));
+                    $ret[$key] = Validate::number(@$this->$key, array('decimal'=>'.'));
                     continue;
             }
         }
