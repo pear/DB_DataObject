@@ -19,7 +19,9 @@
 
 require_once("DB/DataObject/Generator.php");
 
-
+if (!ini_get('register_argc_argv')) {
+    PEAR::raiseError("\nERROR: createTable.php requires register_argc_argv to be set in you php.ini\n\n",null,PEAR_ERROR_DIE);
+}
 if (!@$_SERVER['argv'][1]) {
     PEAR::raiseError("\nERROR: createTable.php usage:\n\ncreateTable example.ini\n\n",null,PEAR_ERROR_DIE);
     exit;
