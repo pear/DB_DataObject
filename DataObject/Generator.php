@@ -141,9 +141,9 @@ class DB_DataObject_Generator extends DB_DataObject
     function _createTableList()
     {
         $this->_connect();
-        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
-
-        $__DB= &$connections[$this->_database_dsn_md5];
+        
+        
+        $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECITONS'][$this->_database_dsn_md5];
 
         $this->tables = $__DB->getListOf('tables');
 
