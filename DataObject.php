@@ -477,7 +477,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug("{$this->__table} DONE", "fetchrow",2);
         }
-        if (isset($this->_query)) {
+        if (isset($this->_query) && !@$_DB_DATAOBJECT['CONFIG']['keep_query_after_fetch']) {
             unset($this->_query);
         }
         return true;
