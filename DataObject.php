@@ -1270,7 +1270,7 @@ Class DB_DataObject
     {
         $args = func_get_args();
         if (count($args)) {
-            $this->__database = $args[0];
+            $this->_database = $args[0];
         }
         return $this->_database;
     }
