@@ -129,7 +129,7 @@ Modifications needed to getLink:
         if ($table === NULL) {
             if (@$links[$this->table]) {
                 if ( @$links[$this->table][$row]) {
-                   list($table,$link) = $links[$this->table][$row];
+                   list($table,$link) = explode(':',$links[$this->table][$row]);
                 } else {
                     return; // technically a possible error condition? 
                 }
