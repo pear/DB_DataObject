@@ -3246,7 +3246,6 @@ class DB_DataObject extends DB_DataObject_Overload
                 }
             
                 if (is_numeric($value)) {
-                    echo "it's numberic?";
                     $this->$col = date('Y-m-d',$value);
                     return true;
                 }
