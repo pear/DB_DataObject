@@ -409,7 +409,7 @@ Class DB_DataObject
         // set link flag
         $this->_link_loaded=false;
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
-            $this->debug("{$this->__table} DONE", "fetchrow");
+            $this->debug("{$this->__table} DONE", "fetchrow",2);
         }
 
         return true;
@@ -1422,18 +1422,24 @@ Class DB_DataObject
             //$this->debug($__DB->getAll('explain ' .$string,DB_FETCHMODE_ASSOC), $log="sql",2);
         }
 
+        $t= explode(' ',microtime());
+        $time = $t[0]+$t[1];
         
          
         $result = $__DB->query($string);
+        
+        
 
         if (DB::isError($result)) {
             if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
                 DB_DataObject::debug($string, "SENT");
+                
             }
             return DB_DataObject::raiseError($result->message, $result->code);
         }
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
-            $this->debug('DONE QUERY', 'query');
+            $t= explode(' ',microtime());
+            $this->debug('QUERY DONE IN  '.($t[0]+$t[1]-$time)."seconds", 'query',1);
         }
         switch (strtolower(substr(trim($string),0,6))) {
             case 'insert':
