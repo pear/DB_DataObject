@@ -59,7 +59,7 @@ define("DB_DATAOBJECT_ERROR_NOCLASS",         -4);  // no class exists
  *
  *
  * //Start and initialize...................... - dont forget the &
- * $config = parse_ini_file('example.ini',TRUE);
+ * $config = parse_ini_file('example.ini',true);
  * $options = &PEAR::setStaticProperty('DB_DataObject','options');
  * $options = $config['DB_DataObject'];
  *
@@ -167,7 +167,7 @@ Class DB_DataObject {
             $keys = $this->_get_keys();
             if (!$keys) {
                 DB_DataObject::raiseError("No Keys available for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-                return FALSE;
+                return false;
             }
             $k = $keys[0];
         }
@@ -176,7 +176,7 @@ Class DB_DataObject {
         }
         if (!$v) {
             DB_DataObject::raiseError("No Value specified for get", DB_DATAOBJECT_ERROR_INVALIDARGS);
-            return FALSE;
+            return false;
         }
         $this->$k = $v;
         return $this->find(1);
@@ -222,12 +222,12 @@ Class DB_DataObject {
         $newclass = DB_DataObject::_autoloadClass($class);
         if (!$newclass) {
             DB_DataObject::raiseError("could not autoload $class", DB_DATAOBJECT_ERROR_NOCLASS);
-            return FALSE;
+            return false;
         }
         $obj = &new $newclass;
         if (!$obj) {
             DB_DataObject::raiseError("Error creating $newclass", DB_DATAOBJECT_ERROR_NOCLASS);
-            return FALSE;
+            return false;
         }
 
         if (!@$cache[$class]) {
@@ -235,7 +235,7 @@ Class DB_DataObject {
         }
         if (!$obj->get($k,$v)) {
             DB_DataObject::raiseError("No Data return from get $k $v", DB_DATAOBJECT_ERROR_NODATA);
-            return FALSE;
+            return false;
         }
         $cache[$class][$key] = $obj;
         return $cache[$class][$key];
@@ -259,7 +259,7 @@ Class DB_DataObject {
     */
 
 
-    function find($n=FALSE) 
+    function find($n=false) 
     {
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug($n, "__find",1);
@@ -330,7 +330,7 @@ Class DB_DataObject {
 
         if (!@$this->N) {
             DB_DataObject::raiseError("fetch: No Data Availabe", DB_DATAOBJECT_ERROR_NODATA);
-            return FALSE;
+            return false;
         }
         $result = &$results[$this->_DB_resultid];
         $array = $result->fetchRow(DB_FETCHMODE_ASSOC);
@@ -341,7 +341,7 @@ Class DB_DataObject {
         if (!is_array($array)) {
             // this is probably end of data!!
             //DB_DataObject::raiseError("fetch: no data returned", DB_DATAOBJECT_ERROR_NODATA);
-            return FALSE;
+            return false;
         }
 
         foreach($array as $k=>$v) {
@@ -354,12 +354,12 @@ Class DB_DataObject {
         }
 
         // set link flag
-        $this->_link_loaded=FALSE;
+        $this->_link_loaded=false;
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("{$this->__table} DONE", "fetchrow");
         }
 
-        return TRUE;
+        return true;
     }
     /**
     * Adds a condition to the WHERE statement, defaults to AND
@@ -374,9 +374,9 @@ Class DB_DataObject {
     * @return   none
     */
 
-    function whereAdd($cond=FALSE,$logic="AND") 
+    function whereAdd($cond=false,$logic="AND") 
     {
-        if ($cond === FALSE) {
+        if ($cond === false) {
             $this->_condition = '';
             return;
         }
@@ -398,9 +398,9 @@ Class DB_DataObject {
     * @access public
     * @return none
     */
-    function orderBy($order=FALSE) 
+    function orderBy($order=false) 
     {
-        if ($order === FALSE) {
+        if ($order === false) {
             $this->_order_by = "";
             return;
         }
@@ -422,9 +422,9 @@ Class DB_DataObject {
     * @access public
     * @return  none
     */
-    function groupBy($group=FALSE) 
+    function groupBy($group=false) 
     {
-        if ($group === FALSE) {
+        if ($group === false) {
             $this->_group_by = "";
             return;
         }
@@ -513,12 +513,12 @@ Class DB_DataObject {
         $items = $this->_get_table();
         if (!$items) {
             DB_DataObject::raiseError("insert:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            return FALSE;
+            return false;
         }
         $datasaved=1;
         $leftq="";
         $rightq = "";
-        $key = FALSE;
+        $key = false;
         $keys = $this->_get_keys();
         $dbtype  = $connections[$this->_database_dsn_md5]->dsn["phptype"];
         if (($key = @$keys[0]) && ($dbtype != 'mysql')) {
@@ -551,7 +551,7 @@ Class DB_DataObject {
             $r = $this->_query("INSERT INTO {$this->__table} ($leftq) VALUES ($rightq) ");
             if (PEAR::isError($r)) {
                 DB_DataObject::raiseError($r);
-                return FALSE;
+                return false;
             }
             if ($key && ($dbtype == 'mysql'))
                 $this->$key = mysql_insert_id($connections[$this->_database_dsn_md5]->connection);
@@ -559,13 +559,13 @@ Class DB_DataObject {
             return $this->$key;
         }
         DB_DataObject::raiseError("insert: No Data specifed for query", DB_DATAOBJECT_ERROR_NODATA);
-        return FALSE;
+        return false;
     }
 
     /**
     * Updates  current objects variables into the database
     * uses the _get_keys() to decide how to update
-    * Returns the  TRUE on success
+    * Returns the  true on success
     *
     * for example
     *
@@ -576,7 +576,7 @@ Class DB_DataObject {
     *   echo "UPDATE FAILED";
     *
     * @access public
-    * @return  boolean TRUE = success
+    * @return  boolean true = success
     */
 
     function update() 
@@ -586,7 +586,7 @@ Class DB_DataObject {
 
         if (!$items) {
             DB_DataObject::raiseError("update:No table definition for {$this->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            return FALSE;
+            return false;
         }
         $datasaved=1;
         $settings ="";
@@ -624,18 +624,18 @@ Class DB_DataObject {
         if ($settings && $this->_condition) {
             $r = $this->_query("UPDATE  {$this->__table}  SET {$settings} {$this->_condition} ");
             if (PEAR::isError($r)) {
-                return FALSE;
+                return false;
             }
             $this->_clear_cache();
-            return TRUE;
+            return true;
         }
         DB_DataObject::raiseError("update: No Data specifed for query $settings , {$this->_condition}", DB_DATAOBJECT_ERROR_NODATA);
-        return FALSE;
+        return false;
     }
     /**
     * Deletes items from table which match current objects variables
     *
-    * Returns the TRUE on success
+    * Returns the true on success
     *
     * for example
     *
@@ -646,13 +646,13 @@ Class DB_DataObject {
     * echo $object->delete(); // builds a conditon
     * $object = new mytable();
     * $object->whereAdd('age > 12');
-    * $object->delete(TRUE); // use the condition
+    * $object->delete(true); // use the condition
     *
     * @access public
     * @param boolean use the whereAdd conditions (default = no - use current values.)
-    * @return  boolean TRUE on success
+    * @return  boolean true on success
     */
-    function delete($use_where=FALSE) 
+    function delete($use_where=false) 
     {
         $keys = $this->_get_keys();
         if (!$use_where) {
@@ -668,24 +668,24 @@ Class DB_DataObject {
         if ($this->_condition) {
             $r = $this->_query("DELETE FROM {$this->__table} {$this->_condition}");
             if (PEAR::isError($r)) {
-                return FALSE;
+                return false;
             }
             $this->_clear_cache();
-            return TRUE;
+            return true;
         }
         DB_DataObject::raiseError("delete: No Data specifed for query {$this->_condition}", DB_DATAOBJECT_ERROR_NODATA);
-        return FALSE;
+        return false;
     }
     /**
     * fetches a specific row into this object variables
     *
     * Not recommended - better to use fetch()
     *
-    * Returens TRUE on success
+    * Returens true on success
     *
     * @param  int   row
     * @access public
-    * @return  boolean TRUE on success
+    * @return  boolean true on success
     */
 
 
@@ -697,15 +697,15 @@ Class DB_DataObject {
         }
         if (!$this->__table) {
             DB_DataObject::raiseError("fetchrow: No table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            return FALSE;
+            return false;
         }
         if ($row === NULL) {
             DB_DataObject::raiseError("fetchrow: No row specified", DB_DATAOBJECT_ERROR_INVALIDARGS);
-            return FALSE;
+            return false;
         }
         if (!$this->N) {
             DB_DataObject::raiseError("fetchrow: No results avaiable", DB_DATAOBJECT_ERROR_NODATA);
-            return FALSE;
+            return false;
         }
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("{$this->__table} $row of {$this->N}", "fetchrow",3);
@@ -716,7 +716,7 @@ Class DB_DataObject {
         $array = $result->fetchrow(DB_FETCHMODE_ASSOC,$row);
         if (!is_array($array)) {
             DB_DataObject::raiseError("fetchrow: No results available", DB_DATAOBJECT_ERROR_NODATA);
-            return FALSE;
+            return false;
         }
 
         foreach($array as $k=>$v) {
@@ -730,7 +730,7 @@ Class DB_DataObject {
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("{$this->__table} DONE", "fetchrow",3);
         }
-        return TRUE;
+        return true;
 
 
     }
@@ -771,7 +771,7 @@ Class DB_DataObject {
 
         $r = $this->_query("SELECT count({$keys[0]}) as num FROM {$this->__table} {$this->_condition}");
         if (PEAR::isError($r)) {
-            return FALSE;
+            return false;
         }
         $this->_condition = $tmpcond;
         $results = &PEAR::getStaticProperty('DB_DataObject','results');
@@ -898,7 +898,7 @@ Class DB_DataObject {
         }
         $options= &PEAR::getStaticProperty('DB_DataObject','options');
         $location = $options['schema_location'];
-        $definitions[$database] = parse_ini_file($location."/{$database}.ini",TRUE);
+        $definitions[$database] = parse_ini_file($location."/{$database}.ini",true);
         /* load the link table if it exists. */
         if (file_exists("{$location}/{$database}.links.ini")) {
             $links = &PEAR::getStaticProperty('DB_DataObject', "{$database}.links");
@@ -1027,7 +1027,7 @@ Class DB_DataObject {
         }
 
         $this->_database = $connections[$this->_database_dsn_md5]->dsn["database"];
-        return TRUE;
+        return true;
     }
     /**
     * sends query to database - this is the private one that must work - internal functions use this rather than $this->query()
@@ -1152,7 +1152,7 @@ Class DB_DataObject {
         @include_once($options['require_prefix'].ucfirst($table).".php");
         if (!class_exists($class)) {
             DB_DataObject::raiseError("autoload:Could not autoload {$class}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            return FALSE;
+            return false;
         }
         return $class;
     }
@@ -1163,7 +1163,7 @@ Class DB_DataObject {
     * @var  boolean
     */
 
-    var $_link_loaded=FALSE;
+    var $_link_loaded=false;
        /**
     * load related objects
     *
@@ -1177,7 +1177,7 @@ Class DB_DataObject {
     *
     * @author Tim White <tim@cyface.com>
     * @access   public
-    * @return   boolean , TRUE on success
+    * @return   boolean , true on success
     */
     function getLinks() 
     {
@@ -1205,7 +1205,7 @@ Class DB_DataObject {
             $k = "_{$key}";
             $this->$k = $this->getLink($key);
         }
-        $this->_link_loaded=TRUE;
+        $this->_link_loaded=true;
     }
      /**
     * return name from related object
@@ -1230,7 +1230,7 @@ Class DB_DataObject {
     * @access	public
     * @return mixed object on success
     */
-    function &getLink($row, $table=NULL,$link = FALSE) 
+    function &getLink($row, $table=NULL,$link = false) 
     {
         /* see if autolinking is available 
        This will do a recursive call! 
@@ -1246,7 +1246,7 @@ Class DB_DataObject {
                     return $this->getLink($row,$table,$link);
                 } else {
                     DB_DataObject::raiseError("getLink: $row is not defined as a link", DB_DATAOBJECT_ERROR_NODATA);
-                    return FALSE; // technically a possible error condition?
+                    return false; // technically a possible error condition?
                 }
             } else { // use the old _ method
                 if (!($p = strpos($row,'_'))) {
@@ -1258,13 +1258,13 @@ Class DB_DataObject {
         }
         if (!isset($this->$row)) {
             DB_DataObject::raiseError("getLink: row not set $row", DB_DATAOBJECT_ERROR_NODATA);
-            return FALSE;
+            return false;
         }
 
         $class = $this->staticAutoloadTable($table);
         if (!$class) {
             DB_DataObject::raiseError("getLink:Could not find class for row $row, table $table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            return FALSE;
+            return false;
         }
         if ($link) {
             return DB_DataObject::staticGet($class,$link,$this->$row);
@@ -1324,7 +1324,7 @@ Class DB_DataObject {
     *
     * @param    array | object
     * @access	public
-    * @return 	boolean , TRUE on success
+    * @return 	boolean , true on success
     */
 
 
@@ -1359,7 +1359,7 @@ Class DB_DataObject {
             }
             $this->$k = $from[$k];
         }
-        return TRUE;
+        return true;
     }
 
      /**
@@ -1367,11 +1367,11 @@ Class DB_DataObject {
     *
     * validate the current objects values either just testing strings/numbers or
     * using the user defined validate{Row name}() methods.
-    * will attempt to call $this->validate{column_name}() - expects TRUE = ok  FALSE = ERROR
+    * will attempt to call $this->validate{column_name}() - expects true = ok  false = ERROR
     * you can the use the validate Class from your own methods.
     *
     * @access    public
-    * @return    array of validation results or TRUE
+    * @return    array of validation results or true
     */
     function validate()
     {
@@ -1397,9 +1397,9 @@ Class DB_DataObject {
         }
 
         foreach ($ret as $key=>$val) {
-            if ($val == FALSE) return $ret;
+            if ($val == false) return $ret;
         }
-        return TRUE; // everything is OK.
+        return true; // everything is OK.
     }
 
 
@@ -1460,10 +1460,10 @@ Class DB_DataObject {
     * $last_error = &PEAR::getStaticProperty('DB_DataObject','lastError');
     *
     * @access 	public
-    * @var  object PEAR_Error (or FALSE)
+    * @var  object PEAR_Error (or false)
     */
 
-    var $_lastError=FALSE;
+    var $_lastError=false;
 
      /**
     * Default error handling is to create a pear error, but never return it.

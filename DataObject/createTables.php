@@ -28,9 +28,14 @@ if (!@$_SERVER['argv'][1]) {
     PEAR::raiseError("\nERROR: createTable.php usage:\n\nC:\php\pear\DB\DataObjects\createTable.php example.ini\n\n",null,PEAR_ERROR_DIE);
     exit;
 }
-$config = parse_ini_file($_SERVER['argv'][1],TRUE);
+$config = parse_ini_file($_SERVER['argv'][1],true);
+
 $options = &PEAR::getStaticProperty('DB_DataObject','options');
 $options = $config['DB_DataObject'];
+if (!$options) {
+    PEAR::raiseError("\nERROR: could not read ini file\n\n",null,PEAR_ERROR_DIE);
+    exit;
+}
 //DB_DataObject::debugLevel(5);
 $generator = new DB_DataObject_Generator;
 $generator->start();
