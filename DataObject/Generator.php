@@ -392,8 +392,7 @@ class DB_DataObject_Generator extends DB_DataObject
             if (preg_match('/not_null/i',$t->flags)) {
                 $type += DB_DATAOBJECT_NOTNULL;
             }
-            
-            $this->_newConfig .= "{$t->name} = $type\n";
+           
             $write_ini = true;
             if (in_array($t->name,array('null','yes','no','true','false'))) {
                 echo "*****************************************************************\n".
