@@ -519,7 +519,7 @@ Class DB_DataObject
             }
             $leftq .= "$k ";
             if ($v & DB_DATAOBJECT_STR) {
-                $rightq .= "'" . addslashes($this->$k). "' ";
+                $rightq .= $__DB->quote($this->$k) . " ";
                 continue;
             }
             if (is_numeric($this->$k)) {
@@ -573,7 +573,11 @@ Class DB_DataObject
         }
         $datasaved = 1;
         $settings  = '';
-
+     
+        $this->_connect();
+        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
+        $__DB  = &$connections[$this->_database_dsn_md5];
+     
         foreach($items as $k => $v) {
             if (!isset($this->$k)) {
                 continue;
@@ -582,7 +586,7 @@ Class DB_DataObject
                 $settings .= ', ';
             }
             if ($v & DB_DATAOBJECT_STR) {
-                $settings .= "$k = '" . addslashes($this->$k) . "' ";
+                $settings .= $k .' = '. $__DB->quote($this->$k) . ' ';
                 continue;
             }
             if (is_numeric($this->$k)) {
@@ -727,10 +731,14 @@ Class DB_DataObject
     {
         $items   = $this->_get_table();
         $tmpcond = $this->_condition;
+        $this->_connect();
+        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
+        $__DB  = &$connections[$this->_database_dsn_md5];
+     
         if ($items)  {
             while (list ($k, $v) = each($items)) {
                 if (isset($this->$k))  {
-                    $this->whereAdd($k. " = '" . addslashes($this->$k) . "' ");
+                    $this->whereAdd($k. ' = ' . $__DB->quote($this->$k) . ' ');
                 }
             }
         }
@@ -1073,6 +1081,10 @@ Class DB_DataObject
      */
     function _build_condition(&$keys, $filter = array())
     {
+        $this->_connect();
+        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
+        $__DB  = &$connections[$this->_database_dsn_md5];
+     
         foreach($keys as $k => $v) {
             if ($filter) {
                 if (!in_array($k, $filter)) {
@@ -1084,7 +1096,7 @@ Class DB_DataObject
             }
 
             if ($v & DB_DATAOBJECT_STR) {
-                $this->whereAdd("{$k} = '" . addslashes($this->$k) . "'");
+                $this->whereAdd($k .' = ' . $__DB->quote($this->$k) );
                 continue;
             }
             if (is_numeric($this->$k)) {
@@ -1345,6 +1357,9 @@ Class DB_DataObject
         
         $this->_connect(); /*  make sure $this->_database is set.  */
         
+        $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
+        $__DB  = &$connections[$this->_database_dsn_md5];
+     
         $links = PEAR::getStaticProperty('DB_DataObject', "{$this->_database}.links");
        
         
@@ -1402,7 +1417,7 @@ Class DB_DataObject
                 continue;
             }
             if ($v & DB_DATAOBJECT_STR) {
-                $this->whereAdd("{$obj->__table}.{$k} = '" . addslashes($obj->$k) . "'");
+                $this->whereAdd("{$obj->__table}.{$k} = " . $__DB->quote($obj->$k));
                 continue;
             }
             if (is_numeric($obj->$k)) {
