@@ -399,9 +399,9 @@ Class DB_DataObject
             }
             $this->$kk = $array[$k];
         }
-        if (isset($this->_data_select)) {
+        if (!empty($this->_data_select)) {
             foreach(array('_data_select','_join','_group_by','_order_by', '_having', '_limit','_condition') as $k) {
-                unset($this->$k);
+                $this->$k = '';
             }
         }
         // set link flag
