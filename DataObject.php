@@ -852,9 +852,14 @@ class DB_DataObject extends DB_DataObject_Overload
         $leftq     = '';
         $rightq    = '';
      
-        @list($key,$useNative,$seq) = isset($_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table]) ?
-            $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] : $this->sequenceKey();
-            
+        $seqKeys   = isset($_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table]) ?
+                        $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] : 
+                        $this->sequenceKey();
+        
+        $key       = isset($seqKeys[0]) ? $seqKeys[0] : false;
+        $useNative = isset($seqKeys[1]) ? $seqKeys[1] : false;
+        $seq       = isset($seqKeys[2]) ? $seqKeys[2] : false;
+        
         $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["phptype"];
         
          
