@@ -502,7 +502,7 @@ class DB_DataObject_Generator extends DB_DataObject
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         
         
-        $var = (substr(phpversion(),0,1) > 4) ? 'private' : 'var';
+        $var = (substr(phpversion(),0,1) > 4) ? 'public' : 'var';
         $body .= "    {$var} \$__table = '{$this->table}';  {$p}// table name\n";
     
         
