@@ -2877,70 +2877,154 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         
         if ($type == 'get') {
-            $return = $this->$element;
+            $return = $this->toValue($element,isset($params[1]) ? $params[1] : null);
             return true;
         }
-        $this->$element = $params[0];
-        
-        // now typecast!!!!!!!
-        // This is based on the code and ideas for DB_Table by Paul M Jones
-        //
-        //
-        $cols = $this->table();
-        // dont know anything about this col..
-        if (!isset($cols[$element])) {
-            return $return = true;
-        }
-        switch (true) {
-            case (($cols[$element] & DB_DATAOBJECT_DATE) &&  ($cols[$element] & DB_DATAOBJECT_TIME)):
-                $guess = strtotime($params[0]);
-                if ($guess != -1) {
-                    $this->$element = date('Y-m-d H:i:s', $guess);
-                }
-                // eak... - no way to validate date time otherwise...
-                $this->$element = (string) $this->$element;
-                return $return = true;
-            
-            case ($cols[$element] & DB_DATAOBJECT_DATE):
-                $guess = strtotime($params[0]);
-                if ($guess != -1) {
-                    $this->$element = date('Y-m-d',$guess);
-                    return $return = true;
-                }
-                // try date!!!!
-                require_once 'Date.php';
-                $x = new Date($params[0]);
-                $this->$element = $x->format("%Y-%m-%d");
-                return $return = true;
-            
-            case ($cols[$element] & DB_DATAOBJECT_TIME):
-                $guess = strtotime($params[0]);
-                if ($guess != -1) {
-                     $this->$element = date('H:i:s', $guess);
-                    return $return = true;
-                }
-                // otherwise an error in type...
-                $return = false;
-                return true;
-            
-           
-            
-            case ($cols[$element] & DB_DATAOBJECT_STR):
-                $this->$element = (string) $this->$element;
-                return $return = true;
-                
-            // todo : floats numerics and ints...
-                
-        }
         
         
-        return $return = true;
+        $return = $this->fromValue($element, $params[0]);
+         
+        return true;
+            
+          
     }
         
     
+    /**
+    * standard set* implementation.
+    *
+    * takes data and uses it to set dates/strings etc.
+    * normally called from __call..  
+    *
+    * Current supports
+    *   date      = using strtotime + pear::date
+    *   time      = using strtotime
+    *   datetime  = using strtotime (if fails = use raw..)
+    *   string    = typecast only..
+    * 
+    * TODO: add formater:: eg. d/m/Y for date! ???
+    *
+    * @param   string       column of database
+    * @param   mixed        value to assign
     
+    *
+    * @return   true     Description
+    * @access   public 
+    * @see      DB_DataObject::_call
+    */
+  
+    
+    function fromValue($col,$value) 
+    {
+        $cols = $this->table();
+        // dont know anything about this col..
+        if (!isset($cols[$element])) {
+            $this->$col = $value;
+            return true;
+        }
+        
+        switch (true) {
+            case (($cols[$col] & DB_DATAOBJECT_DATE) &&  ($cols[$col] & DB_DATAOBJECT_TIME)):
+                $guess = strtotime($value);
+                if ($guess != -1) {
+                    $this->$col = date('Y-m-d H:i:s', $guess);
+                }
+                // eak... - no way to validate date time otherwise...
+                $this->$col = (string) $value;
+                return true;
+            
+            case ($cols[$col] & DB_DATAOBJECT_DATE):
+                $guess = strtotime($value);
+                if ($guess != -1) {
+                    $this->$col = date('Y-m-d',$guess);
+                    return true;
+                }
+                // try date!!!!
+                require_once 'Date.php';
+                $x = new Date($value);
+                $this->$col = $x->format("%Y-%m-%d");
+                return true;
+            
+            case ($cols[$col] & DB_DATAOBJECT_TIME):
+                $guess = strtotime($value);
+                if ($guess != -1) {
+                     $this->$col = date('H:i:s', $guess);
+                    return $return = true;
+                }
+                // otherwise an error in type...
+                return false;
+            
+           
+            
+            case ($cols[$col] & DB_DATAOBJECT_STR):
+                $this->$col = (string) $value;
+                return true;
+                
+            // todo : floats numerics and ints...
+            default:
+                $this->$col = $value;
+                return true;
+        }
+    
+    
+    
+    }
+     /**
+    * standard get* implementation.
+    *
+    *  with formaters..
+    * supported formaters:  
+    *   date/time : d/m/Y (eg. php date..) or pear::Date ** broken!!!
+    *   numbers   : %02d (eg. sprintf)
+    *
+    * 
+    * @param   string       column of database
+    * @param   format       foramt
+    *
+    * @return   true     Description
+    * @access   public 
+    * @see      DB_DataObject::_call
+    */
+    function toValue($col,$format = null) 
+    {
+        if (is_null($format)) {
+            return $this->$col;
+        }
+        switch (true) {
+            case (($cols[$col] & DB_DATAOBJECT_DATE) &&  ($cols[$col] & DB_DATAOBJECT_TIME)):
+                $guess = strtotime($this->$col);
+                if ($guess != -1) {
+                    return date($format, $guess);
+                }
+                // eak... - no way to validate date time otherwise...
+                return $this->$col;
+            case ($cols[$col] & DB_DATAOBJECT_DATE):
+                $guess = strtotime($this->$col);
+                if ($guess != -1) {
+                    $this->$col = date($format,$guess);
+                    return true;
+                }
+                // try date!!!!
+                require_once 'Date.php';
+                $x = new Date($this->$col);
+                // this is broken - date does not work the same way..
+                return $x->format($format);
+                
+            case ($cols[$col] & DB_DATAOBJECT_TIME):
+                $guess = strtotime($this->$col);
+                if ($guess != -1) {
+                    return date($format, $guess);
+                }
+                // otherwise an error in type...
+                return $this->$col;
+            default:
+                return sprintf($format,$this->col);
+        }
+            
 
-
+    }
+    
+    
     /* ----------------------- Debugger ------------------ */
 
     /**
