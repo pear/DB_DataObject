@@ -157,7 +157,12 @@ class DB_DataObject_Generator extends DB_DataObject
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
 
         $this->tables = $__DB->getListOf('tables');
-
+        
+        if (is_a($this->tables , 'PEAR_Error')) {
+            return PEAR::raiseError($this->tables->toString(), null, PEAR_ERROR_DIE);
+        }
+            
+        
         // declare a temporary table to be filled with matching tables names
         $tmp_table = array();
 
