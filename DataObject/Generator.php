@@ -532,7 +532,7 @@ class DB_DataObject_Generator extends DB_DataObject
         $body .= "\n    /* the code above is auto generated do not remove the tag below */";
         $body .= "\n    ###END_AUTOCODE\n";
 
-        $foot .= "}\n?>";
+        $foot .= "}\n";
         $full = $head . $body . $foot;
 
         if (!$input) {
