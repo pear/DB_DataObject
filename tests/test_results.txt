@@ -1,0 +1,1532 @@
+--TEST--
+DB::DataObject test
+--SKIPIF--
+--FILE--
+test   : QUERY       : DROP TABLE IF EXISTS test
+test   : query       : QUERY DONE IN  0.0014588832855225 seconds
+test   : QUERY       : DROP TABLE IF EXISTS test2
+test   : query       : QUERY DONE IN  0.0013279914855957 seconds
+test   : QUERY       : DROP TABLE IF EXISTS testproxy
+test   : query       : QUERY DONE IN  0.0012850761413574 seconds
+test   : QUERY       : DROP TABLE IF EXISTS testproxy2
+test   : query       : QUERY DONE IN  0.027520179748535 seconds
+test   : QUERY       : DROP TABLE IF EXISTS testproxy2_seq
+test   : query       : QUERY DONE IN  0.0036618709564209 seconds
+test   : QUERY       : CREATE TABLE test (
+              id int(11) NOT NULL auto_increment PRIMARY KEY,
+              name varchar(255) NOT NULL default '',
+              username varchar(32) NOT NULL default '',
+              password varchar(13) binary NOT NULL default '',
+              firstname varchar(255) NOT NULL default '',
+              lastname varchar(255) NOT NULL default '' 
+            )
+test   : query       : QUERY DONE IN  0.0017139911651611 seconds
+test   : QUERY       : CREATE TABLE test2 (
+              id int(11) NOT NULL PRIMARY KEY,
+              name varchar(255) NOT NULL default '',
+              username varchar(32) NOT NULL default '',
+              password varchar(13) binary NOT NULL default '',
+              firstname varchar(255) NOT NULL default '',
+              lastname varchar(255) NOT NULL default '' 
+            )
+test   : query       : QUERY DONE IN  0.0016729831695557 seconds
+test   : QUERY       : CREATE TABLE testproxy (
+              id int(11) NOT NULL  auto_increment PRIMARY KEY,
+              name varchar(255) NOT NULL default '',
+              username varchar(32) NOT NULL default '',
+              password varchar(13) binary NOT NULL default '',
+              firstname varchar(255) NOT NULL default '',
+              lastname varchar(255) NOT NULL default '' 
+            )
+test   : query       : QUERY DONE IN  0.0017070770263672 seconds
+test   : QUERY       : CREATE TABLE testproxy2 (
+              id int(11) NOT NULL PRIMARY KEY,
+              name varchar(255) NOT NULL default '',
+              username varchar(32) NOT NULL default '',
+              password varchar(13) binary NOT NULL default '',
+              firstname varchar(255) NOT NULL default '',
+              lastname varchar(255) NOT NULL default '' 
+            ) TYPE = InnoDB
+test   : query       : QUERY DONE IN  0.0050380229949951 seconds
+test   : QUERY       : CREATE TABLE testproxy2_seq
+                (id INTEGER UNSIGNED NOT NULL, PRIMARY KEY(id)) 
+                TYPE = InnoDB
+test   : query       : QUERY DONE IN  0.0040500164031982 seconds
+test   : QUERY       : INSERT INTO testproxy2_seq VALUES(0)
+test   : query       : QUERY DONE IN  0.0012781620025635 seconds
+
+
+
+******create database' 
+test   : QUERY       : INSERT INTO test (name , username ) VALUES ('test' , 'username' ) 
+test   : query       : QUERY DONE IN  0.0011990070343018 seconds
+INSERT got 1
+myproject_dataobject_test   : __find       : 
+myproject_dataobject_test   : QUERY       : SELECT * FROM test     
+myproject_dataobject_test   : query       : QUERY DONE IN  0.0013449192047119 seconds
+myproject_dataobject_test   : __find       : CHECK autofetchd 
+myproject_dataobject_test   : __find       : DONE
+myproject_dataobject_test   : 0       : fetched on object after fetch completed (no results found)
+
+
+
+******delete everything with test and 'username' 
+test   : QUERY       : DELETE FROM test  WHERE  test.name  = 'test' AND  test.username  = 'username'
+test   : query       : QUERY DONE IN  0.0012331008911133 seconds
+test   : 1       : Clearing Cache for test
+myproject_dataobject_test   : __find       : 
+myproject_dataobject_test   : QUERY       : SELECT * FROM test     
+myproject_dataobject_test   : query       : QUERY DONE IN  0.0013010501861572 seconds
+myproject_dataobject_test   : __find       : CHECK autofetchd 
+myproject_dataobject_test   : __find       : DONE
+NO RESULTS!
+
+
+
+***** update everything with username to firstname = 'fred' *
+test   : QUERY       : INSERT INTO test (name , username ) VALUES ('test' , 'username' ) 
+test   : query       : QUERY DONE IN  0.0010931491851807 seconds
+INSERT got 2
+test   : 3       : got keys as a:1:{i:0;s:2:"id";}
+test   : QUERY       : UPDATE  test  SET firstname = 'fred'   WHERE username = 'username' 
+test   : query       : QUERY DONE IN  0.0011241436004639 seconds
+test   : 1       : Clearing Cache for test
+myproject_dataobject_test   : __find       : 
+myproject_dataobject_test   : QUERY       : SELECT * FROM test     
+myproject_dataobject_test   : query       : QUERY DONE IN  0.0012650489807129 seconds
+myproject_dataobject_test   : __find       : CHECK autofetchd 
+myproject_dataobject_test   : __find       : DONE
+myproject_dataobject_test   : 0       : fetched on object after fetch completed (no results found)
+
+
+
+****** now update based on key
+test   : GET       : id 2 Array
+(
+    [0] => id
+)
+
+test   : __find       : 1
+test   : QUERY       : SELECT * FROM test  WHERE  test.id = 2    
+test   : query       : QUERY DONE IN  0.0013611316680908 seconds
+test   : __find       : CHECK autofetchd 1
+test   : __find       : ABOUT TO AUTOFETCH
+test   : 0       : fetched on object after fetch completed (no results found)
+test   : __find       : DONE
+test   : 3       : got keys as a:1:{i:0;s:2:"id";}
+test   : QUERY       : UPDATE  test  SET firstname = 'brian'   WHERE  test.id = 2 
+test   : query       : QUERY DONE IN  0.0013558864593506 seconds
+test   : 1       : Clearing Cache for test
+myproject_dataobject_test   : __find       : 
+myproject_dataobject_test   : QUERY       : SELECT * FROM test     
+myproject_dataobject_test   : query       : QUERY DONE IN  0.0012750625610352 seconds
+myproject_dataobject_test   : __find       : CHECK autofetchd 
+myproject_dataobject_test   : __find       : DONE
+myproject_dataobject_test   : 0       : fetched on object after fetch completed (no results found)
+
+
+
+****** toArray on only fetched keys.
+test   : __find       : 1
+test   : QUERY       : SELECT  firstname,lastname  FROM test  WHERE  test.id = 2    
+test   : query       : QUERY DONE IN  0.001352071762085 seconds
+test   : __find       : CHECK autofetchd 1
+test   : __find       : ABOUT TO AUTOFETCH
+test   : 0       : fetched on object after fetch completed (no results found)
+test   : __find       : DONE
+Array
+(
+    [id] => 2
+    [name] => 
+    [username] => 
+    [password] => 
+    [firstname] => 
+    [lastname] => 
+)
+
+
+
+****** now update using changed items only
+test   : GET       : id 2 Array
+(
+    [0] => id
+)
+
+test   : __find       : 1
+test   : QUERY       : SELECT * FROM test  WHERE  test.id = 2    
+test   : query       : QUERY DONE IN  0.0013620853424072 seconds
+test   : __find       : CHECK autofetchd 1
+test   : __find       : ABOUT TO AUTOFETCH
+test   : 0       : fetched on object after fetch completed (no results found)
+test   : __find       : DONE
+test   : 3       : got keys as a:1:{i:0;s:2:"id";}
+test   : QUERY       : UPDATE  test  SET firstname = 'jones'   WHERE  test.id = 2 
+test   : query       : QUERY DONE IN  0.0012080669403076 seconds
+test   : 1       : Clearing Cache for test
+myproject_dataobject_test   : __find       : 
+myproject_dataobject_test   : QUERY       : SELECT * FROM test     
+myproject_dataobject_test   : query       : QUERY DONE IN  0.0013108253479004 seconds
+myproject_dataobject_test   : __find       : CHECK autofetchd 
+myproject_dataobject_test   : __find       : DONE
+myproject_dataobject_test   : 0       : fetched on object after fetch completed (no results found)
+
+
+
+****** now update using changed items only
+Array
+(
+    [user[id]] => 2
+    [user[name]] => 
+    [user[username]] => 
+    [user[password]] => 
+    [user[firstname]] => jones
+    [user[lastname]] => 
+)
+
+
+
+****** limited queries 1
+test   : __find       : 
+test   : QUERY       : SELECT * FROM test      LIMIT 1
+test   : query       : QUERY DONE IN  0.0013160705566406 seconds
+test   : __find       : CHECK autofetchd 
+test   : __find       : DONE
+test   : 0       : fetched on object after fetch completed (no results found)
+
+
+
+****** limited queries 1,1
+test   : __find       : 
+test   : QUERY       : SELECT * FROM test      LIMIT 1, 1
+test   : query       : QUERY DONE IN  0.0013210773468018 seconds
+test   : __find       : CHECK autofetchd 
+test   : __find       : DONE
+
+
+
+****** to Array on empty result
+Array
+(
+    [user[id]] => 
+    [user[name]] => 
+    [user[username]] => 
+    [user[password]] => 
+    [user[firstname]] => 
+    [user[lastname]] => 
+)
+
+
+
+******get and delete an object key
+test   : GET       : id 2 Array
+(
+    [0] => id
+)
+
+test   : __find       : 1
+test   : QUERY       : SELECT * FROM test  WHERE  test.id = 2    
+test   : query       : QUERY DONE IN  0.0013940334320068 seconds
+test   : __find       : CHECK autofetchd 1
+test   : __find       : ABOUT TO AUTOFETCH
+test   : 0       : fetched on object after fetch completed (no results found)
+test   : __find       : DONE
+test   : QUERY       : DELETE FROM test  WHERE  test.id = 2
+test   : query       : QUERY DONE IN  0.0012140274047852 seconds
+test   : 1       : Clearing Cache for test
+
+
+
+******changing database stuff.
+test   : QUERY       : BEGIN
+test   : QUERY       : INSERT INTO test (username ) VALUES ('xxx' ) 
+test   : query       : QUERY DONE IN  0.0013308525085449 seconds
+test   : QUERY       : ROLLBACK
+myproject_dataobject_testproxy2   : __find       : 
+myproject_dataobject_testproxy2   : QUERY       : SELECT * FROM testproxy2     
+myproject_dataobject_testproxy2   : query       : QUERY DONE IN  0.001352071762085 seconds
+myproject_dataobject_testproxy2   : __find       : CHECK autofetchd 
+myproject_dataobject_testproxy2   : __find       : DONE
+NO RESULTS!
+test   : QUERY       : BEGIN
+test   : QUERY       : INSERT INTO test (username ) VALUES ('yyy' ) 
+test   : query       : QUERY DONE IN  0.0013530254364014 seconds
+test   : QUERY       : COMMIT
+myproject_dataobject_testproxy2   : __find       : 
+myproject_dataobject_testproxy2   : QUERY       : SELECT * FROM testproxy2     
+myproject_dataobject_testproxy2   : query       : QUERY DONE IN  0.001309871673584 seconds
+myproject_dataobject_testproxy2   : __find       : CHECK autofetchd 
+myproject_dataobject_testproxy2   : __find       : DONE
+NO RESULTS!
+test   : QUERY       : INSERT INTO test (username ) VALUES ('qqqqqq' ) 
+test   : query       : QUERY DONE IN  0.0010969638824463 seconds
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : QUERY       : DROP TABLE  IF EXISTS player_has_stats
+db_dataobject   : query       : QUERY DONE IN  0.0013189315795898 seconds
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : QUERY       : 
+            CREATE TABLE `player_has_stats` (
+                  `player_id` int(10) unsigned NOT NULL default '0',
+                  `deaths` int(10) unsigned NOT NULL default '0',
+                  `kills` int(10) unsigned NOT NULL default '0',
+                  PRIMARY KEY  (`player_id`)
+                ) TYPE=MyISAM
+                
+             
+db_dataobject   : query       : QUERY DONE IN  0.0017321109771729 seconds
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : fillTable       : getting def for test/player_has_stats
+db_dataobject_generator   : defs       : Array
+(
+    [0] => Array
+        (
+            [table] => player_has_stats
+            [name] => player_id
+            [type] => int
+            [len] => 10
+            [flags] => not_null primary_key unsigned
+        )
+
+    [1] => Array
+        (
+            [table] => player_has_stats
+            [name] => deaths
+            [type] => int
+            [len] => 10
+            [flags] => not_null unsigned
+        )
+
+    [2] => Array
+        (
+            [table] => player_has_stats
+            [name] => kills
+            [type] => int
+            [len] => 10
+            [flags] => not_null unsigned
+        )
+
+)
+
+TABLE STRUCTURE FOR player_has_stats
+Array
+(
+    [0] => stdClass Object
+        (
+            [table] => player_has_stats
+            [name] => player_id
+            [type] => int
+            [len] => 10
+            [flags] => not_null primary_key unsigned
+        )
+
+    [1] => stdClass Object
+        (
+            [table] => player_has_stats
+            [name] => deaths
+            [type] => int
+            [len] => 10
+            [flags] => not_null unsigned
+        )
+
+    [2] => stdClass Object
+        (
+            [table] => player_has_stats
+            [name] => kills
+            [type] => int
+            [len] => 10
+            [flags] => not_null unsigned
+        )
+
+)
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+Array
+(
+    [0] => dump for player_has_stats
+    [1] => Array
+        (
+            [table] => Array
+                (
+                    [player_id] => 129
+                    [deaths] => 129
+                    [kills] => 129
+                )
+
+            [keys] => Array
+                (
+                    [player_id] => K
+                )
+
+        )
+
+)
+myproject_dataobject_player_has_stats   : CONNECT       : USING CACHED CONNECTION
+array(3) {
+  [0]=>
+  bool(false)
+  [1]=>
+  bool(false)
+  [2]=>
+  bool(false)
+}
+myproject_dataobject_player_has_stats Object
+(
+    [_DB_DataObject_version] => @version@
+    [__table] => player_has_stats
+    [N] => 0
+    [_database_dsn] => 
+    [_database_dsn_md5] => 2f3fb5552c1aaa2a1ddef961a3506ebc
+    [_database] => test
+    [_query] => Array
+        (
+            [condition] => 
+            [group_by] => 
+            [order_by] => 
+            [having] => 
+            [limit] => 
+            [data_select] => *
+        )
+
+    [_DB_resultid] => 
+    [_link_loaded] => 
+    [_join] => 
+    [_lastError] => 
+    [player_id] => 
+    [deaths] => 
+    [kills] => 
+)
+myproject_dataobject_player_has_stats   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_player_has_stats   : QUERY       : INSERT INTO player_has_stats (player_id ) VALUES ( 13 ) 
+myproject_dataobject_player_has_stats   : query       : QUERY DONE IN  0.0012030601501465 seconds
+
+
+
+******sequences.
+test2   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : fillTable       : getting def for test/test2
+db_dataobject_generator   : defs       : Array
+(
+    [0] => Array
+        (
+            [table] => test2
+            [name] => id
+            [type] => int
+            [len] => 11
+            [flags] => not_null primary_key
+        )
+
+    [1] => Array
+        (
+            [table] => test2
+            [name] => name
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+    [2] => Array
+        (
+            [table] => test2
+            [name] => username
+            [type] => string
+            [len] => 32
+            [flags] => not_null
+        )
+
+    [3] => Array
+        (
+            [table] => test2
+            [name] => password
+            [type] => string
+            [len] => 13
+            [flags] => not_null binary
+        )
+
+    [4] => Array
+        (
+            [table] => test2
+            [name] => firstname
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+    [5] => Array
+        (
+            [table] => test2
+            [name] => lastname
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+)
+
+TABLE STRUCTURE FOR test2
+Array
+(
+    [0] => stdClass Object
+        (
+            [table] => test2
+            [name] => id
+            [type] => int
+            [len] => 11
+            [flags] => not_null primary_key
+        )
+
+    [1] => stdClass Object
+        (
+            [table] => test2
+            [name] => name
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+    [2] => stdClass Object
+        (
+            [table] => test2
+            [name] => username
+            [type] => string
+            [len] => 32
+            [flags] => not_null
+        )
+
+    [3] => stdClass Object
+        (
+            [table] => test2
+            [name] => password
+            [type] => string
+            [len] => 13
+            [flags] => not_null binary
+        )
+
+    [4] => stdClass Object
+        (
+            [table] => test2
+            [name] => firstname
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+    [5] => stdClass Object
+        (
+            [table] => test2
+            [name] => lastname
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+)
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+Array
+(
+    [0] => dump for test2
+    [1] => Array
+        (
+            [table] => Array
+                (
+                    [id] => 129
+                    [name] => 130
+                    [username] => 130
+                    [password] => 130
+                    [firstname] => 130
+                    [lastname] => 130
+                )
+
+            [keys] => Array
+                (
+                    [id] => K
+                )
+
+        )
+
+)
+test2   : CONNECT       : USING CACHED CONNECTION
+test2   : QUERY       : INSERT INTO test2 (id , username ) VALUES ( 220 , 'yyyy' ) 
+test2   : query       : QUERY DONE IN  0.001215934753418 seconds
+
+RET: 220
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : fillTable       : getting def for test/test2
+db_dataobject_generator   : defs       : Array
+(
+    [0] => Array
+        (
+            [table] => test2
+            [name] => id
+            [type] => int
+            [len] => 11
+            [flags] => not_null primary_key
+        )
+
+    [1] => Array
+        (
+            [table] => test2
+            [name] => name
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+    [2] => Array
+        (
+            [table] => test2
+            [name] => username
+            [type] => string
+            [len] => 32
+            [flags] => not_null
+        )
+
+    [3] => Array
+        (
+            [table] => test2
+            [name] => password
+            [type] => string
+            [len] => 13
+            [flags] => not_null binary
+        )
+
+    [4] => Array
+        (
+            [table] => test2
+            [name] => firstname
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+    [5] => Array
+        (
+            [table] => test2
+            [name] => lastname
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+)
+
+TABLE STRUCTURE FOR test2
+Array
+(
+    [0] => stdClass Object
+        (
+            [table] => test2
+            [name] => id
+            [type] => int
+            [len] => 11
+            [flags] => not_null primary_key
+        )
+
+    [1] => stdClass Object
+        (
+            [table] => test2
+            [name] => name
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+    [2] => stdClass Object
+        (
+            [table] => test2
+            [name] => username
+            [type] => string
+            [len] => 32
+            [flags] => not_null
+        )
+
+    [3] => stdClass Object
+        (
+            [table] => test2
+            [name] => password
+            [type] => string
+            [len] => 13
+            [flags] => not_null binary
+        )
+
+    [4] => stdClass Object
+        (
+            [table] => test2
+            [name] => firstname
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+    [5] => stdClass Object
+        (
+            [table] => test2
+            [name] => lastname
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+)
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+Array
+(
+    [0] => dump for test2
+    [1] => Array
+        (
+            [table] => Array
+                (
+                    [id] => 129
+                    [name] => 130
+                    [username] => 130
+                    [password] => 130
+                    [firstname] => 130
+                    [lastname] => 130
+                )
+
+            [keys] => Array
+                (
+                    [id] => K
+                )
+
+        )
+
+)
+myproject_dataobject_test2   : __find       : 
+myproject_dataobject_test2   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_test2   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_test2   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_test2   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_test2   : QUERY       : SELECT * FROM test2     
+myproject_dataobject_test2   : query       : QUERY DONE IN  0.0013711452484131 seconds
+myproject_dataobject_test2   : __find       : CHECK autofetchd 
+myproject_dataobject_test2   : __find       : DONE
+myproject_dataobject_test2   : 0       : fetched on object after fetch completed (no results found)
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : fillTable       : getting def for test/testproxy
+db_dataobject_generator   : defs       : Array
+(
+    [0] => Array
+        (
+            [table] => testproxy
+            [name] => id
+            [type] => int
+            [len] => 11
+            [flags] => not_null primary_key auto_increment
+        )
+
+    [1] => Array
+        (
+            [table] => testproxy
+            [name] => name
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+    [2] => Array
+        (
+            [table] => testproxy
+            [name] => username
+            [type] => string
+            [len] => 32
+            [flags] => not_null
+        )
+
+    [3] => Array
+        (
+            [table] => testproxy
+            [name] => password
+            [type] => string
+            [len] => 13
+            [flags] => not_null binary
+        )
+
+    [4] => Array
+        (
+            [table] => testproxy
+            [name] => firstname
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+    [5] => Array
+        (
+            [table] => testproxy
+            [name] => lastname
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+)
+
+TABLE STRUCTURE FOR testproxy
+Array
+(
+    [0] => stdClass Object
+        (
+            [table] => testproxy
+            [name] => id
+            [type] => int
+            [len] => 11
+            [flags] => not_null primary_key auto_increment
+        )
+
+    [1] => stdClass Object
+        (
+            [table] => testproxy
+            [name] => name
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+    [2] => stdClass Object
+        (
+            [table] => testproxy
+            [name] => username
+            [type] => string
+            [len] => 32
+            [flags] => not_null
+        )
+
+    [3] => stdClass Object
+        (
+            [table] => testproxy
+            [name] => password
+            [type] => string
+            [len] => 13
+            [flags] => not_null binary
+        )
+
+    [4] => stdClass Object
+        (
+            [table] => testproxy
+            [name] => firstname
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+    [5] => stdClass Object
+        (
+            [table] => testproxy
+            [name] => lastname
+            [type] => string
+            [len] => 255
+            [flags] => not_null
+        )
+
+)
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+Array
+(
+    [0] => dump for testproxy
+    [1] => Array
+        (
+            [table] => Array
+                (
+                    [id] => 129
+                    [name] => 130
+                    [username] => 130
+                    [password] => 130
+                    [firstname] => 130
+                    [lastname] => 130
+                )
+
+            [keys] => Array
+                (
+                    [id] => N
+                )
+
+        )
+
+)
+myproject_dataobject_testproxy Object
+(
+    [_DB_DataObject_version] => @version@
+    [__table] => testproxy
+    [N] => 0
+    [_database_dsn] => 
+    [_database_dsn_md5] => 
+    [_database] => 
+    [_query] => Array
+        (
+            [condition] => 
+            [group_by] => 
+            [order_by] => 
+            [having] => 
+            [limit] => 
+            [data_select] => *
+        )
+
+    [_DB_resultid] => 
+    [_link_loaded] => 
+    [_join] => 
+    [_lastError] => 
+    [id] => 
+    [name] => 
+    [username] => 
+    [password] => 
+    [firstname] => 
+    [lastname] => 
+)
+myproject_dataobject_testproxy2   : CONNECT       : USING CACHED CONNECTION
+Array
+(
+    [id] => 129
+    [name] => 130
+    [username] => 130
+    [password] => 130
+    [firstname] => 130
+    [lastname] => 130
+)
+myproject_dataobject_testproxy   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_testproxy   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_testproxy   : QUERY       : INSERT INTO testproxy () VALUES () 
+myproject_dataobject_testproxy   : query       : QUERY DONE IN  0.001194953918457 seconds
+1myproject_dataobject_testproxy   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_testproxy   : QUERY       : INSERT INTO testproxy () VALUES () 
+myproject_dataobject_testproxy   : query       : QUERY DONE IN  0.0010268688201904 seconds
+2test   : CONNECT       : USING CACHED CONNECTION
+test   : QUERY       : DROP TABLE IF EXISTS `page_module`
+test   : query       : QUERY DONE IN  0.001262903213501 seconds
+test   : CONNECT       : USING CACHED CONNECTION
+test   : QUERY       : 
+            CREATE TABLE `page_module` (
+                `page_id` mediumint(8) unsigned NOT NULL default '0',
+                `module_id` mediumint(8) unsigned NOT NULL default '0',
+                `place` tinyint(3) unsigned NOT NULL default '0',
+                `title` varchar(50) NOT NULL default '',
+                `position` varchar(10) NOT NULL default 'top',
+                PRIMARY KEY  (`page_id`,`module_id`)
+            ) TYPE=MyISAM;
+test   : query       : QUERY DONE IN  0.0017530918121338 seconds
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : fillTable       : getting def for test/page_module
+db_dataobject_generator   : defs       : Array
+(
+    [0] => Array
+        (
+            [table] => page_module
+            [name] => page_id
+            [type] => int
+            [len] => 8
+            [flags] => not_null primary_key unsigned
+        )
+
+    [1] => Array
+        (
+            [table] => page_module
+            [name] => module_id
+            [type] => int
+            [len] => 8
+            [flags] => not_null primary_key unsigned
+        )
+
+    [2] => Array
+        (
+            [table] => page_module
+            [name] => place
+            [type] => int
+            [len] => 3
+            [flags] => not_null unsigned
+        )
+
+    [3] => Array
+        (
+            [table] => page_module
+            [name] => title
+            [type] => string
+            [len] => 50
+            [flags] => not_null
+        )
+
+    [4] => Array
+        (
+            [table] => page_module
+            [name] => position
+            [type] => string
+            [len] => 10
+            [flags] => not_null
+        )
+
+)
+
+TABLE STRUCTURE FOR page_module
+Array
+(
+    [0] => stdClass Object
+        (
+            [table] => page_module
+            [name] => page_id
+            [type] => int
+            [len] => 8
+            [flags] => not_null primary_key unsigned
+        )
+
+    [1] => stdClass Object
+        (
+            [table] => page_module
+            [name] => module_id
+            [type] => int
+            [len] => 8
+            [flags] => not_null primary_key unsigned
+        )
+
+    [2] => stdClass Object
+        (
+            [table] => page_module
+            [name] => place
+            [type] => int
+            [len] => 3
+            [flags] => not_null unsigned
+        )
+
+    [3] => stdClass Object
+        (
+            [table] => page_module
+            [name] => title
+            [type] => string
+            [len] => 50
+            [flags] => not_null
+        )
+
+    [4] => stdClass Object
+        (
+            [table] => page_module
+            [name] => position
+            [type] => string
+            [len] => 10
+            [flags] => not_null
+        )
+
+)
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+Array
+(
+    [0] => dump for page_module
+    [1] => Array
+        (
+            [table] => Array
+                (
+                    [page_id] => 129
+                    [module_id] => 129
+                    [place] => 129
+                    [title] => 130
+                    [position] => 130
+                )
+
+            [keys] => Array
+                (
+                    [page_id] => K
+                    [module_id] => K
+                )
+
+        )
+
+)
+myproject_dataobject_page_module   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_page_module   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_page_module   : QUERY       : INSERT INTO page_module (page_id , module_id , position ) VALUES ( 1 ,  1 , 'top' ) 
+myproject_dataobject_page_module   : query       : QUERY DONE IN  0.0012450218200684 seconds
+test   : CONNECT       : USING CACHED CONNECTION
+test   : QUERY       : DROP TABLE IF EXISTS  typetest
+test   : query       : QUERY DONE IN  0.001305103302002 seconds
+test   : CONNECT       : USING CACHED CONNECTION
+test   : QUERY       : 
+            CREATE TABLE typetest (
+                id int(11) NOT NULL auto_increment PRIMARY KEY,
+                a_date date default '',
+                a_time time NOT NULL default '',
+                a_datetime  datetime default '',
+                b_date  datetime default '',
+                ts timestamp
+            ) TYPE=MyISAM;
+test   : query       : QUERY DONE IN  0.0017490386962891 seconds
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : fillTable       : getting def for test/typetest
+db_dataobject_generator   : defs       : Array
+(
+    [0] => Array
+        (
+            [table] => typetest
+            [name] => id
+            [type] => int
+            [len] => 11
+            [flags] => not_null primary_key auto_increment
+        )
+
+    [1] => Array
+        (
+            [table] => typetest
+            [name] => a_date
+            [type] => date
+            [len] => 10
+            [flags] => 
+        )
+
+    [2] => Array
+        (
+            [table] => typetest
+            [name] => a_time
+            [type] => time
+            [len] => 8
+            [flags] => not_null
+        )
+
+    [3] => Array
+        (
+            [table] => typetest
+            [name] => a_datetime
+            [type] => datetime
+            [len] => 19
+            [flags] => 
+        )
+
+    [4] => Array
+        (
+            [table] => typetest
+            [name] => b_date
+            [type] => datetime
+            [len] => 19
+            [flags] => 
+        )
+
+    [5] => Array
+        (
+            [table] => typetest
+            [name] => ts
+            [type] => timestamp
+            [len] => 14
+            [flags] => not_null unsigned zerofill timestamp
+        )
+
+)
+
+TABLE STRUCTURE FOR typetest
+Array
+(
+    [0] => stdClass Object
+        (
+            [table] => typetest
+            [name] => id
+            [type] => int
+            [len] => 11
+            [flags] => not_null primary_key auto_increment
+        )
+
+    [1] => stdClass Object
+        (
+            [table] => typetest
+            [name] => a_date
+            [type] => date
+            [len] => 10
+            [flags] => 
+        )
+
+    [2] => stdClass Object
+        (
+            [table] => typetest
+            [name] => a_time
+            [type] => time
+            [len] => 8
+            [flags] => not_null
+        )
+
+    [3] => stdClass Object
+        (
+            [table] => typetest
+            [name] => a_datetime
+            [type] => datetime
+            [len] => 19
+            [flags] => 
+        )
+
+    [4] => stdClass Object
+        (
+            [table] => typetest
+            [name] => b_date
+            [type] => datetime
+            [len] => 19
+            [flags] => 
+        )
+
+    [5] => stdClass Object
+        (
+            [table] => typetest
+            [name] => ts
+            [type] => timestamp
+            [len] => 14
+            [flags] => not_null unsigned zerofill timestamp
+        )
+
+)
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+Array
+(
+    [0] => dump for typetest
+    [1] => Array
+        (
+            [table] => Array
+                (
+                    [id] => 129
+                    [a_date] => 6
+                    [a_time] => 138
+                    [a_datetime] => 14
+                    [b_date] => 14
+                    [ts] => 384
+                )
+
+            [keys] => Array
+                (
+                    [id] => N
+                )
+
+        )
+
+)
+myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
+Array
+(
+    [id] => 129
+    [a_date] => 6
+    [a_time] => 138
+    [a_datetime] => 14
+    [b_date] => 14
+    [ts] => 384
+)
+it's numberic?myproject_dataobject_typetest Object
+(
+    [_DB_DataObject_version] => @version@
+    [__table] => typetest
+    [N] => 0
+    [_database_dsn] => 
+    [_database_dsn_md5] => 2f3fb5552c1aaa2a1ddef961a3506ebc
+    [_database] => test
+    [_query] => Array
+        (
+            [condition] => 
+            [group_by] => 
+            [order_by] => 
+            [having] => 
+            [limit] => 
+            [data_select] => *
+        )
+
+    [_DB_resultid] => 
+    [_link_loaded] => 
+    [_join] => 
+    [_lastError] => 
+    [id] => 
+    [a_date] => 2003-01-01
+    [a_time] => 12:00:00
+    [a_datetime] => 2004-07-23 01:00:00
+    [b_date] => null
+    [ts] => 
+)
+myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_typetest   : QUERY       : INSERT INTO typetest (a_date , a_time , a_datetime , b_date ) VALUES ('2003-01-01' , '12:00:00' , '2004-07-23 01:00:00' ,  NULL ) 
+myproject_dataobject_typetest   : query       : QUERY DONE IN  0.0012221336364746 seconds
+myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_typetest   : GET       : id 1 Array
+(
+    [0] => id
+)
+
+myproject_dataobject_typetest   : __find       : 1
+myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_typetest   : QUERY       : SELECT * FROM typetest  WHERE  typetest.id = 1    
+myproject_dataobject_typetest   : query       : QUERY DONE IN  0.0013480186462402 seconds
+myproject_dataobject_typetest   : __find       : CHECK autofetchd 1
+myproject_dataobject_typetest   : __find       : ABOUT TO AUTOFETCH
+myproject_dataobject_typetest   : 0       : fetched on object after fetch completed (no results found)
+myproject_dataobject_typetest   : __find       : DONE
+myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_typetest   : 3       : got keys as a:1:{i:0;s:2:"id";}
+myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_typetest   : QUERY       : UPDATE  typetest  SET b_date = '1970-01-01 07:59:59'   WHERE  typetest.id = 1 
+myproject_dataobject_typetest   : query       : QUERY DONE IN  0.0011579990386963 seconds
+myproject_dataobject_typetest   : 1       : Clearing Cache for myproject_dataobject_typetest
+TIMESTAMP = 
+myproject_dataobject_typetest Object
+(
+    [_DB_DataObject_version] => @version@
+    [__table] => typetest
+    [N] => 1
+    [_database_dsn] => 
+    [_database_dsn_md5] => 2f3fb5552c1aaa2a1ddef961a3506ebc
+    [_database] => test
+    [_query] => Array
+        (
+            [condition] => 
+            [group_by] => 
+            [order_by] => 
+            [having] => 
+            [limit] => 
+            [data_select] => *
+        )
+
+    [_DB_resultid] => 14
+    [_link_loaded] => 
+    [_join] => 
+    [_lastError] => 
+    [id] => 1
+    [a_date] => 
+    [a_time] => 
+    [a_datetime] => 
+    [b_date] => 1970-01-01 07:59:59
+    [ts] => 
+)
+db_dataobject   : CONNECT       : NEW CONNECTION
+db_dataobject   : CONNECT       : pgsql://@localhost/test acc1933ec1230f41406c1ced83ac1ca7
+db_dataobject   : QUERY       : DROP SEQUENCE response_response_id_seq
+db_dataobject   : query       : QUERY DONE IN  0.010711908340454 seconds
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : QUERY       : DROP TABLE seqtest
+db_dataobject   : query       : QUERY DONE IN  0.0068290233612061 seconds
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : QUERY       : CREATE SEQUENCE response_response_id_seq INCREMENT 1 START 1
+db_dataobject   : query       : QUERY DONE IN  0.0051600933074951 seconds
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : QUERY       : 
+            CREATE TABLE seqtest (
+                id INT NOT NULL UNIQUE   default nextval( 'response_response_id_seq' ),
+                xxx varchar(32),
+                price double precision
+            )
+db_dataobject   : query       : QUERY DONE IN  0.010825872421265 seconds
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : fillTable       : getting def for test/seqtest
+db_dataobject_generator   : defs       : Array
+(
+    [0] => Array
+        (
+            [table] => seqtest
+            [name] => id
+            [type] => int4
+            [len] => 4
+            [flags] => not_null default_nextval%28response_response_id_seq%29 unique_key
+        )
+
+    [1] => Array
+        (
+            [table] => seqtest
+            [name] => xxx
+            [type] => varchar
+            [len] => -1
+            [flags] => 
+        )
+
+    [2] => Array
+        (
+            [table] => seqtest
+            [name] => price
+            [type] => float8
+            [len] => 8
+            [flags] => 
+        )
+
+)
+
+TABLE STRUCTURE FOR seqtest
+Array
+(
+    [0] => stdClass Object
+        (
+            [table] => seqtest
+            [name] => id
+            [type] => int4
+            [len] => 4
+            [flags] => not_null default_nextval%28response_response_id_seq%29 unique_key
+        )
+
+    [1] => stdClass Object
+        (
+            [table] => seqtest
+            [name] => xxx
+            [type] => varchar
+            [len] => -1
+            [flags] => 
+        )
+
+    [2] => stdClass Object
+        (
+            [table] => seqtest
+            [name] => price
+            [type] => float8
+            [len] => 8
+            [flags] => 
+        )
+
+)
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+Array
+(
+    [0] => dump for seqtest
+    [1] => Array
+        (
+            [table] => Array
+                (
+                    [id] => 129
+                    [xxx] => 2
+                    [price] => 1
+                )
+
+            [keys] => Array
+                (
+                    [id] => K
+                )
+
+        )
+
+)
+myproject_dataobject_seqtest   : CONNECT       : USING CACHED CONNECTION
+Array
+(
+    [id] => 129
+    [xxx] => 2
+    [price] => 1
+)
+myproject_dataobject_seqtest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_seqtest   : QUERY       : INSERT INTO seqtest (xxx ) VALUES ('Fred' ) 
+myproject_dataobject_seqtest   : query       : QUERY DONE IN  0.0037448406219482 seconds
+bool(true)
+myproject_dataobject_seqtest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_seqtest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_seqtest   : QUERY       : INSERT INTO seqtest (xxx ) VALUES ('Blogs' ) 
+myproject_dataobject_seqtest   : query       : QUERY DONE IN  0.0025160312652588 seconds
+bool(true)
+myproject_dataobject_seqtest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_seqtest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_seqtest   : QUERY       : INSERT INTO seqtest (xxx ) VALUES ('Jones' ) 
+myproject_dataobject_seqtest   : query       : QUERY DONE IN  0.003000020980835 seconds
+string(1) "3"
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : QUERY       : DROP SEQUENCE items_seq
+db_dataobject   : query       : QUERY DONE IN  0.0038759708404541 seconds
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : QUERY       : DROP TABLE itemtest
+db_dataobject   : query       : QUERY DONE IN  0.010129928588867 seconds
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : QUERY       : CREATE SEQUENCE items_seq INCREMENT 1 START 1
+db_dataobject   : query       : QUERY DONE IN  0.0051980018615723 seconds
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : QUERY       : 
+            create table itemtest (
+                id int not null primary key default nextval('items_seq'),
+                word varchar(100) not null constraint word_unique unique
+             )
+db_dataobject   : query       : QUERY DONE IN  0.011394023895264 seconds
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : fillTable       : getting def for test/itemtest
+db_dataobject_generator   : defs       : Array
+(
+    [0] => Array
+        (
+            [table] => itemtest
+            [name] => id
+            [type] => int4
+            [len] => 4
+            [flags] => not_null default_nextval%28items_seq%29 primary_key
+        )
+
+    [1] => Array
+        (
+            [table] => itemtest
+            [name] => word
+            [type] => varchar
+            [len] => -1
+            [flags] => not_null unique_key
+        )
+
+)
+
+TABLE STRUCTURE FOR itemtest
+Array
+(
+    [0] => stdClass Object
+        (
+            [table] => itemtest
+            [name] => id
+            [type] => int4
+            [len] => 4
+            [flags] => not_null default_nextval%28items_seq%29 primary_key
+        )
+
+    [1] => stdClass Object
+        (
+            [table] => itemtest
+            [name] => word
+            [type] => varchar
+            [len] => -1
+            [flags] => not_null unique_key
+        )
+
+)
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+Array
+(
+    [0] => dump for itemtest
+    [1] => Array
+        (
+            [table] => Array
+                (
+                    [id] => 129
+                    [word] => 130
+                )
+
+            [keys] => Array
+                (
+                    [id] => K
+                    [word] => K
+                )
+
+        )
+
+)
+myproject_dataobject_itemtest   : CONNECT       : USING CACHED CONNECTION
+Array
+(
+    [id] => 129
+    [word] => 130
+)
+Array
+(
+    [0] => id
+    [1] => word
+)
+Array
+(
+    [0] => 
+    [1] => 
+    [2] => 
+)
+myproject_dataobject_itemtest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_itemtest   : QUERY       : INSERT INTO itemtest (word ) VALUES ('test' ) 
+myproject_dataobject_itemtest   : query       : QUERY DONE IN  0.019608020782471 seconds
+myproject_dataobject_itemtest   : CONNECT       : USING CACHED CONNECTION
+Array
+(
+    [0] => id
+    [1] => 1
+    [2] => items_seq
+)
+myproject_dataobject_itemtest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_itemtest   : QUERY       : INSERT INTO itemtest (word ) VALUES ('test2' ) 
+myproject_dataobject_itemtest   : query       : QUERY DONE IN  0.0023949146270752 seconds
+insert 2
+--GET--
+--POST--
+--EXPECT--

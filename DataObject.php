@@ -267,7 +267,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             $k = $keys[0];
         }
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("$k $v " .print_r($keys,true), "GET");
         }
         
@@ -310,13 +310,13 @@ class DB_DataObject extends DB_DataObject_Overload
         if ($v === null) {
             $key = $k;
         }
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             DB_DataObject::debug("$class $key","STATIC GET - TRY CACHE");
         }
-        if (@$_DB_DATAOBJECT['CACHE'][$lclass][$key]) {
+        if (!empty($_DB_DATAOBJECT['CACHE'][$lclass][$key])) {
             return $_DB_DATAOBJECT['CACHE'][$lclass][$key];
         }
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             DB_DataObject::debug("$class $key","STATIC GET - NOT IN CACHE");
         }
 
@@ -326,7 +326,7 @@ class DB_DataObject extends DB_DataObject_Overload
             return false;
         }
         
-        if (!@$_DB_DATAOBJECT['CACHE'][$lclass]) {
+        if (!isset($_DB_DATAOBJECT['CACHE'][$lclass])) {
             $_DB_DATAOBJECT['CACHE'][$lclass] = array();
         }
         if (!$obj->get($k,$v)) {
@@ -368,7 +368,7 @@ class DB_DataObject extends DB_DataObject_Overload
             DB_DataObject::_loadConfig();
         }
 
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug($n, "__find",1);
         }
         if (!$this->__table) {
@@ -379,7 +379,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $query_before = $this->_query;
         $this->_build_condition($this->table()) ;
         
-        $quoteIdentifiers = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
+        $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
@@ -395,19 +395,19 @@ class DB_DataObject extends DB_DataObject_Overload
             
             $this->_query['limit']); // is select
         
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("CHECK autofetchd $n", "__find", 1);
         }
         // unset the 
         
         
         if ($n && $this->N > 0 ) {
-             if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+             if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                 $this->debug("ABOUT TO AUTOFETCH", "__find", 1);
             }
             $this->fetch() ;
         }
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("DONE", "__find", 1);
         }
         $this->_query = $query_before;
@@ -448,17 +448,17 @@ class DB_DataObject extends DB_DataObject_Overload
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        if (!@$this->N) {
-            if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (empty($this->N)) {
+            if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                 $this->debug("No data returned from FIND (eg. N is 0)","FETCH", 3);
             }
             return false;
         }
         
-        if (!@$_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid] || 
+        if (!empty($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]) || 
             !is_object($result = &$_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid])) 
         {
-            if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+            if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                 $this->debug('fetched on object after fetch completed (no results found)');
             }
             return false;
@@ -466,12 +466,12 @@ class DB_DataObject extends DB_DataObject_Overload
         
         
         $array = $result->fetchRow(DB_FETCHMODE_ASSOC);
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug(serialize($array),"FETCH");
         }
 
         if ($array === null) {
-            if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+            if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                 $t= explode(' ',microtime());
             
                 $this->debug("Last Data Fetch'ed after " . 
@@ -495,7 +495,7 @@ class DB_DataObject extends DB_DataObject_Overload
         foreach($array as $k=>$v) {
             $kk = str_replace(".", "_", $k);
             $kk = str_replace(" ", "_", $kk);
-             if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+             if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                 $this->debug("$kk = ". $array[$k], "fetchrow LINE", 3);
             }
             $this->$kk = $array[$k];
@@ -503,10 +503,10 @@ class DB_DataObject extends DB_DataObject_Overload
         
         // set link flag
         $this->_link_loaded=false;
-        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("{$this->__table} DONE", "fetchrow",2);
         }
-        if (isset($this->_query) && !@$_DB_DATAOBJECT['CONFIG']['keep_query_after_fetch']) {
+        if (isset($this->_query) && !empty($_DB_DATAOBJECT['CONFIG']['keep_query_after_fetch'])) {
             unset($this->_query);
         }
         return true;
@@ -794,7 +794,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $table = $tableName;
         }
         $s = '%s';
-        if (@$_DB_DATAOBJECT['CONFIG']['quote_identifiers']) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers'])) {
             $this->_connect();
             $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
@@ -834,7 +834,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->_connect();
         }
         
-        $quoteIdentifiers  = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
+        $quoteIdentifiers  = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
          
@@ -996,7 +996,7 @@ class DB_DataObject extends DB_DataObject_Overload
                         
             }
 
-            if (@$_DB_DATAOBJECT['CACHE'][$class]) {
+            if (isset($_DB_DATAOBJECT['CACHE'][strtolower(get_class($this))])) {
                 $this->_clear_cache();
             }
             if ($key) {
@@ -1060,7 +1060,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $DB            = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
         $dbtype        = $DB->dsn["phptype"];
-        $quoteIdentifiers = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
+        $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         
         foreach($items as $k => $v) {
             if (!isset($this->$k)) {
@@ -1196,7 +1196,7 @@ class DB_DataObject extends DB_DataObject_Overload
         // connect will load the config!
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-        $quoteIdentifiers  = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
+        $quoteIdentifiers  = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         
         $extra_cond = " {$this->_query['order_by']} {$this->_query['limit']}";
         
@@ -1330,7 +1330,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $t = clone($this);
         
-        $quoteIdentifiers = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
+        $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         
         $items   = $t->table();
         if (!isset($t->_query)) {
@@ -2093,7 +2093,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
-        $quoteIdentifiers  = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];
+        $quoteIdentifiers  = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         // if we dont have query vars.. - reset them.
         if (!isset($this->_query)) {
             $x = new DB_DataObject;
@@ -2718,7 +2718,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $joinAs = $obj->__table;
         }
         
-        $quoteIdentifiers = @$_DB_DATAOBJECT['CONFIG']['quote_identifiers'];        
+        $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         
         $objTable = $quoteIdentifiers ? $DB->quoteIdentifier($obj->__table) : $obj->__table ;
         
