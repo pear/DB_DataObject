@@ -18,7 +18,7 @@ require_once 'PEAR.php';
 
 $options = &PEAR::getStaticProperty('DB_DataObject','options');
 //$options['schema_location'] = dirname(__FILE__);
-$options['database'] = 'mysql://@localhost/test';
+$options['database'] = 'mysql://alan@localhost/test';
 $options['debug_force_updates'] = TRUE;
 $options['proxy'] = 'full';
 $options['class_prefix'] = 'MyProject_DataObject_';
@@ -168,6 +168,18 @@ class test extends DB_DataObject {
         $s = serialize($t);
         echo $s;
     }
+    function test43()  // set toAray() bug #
+    {
+        $t = DB_DataObject::factory('testset');
+        $t->name = "fred";
+        $t->gender= 'not quite sure';
+        $t->insert();
+        $t = DB_DataObject::factory('testset');
+        $t->find(true);
+        print_R($t->toArray());
+        
+    }
+    
     
 	function test50() {
 	
