@@ -318,9 +318,11 @@ Class DB_DataObject
             ' FROM ' . $this->__table . " " .
             $this->_join .
             $this->_condition . ' '.
+           
             $this->_group_by . ' '.
+             $this->_having . ' '.
             $this->_order_by . ' '.
-            $this->_having . ' '.
+            
             $this->_limit); // is select
         ////add by ming ... keep old condition .. so that find can reuse
         $this->_condition = $tmpcond;
