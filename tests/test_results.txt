@@ -71,7 +71,6 @@ myproject_dataobject_test Object
     [lastname] => 
 )
 myproject_dataobject_test   : FETCH       : N;
-myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.0036880970001221 seconds
 
 
 
@@ -108,7 +107,6 @@ myproject_dataobject_test Object
     [lastname] => 
 )
 myproject_dataobject_test   : FETCH       : N;
-myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.003525972366333 seconds
 
 
 
@@ -143,7 +141,6 @@ myproject_dataobject_test Object
     [lastname] => 
 )
 myproject_dataobject_test   : FETCH       : N;
-myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.0038559436798096 seconds
 
 
 
@@ -197,7 +194,6 @@ myproject_dataobject_test Object
     [lastname] => 
 )
 myproject_dataobject_test   : FETCH       : N;
-myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.0036089420318604 seconds
 
 
 
@@ -759,9 +755,9 @@ Array
 
 )
 test2   : CONNECT       : USING CACHED CONNECTION
-test2   : QUERY       : INSERT INTO test2 (id , username ) VALUES ( 238 , 'yyyy' ) 
+test2   : QUERY       : INSERT INTO test2 (id , username ) VALUES ( 239 , 'yyyy' ) 
 
-RET: 238
+RET: 239
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : fillTable       : getting def for test/test2
@@ -913,8 +909,8 @@ myproject_dataobject_test2   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_test2   : QUERY       : SELECT * FROM test2     
 myproject_dataobject_test2   : __find       : CHECK autofetchd 
 myproject_dataobject_test2   : __find       : DONE
-myproject_dataobject_test2   : FETCH       : a:6:{s:2:"id";s:3:"238";s:4:"name";s:0:"";s:8:"username";s:4:"yyyy";s:8:"password";s:0:"";s:9:"firstname";s:0:"";s:8:"lastname";s:0:"";}
-myproject_dataobject_test2   : fetchrow LINE       : id = 238
+myproject_dataobject_test2   : FETCH       : a:6:{s:2:"id";s:3:"239";s:4:"name";s:0:"";s:8:"username";s:4:"yyyy";s:8:"password";s:0:"";s:9:"firstname";s:0:"";s:8:"lastname";s:0:"";}
+myproject_dataobject_test2   : fetchrow LINE       : id = 239
 myproject_dataobject_test2   : fetchrow LINE       : name = 
 myproject_dataobject_test2   : fetchrow LINE       : username = yyyy
 myproject_dataobject_test2   : fetchrow LINE       : password = 
@@ -924,7 +920,7 @@ myproject_dataobject_test2   : fetchrow       : test2 DONE
 myproject_dataobject_test2 Object
 (
     [N] => 1
-    [id] => 238
+    [id] => 239
     [name] => 
     [username] => yyyy
     [password] => 
@@ -932,7 +928,6 @@ myproject_dataobject_test2 Object
     [lastname] => 
 )
 myproject_dataobject_test2   : FETCH       : N;
-myproject_dataobject_test2   : FETCH       : Last Data Fetch'ed after 0.0042018890380859 seconds
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : fillTable       : getting def for test/testproxy
@@ -1425,7 +1420,7 @@ Array
     [b_date] => 14
     [ts] => 384
 )
-it's numberic?myproject_dataobject_typetest Object
+myproject_dataobject_typetest Object
 (
     [_DB_DataObject_version] => @version@
     [__table] => typetest
@@ -1450,12 +1445,12 @@ it's numberic?myproject_dataobject_typetest Object
     [id] => 
     [a_date] => 2003-01-01
     [a_time] => 12:00:00
-    [a_datetime] => 2004-09-13 01:00:00
+    [a_datetime] => 2004-10-13 01:00:00
     [b_date] => null
     [ts] => 
 )
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_typetest   : QUERY       : INSERT INTO typetest (a_date , a_time , a_datetime , b_date ) VALUES ('2003-01-01' , '12:00:00' , '2004-09-13 01:00:00' ,  NULL ) 
+myproject_dataobject_typetest   : QUERY       : INSERT INTO typetest (a_date , a_time , a_datetime , b_date ) VALUES ('2003-01-01' , '12:00:00' , '2004-10-13 01:00:00' ,  NULL ) 
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : GET       : id 1 Array
 (
@@ -1469,13 +1464,13 @@ myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : QUERY       : SELECT * FROM typetest  WHERE  typetest.id = 1    
 myproject_dataobject_typetest   : __find       : CHECK autofetchd 1
 myproject_dataobject_typetest   : __find       : ABOUT TO AUTOFETCH
-myproject_dataobject_typetest   : FETCH       : a:6:{s:2:"id";s:1:"1";s:6:"a_date";s:10:"2003-01-01";s:6:"a_time";s:8:"12:00:00";s:10:"a_datetime";s:19:"2004-09-13 01:00:00";s:6:"b_date";N;s:2:"ts";s:14:"20040914104421";}
+myproject_dataobject_typetest   : FETCH       : a:6:{s:2:"id";s:1:"1";s:6:"a_date";s:10:"2003-01-01";s:6:"a_time";s:8:"12:00:00";s:10:"a_datetime";s:19:"2004-10-13 01:00:00";s:6:"b_date";N;s:2:"ts";s:14:"20041014103657";}
 myproject_dataobject_typetest   : fetchrow LINE       : id = 1
 myproject_dataobject_typetest   : fetchrow LINE       : a_date = 2003-01-01
 myproject_dataobject_typetest   : fetchrow LINE       : a_time = 12:00:00
-myproject_dataobject_typetest   : fetchrow LINE       : a_datetime = 2004-09-13 01:00:00
+myproject_dataobject_typetest   : fetchrow LINE       : a_datetime = 2004-10-13 01:00:00
 myproject_dataobject_typetest   : fetchrow LINE       : b_date = 
-myproject_dataobject_typetest   : fetchrow LINE       : ts = 20040914104421
+myproject_dataobject_typetest   : fetchrow LINE       : ts = 20041014103657
 myproject_dataobject_typetest   : fetchrow       : typetest DONE
 myproject_dataobject_typetest   : __find       : DONE
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
@@ -1483,9 +1478,9 @@ myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : 3       : got keys as a:1:{i:0;s:2:"id";}
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_typetest   : QUERY       : UPDATE  typetest  SET a_date = '2003-01-01' , a_time = '12:00:00' , a_datetime = '2004-09-13 01:00:00' , b_date = '1970-01-01 07:59:59'   WHERE  typetest.id = 1 
+myproject_dataobject_typetest   : QUERY       : UPDATE  typetest  SET a_date = '2003-01-01' , a_time = '12:00:00' , a_datetime = '2004-10-13 01:00:00' , b_date = '1970-01-01 07:59:59'   WHERE  typetest.id = 1 
 myproject_dataobject_typetest   : 1       : Clearing Cache for myproject_dataobject_typetest
-TIMESTAMP = 14/09/2004 10:44:21
+TIMESTAMP = 14/10/2004 10:36:57
 myproject_dataobject_typetest Object
 (
     [_DB_DataObject_version] => @version@
@@ -1501,9 +1496,9 @@ myproject_dataobject_typetest Object
     [id] => 1
     [a_date] => 2003-01-01
     [a_time] => 12:00:00
-    [a_datetime] => 2004-09-13 01:00:00
+    [a_datetime] => 2004-10-13 01:00:00
     [b_date] => 1970-01-01 07:59:59
-    [ts] => 20040914104421
+    [ts] => 20041014103657
     [_query] => Array
         (
             [condition] => 
@@ -1645,7 +1640,7 @@ Array
     [2] => 
 )
 myproject_dataobject_itemtest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_itemtest   : QUERY       : INSERT INTO itemtest (id , word ) VALUES ( 32 , 'test' ) 
+myproject_dataobject_itemtest   : QUERY       : INSERT INTO itemtest (id , word ) VALUES ( 41 , 'test' ) 
 myproject_dataobject_itemtest   : CONNECT       : USING CACHED CONNECTION
 Array
 (
@@ -1656,6 +1651,115 @@ Array
 myproject_dataobject_itemtest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_itemtest   : QUERY       : INSERT INTO itemtest (word ) VALUES ('test2' ) 
 insert 1
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : QUERY       : DROP SEQUENCE bool_seq
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : QUERY       : DROP TABLE booltest
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : QUERY       : CREATE SEQUENCE bool_seq INCREMENT 1 START 1
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : QUERY       : 
+            create table booltest (
+                id int not null primary key default nextval('items_seq'),
+                bo_test boolean default 'f',
+                bo_int int default 0
+             )
+db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+db_dataobject_generator   : fillTable       : getting def for test/booltest
+db_dataobject_generator   : defs       : Array
+(
+    [0] => Array
+        (
+            [table] => booltest
+            [name] => id
+            [type] => int4
+            [len] => 4
+            [flags] => not_null default_nextval%28items_seq%29 primary_key
+        )
+
+    [1] => Array
+        (
+            [table] => booltest
+            [name] => bo_test
+            [type] => bool
+            [len] => 1
+            [flags] => default_false
+        )
+
+    [2] => Array
+        (
+            [table] => booltest
+            [name] => bo_int
+            [type] => int4
+            [len] => 4
+            [flags] => default_0
+        )
+
+)
+
+TABLE STRUCTURE FOR booltest
+Array
+(
+    [0] => stdClass Object
+        (
+            [table] => booltest
+            [name] => id
+            [type] => int4
+            [len] => 4
+            [flags] => not_null default_nextval%28items_seq%29 primary_key
+        )
+
+    [1] => stdClass Object
+        (
+            [table] => booltest
+            [name] => bo_test
+            [type] => bool
+            [len] => 1
+            [flags] => default_false
+        )
+
+    [2] => stdClass Object
+        (
+            [table] => booltest
+            [name] => bo_int
+            [type] => int4
+            [len] => 4
+            [flags] => default_0
+        )
+
+)
+db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
+Array
+(
+    [0] => dump for booltest
+    [1] => Array
+        (
+            [table] => Array
+                (
+                    [id] => 129
+                    [bo_test] => 18
+                    [bo_int] => 1
+                )
+
+            [keys] => Array
+                (
+                    [id] => N
+                )
+
+        )
+
+)
+myproject_dataobject_booltest   : __find       : 
+myproject_dataobject_booltest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_booltest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_booltest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_booltest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_booltest   : QUERY       : SELECT * FROM booltest  WHERE  booltest.bo_test  = TRUE AND  booltest.bo_int = 0    
+myproject_dataobject_booltest   : __find       : CHECK autofetchd 
+myproject_dataobject_booltest   : __find       : DONE
+myproject_dataobject_booltest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_booltest   : QUERY       : INSERT INTO booltest (id , bo_test , bo_int ) VALUES ( 4 , TRUE ,  1 ) 
 --GET--
 --POST--
 --EXPECT--

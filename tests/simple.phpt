@@ -463,7 +463,7 @@ class test extends DB_DataObject {
     
     /* POSTGRES TESTS */
     
-	function test100() {
+    function test100() {
 
     
     
@@ -543,8 +543,31 @@ class test extends DB_DataObject {
          $x->word = 'test2';
         echo "insert ". $x->insert() . "\n";
        
+       
+        // bug #2519 - 
+        $x  = new DB_DataObject;
+        $x->query("DROP SEQUENCE bool_seq");
+        $x->query("DROP TABLE booltest");
         
-   }
+        
+        $r = $x->query("CREATE SEQUENCE bool_seq INCREMENT 1 START 1");
+        $r = $x->query("
+            create table booltest (
+                id int not null primary key default nextval('items_seq'),
+                bo_test boolean default 'f',
+                bo_int int default 0
+             )");
+        
+        $x = DB_DataObject::factory('booltest');
+        $x->bo_test = true;
+        $x->bo_int = true;
+        $x->find();
+        
+        $x->insert();
+        
+        
+        
+    }
             
     
     
