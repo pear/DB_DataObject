@@ -1187,7 +1187,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             exit;
         }
 
-        $r = $this->_query(
+        $r = $t->_query(
             "SELECT count({$t->__table}.{$keys[0]}) as DATAOBJECT_NUM
                 FROM {$t->__table} {$t->_join} {$t->_query['condition']}");
         if (PEAR::isError($r)) {
@@ -1297,27 +1297,53 @@ Class DB_DataObject extends DB_DataObject_Overload
     var $_DB_resultid; // database result object
 
 
-    /* =========================================================== */
-    /*  Major Private Methods - the core part!*/
-    /* =========================================================== */
+    /* ============================================================== */
+    /*  Table definition layer (started of very private but 'came out'*/
+    /* ============================================================== */
 
     /**
-     * Autoload  the table definitions
+     * Autoload or manually load the table definitions
+     *
+     *
+     * usage :
+     * DB_DataObject::databaseStructure(   parse_ini_file('mydb.ini',true), 
+     *                                    parse_ini_file('mydb.link.ini',true)); 
+     *
+     * obviously you dont have to use ini files.. (just return array similar to ini files..)
+     *  
+     * It should append to the table structure array 
      *
      *
      * @access private
+     * @static
      * @return boolean
      */
-    function _loadDefinitions()
+    function databaseStructure()
     {
 
         global $_DB_DATAOBJECT;
+        
+        if ($args = func_get_args()) {
+            $_DB_DATAOBJECT['INI'][$this->_database] = isset($_DB_DATAOBJECT['INI'][$this->_database]) ?
+                $_DB_DATAOBJECT['INI'][$this->_database] + $args[0] : $args[0];
+            
+            if (isset($args[1])) {
+                $_DB_DATAOBJECT['LINKS'][$this->_database] = isset($_DB_DATAOBJECT['LINKS'][$this->_database]) ?
+                    $_DB_DATAOBJECT['LINKS'][$this->_database] + $args[1] : $args[1];
+            }
+            return array($_DB_DATAOBJECT['INI'][$this->_database], $_DB_DATAOBJECT['LINKS'][$this->_database]);
+        }
+        // loaded already?
         if (isset($_DB_DATAOBJECT['INI'][$this->_database])) {
-            return true;
+            return array($_DB_DATAOBJECT['INI'][$this->_database], $_DB_DATAOBJECT['LINKS'][$this->_database]);
         }
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
+        
+        // if you supply this with arguments, then it will take those
+        // as the database and links array...
+       
         $location = $_DB_DATAOBJECT['CONFIG']['schema_location'];
 
         $ini   = $location . "/{$this->_database}.ini";
@@ -1328,12 +1354,13 @@ Class DB_DataObject extends DB_DataObject_Overload
         $links = str_replace('.ini','.links.ini',$ini);
 
         $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);
+        $_DB_DATAOBJECT['LINKS'][$this->_database] = array();
         /* load the link table if it exists. */
         if (file_exists($links)) {
             /* not sure why $links = ... here  - TODO check if that works */
             $_DB_DATAOBJECT['LINKS'][$this->_database] = parse_ini_file($links, true);
         }
-        return true;
+        return array($_DB_DATAOBJECT['INI'][$this->_database], $_DB_DATAOBJECT['LINKS'][$this->_database]);
     }
 
 
@@ -1398,7 +1425,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             $this->_connect();
         }
         
-        $this->_loadDefinitions();
+        $this->databaseStructure();
 
 
         $ret = array();
@@ -1437,7 +1464,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (!@$this->_database) {
             $this->_connect();
         }
-        $this->_loadDefinitions();
+        $this->databaseStructure();
 
         if (isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table."__keys"])) {
             return array_keys($_DB_DATAOBJECT['INI'][$this->_database][$this->__table."__keys"]);
@@ -1493,6 +1520,15 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         return array($keys[0],false);
     }
+    
+    
+    
+    /* =========================================================== */
+    /*  Major Private Methods - the core part!              */
+    /* =========================================================== */
+
+ 
+    
     /**
      * clear the cache values for this class  - normally done on insert/update etc.
      *
