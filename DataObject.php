@@ -2682,7 +2682,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         // if obj only a dataobject - eg. no extended class has been defined..
         // it obvioulsy cant work out what child elements might exist...
         // untill we get on the fly querying of tables..
-        if ( get_class($obj) == 'db_dataobject') {
+        if ( strtolower(get_class($obj)) == 'db_dataobject') {
             return true;
         }
          
@@ -2992,7 +2992,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         //$this->debug("ATTEMPTING OVERLOAD? $method");
         // ignore constructors : - mm
-        if ($method == get_class($this)) {
+        if (strtolower($method) == strtolower(get_class($this))) {
             return true;
         }
         $type = strtolower(substr($method,0,3));
