@@ -3116,8 +3116,8 @@ class DB_DataObject extends DB_DataObject_Overload
         // deal with naming conflick of setFrom = this is messy ATM!
         
         if (strtolower($method) == 'set_from') {
-            $this->from = $params[0];
-            return $return = true;
+            $return = $this->toValue('from',isset($params[0]) ? $params[0] : null);
+            return  true;
         }
         
         $element = substr($method,3);
@@ -3135,6 +3135,11 @@ class DB_DataObject extends DB_DataObject_Overload
             foreach($array as $k) {
                 $case[strtolower($k)] = $k;
             }
+            if ((substr(php_version(),0,1) == 5) && isset($case[strtolower($element)])) {
+                trigger_error("PHP5 set/get calls should match the case of the variable",E_USER_WARNING);
+                $element = strtolower($element);
+            }
+            
             // does it really exist?
             if (!isset($case[$element])) {
                 return false;            
