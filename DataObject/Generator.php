@@ -14,12 +14,10 @@
 // +----------------------------------------------------------------------+
 // | Author:  Alan Knowles <alan@akbkhome.com>
 // +----------------------------------------------------------------------+
-//
 // $Id$
-//
-/* generation tools for DB_DataObject
- *
- * @package DB_DataObject
+
+/**
+ * Generation tools for DB_DataObject
  *
  * Config _$ptions
  * [DB_DataObject_Generator]
@@ -46,11 +44,21 @@
  * ; alter the extends field when updating a class (defaults to only replacing DB_DataObject)
  * generator_class_rewrite = ANY|specific_name   // default is DB_DataObject
  *
-*/
+ * @package  DB_DataObject
+ * @category DB
+ */
 
+/**
+ * Needed classes
+ */
 require_once 'DB/DataObject.php';
 //require_once('Config.php');
 
+/**
+ * Generator class
+ *
+ * @package DB_DataObject
+ */
 class DB_DataObject_Generator extends DB_DataObject
 {
     /* =========================================================== */
@@ -98,7 +106,6 @@ class DB_DataObject_Generator extends DB_DataObject
             }
         }
 
-
         if (@$options['database'] && !in_array($options['database'],$databases)) {
             $databases[] = $options['database'];
         }
@@ -141,8 +148,8 @@ class DB_DataObject_Generator extends DB_DataObject
     function _createTableList()
     {
         $this->_connect();
-        
-        
+
+
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
 
         $this->tables = $__DB->getListOf('tables');
@@ -232,7 +239,7 @@ class DB_DataObject_Generator extends DB_DataObject
                     if ($t->len == 1) {
                         $type +=  DB_DATAOBJECT_BOOL;
                     }
-                    
+
                 case "REAL":
                 case "DOUBLE":
                 case "FLOAT":
@@ -411,11 +418,11 @@ class DB_DataObject_Generator extends DB_DataObject
         if (!$input) return $full;
         if (!preg_match('/\n\s*###START_AUTOCODE\n/s',$input))  return $full;
         if (!preg_match('/\n\s*###END_AUTOCODE\n/s',$input))  return $full;
-        
-        
-        /* this will only replace extends DB_DataObject by default, 
+
+
+        /* this will only replace extends DB_DataObject by default,
             unless use set generator_class_rewrite to ANY or a name*/
-        
+
         $class_rewrite = 'DB_DataObject';
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         if (!($class_rewrite = @$options['generator_class_rewrite'])) {
@@ -424,10 +431,10 @@ class DB_DataObject_Generator extends DB_DataObject
         if ($class_rewrite == 'ANY') {
             $class_rewrite = '[a-z_]+';
         }
-        
+
         $input = preg_replace(
             '/\nclass\s*[a-z_]+\s*extends\s*' .$class_rewrite . '\s*\{\n/si',
-            "\nclass {$this->classname} extends {$this->_extends} {\n",
+            "\nclass {$this->classname} extends {$this->_extends} \n{\n",
             $input);
 
         return preg_replace(

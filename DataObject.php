@@ -14,11 +14,18 @@
 // +----------------------------------------------------------------------+
 // | Author:  Alan Knowles <alan@akbkhome.com>
 // +----------------------------------------------------------------------+
-//
-// $Id$
-//
-// Object Based Database Query Builder and data store
-//
+/**
+ * Object Based Database Query Builder and data store
+ *
+ * @package  DB_DataObject
+ * @category DB
+ *
+ * $Id$
+ */
+
+/**
+ * Needed classes
+ */
 require_once 'DB.php';
 require_once 'PEAR.php';
 
@@ -33,7 +40,7 @@ define('DB_DATAOBJECT_TIME', 8);  // is time #TODO
 define('DB_DATAOBJECT_BOOL', 16); // is boolean #TODO
 define('DB_DATAOBJECT_TXT',  32); // is long text #TODO
 
-/*
+/**
  * Theses are the standard error codes, most methods will fail silently - and return false
  * to access the error message either use $table->_lastError
  * or $last_error = PEAR::getStaticProperty('DB_DataObject','lastError');
@@ -53,13 +60,13 @@ define('DB_DATAOBJECT_ERROR_NOTSUPPORTED'  ,-6);  // limit queries on unsuppored
  */
 define('DB_DATAOBJECT_WHEREADD_ONLY', true);
 
-/*
+/**
  *
- * storage for connection and result objects, 
- * it is done this way so that print_r()'ing the is smaller, and 
+ * storage for connection and result objects,
+ * it is done this way so that print_r()'ing the is smaller, and
  * it reduces the memory size of the object.
  * -- future versions may use $this->_connection = & PEAR object..
- *   although will need speed tests to see how this affects it. 
+ *   although will need speed tests to see how this affects it.
  * - includes sub arrays
  *   - connections = md5 sum mapp to pear db object
  *   - results     = [id] => map to pear db object
@@ -67,7 +74,7 @@ define('DB_DATAOBJECT_WHEREADD_ONLY', true);
  *   - links       = mapping of database to links file
  *   - lasterror   = pear error objects for last error event.
  *   - config      = aliased view of PEAR::getStaticPropery('DB_DataObject','options') * done for performance.
-*/
+ */
 $GLOBALS['_DB_DATAOBJECT']['RESULTS'] = array();
 $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'] = array();
 $GLOBALS['_DB_DATAOBJECT']['INI'] = array();
@@ -128,7 +135,6 @@ $GLOBALS['_DB_DATAOBJECT']['CACHE'] = array();
  *     echo $instance->somedata;
  * }
  *
- *
  * @package  DB_DataObject
  * @author   Alan Knowles <alan@akbkhome.com>
  * @since    PHP 4.0
@@ -183,7 +189,7 @@ Class DB_DataObject
      * @param   string  $k column
      * @param   string  $v value
      * @access  public
-     * @return  int No. of rows
+     * @return  int     No. of rows
      */
     function get($k = NULL, $v = NULL)
     {
@@ -191,7 +197,7 @@ Class DB_DataObject
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        
+
         if ($v === NULL) {
             $v = $k;
             $keys = $this->_get_keys();
@@ -231,12 +237,12 @@ Class DB_DataObject
      */
     function &staticGet($class, $k, $v = NULL)
     {
-        
+
         global $_DB_DATAOBJECT;
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        
+
         $cache = &PEAR::getStaticProperty('DB_DataObject','cache');
 
         $key = "$k:$v";
@@ -294,12 +300,11 @@ Class DB_DataObject
      */
     function find($n = false)
     {
-        
         global $_DB_DATAOBJECT;
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        
+
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug($n, "__find",1);
         }
@@ -310,13 +315,13 @@ Class DB_DataObject
         $this->N = 0;
         $tmpcond = $this->_condition;
         $this->_build_condition($this->_get_table()) ;
-        $this->_query("SELECT " .
+        $this->_query('SELECT ' .
             $this->_data_select .
-            " FROM " . $this->__table . " " .
+            ' FROM ' . $this->__table . " " .
             $this->_join .
-            $this->_condition . " ".
-            $this->_group_by . " ".
-            $this->_order_by . " ".
+            $this->_condition . ' '.
+            $this->_group_by . ' '.
+            $this->_order_by . ' '.
             $this->_limit); // is select
         ////add by ming ... keep old condition .. so that find can reuse
         $this->_condition = $tmpcond;
@@ -437,7 +442,7 @@ Class DB_DataObject
      *
      * @param  string $order  Order
      * @access public
-     * @return none
+     * @return void
      */
     function orderBy($order = false)
     {
@@ -484,13 +489,13 @@ Class DB_DataObject
      * $object->limit(12,10);
      *
      * Note this will emit an error on databases other than mysql/postgress
-     * as there is no 'clean way' to implement it. - you should consider refering to 
+     * as there is no 'clean way' to implement it. - you should consider refering to
      * your database manual to decide how you want to implement it.
      *
      * @param  string $a  limit start (or number), or blank to reset
      * @param  string $b  number
      * @access public
-     * @return none
+     * @return void
      */
     function limit($a = NULL, $b = NULL)
     {
@@ -498,18 +503,18 @@ Class DB_DataObject
            $this->_limit = '';
            return;
         }
-        
-        
+
+
         $db = $this->getDatabaseConnection();
-        
+
         if (($db->features['limit'] == 'alter') && ($db->phptype != 'oci8')) {
             if ($b === NULL) {
                $this->_limit = " LIMIT $a";
                return;
             }
-            
+
             $this->_limit = $db->modifyLimitQuery('',$a,$b);
-        
+
         } else {
             PEAR::raiseError(
                 "DB_DataObjects only supports mysql and postgres limit queries at present, \n".
@@ -528,7 +533,7 @@ Class DB_DataObject
      *
      * @param  string  $k
      * @access public
-     * @return none
+     * @return void
      */
     function selectAdd($k = NULL)
     {
@@ -562,7 +567,7 @@ Class DB_DataObject
         global $_DB_DATAOBJECT;
         // connect will load the config!
         $this->_connect();
-         
+
         $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
         $items = $this->_get_table();
         if (!$items) {
@@ -570,30 +575,30 @@ Class DB_DataObject
             return false;
         }
         $options= &$_DB_DATAOBJECT['CONFIG'];
-        
+
         // turn the sequence keys into an array
-        if ((@$options['ignore_sequence_keys']) && 
-                (@$options['ignore_sequence_keys'] != 'ALL') && 
+        if ((@$options['ignore_sequence_keys']) &&
+                (@$options['ignore_sequence_keys'] != 'ALL') &&
                 (!is_array($options['ignore_sequence_keys']))) {
-            $options['ignore_sequence_keys']  = explode(',', $options['ignore_sequence_keys']);    
+            $options['ignore_sequence_keys']  = explode(',', $options['ignore_sequence_keys']);
         }
-        
+
         $datasaved = 1;
         $leftq     = '';
         $rightq    = '';
         $key       = false;
         $keys      = $this->_get_keys();
         $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["phptype"];
-        
+
         // big check for using sequences
-        if (    ($key = @$keys[0]) && 
-                ($dbtype != 'mysql') && 
-                (@$options['ignore_sequence_keys'] != 'ALL') &&   
+        if (    ($key = @$keys[0]) &&
+                ($dbtype != 'mysql') &&
+                (@$options['ignore_sequence_keys'] != 'ALL') &&
                 (is_array(@$options['ignore_sequence_keys']) &&
                     @!in_array($this->__table,$options['ignore_sequence_keys']))
-            ) 
+            )
         {
-                
+
             if (!($seq = @$options['sequence_'. $this->__table])) {
                 $seq = $this->__table;
             }
@@ -609,12 +614,12 @@ Class DB_DataObject
                 $rightq .= ', ';
             }
             $leftq .= "$k ";
-            
+
             if ($this->$k === null) {
                 $rightq .= " NULL ";
                 continue;
             }
-            
+
             if ($v & DB_DATAOBJECT_STR) {
                 $rightq .= $__DB->quote($this->$k) . " ";
                 continue;
@@ -638,13 +643,13 @@ Class DB_DataObject
                 DB_DataObject::raiseError('No Data Affected By insert',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
                 return false;
             }
-            
-            if ($key && 
+
+            if ($key &&
                 ($items[$key] & DB_DATAOBJECT_INT) &&
-                ($dbtype == 'mysql') && 
+                ($dbtype == 'mysql') &&
                 (@$options['ignore_sequence_keys'] != 'ALL') &&
-                    (   
-                        !@$options['ignore_sequence_keys'] || 
+                    (
+                        !@$options['ignore_sequence_keys'] ||
                         (is_array(@$options['ignore_sequence_keys']) &&
                             in_array($this->__table,@$options['ignore_sequence_keys']))
                     )
@@ -652,7 +657,7 @@ Class DB_DataObject
             {
                 $this->$key = mysql_insert_id($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->connection);
             }
-        
+
             $this->_clear_cache();
             return $this->$key;
         }
@@ -691,7 +696,7 @@ Class DB_DataObject
         global $_DB_DATAOBJECT;
         // connect will load the config!
         $this->_connect();
-         
+
         $items = $this->_get_table();
         $keys  = $this->_get_keys();
 
@@ -701,11 +706,11 @@ Class DB_DataObject
         }
         $datasaved = 1;
         $settings  = '';
-     
-       
+
+
 
         $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-     
+
         foreach($items as $k => $v) {
             if (!isset($this->$k)) {
                 continue;
@@ -713,8 +718,8 @@ Class DB_DataObject
             if (($dataObject !== false) && (@$dataObject->$k == $this->$k)) {
                 continue;
             }
-            
-            
+
+
             if ($settings)  {
                 $settings .= ', ';
             }
@@ -722,7 +727,7 @@ Class DB_DataObject
             if ($this->$k === null) {
                 $settings .= "$k = NULL";
             }
-            
+
             if ($v & DB_DATAOBJECT_STR) {
                 $settings .= $k .' = '. $__DB->quote($this->$k) . ' ';
                 continue;
@@ -752,7 +757,7 @@ Class DB_DataObject
                 DB_DataObject::raiseError('No Data Affected By update',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
                 return false;
             }
-            
+
             $this->_clear_cache();
             return $r;
         }
@@ -778,7 +783,7 @@ Class DB_DataObject
      *
      * @param bool $useWhere (optional) If DB_DATAOBJECT_WHEREADD_ONLY is passed in then
      *             we will build the condition only using the whereAdd's.  Default is to
-     *             build the condition only using the object parameters. 
+     *             build the condition only using the object parameters.
      *
      * @access public
      * @return bool True on success
@@ -788,9 +793,9 @@ Class DB_DataObject
         global $_DB_DATAOBJECT;
         // connect will load the config!
         $this->_connect();
-        
+
         if (!$useWhere) {
-            
+
             $keys = $this->_get_keys();
             $this->_condition = ''; // default behaviour not to use where condition
             $this->_build_condition($this->_get_table(),$keys);
@@ -898,8 +903,8 @@ Class DB_DataObject
         global $_DB_DATAOBJECT;
         $items   = $this->_get_table();
         $tmpcond = $this->_condition;
-        $__DB    = $this->getDatabaseConnection(); 
-     
+        $__DB    = $this->getDatabaseConnection();
+
         if (!$whereAddOnly && $items)  {
             foreach ($items as $key => $val) {
                 if (isset($this->$key))  {
@@ -915,7 +920,7 @@ Class DB_DataObject
         }
 
         $r = $this->_query(
-            "SELECT count({$keys[0]}) as __num 
+            "SELECT count({$keys[0]}) as __num
                 FROM {$this->__table} {$this->_join} {$this->_condition}");
         if (PEAR::isError($r)) {
             return false;
@@ -933,7 +938,7 @@ Class DB_DataObject
      *
      * @param  string  $string  SQL Query
      * @access public
-     * @return none or PEAR_Error
+     * @return void or PEAR_Error
      */
     function query($string)
     {
@@ -942,20 +947,20 @@ Class DB_DataObject
 
 
     /**
-     * an escape wrapper around quote .. 
+     * an escape wrapper around quote ..
      * can be used when adding manual queries =
-     * eg. 
+     * eg.
      * $object->query("select * from xyz where abc like '". $object->quote($_GET['name']) . "'");
-     * 
+     *
      * @param  string  $string  SQL Query
      * @access public
-     * @return none or PEAR_Error
+     * @return void or PEAR_Error
      */
-    function escape($string) 
+    function escape($string)
     {
         global $_DB_DATAOBJECT;
         $this->_connect();
-         
+
         $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
         return substr($__DB->quote($string),1,-1);
     }
@@ -1037,8 +1042,8 @@ Class DB_DataObject
      * @var     integer
      */
     var $_DB_resultid; // database result object
-    
-    
+
+
     /* =========================================================== */
     /*  Major Private Methods - the core part!*/
     /* =========================================================== */
@@ -1048,11 +1053,11 @@ Class DB_DataObject
      *
      *
      * @access private
-     * @return boolean 
+     * @return boolean
      */
     function _loadDefinitions()
     {
-         
+
         global $_DB_DATAOBJECT;
         if (isset($_DB_DATAOBJECT['INI'][$this->_database])) {
             return true;
@@ -1061,14 +1066,14 @@ Class DB_DataObject
             DB_DataObject::_loadConfig();
         }
         $location = $_DB_DATAOBJECT['CONFIG']['schema_location'];
-        
+
         $ini   = $location . "/{$this->_database}.ini";
-        
+
         if (isset($_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"])) {
             $ini = $_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"];
         }
         $links = str_replace('.ini','.links.ini',$ini);
-        
+
         $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);
         /* load the link table if it exists. */
         if (file_exists($links)) {
@@ -1091,8 +1096,8 @@ Class DB_DataObject
             $this->_connect();
         }
         $this->_loadDefinitions();
-        
-        
+
+
         $ret = array();
         if (isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
             $ret =  $_DB_DATAOBJECT['INI'][$this->_database][$this->__table];
@@ -1115,7 +1120,7 @@ Class DB_DataObject
             $this->_connect();
         }
         $this->_loadDefinitions();
-        
+
         if (isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table."__keys"])) {
             return array_keys($_DB_DATAOBJECT['INI'][$this->_database][$this->__table."__keys"]);
         }
@@ -1126,7 +1131,7 @@ Class DB_DataObject
      * clear the cache values for this class  - normally done on insert/update etc.
      *
      * @access private
-     * @return none
+     * @return void
      */
     function _clear_cache()
     {
@@ -1140,14 +1145,14 @@ Class DB_DataObject
     /**
      * connects to the database
      *
-     * 
+     *
      * TODO: tidy this up - This has grown to support a number of connection options like
      *  a) dynamic changing of ini file to change which database to connect to
      *  b) multi data via the table_{$table} = dsn ini option
-     *  c) session based storage. 
-     * 
+     *  c) session based storage.
+     *
      * @access private
-     * @return none
+     * @return void
      */
     function _connect()
     {
@@ -1155,10 +1160,10 @@ Class DB_DataObject
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        
+
         // is it already connected ?
-        
-        if ($this->_database_dsn_md5 && @$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]) { 
+
+        if ($this->_database_dsn_md5 && @$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]) {
             if (PEAR::isError($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
                 DB_DataObject::raiseError(
                         $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->message,
@@ -1166,16 +1171,16 @@ Class DB_DataObject
                 );
                 return;
             }
-            
+
             if (!$this->_database) {
                 $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["database"];
             }
             return;
         }
-        
+
         // it's not currently connected!
         // try and work out what to use for the dsn !
-        
+
         $options= &$_DB_DATAOBJECT['CONFIG'];
         $dsn = @$this->_database_dsn;
 
@@ -1189,7 +1194,7 @@ Class DB_DataObject
                 $dsn = $options['database'];
             }
         }
-        
+
         $this->_database_dsn_md5 = md5($dsn);
 
         if (@$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]) {
@@ -1206,9 +1211,9 @@ Class DB_DataObject
             /* actualy make a connection */
             $this->debug("{$dsn} {$this->_database_dsn_md5}", "CONNECT",3);
         }
-        
+
         $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn);
-        
+
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug(serialize($_DB_DATAOBJECT['CONNECTIONS']), "CONNECT",5);
         }
@@ -1219,20 +1224,14 @@ Class DB_DataObject
             );
 
         }
-        
+
         if (!$this->_database) {
             $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["database"];
         }
-        
+
         return true;
     }
 
-    
-    
-    
-    
-    
-    
     /**
      * sends query to database - this is the private one that must work - internal functions use this rather than $this->query()
      *
@@ -1243,21 +1242,21 @@ Class DB_DataObject
     function _query($string)
     {
         global $_DB_DATAOBJECT;
-        
+
         $this->_connect();
-        
+
         $options = &$_DB_DATAOBJECT['CONFIG'];
-        
+
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug("QUERY".$string,$log="sql");
         }
         $__DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-        
+
         if (@$options['debug_ignore_updates'] &&
             (strtolower(substr(trim($string), 0, 6)) != 'select') &&
             (strtolower(substr(trim($string), 0, 4)) != 'show') &&
             (strtolower(substr(trim($string), 0, 8)) != 'describe')) {
-                
+
             $this->debug('Disabling Update as you are in debug mode');
             return DB_DataObject::raiseError("Disabling Update as you are in debug mode", NULL) ;
 
@@ -1303,19 +1302,19 @@ Class DB_DataObject
     {
         global $_DB_DATAOBJECT;
         $this->_connect();
-        
+
         $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
 
         foreach($keys as $k => $v) {
             // index keys is an indexed array
-            /* these filter checks are a bit suspicious.. 
+            /* these filter checks are a bit suspicious..
                 - need to check that update really wants to work this way */
-                
+
             if ($filter) {
                 if (!in_array($k, $filter)) {
                     continue;
                 }
-            } 
+            }
             if ($negative_filter) {
                 if (in_array($k, $negative_filter)) {
                     continue;
@@ -1455,7 +1454,7 @@ Class DB_DataObject
      * stores it in $this->_xxxxx_yyyyy
      *
      * you can also use $this->getLink('thisColumnName','otherTable','otherTableColumnName')
-     * 
+     *
      *
      * @param string $row    either row or row.xxxxx
      * @param string $table  name of table to look up value in
@@ -1470,15 +1469,15 @@ Class DB_DataObject
          * This will do a recursive call!
          */
         global $_DB_DATAOBJECT;
-        
+
         $this->_get_table(); /* make sure the links are loaded */
-       
+
         if ($table === NULL) {
             $links = array();
             if (isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
                 $links = &$_DB_DATAOBJECT['LINKS'][$this->_database];
             }
-            
+
             if (isset($links[$this->__table])) {
                 if (@$links[$this->__table][$row]) {
                     list($table,$link) = explode(':', $links[$this->__table][$row]);
@@ -1529,9 +1528,9 @@ Class DB_DataObject
     function &getLinkArray($row, $table = NULL)
     {
         global $_DB_DATAOBJECT;
-        
+
         $this->_get_table(); /* make sure the links are loaded */
-       
+
 
         $ret = array();
         if (!$table) {
@@ -1539,7 +1538,7 @@ Class DB_DataObject
             if (isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
                 $links = &$_DB_DATAOBJECT['LINKS'][$this->_database];
             }
-            
+
             if (@$links[$this->__table][$row]) {
                 list($table,$link) = explode(':',$links[$this->__table][$row]);
             } else {
@@ -1574,7 +1573,8 @@ Class DB_DataObject
      * @access  private
      * @var     string
      */
-    var $_join = ''; 
+    var $_join = '';
+
     /**
      * joinAdd - adds another dataobject to this, building a joined query.
      *
@@ -1616,24 +1616,24 @@ Class DB_DataObject
         if (!is_object($obj)) {
             DB_DataObject::raiseError("joinAdd: called without an object", DB_DATAOBJECT_ERROR_NODATA,PEAR_ERROR_DIE);
         }
-        
+
         $this->_connect(); /*  make sure $this->_database is set.  */
-        
+
         $this->_get_table(); /* make sure the links are loaded */
-        
+
         $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-     
+
 
         $links = array();
         if (isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
             $links = &$_DB_DATAOBJECT['LINKS'][$this->_database];
         }
-        
+
         $ofield = false; // object field
         $tfield = false; // this field
-        
+
          /* look up the links for obj table */
-         
+
         if (isset($links[$obj->__table])) {
             foreach ($links[$obj->__table] as $k => $v) {
                 /* link contains {this column} = {linked table}:{linked column} */
@@ -1645,9 +1645,9 @@ Class DB_DataObject
                 }
             }
         }
-        
-        /* otherwise see if there are any links from this table to the obj. */    
-        
+
+        /* otherwise see if there are any links from this table to the obj. */
+
         if (($ofield === false) &&isset($links[$this->__table])) {
             foreach ($links[$this->__table] as $k => $v) {
                 /* link contains {this column} = {linked table}:{linked column} */
@@ -1659,25 +1659,25 @@ Class DB_DataObject
                 }
             }
         }
-        
+
         /* did I find a conneciton between them? */
-            
+
         if ($ofield === false) {
             DB_DataObject::raiseError("joinAdd: {$obj->__table} has no link with {$this->__table}", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
-        
+
         $this->_join .= "INNER JOIN {$obj->__table} ON {$obj->__table}.{$ofield}={$this->__table}.{$tfield} ";
-        
-        
+
+
         /* now add where conditions for anything that is set in the object */
-        
+
         $items = $obj->_get_table();
         if (!$items) {
             DB_DataObject::raiseError("joinAdd: No table definition for {$obj->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
         }
-        
+
         foreach($items as $k => $v) {
             if (!isset($obj->$k)) {
                 continue;
@@ -1693,12 +1693,10 @@ Class DB_DataObject
             /* this is probably an error condition! */
             $this->whereAdd("{$obj->__table}.{$k} = 0");
         }
-        
-        
+
+
     }
-    
-    
-    
+
     /**
      * Copies items that are in the table definitions from an
      * array or object into the current object
@@ -1742,12 +1740,9 @@ Class DB_DataObject
         return true;
     }
 
-
-
-
     /**
      * Returns an associative array from the current data
-     * (kind of oblivates the idea behind DataObjects, but 
+     * (kind of oblivates the idea behind DataObjects, but
      * is usefull if you use it with things like QuickForms.
      *
      * you can use the format to return things like user[key]
@@ -1770,6 +1765,7 @@ Class DB_DataObject
         }
         return $ret;
     }
+
     /**
      * validate - override this to set up your validation rules
      *
@@ -1819,7 +1815,7 @@ Class DB_DataObject
     function &getDatabaseConnection()
     {
         global $_DB_DATAOBJECT;
-      
+
         $this->_connect();
         if (!isset($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
             return false;
@@ -1845,6 +1841,7 @@ Class DB_DataObject
     }
 
     /* ----------------------- Debugger ------------------ */
+
     /**
      * Debugger. - use this in your extended classes to output debugging information.
      *
@@ -1859,7 +1856,7 @@ Class DB_DataObject
     function debug($message, $logtype = 0, $level = 1)
     {
         global $_DB_DATAOBJECT;
-      
+
         if (DB_DataObject::debugLevel()<$level) {
             return;
         }
@@ -1924,13 +1921,13 @@ Class DB_DataObject
         }
         // this will never work totally with PHP's object model.
         // as this is passed on static calls (like staticGet in our case)
-        
+
         if (@is_object($this) && is_subclass_of($this,'db_dataobject')) {
             $this->_lastError = $error;
         }
-        
+
         $_DB_DATAOBJECT['LASTERROR'] = $error;
-        
+
         // no checks for production here?.......
         DB_DataObject::debug($message,"ERROR",1);
         return $error;
@@ -1940,27 +1937,20 @@ Class DB_DataObject
      * Define the global $_DB_DATAOBJECT['CONFIG'] as an alias to  PEAR::getStaticProperty('DB_DataObject','options');
      *
      * After Profiling DB_DataObject, I discoved that the debug calls where taking
-     * considerable time (well 0.1 ms), so this should stop those calls happening. as 
+     * considerable time (well 0.1 ms), so this should stop those calls happening. as
      * all calls to debug are wrapped with direct variable queries rather than actually calling the funciton
      * THIS STILL NEEDS FURTHER INVESTIGATION
      *
      * @access   public
-     * @return   error object
+     * @return   object an error object
      */
     function _loadConfig()
     {
         global $_DB_DATAOBJECT;
-        
+
         $_DB_DATAOBJECT['CONFIG'] = &PEAR::getStaticProperty('DB_DataObject','options');
-        
-        
+
+
     }
-    
-    
-    
-    
-    
 }
-
-
 ?>
