@@ -712,9 +712,12 @@ Class DB_DataObject extends DB_DataObject_Overload
      * $object->selectAdd("unixtime(DATE) as udate");
      * $object->selectAdd("DATE");
      *
+     * to prepend distict:
+     * $object->selectAdd('distinct ' . $object->selectAdd());
+     *
      * @param  string  $k
      * @access public
-     * @return void
+     * @return mixed null or old string if you reset it.
      */
     function selectAdd($k = null)
     {
@@ -725,8 +728,9 @@ Class DB_DataObject extends DB_DataObject_Overload
             return false;
         }
         if ($k === null) {
+            $old = $this->_query['data_select'];
             $this->_query['data_select'] = '';
-            return;
+            return $old;
         }
         
         // check input...= 0 or '    ' == error!
@@ -734,8 +738,9 @@ Class DB_DataObject extends DB_DataObject_Overload
             return $this->raiseError("selectAdd: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
         }
         
-        if ($this->_query['data_select'])
+        if ($this->_query['data_select']) {
             $this->_query['data_select'] .= ', ';
+        }
         $this->_query['data_select'] .= " $k ";
     }
     /**
