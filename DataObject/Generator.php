@@ -272,6 +272,9 @@ class DB_DataObject_Generator extends DB_DataObject
                     $type=DB_DATAOBJECT_STR;
                     break;
             }
+            if (!strlen(trim($t->name))) {
+                continue;
+            }
             $this->_newConfig .= "{$t->name} = $type\n";
             //$this->_newConfig->setValue("/{$this->table}",$t->name, $type);
 
@@ -376,6 +379,9 @@ class DB_DataObject_Generator extends DB_DataObject
         $connections = array();
         $sets = array();
         foreach($defs as $t) {
+            if (strlen(trim($t->name))) {
+                continue;
+            }
             $padding = (30 - strlen($t->name));
             if ($padding < 2) $padding =2;
             $p =  str_repeat(' ',$padding) ;
