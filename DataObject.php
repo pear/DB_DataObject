@@ -194,14 +194,14 @@ Class DB_DataObject
      * @access  public
      * @return  int     No. of rows
      */
-    function get($k = NULL, $v = NULL)
+    function get($k = null, $v = null)
     {
         global $_DB_DATAOBJECT;
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
 
-        if ($v === NULL) {
+        if ($v === null) {
             $v = $k;
             $keys = $this->_get_keys();
             if (!$keys) {
@@ -213,7 +213,7 @@ Class DB_DataObject
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug("$k $v " .serialize(@$keys), "GET");
         }
-        if ($v === NULL) {
+        if ($v === null) {
             DB_DataObject::raiseError("No Value specified for get", DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
         }
@@ -238,7 +238,7 @@ Class DB_DataObject
      * @access  public
      * @return  object
      */
-    function &staticGet($class, $k, $v = NULL)
+    function &staticGet($class, $k, $v = null)
     {
 
         global $_DB_DATAOBJECT;
@@ -249,7 +249,7 @@ Class DB_DataObject
         
 
         $key = "$k:$v";
-        if ($v === NULL) {
+        if ($v === null) {
             $key = $k;
         }
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
@@ -560,7 +560,7 @@ Class DB_DataObject
         $db = $this->getDatabaseConnection();
 
         if (($db->features['limit'] == 'alter') && ($db->phptype != 'oci8')) {
-            if ($b === NULL) {
+            if ($b === null) {
                $this->_limit = " LIMIT $a";
                return;
             }
@@ -589,7 +589,7 @@ Class DB_DataObject
      */
     function selectAdd($k = null)
     {
-        if ($k === NULL) {
+        if ($k === null) {
             $this->_data_select = '';
             return;
         }
@@ -703,7 +703,7 @@ Class DB_DataObject
         }
 
         foreach($items as $k => $v) {
-            if (!isset($this->$k)) {
+            if (!isset($this->$k) && !@is_null($this->$k)) {
                 continue;
             }
             if ($leftq) {
@@ -812,7 +812,7 @@ Class DB_DataObject
         $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
 
         foreach($items as $k => $v) {
-            if (!isset($this->$k)) {
+            if (!isset($this->$k) && !@is_null($this->$k)) {
                 continue;
             }
             if (($dataObject !== false) && (@$dataObject->$k == $this->$k)) {
@@ -935,7 +935,7 @@ Class DB_DataObject
      * @access public
      * @return boolean true on success
      */
-    function fetchRow($row = NULL)
+    function fetchRow($row = null)
     {
         global $_DB_DATAOBJECT;
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
@@ -948,7 +948,7 @@ Class DB_DataObject
             DB_DataObject::raiseError("fetchrow: No table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
         }
-        if ($row === NULL) {
+        if ($row === null) {
             DB_DataObject::raiseError("fetchrow: No row specified", DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
         }
@@ -1368,7 +1368,7 @@ Class DB_DataObject
             (strtolower(substr(trim($string), 0, 8)) != 'describe')) {
 
             $this->debug('Disabling Update as you are in debug mode');
-            return DB_DataObject::raiseError("Disabling Update as you are in debug mode", NULL) ;
+            return DB_DataObject::raiseError("Disabling Update as you are in debug mode", null) ;
 
         }
         
@@ -1436,9 +1436,15 @@ Class DB_DataObject
                     continue;
                 }
             }
-            if (!isset($this->$k)) {
+            if (!isset($this->$k) && !@is_null($this->$k)) {
                 continue;
             }
+            
+            if (is_null($this->$k)) {
+                $this->whereAdd(" {$this->__table}.{$k}  IS NULL");
+                continue;
+            }
+            
 
             if ($v & DB_DATAOBJECT_STR) {
                 $this->whereAdd(" {$this->__table}.{$k}  = " . $__DB->quote($this->$k) );
@@ -1626,7 +1632,7 @@ Class DB_DataObject
      * @access public
      * @return mixed object on success
      */
-    function &getLink($row, $table = NULL, $link = false)
+    function &getLink($row, $table = null, $link = false)
     {
         /* see if autolinking is available
          * This will do a recursive call!
@@ -1635,7 +1641,7 @@ Class DB_DataObject
 
         $this->_get_table(); /* make sure the links are loaded */
 
-        if ($table === NULL) {
+        if ($table === null) {
             $links = array();
             if (isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
                 $links = &$_DB_DATAOBJECT['LINKS'][$this->_database];
@@ -1697,7 +1703,7 @@ Class DB_DataObject
      * @access public
      * @return array of results (empty array on failure)
      */
-    function &getLinkArray($row, $table = NULL)
+    function &getLinkArray($row, $table = null)
     {
         global $_DB_DATAOBJECT;
 
@@ -2215,13 +2221,13 @@ Class DB_DataObject
      * @access  public
      * @return  none
      */
-    function debugLevel($v = NULL)
+    function debugLevel($v = null)
     {
         global $_DB_DATAOBJECT;
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        if ($v !== NULL) {
+        if ($v !== null) {
             $_DB_DATAOBJECT['CONFIG']['debug']  = $v;
         }
         return @$_DB_DATAOBJECT['CONFIG']['debug'];
@@ -2248,12 +2254,12 @@ Class DB_DataObject
      * @access public
      * @return error object
      */
-    function raiseError($message, $type = NULL, $behaviour = NULL)
+    function raiseError($message, $type = null, $behaviour = null)
     {
         global $_DB_DATAOBJECT;
         
         if ($behaviour == PEAR_ERROR_DIE && @$_DB_DATAOBJECT['CONFIG']['dont_die']) {
-            $behaviour = NULL;
+            $behaviour = null;
         }
         
         if (PEAR::isError($message)) {
