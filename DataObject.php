@@ -1384,22 +1384,21 @@ class DB_DataObject extends DB_DataObject_Overload
 
 
     /**
-     * an escape wrapper around quote ..
-     * can be used when adding manual queries =
+     * an escape wrapper around DB->escapeSimple()
+     * can be used when adding manual queries or clauses
      * eg.
-     * $object->query("select * from xyz where abc like '". $object->quote($_GET['name']) . "'");
+     * $object->query("select * from xyz where abc like '". $object->escape($_GET['name']) . "'");
      *
-     * @param  string  $string  SQL Query
+     * @param  string  $string  value to be escaped 
      * @access public
-     * @return void or PEAR_Error
+     * @return string
      */
     function escape($string)
     {
         global $_DB_DATAOBJECT;
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-       
-        return substr($DB->quote($string),1,-1);
+        return $DB->escapeSimple($string);
     }
 
     /* ==================================================== */
