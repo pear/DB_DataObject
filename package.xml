@@ -24,10 +24,16 @@
   
   
     <release>
-      <version>0.13</version>
-      <date>2003-01-23</date>
+      <version>0.14</version>
+      <date>2003-02-06</date>
       <notes>
-        - bug fix release - debug_ignore_updates worked in reverse.. (Alexander Mazurov)
+        - added get affected rows to update/insert/delete
+          they will return false if no data is affected and set 
+          the Objects lastError value.
+          Note: databases that do not support affectedRows(), will always 
+          return false.
+        
+          
         
       </notes>
       <state>stable</state>

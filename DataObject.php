@@ -44,6 +44,7 @@ define('DB_DATAOBJECT_ERROR_INVALIDARGS',   -1);  // wrong args to function
 define('DB_DATAOBJECT_ERROR_NODATA',        -2);  // no data available
 define('DB_DATAOBJECT_ERROR_INVALIDCONFIG', -3);  // something wrong with the config
 define('DB_DATAOBJECT_ERROR_NOCLASS',       -4);  // no class exists
+define('DB_DATAOBJECT_ERROR_NOAFFECTEDROWS',-5);  // no rows where affected by update/insert/delete
 
 /**
  * Used in methods like delete() and count() to specify that the method should
@@ -588,6 +589,10 @@ Class DB_DataObject
                 DB_DataObject::raiseError($r);
                 return false;
             }
+            if ($r < 1) {
+                DB_DataObject::raiseError('No Data Affected By insert',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
+                return false;
+            }
             
             if ($key && 
                 ($items[$key] & DB_DATAOBJECT_INT) &&
@@ -674,8 +679,14 @@ Class DB_DataObject
         if ($settings && $this->_condition) {
             $r = $this->_query("UPDATE  {$this->__table}  SET {$settings} {$this->_condition} ");
             if (PEAR::isError($r)) {
+                $this->raiseError($r);
                 return false;
             }
+            if ($r < 1) {
+                DB_DataObject::raiseError('No Data Affected By update',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
+                return false;
+            }
+            
             $this->_clear_cache();
             return true;
         }
@@ -722,6 +733,11 @@ Class DB_DataObject
         if ($this->_condition) {
             $r = $this->_query("DELETE FROM {$this->__table} {$this->_condition}");
             if (PEAR::isError($r)) {
+                $this->raiseError($r);
+                return false;
+            }
+            if ($r < 1) {
+                DB_DataObject::raiseError('No Data Affected By delete',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
                 return false;
             }
             $this->_clear_cache();
@@ -924,8 +940,8 @@ Class DB_DataObject
      * @var     integer
      */
     var $_DB_resultid; // database result object
-
-
+    
+    
     /* =========================================================== */
     /*  Major Private Methods - the core part!*/
     /* =========================================================== */
@@ -1150,7 +1166,7 @@ Class DB_DataObject
             case 'update':
             case 'delete':
                 unset($GLOBALS['_DB_DATAOBJECT']['RESULTS'][$this->_DB_resultid]);
-                return;
+                return $__DB->affectedRows();;
         }
         $this->N = 0;
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
