@@ -150,7 +150,7 @@ Class DB_DataObject
     * @access   private
     * @var      string
     */
-    var $_DB_DataObject_version = "1.0";
+    var $_DB_DataObject_version = "1.2";
 
     /**
      * The Database table (used by table extends)
