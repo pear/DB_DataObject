@@ -1239,7 +1239,7 @@ Class DB_DataObject extends DB_DataObject_Overload
      *
      * @param  string  $string  SQL Query
      * @access public
-     * @return void or PEAR_Error
+     * @return void or DB_Error
      */
     function query($string)
     {
@@ -1776,7 +1776,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                 DB_DataObject::debug($string, "SENT");
                 
             }
-            return DB_DataObject::raiseError($result->message, $result->code);
+            return $result;
         }
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $t= explode(' ',microtime());
