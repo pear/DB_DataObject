@@ -101,7 +101,7 @@ class DB_DataObject_Cast {
   
     function blob($value) {
         $r = new DB_DataObject_Cast;
-        $r->type = __FUNCTION__;
+        $r->type = 'blob';
         $r->value = $value;
         return $r;
     }
@@ -121,7 +121,7 @@ class DB_DataObject_Cast {
   
     function string($value) {
         $r = new DB_DataObject_Cast;
-        $r->type = __FUNCTION__;
+        $r->type = 'string';
         $r->value = $value;
         return $r;
     }
@@ -139,7 +139,7 @@ class DB_DataObject_Cast {
   
     function sql($value) {
         $r = new DB_DataObject_Cast;
-        $r->type = __FUNCTION__;
+        $r->type = 'sql';
         $r->value = $value;
         return $r;
     }
@@ -202,7 +202,7 @@ class DB_DataObject_Cast {
             $bits = explode('-',date('Y-m-d',mktime(1,1,1,$bits[1],$bits[2],$bits[0])));
         }
         $r = new DB_DataObject_Cast;
-        $r->type = __FUNCTION__;
+        $r->type = 'date';
         list($r->year,$r->month,$r->day) = $bits;
         return $r;
     }
@@ -338,4 +338,3 @@ class DB_DataObject_Cast {
     
 }
 
-?>
