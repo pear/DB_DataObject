@@ -16,29 +16,31 @@
 // | Author:  Alan Knowles <alan@akbkhome.com>
 // +----------------------------------------------------------------------+
 //
+// $Id$
+//
 
-require_once("DB/DataObject/Generator.php");
+require_once 'DB/DataObject/Generator.php';
 
 if (!ini_get('register_argc_argv')) {
-    PEAR::raiseError("\nERROR: You must turn register_argc_argv On in you php.ini file for this to work\neg.\n\nregister_argc_argv = On\n\n",null,PEAR_ERROR_DIE);
+    PEAR::raiseError("\nERROR: You must turn register_argc_argv On in you php.ini file for this to work\neg.\n\nregister_argc_argv = On\n\n", null, PEAR_ERROR_DIE);
     exit;
 }
 
 if (!@$_SERVER['argv'][1]) {
-    PEAR::raiseError("\nERROR: createTable.php usage:\n\nC:\php\pear\DB\DataObjects\createTable.php example.ini\n\n",null,PEAR_ERROR_DIE);
+    PEAR::raiseError("\nERROR: createTable.php usage:\n\nC:\php\pear\DB\DataObjects\createTable.php example.ini\n\n", null, PEAR_ERROR_DIE);
     exit;
 }
-$config = parse_ini_file($_SERVER['argv'][1],true);
+
+$config = parse_ini_file($_SERVER['argv'][1], true);
 
 $options = &PEAR::getStaticProperty('DB_DataObject','options');
 $options = $config['DB_DataObject'];
+
 if (!$options) {
-    PEAR::raiseError("\nERROR: could not read ini file\n\n",null,PEAR_ERROR_DIE);
+    PEAR::raiseError("\nERROR: could not read ini file\n\n", null, PEAR_ERROR_DIE);
     exit;
 }
 //DB_DataObject::debugLevel(5);
 $generator = new DB_DataObject_Generator;
 $generator->start();
-
-
-?> 
+?>
