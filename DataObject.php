@@ -1920,7 +1920,13 @@ Class DB_DataObject
      * }
      *
      *
-     * @param    optional $obj       object     the joining object (no value resets the join)
+     * @param    optional $obj       object |array    the joining object (no value resets the join)
+     *                                          If you use an array here it should be in the format:
+     *                                          array('local_column','remotetable:remote_column');
+     *                                          if remotetable does not have a definition, you should
+     *                                          use @ to hide the include error message..
+     *                                      
+     *
      * @param    optional $joinType  string     'LEFT'|'INNER'|'RIGHT'|'' Inner is default, '' indicates 
      *                                          just select ... from a,b,c with no join and 
      *                                          links are added as where items.
@@ -1946,6 +1952,27 @@ Class DB_DataObject
             $this->_join = '';
             return;
         }
+        
+        // support for array as first argument 
+        // this assumes that you dont have a links.ini for the specified table.
+        // and it doesnt exist as am extended dataobject!! - experimental.
+        
+        $ofield = false; // object field
+        $tfield = false; // this field
+        $toTable = false;
+        if (is_array($obj)) {
+            $tfield = $obj[0];
+            list($toTable,$ofield) = explode(':',$obj[1]);
+            $obj = DB_DataObject::factory($toTable);
+            if (!$obj) {
+                $obj = new DB_DataObject;
+                $obj->__table = $toTable;
+            }
+            // set the table items to nothing.. - eg. do not try and match
+            // things in the child table...???
+            $items = array();
+        }
+        
         if (!is_object($obj)) {
             DB_DataObject::raiseError("joinAdd: called without an object", DB_DATAOBJECT_ERROR_NODATA,PEAR_ERROR_DIE);
         }
@@ -1962,12 +1989,10 @@ Class DB_DataObject
             $links = &$_DB_DATAOBJECT['LINKS'][$this->_database];
         }
 
-        $ofield = false; // object field
-        $tfield = false; // this field
-
+        
          /* look up the links for obj table */
 
-        if (isset($links[$obj->__table])) {
+        if (!$ofield && isset($links[$obj->__table])) {
             foreach ($links[$obj->__table] as $k => $v) {
                 /* link contains {this column} = {linked table}:{linked column} */
                 $ar = explode(':', $v);
@@ -2050,9 +2075,24 @@ Class DB_DataObject
                 $this->whereAdd("{$joinAs}.{$ofield}={$this->__table}.{$tfield}");
         }
          
+        // if obj only a dataobject - eg. no extended class has been defined..
+        // it obvioulsy cant work out what child elements might exist...
+        // untill we get on the fly querying of tables..
+        if ( get_class($obj) == 'db_dataobject') {
+            return true;
+        }
+         
         /* now add where conditions for anything that is set in the object */
-
+    
+    
+    
         $items = $obj->table();
+        // will return an array if no items..
+        
+        // only fail if we where expecting it to work (eg. not joined on a array)
+        
+        
+        
         if (!$items) {
             DB_DataObject::raiseError("joinAdd: No table definition for {$obj->__table}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
@@ -2076,16 +2116,12 @@ Class DB_DataObject
         
         // and finally merge the whereAdd from the child..
         if (!$obj->_condition) {
-            return;
+            return true;
         }
         $cond = preg_replace('/^\sWHERE/i','',$obj->_condition);
+        
         $this->whereAdd("($cond)");
-        
-        
-        
-        
-        
-        
+        return true;
 
     }
 
