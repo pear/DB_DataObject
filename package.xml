@@ -34,6 +34,8 @@
         - fix generator for postgres and mdb - use unique keys and look for 'nextval' as keys.
         - fix no key insert bug (G Moxley Kempster)
         - fix empty table bug in generator (Robert Janeczek)
+        - staticAutoloadTable(), now handles parse errors in included files alot cleaner
+        - added dependancies on php4.3, DB 1.3 and Validate (although Validate is optional)
       </notes>
       <state>stable</state>
     </release>
@@ -54,7 +56,13 @@
         </dir>
     </filelist>
     
-   
+   <deps>
+      <dep type="php" rel="ge" version="4.3"/>
+      <dep type="pkg" rel="ge" version="1.3">DB</dep>
+      <dep type="pkg" rel="ge" version="0.1.1">Validate</dep>
+    </deps>
+    
+
    
   <changelog>
   
