@@ -668,7 +668,7 @@ Class DB_DataObject
         $this->_build_condition($keys);
         // if primary keys are not set then use data from rest of object.
         if (!$use_where && !$this->_condition) {
-            $this->_build_condition($this->_get_table(),$keys);
+            $this->_build_condition($this->_get_table(),array(),$keys);
         }
 
         if ($this->_condition) {
@@ -1024,7 +1024,7 @@ Class DB_DataObject
         $connections[$this->_database_dsn_md5] = DB::connect($dsn);
         
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
-            $this->debug(serialize($connections), "CONNECT",3);
+            $this->debug(serialize($connections), "CONNECT",5);
         }
         if (PEAR::isError($connections[$this->_database_dsn_md5])) {
             DB_DataObject::raiseError(
@@ -1062,9 +1062,11 @@ Class DB_DataObject
             (strtolower(substr(trim($string), 0, 6)) != 'select') &&
             (strtolower(substr(trim($string), 0, 4)) != 'show') &&
             (strtolower(substr(trim($string), 0, 8)) != 'describe')) {
-
-            $this->debug('Disabling Update as you are in debug mode');
-            return DB_DataObject::raiseError("Disabling Update as you are in debug mode", NULL) ;
+            $options = &PEAR::getStaticProperty('DB_DataObject','options');
+            if (!@$options['debug_force_updates']) {
+                $this->debug('Disabling Update as you are in debug mode');
+                return DB_DataObject::raiseError("Disabling Update as you are in debug mode", NULL) ;
+            }
         }
         $this->_DB_resultid = count($results); // add to the results stuff...
         $results[$this->_DB_resultid] = $__DB->query($string);
@@ -1086,7 +1088,7 @@ Class DB_DataObject
         }
         $this->N = 0;
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
-            $this->debug(serialize($result), 'RESULT',3);
+            $this->debug(serialize($result), 'RESULT',5);
         }
         if (method_exists($result, 'numrows')) {
             $this->N = $result->numrows();
@@ -1101,7 +1103,7 @@ Class DB_DataObject
      * @access  private
      * @return  string
      */
-    function _build_condition(&$keys, $filter = array())
+    function _build_condition(&$keys, $filter = array(),$negative_filter=array())
     {
         $this->_connect();
         $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
@@ -1110,6 +1112,11 @@ Class DB_DataObject
         foreach($keys as $k => $v) {
             if ($filter) {
                 if (!in_array($k, $filter)) {
+                    continue;
+                }
+            } 
+            if ($negative_filter) {
+                if (in_array($k, $negative_filter)) {
                     continue;
                 }
             }
