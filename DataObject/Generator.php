@@ -319,7 +319,7 @@ class DB_DataObject_Generator extends DB_DataObject {
     
     function _generateClassTable($input='') {
         // title = expand me!
-        
+        $foot = "";
         $head = "<?\n/*\n* Table Definition for {$this->table}\n*/\n\n";
         // requires
         $head .= "\n\nrequire_once('{$this->_extendsFile}');\n\n";
