@@ -1912,9 +1912,10 @@ Class DB_DataObject extends DB_DataObject_Overload
     
     /**
      * Have the links been loaded?
+     * if they have it contains a array of those variables.
      *
      * @access  private
-     * @var     boolean
+     * @var     boolean | array
      */
     var $_link_loaded = false;
     
@@ -1978,7 +1979,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (isset($links[$this->__table]) && (!@$links[$this->__table])) {
             return false;
         }
+        $loaded = array();
         if (@$links[$this->__table]) {
+            
             foreach($links[$this->__table] as $key => $match) {
                 list($table,$link) = explode(':', $match);
                 $k = sprintf($format, str_replace('.', '_', $key));
@@ -1986,8 +1989,11 @@ Class DB_DataObject extends DB_DataObject_Overload
                 if ($p = strpos($key,".")) {
                       $key = substr($key, 0, $p);
                 }
+                
                 $this->$k = $this->getLink($key, $table, $link);
+                $loaded[] = $k;
             }
+            $this->_link_loaded = $loaded;
             return true;
         }
         foreach (array_keys($cols) as $key) {
@@ -1997,8 +2003,9 @@ Class DB_DataObject extends DB_DataObject_Overload
             // does the table exist.
             $k =sprintf($format, $key);
             $this->$k = $this->getLink($key);
+            $loaded[] = $k;
         }
-        $this->_link_loaded = true;
+        $this->_link_loaded = $loaded;
         return true;
     }
 
@@ -2463,6 +2470,7 @@ Class DB_DataObject extends DB_DataObject_Overload
      * you can use the format to return things like user[key]
      * by sending it $object->toArray('user[%s]')
      *
+     * will also return links converted to arrays.
      *
      * @param   string sprintf format for array
      * @access   public
@@ -2487,6 +2495,14 @@ Class DB_DataObject extends DB_DataObject_Overload
             }
             $ret[sprintf($format,$k)] = $this->$k;
         }
+        if (!$this->_link_loaded) {
+            return $ret;
+        }
+        foreach($this->_link_loaded as $k) {
+            $ret[sprintf($format,$k)] = $this->$k->toArray();
+        
+        }
+        
         return $ret;
     }
 

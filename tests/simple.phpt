@@ -61,49 +61,57 @@ class test extends DB_DataObject {
         $this->dumpTest(); 
 	
 
-	echo "\n\n\n****** now update based on key\n";
+        echo "\n\n\n****** now update based on key\n";
         $t= new test;
         $t->get(2);
         $t->firstname='brian';
         $t->update();
         $this->dumpTest();  
 	
-	echo "\n\n\n****** now update using changed items only\n";
+        echo "\n\n\n****** now update using changed items only\n";
         $t= new test;
         $t->get(2);
-	$copy = $t;
+        $copy = $t;
         $t->firstname='jones';
         $t->update($copy);
         $this->dumpTest();  
-	echo "\n\n\n****** now update using changed items only\n";	
+        echo "\n\n\n****** now update using changed items only\n";	
 
-	print_r($t->toArray('user[%s]'));
+        print_r($t->toArray('user[%s]'));
 
-	echo "\n\n\n****** limited queries 1\n";
+        echo "\n\n\n****** limited queries 1\n";
         $t= new test;
 
         $t->limit(1);
-	$t->find();
-	$t->fetch();
+        $t->find();
+        $t->fetch();
 	
 	
-	echo "\n\n\n****** limited queries 1,1\n";
-	$t= new test;
+        echo "\n\n\n****** limited queries 1,1\n";
+        $t= new test;
 
         $t->limit(1,1);
-	$t->find();
-	$t->fetch(); 
+        $t->find();
+        $t->fetch(); 
 	
-	echo "\n\n\n****** to Array on empty result\n";
-	print_r($t->toArray('user[%s]'));
+        echo "\n\n\n****** to Array on empty result\n";
+        print_r($t->toArray('user[%s]'));
 	
 
-	echo "\n\n\n******get and delete an object key\n";
-	$t = new test;
-	$t->get(2);
-	$t->delete();
+        echo "\n\n\n******get and delete an object key\n";
+        $t = new test;
+        $t->get(2);
+        $t->delete();
         
         
+        echo "\n\n\n******changing database stuff.\n";
+        
+        $t = new test;
+        $x = & $t->getDatabaseConnection();
+        
+        $x->autocommit = 0;
+        $y = & $t->getDatabaseConnection();
+        print_r($y);
         
     }
     
