@@ -22,13 +22,12 @@
   </maintainers>
   
   <release>
-     <version>1.7.9</version>
-      <date>2004-03-12</date>
+     <version>1.7.10</version>
+      <date>2004-03-16</date>
       <notes><![CDATA[
         Minor Bugfix release. 
       
-      
-        #3764 - toValue(), and hence toArray() cast booleans to true|false. (previous fix was buggy) 
+        #3829 - joinAdd fix for database prefixing (yet again)
            
  
       ]]></notes>
@@ -65,7 +64,21 @@
     </deps>
 
   <changelog>
-    
+    <release>
+     <version>1.7.9</version>
+      <date>2004-03-12</date>
+      <notes><![CDATA[
+        Minor Bugfix release. 
+      
+      
+        #3764 - toValue(), and hence toArray() cast booleans to true|false. (previous fix was buggy) 
+           
+ 
+      ]]></notes>
+      <state>stable</state>
+    </release> 
+   
+  
   <release>
      <version>1.7.8</version>
       <date>2004-03-12</date>
