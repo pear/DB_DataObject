@@ -57,11 +57,13 @@ define('DB_DATAOBJECT_ERROR_NOCLASS',       -4);  // no class exists
  *   - results     = [id] => map to pear db object
  *   - ini         = mapping of database to ini file results
  *   - links       = mapping of database to links file
+ *   - lasterror   = pear error objects for last error event.
 */
 $GLOBALS['_DB_DATAOBJECT']['RESULTS'] = array();
 $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'] = array();
 $GLOBALS['_DB_DATAOBJECT']['INI'] = array();
 $GLOBALS['_DB_DATAOBJECT']['LINKS'] = array();
+$GLOBALS['_DB_DATAOBJECT']['LASTERROR'] = null;
 
 /**
  * The main "DB_DataObject" class is really a base class for your own tables classes
@@ -1727,11 +1729,16 @@ Class DB_DataObject
         } else {
             $error = PEAR::raiseError($message, $type, $behaviour);
         }
-        if (is_object($this)) {
+        // this will never work totally with PHP's object model.
+        // as this is passed on static calls (like staticGet in our case)
+        
+        if (@is_object($this) && is_subclass_of($this,'db_dataobject')) {
             $this->_lastError = $error;
         }
-        $last_error = &PEAR::getStaticProperty('DB_DataObject','lastError');
-        $last_error = $error;
+        
+        $GLOBALS['_DB_DATAOBJECT']['LASTERROR'] = $error;
+        
+        // no checks for production here?.......
         DB_DataObject::debug($message,"ERROR",1);
         return $error;
     }
