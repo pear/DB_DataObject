@@ -2884,7 +2884,7 @@ class DB_DataObject extends DB_DataObject_Overload
     function toArray($format = '%s')
     {
         global $_DB_DATAOBJECT;
-        $ret = array( ');
+        $ret = array();
         $ar = isset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid]) ?
             $_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid] :
             $this->table();
