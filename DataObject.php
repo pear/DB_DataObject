@@ -88,8 +88,9 @@
 
 /**
  * Needed classes
+ * - we use getStaticProperty from PEAR pretty extensively (cant remove it ATM)
  */
-require_once 'DB.php';
+
 require_once 'PEAR.php';
 
 /**
@@ -1948,7 +1949,9 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->debug("{$dsn} {$this->_database_dsn_md5}", "CONNECT",3);
         }
         $db_options = PEAR::getStaticProperty('DB','options');
+        require_once 'DB.php';
         if ($db_options) {
+
             $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn,$db_options);
         } else {
             $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn);
@@ -2045,7 +2048,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
        
 
-        if (DB::isError($result)) {
+        if (is_a($result,'DB_Error')) {
             if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) { 
                 $this->debug($result->toString(), "Query Error",1 );
             }
@@ -2075,7 +2078,7 @@ class DB_DataObject extends DB_DataObject_Overload
         if (method_exists($result, 'numrows')) {
             $DB->expectError(DB_ERROR_UNSUPPORTED);
             $this->N = $result->numrows();
-    	    if (DB::isError($this->N)) {
+            if (is_a($this->N,'DB_Error')) {
                 $this->N = 1;
             }
             $DB->popExpect();
