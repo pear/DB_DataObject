@@ -38,7 +38,7 @@
             - tableName()  = returns or assign the table name
             - database()   = returns or assign the database name
           
-          changes by Marcus Wolff
+          changes by Markus Wolff
         
         POSSIBLE BC Implications:   If you define _get_table or _get_keys manually (rather than using the ini file)
           you should rename your methods table() and keys()
