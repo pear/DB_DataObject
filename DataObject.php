@@ -2867,7 +2867,13 @@ class DB_DataObject extends DB_DataObject_Overload
             /* this is probably an error condition! */
             $this->whereAdd("{$joinAs}.{$kSql} = 0");
         }
-        
+        if (!isset($this->_query)) {
+            $this->raiseError(
+                "joinAdd can not be run from a object that has had a query run on it,
+                clone the object or create a new one and use setFrom()", 
+                DB_DATAOBJECT_ERROR_INVALIDARGS);
+            return false;
+        }
         // and finally merge the whereAdd from the child..
         if (!$obj->_query['condition']) {
             return true;
