@@ -575,8 +575,8 @@ Class DB_DataObject
         $table = $this->__table;
         if (is_object($from)) {
             $table = $from->__table;
-            if ($tableAs !== false) {
-                $table = $tableAs;
+            if ($tableName !== false) {
+                $table = $tableName;
             }
             $from = array_keys($from->_get_table());
         }
