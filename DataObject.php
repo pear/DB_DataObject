@@ -3156,14 +3156,13 @@ Class DB_DataObject extends DB_DataObject_Overload
                     return '';
                 } 
                 $guess = strtotime($this->$col);
-                if ($guess > -1) {
-                   
+                var_dump($guess);
+                if ($guess != -1) {
                     return strftime($format,$guess);
                 }
                 // try date!!!!
                 require_once 'Date.php';
-                $x = new Date($this->$col);
-                // this is broken - date does not work the same way..
+                $x = new Date($this->$col. ' 01:01:01');
                 return $x->format($format);
                 
             case ($cols[$col] & DB_DATAOBJECT_TIME):
