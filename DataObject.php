@@ -2893,7 +2893,13 @@ class DB_DataObject extends DB_DataObject_Overload
         if ($addJoinAs) {
             $fullJoinAs = "AS {$joinAs}";
         } else {
-            if ($database_prefix && ($obj->_database != $this->_database) && strlen($this->_database )) {
+            // if 
+            if (
+                    in_array($DB->dsn['phptype'],array('mysql','mysqli')) &&
+                    ($obj->_database != $this->_database) &&
+                    strlen($this->_database)
+                ) 
+            {
                 $joinAs = ($quoteIdentifiers ? $DB->quoteIdentifier($obj->_database) : $obj->_database) . '.' . $joinAs;
             }
         }
