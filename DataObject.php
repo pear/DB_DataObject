@@ -811,7 +811,7 @@ class DB_DataObject extends DB_DataObject_Overload
     /**
      * Insert the current objects variables into the database
      *
-     * Returns the ID of the inserted element - mysql specific = fixme?
+     * Returns the ID of the inserted element (if auto increment or sequences are used.)
      *
      * for example
      *
@@ -822,7 +822,7 @@ class DB_DataObject extends DB_DataObject_Overload
      * echo $object->insert();
      *
      * @access public
-     * @return mixed True on success, false on failure, 0 on no data affected
+     * @return mixed false on failure, int when auto increment or sequence used, otherwise true on success
      */
     function insert()
     {
