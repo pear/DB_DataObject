@@ -33,9 +33,18 @@
           methods, which are predefined as
           getXXX = returns $object->XXX
           setXXX($V) = returns true (or an error string if you create your own)
+          (on affects php-4.3.2RC2 or later..)
         - selectAs($dataobject,'prefix_%s') to help control the way join queries return 
           their data * doing selectAs() - clears the select and sets it to table.id as id ... etc.
-        
+        - setFrom has an extra optional parameter for formating: eg.
+          $object->setFrom($_POST,'prefix_%s') would map prefix_name to $object->name
+          the default is '%s' which is the same as the previous behaviour
+        - added option dont_die (default no) to ini file
+          default (no) means that DataObjects will emit a PEAR_ERROR_DIE on configuration and 
+          programming errors
+          true or 1 means that you can write a PEAR::error handler to catch the errors and
+          display a nice it's not working message
+          
           
       </notes>
       <state>stable</state>
