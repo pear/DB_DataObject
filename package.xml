@@ -21,10 +21,17 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>0.1</version>
-    <date>2002-06-25</date>
-    <notes>PEARified - documentation are temporarly on http://docs.akbkhome.com/DB_DataObject/</notes>
-    <state>stable</state>
+      <version>0.3</version>
+      <date>2002-08-16</date>
+      <notes>
+      - Fixed Globals requirement in createTables,
+      - Added Validation Utilities
+      - Fixed SetFrom Object
+      - Added database.links.ini support (by Tim White)
+      - added production option to configuration
+      - added DB_DataObject::staticAutoLoadTable($tablename);
+      </notes>
+      <state>beta</state>
     <filelist>
         <dir name="/" baseinstalldir="DB" role="php">
             <file>DataObject.php</file>
@@ -38,10 +45,29 @@
   </release>
   <changelog>
     <release>
+      <version>0.3</version>
+      <date>2002-08-16</date>
+      <notes>
+       - Fixed Globals requirement in createTables,
+      - Added Validation Utilities
+      - Fixed SetFrom Object
+      - Added database.links.ini support (by Tim White)
+      - added production option to configuration
+      - added DB_DataObject::staticAutoLoadTable($tablename);
+      </notes>
+      <state>beta</state>
+    </release>
+   <release>
+      <version>0.2</version>
+      <date>2002-07-12</date>
+      <notes>Removed list method, First upload as pear package. - Documentation now in PEAR Manual</notes>
+      <state>beta</state>
+    </release>
+    <release>
       <version>0.1</version>
       <date>2002-06-25</date>
-      <notes>PEARified - documentation are temporarly on http://docs.akbkhome.com/DB_DataObject/</notes>
-      <state>stable</state>
+      <notes>PEARified</notes>
+      <state>beta</state>
     </release>
   </changelog>
 </package>
