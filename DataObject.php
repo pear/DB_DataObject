@@ -85,7 +85,6 @@ $GLOBALS['_DB_DATAOBJECT']['LINKS'] = array();
 $GLOBALS['_DB_DATAOBJECT']['LASTERROR'] = null;
 $GLOBALS['_DB_DATAOBJECT']['CONFIG'] = array();
 $GLOBALS['_DB_DATAOBJECT']['CACHE'] = array();
-$GLOBALS['_DB_DATAOBJECT']['LOADED'] = array();
 $GLOBALS['_DB_DATAOBJECT']['OVERLOADED'] = false;
 $GLOBALS['_DB_DATAOBJECT']['QUERYENDTIME'] = 0;
 /**
@@ -1663,7 +1662,8 @@ Class DB_DataObject
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        $class   = DB_DataObject::_autoloadClass($_DB_DATAOBJECT['CONFIG']['class_prefix'] . ucfirst($table));
+        $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . ucfirst($table);
+        $class = (class_exists($class)) ? $class  : DB_DataObject::_autoloadClass($class);
         return $class;
     }
     
@@ -1687,8 +1687,10 @@ Class DB_DataObject
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        $class   = DB_DataObject::_autoloadClass($_DB_DATAOBJECT['CONFIG']['class_prefix'] . ucfirst($table));
+        $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . ucfirst($table);
         
+        $class = (class_exists($class)) ? $class  : DB_DataObject::_autoloadClass($class);
+
         if (!$class) {
             return DB_DataObject::raiseError("factory could not find class $class from $table",
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
@@ -1706,6 +1708,7 @@ Class DB_DataObject
     function _autoloadClass($class)
     {
         global $_DB_DATAOBJECT;
+        
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
@@ -1713,13 +1716,19 @@ Class DB_DataObject
 
         // only include the file if it exists - and barf badly if it has parse errors :)
         
-        $file = $_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).'.php';
         
-         
+        
+        if (!file_exists($_DB_DATAOBJECT['CONFIG']['class_location'].'/'.ucfirst($table).".php")) {
+            DB_DataObject::raiseError(
+                "autoload:Could not find class {$class} using class_location value", 
+                DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+            return false;
+        }
+        
         include_once $_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).".php";
         
         
-        $_DB_DATAOBJECT['LOADED'][$file] = true;
+        
         
         if (!class_exists($class)) {
             DB_DataObject::raiseError("autoload:Could not autoload {$class}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
@@ -1884,7 +1893,9 @@ Class DB_DataObject
             DB_DataObject::raiseError("getLink: row not set $row", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
-
+        
+        // check to see if we know anything about this table..
+        
         $obj = $this->factory($table);
         
         if (PEAR::isError($obj)) {
