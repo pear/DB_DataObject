@@ -198,7 +198,7 @@ class DB_DataObject_Generator extends DB_DataObject
         $this->_connect();
         // dont generate a schema if location is not set
         // it's created on the fly!
-        if (!@$options['schema_location']) {
+        if (!@$options['schema_location'] && @!$options["ini_{$this->_database}"] ) {
             return;
         }
         $base =  $options['schema_location'];
@@ -211,7 +211,7 @@ class DB_DataObject_Generator extends DB_DataObject
             require_once 'System.php';
             System::mkdir(array('-p','-m',0755,$base));
         }
-        echo "{$file}\n";
+        $this->debug("Writing ini as {$file}\n");
         touch($file);
         //print_r($this->_newConfig);
         $fh = fopen($file,'w');
