@@ -1709,8 +1709,10 @@ Class DB_DataObject extends DB_DataObject_Overload
     function _query($string)
     {
         global $_DB_DATAOBJECT;
+        $this->_connect();
+        
 
-        $DB = &$this->getDatabaseConnection();
+        $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]
 
         $options = &$_DB_DATAOBJECT['CONFIG'];
 
@@ -1718,6 +1720,11 @@ Class DB_DataObject extends DB_DataObject_Overload
             $this->debug($string,$log="QUERY");
             
         }
+        
+        if (strtoupper($string) == 'BEGIN') {
+            $DB->autoCommit($onoff);
+        }
+         
         
 
         if (@$options['debug_ignore_updates'] &&
@@ -2623,25 +2630,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         return $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
     }
-    /*
-    * enable/disable automatic Commit
-    *
-    * This is a wrapper, as overload does not allow you to return by reference properly.
-    *
-    * @param optional boolean $onoff (default turns off)
-    * @return mixed DB_Error 
-    *
-    * @access public
-    */
-    function autoCommit($onoff=false)
-    {
-        $this->_connect();
-        if (!isset($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
-            return  false;
-        }
-        return $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->autoCommit($onoff);
-        
-    }
+ 
  
     /**
      * Gets the DB result object related to the objects active query
