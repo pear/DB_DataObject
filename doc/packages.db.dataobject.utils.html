@@ -76,25 +76,25 @@ NAME="packages.DB.DataObject.utils">AutoForm Utilities and Debugging</H1
 ><DIV
 CLASS="refnamediv"
 ><A
-NAME="AEN4167"
+NAME="AEN4197"
 ></A
 >AutoForm Utilities and Debugging&nbsp;--&nbsp;
-        setFrom(), debugLevel()
+        ::setFrom(), ::debugLevel()
       </DIV
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN4170"
+NAME="AEN4200"
 ></A
 ><H2
->setFrom</H2
+>::setFrom()</H2
 ><P
 >&#13;      Copies data from an Array or object into the current object
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN4173"><P
+NAME="AEN4203"><P
 ></P
 ><P
 ><CODE
@@ -104,13 +104,13 @@ CLASS="FUNCDEF"
 CLASS="function"
 >::setFrom</B
 ></CODE
-> (Array or Object from)</CODE
+> ((Array or Object) from)</CODE
 ></P
 ><P
 ></P
 ></DIV
 ><P
->&#13;        copies all that relates to this table (Except keys) into the current object
+>&#13;        copies all the data that relates to this table (Except keys) into the current object
         <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -122,7 +122,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4180"><P
+NAME="AEN4210"><P
 ><B
 >Example 1.  Copying data from post or object</B
 ></P
@@ -163,7 +163,9 @@ $person-&#62;update();
 ></TR
 ></TABLE
 >
-        
+      </P
+><P
+>&#13;        
         Copies all the data (with names the of this objects columns) from another object or array into 
         this one.
         
@@ -173,17 +175,17 @@ $person-&#62;update();
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN4183"
+NAME="AEN4214"
 ></A
 ><H2
->DB_DataObject::debugLevel</H2
+>DB_DataObject::debugLevel()</H2
 ><P
->&#13;      Sets the debugging level - so you can see the Queries Being build and executed
+>&#13;      Sets the debugging level - so you can see the queries being built and executed
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN4186"><P
+NAME="AEN4217"><P
 ></P
 ><P
 ><CODE
@@ -200,6 +202,7 @@ CLASS="function"
 ></DIV
 ><P
 >&#13;        Sets the debugging level (without any parameters it will disable the debugging output)
+        See the configuration page for details on the various levels.
         <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -211,7 +214,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4194"><P
+NAME="AEN4225"><P
 ><B
 >Example 2.  Setting the debugging level </B
 ></P

@@ -76,15 +76,15 @@ NAME="packages.DB.DataObject.links">Automatic Table Linking</H1
 ><DIV
 CLASS="refnamediv"
 ><A
-NAME="AEN4125"
+NAME="AEN4151"
 ></A
 >Automatic Table Linking&nbsp;--&nbsp;
-       Automatic Table Linking - getLink, getLinks
+       Automatic Table Linking - ::getLink(), ::getLinks()
       </DIV
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN4128"
+NAME="AEN4154"
 ></A
 ><H2
 >Automating the colleciton of related data</H2
@@ -94,34 +94,32 @@ NAME="AEN4128"
         can automatically fetch objects into the parents variables.
       </P
 ><P
->&#13;        The method of doing this is heavily dependant on naming columns relating to databases, for example in the
-        membership described above, you would have to have a column called person_id, group_id for the Link methods
-        to understand which table to fetch the data from. The principle is TABLENAME_ANYTHING, and it will always
-        attempt to find primary keys that match the value of field, and load the related object into $object-&#62;_tablename_anything
+>&#13;        The Automated method of doing this is heavily dependant on naming columns relating to databases, for example in the
+        membership described above, you would have to have a column called person_id, group_id for the automated Link 
+        methods to understand which table to fetch the data from. The principle is TABLENAME_ANYTHING, and it 
+        will always attempt to find primary keys that match the value of field, the getLinks() methods will autoload 
+        the related object into $object-&#62;_tablename_anything
       </P
 ><P
->&#13;        The linking feature is not essential to the core operation of DB_DataObject, and can be ignored if you
-        do not wish to set up or revise your database structure. - It just saves alot of work next time you
-        set up an application.
-      </P
-><P
->&#13;        
+>&#13;       The other way of using getLink() is to use it with the second parameter which is the table name of the related
+       table, it will then query the primary key on that table to see if it matches the value of the requested row.
+       In this method however the getLinks() method will not work, as it will not know the related table names.
       </P
 ></DIV
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN4134"
+NAME="AEN4159"
 ></A
 ><H2
->getLink</H2
+>::getLink()</H2
 ><P
->&#13;      Loads the related object into the main object, with a variable name prefixed with _
+>&#13;      Gets the Related Row Object from the Related Table
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN4137"><P
+NAME="AEN4162"><P
 ></P
 ><P
 ><CODE
@@ -131,13 +129,13 @@ CLASS="FUNCDEF"
 CLASS="function"
 >::getLink</B
 ></CODE
-> (string Row)</CODE
+> (string Row [, string Table])</CODE
 ></P
 ><P
 ></P
 ></DIV
 ><P
->&#13;        Loads the related Object 
+>&#13;        Gets the related Object 
         <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -149,9 +147,9 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4144"><P
+NAME="AEN4172"><P
 ><B
->Example 1.  loading the related object </B
+>Example 1.  Getting the related object </B
 ></P
 ><TABLE
 WIDTH="100%"
@@ -166,8 +164,10 @@ CLASS="php"
 >&#60;?
 $person = new DataObjects_Person;
 $person-&#62;get(12);
-$person-&#62;getLink('group_owner');
-print_r($_person_group);
+$group = $person-&#62;getLink('group_owner');
+echo $group-&#62;name;
+$group = $person-&#62;getLink('colourid','hair');
+
 ?&#62;</PRE
 ></TD
 ></TR
@@ -177,8 +177,10 @@ print_r($_person_group);
 ></TR
 ></TABLE
 >
-        
-        This would execute the following SQL statement, and fetch the data
+      </P
+><P
+>&#13;        
+        This would execute the following SQL statements, and fetch the data
        <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -190,7 +192,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4147"><P
+NAME="AEN4176"><P
 ><B
 >Example 2.  Resulting SQL </B
 ></P
@@ -205,7 +207,8 @@ BGCOLOR="#EEEEEE"
 ><PRE
 CLASS="sql"
 >SELECT * FROM person WHERE id=12
-SELECT * FROM group WHERE id=3</PRE
+SELECT * FROM group WHERE id=3
+SELECT * FROM hair WHERE id=4</PRE
 ></TD
 ></TR
 ></TABLE
@@ -221,17 +224,18 @@ SELECT * FROM group WHERE id=3</PRE
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN4150"
+NAME="AEN4179"
 ></A
 ><H2
->getLinks</H2
+>::getLinks()</H2
 ><P
->&#13;      Loads the all the related objects into the main object, with a variable name prefixed with _
+>&#13;      Loads the all the related objects into the main object, based on the naming of columns using the tablename_xxx 
+      naming method, and sets   the main objects variables with the row name prefixed with a _
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN4153"><P
+NAME="AEN4182"><P
 ></P
 ><P
 ><CODE
@@ -259,7 +263,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4160"><P
+NAME="AEN4189"><P
 ><B
 >Example 3.  Loading all the related objects </B
 ></P
@@ -277,8 +281,8 @@ CLASS="php"
 $person = new DataObjects_Person;
 $person-&#62;get(12);
 $person-&#62;getLinks();
-print_r($_person_group);
-print_r($_person_eyes);
+print_r($person-&#62;_group);
+print_r($person-&#62;_eyes);
 ?&#62;</PRE
 ></TD
 ></TR
@@ -288,7 +292,9 @@ print_r($_person_eyes);
 ></TR
 ></TABLE
 >
-        
+      </P
+><P
+>&#13;        
         This would execute the following SQL statement, and fetch the data
        <TABLE
 WIDTH="100%"
@@ -301,7 +307,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4163"><P
+NAME="AEN4193"><P
 ><B
 >Example 4.  Resulting SQL </B
 ></P

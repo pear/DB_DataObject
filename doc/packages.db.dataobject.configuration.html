@@ -89,9 +89,9 @@ NAME="AEN3757"
 ><H2
 >Configuration</H2
 ><P
->&#13;      DB_DataObject needs to be configured before using it and auto generating classes and definitions,
-      the easiest way to configure DB_DataObject is to use ini files (although you may also like to consider
-      the PEAR::Config class.
+>&#13;      DB_DataObject needs to be configured before using it and auto generating classes and definitions.
+      The easiest way to configure DB_DataObject is to use ini files (although you may also like to consider
+      the PEAR::Config class, or your own configuration system)
       </P
 ><TABLE
 WIDTH="100%"
@@ -165,9 +165,9 @@ BGCOLOR="#EEEEEE"
 CLASS="php"
 >&#60;?php
 $config = parse_ini_file('example.ini',TRUE);
-foreach($config as $key=&#62;$value) {
-  $options = &#38;PEAR::getStaticProperty($key,'options');
-  $options = $value;
+foreach($config as $class=&#62;$values) {
+  $options = &#38;PEAR::getStaticProperty($class,'options');
+  $options = $values;
 }
 ?&#62;</PRE
 ></TD
@@ -184,7 +184,7 @@ CLASS="refsect1"
 NAME="AEN3768"
 ></A
 ><H2
->Configuration Options - Standard</H2
+>Configuration Options - Required</H2
 ><P
 ></P
 ><DIV
@@ -216,8 +216,8 @@ CLASS="parameter"
 >&#13;            The Directory where the DB_DataObject database schema file is store.
             </P
 ><P
->&#13;            DB_DataObject Stores the Description of the database (Tables and Columns) in an .ini file, in this directory
-            this information is used to determine if the column is a string and needs quotes, or should be a number (and is checked)
+>&#13;            DB_DataObject stores the description of the database (Tables and Columns) in an .ini file, 
+            in this directory. This information is used to determine if the column is a string and needs quotes, or should be a number (and is checked)
             at SQL building time. It is quite common to store the schema in the same directory as your DataObject
             Classes.
             </P
@@ -232,8 +232,8 @@ CLASS="parameter"
             directory</DT
 ><DD
 ><P
->&#13;            The Path absoloute, or relative to your default include path(s), where your 
-            extended classes can be found.
+>&#13;            The Path absolute, or relative to your default include path(s), where your 
+            extended classes can be found. 
             </P
 ><P
 >&#13;            This is used by the staticGet() method and the getLinks() method to auto load classes, 
@@ -253,13 +253,26 @@ CLASS="parameter"
             alter the prefixed name, this is used by the staticGet() and getLinks() methods
             </P
 ></DD
+><DT
+><TT
+CLASS="parameter"
+><I
+>debug</I
+></TT
+>
+            integer</DT
+><DD
+><P
+>&#13;            The default debugging level (default 0=off), 1= basic sql logging,2=result logging, 3=everything
+            </P
+></DD
 ></DL
 ></DIV
 ></DIV
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN3797"
+NAME="AEN3803"
 ></A
 ><H2
 >Configuration Options - Mulitiple Databases (optional)</H2
@@ -293,7 +306,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3807"><P
+NAME="AEN3813"><P
 ><B
 >Example 3.  using multiple databases - database passwords</B
 ></P
@@ -344,7 +357,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3817"><P
+NAME="AEN3823"><P
 ><B
 >Example 4.  using multiple databases - table settings</B
 ></P
@@ -377,7 +390,7 @@ table_stock     = sales</PRE
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN3820"
+NAME="AEN3826"
 ></A
 ><H2
 >Configuration Options - Builder</H2
@@ -399,7 +412,7 @@ CLASS="parameter"
 >&#13;            The Directory where your DataObject extended Classes are.
             </P
 ><P
->&#13;            It is also used by the Class AutoBuilder when updating/writing to your class definitions.
+>&#13;             Used by the Class AutoBuilder when updating/writing to your class definitions.
             </P
 ></DD
 ><DT

@@ -76,25 +76,25 @@ NAME="packages.DB.DataObject.find_fetch">Finding and fetching</H1
 ><DIV
 CLASS="refnamediv"
 ><A
-NAME="AEN3874"
+NAME="AEN3882"
 ></A
 >Finding and fetching&nbsp;--&nbsp;
-        Simple Querying methods ::staticGet ::get ::find ::fetch
+        Simple Querying methods ::staticGet() ::get() ::find() ::fetch()
       </DIV
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN3877"
+NAME="AEN3885"
 ></A
 ><H2
->get</H2
+>::get()</H2
 ><P
->&#13;      Simple Get (Select) request, are achieved using the get methods
+>&#13;      Simple Get (Select) request, are achieved using the get method
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN3880"><P
+NAME="AEN3888"><P
 ></P
 ><P
 ><CODE
@@ -123,7 +123,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3890"><P
+NAME="AEN3898"><P
 ><B
 >Example 1.  Simple fetch of data based on Primary Key</B
 ></P
@@ -150,6 +150,9 @@ print_r($person);
 ></TR
 ></TABLE
 >
+      </P
+><P
+>&#13;
       This would execute the following SQL statement and fetch the results into the objects variables
         <TABLE
 WIDTH="100%"
@@ -162,7 +165,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3893"><P
+NAME="AEN3902"><P
 ><B
 >Example 2.  Resulting SQL </B
 ></P
@@ -185,7 +188,9 @@ CLASS="sql"
 ></TR
 ></TABLE
 >
-        To use another field other than the primary key, you would use it with two parameters
+      </P
+><P
+>&#13;        To use another field other than the primary key, you would use it with two parameters
         <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -197,9 +202,9 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3896"><P
+NAME="AEN3906"><P
 ><B
->Example 3.  Simple fetch of data based on Primary Key</B
+>Example 3.  Simple fetch of data based on Key and Value</B
 ></P
 ><TABLE
 WIDTH="100%"
@@ -224,6 +229,9 @@ print_r($person);
 ></TR
 ></TABLE
 >
+      </P
+><P
+>&#13;
         This would execute the following SQL statement and fetch the results into the objects variables
         <TABLE
 WIDTH="100%"
@@ -236,7 +244,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3899"><P
+NAME="AEN3910"><P
 ><B
 >Example 4.  Resulting SQL </B
 ></P
@@ -259,8 +267,9 @@ CLASS="sql"
 ></TR
 ></TABLE
 >
-        
-        The result of these two queries would be that all the objects variables would contain the matched row's 
+      </P
+><P
+>&#13;        The result of these two queries would be that all the objects variables would contain the matched row's 
         data and the variable $person-&#62;N would contain the number of matches.
         <TABLE
 WIDTH="100%"
@@ -273,7 +282,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3902"><P
+NAME="AEN3914"><P
 ><B
 >Example 5.  Results of example code</B
 ></P
@@ -308,17 +317,17 @@ CLASS="ini"
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN3905"
+NAME="AEN3917"
 ></A
 ><H2
->staticGet</H2
+>::staticGet()</H2
 ><P
 >&#13;      Simple Get (Select) request, abreviated get request.
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN3908"><P
+NAME="AEN3920"><P
 ></P
 ><P
 ><CODE
@@ -335,7 +344,7 @@ CLASS="function"
 ></DIV
 ><P
 >&#13;        The static method is similar to the get request, however it does not require the 
-        initial instantation of the class
+        initial instantation of the class. staticGet also caches the result.
         <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -347,7 +356,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3918"><P
+NAME="AEN3930"><P
 ><B
 >Example 6.  Simple fetch of data based on Primary Key</B
 ></P
@@ -373,9 +382,11 @@ print_r($person);
 ></TR
 ></TABLE
 >
-      
+      </P
+><P
+>&#13;
         You may also use the DB_DataObject staticGet method directly, however you need to specify which
-        class you wish to use.
+        class you wish to use. In this case, the Class file will be automatically loaded.
         <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -387,7 +398,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3921"><P
+NAME="AEN3934"><P
 ><B
 >Example 7.  Simple fetch of data based on Primary Key</B
 ></P
@@ -418,17 +429,17 @@ print_r($person);
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN3924"
+NAME="AEN3937"
 ></A
 ><H2
->find</H2
+>::find()</H2
 ><P
 >&#13;      Searching for Items
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN3927"><P
+NAME="AEN3940"><P
 ></P
 ><P
 ><CODE
@@ -438,14 +449,14 @@ CLASS="FUNCDEF"
 CLASS="function"
 >::find</B
 ></CODE
-> ([boolean Auto Fetch])</CODE
+> ([boolean AutoFetch])</CODE
 ></P
 ><P
 ></P
 ></DIV
 ><P
->&#13;        The find method can be used to execute, and optionally fetch data based on the values of
-        the object
+>&#13;        The find method builds and executes the current Query, based on the object variables and any 'WhereAdd' conditions
+        , If the AutoFetch is TRUE, then it will also call the fetch method automatically.
         <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -457,9 +468,9 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3935"><P
+NAME="AEN3948"><P
 ><B
->Example 8.  Simple fetch of data based on Object Vars</B
+>Example 8.  Simple find of data based on Object Vars</B
 ></P
 ><TABLE
 WIDTH="100%"
@@ -485,7 +496,9 @@ $number_of_rows = $person-&#62;find();
 ></TR
 ></TABLE
 >
-  
+      </P
+><P
+>&#13;
        This would execute the following SQL statement and fetch the results into the objects variables
         <TABLE
 WIDTH="100%"
@@ -498,7 +511,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3938"><P
+NAME="AEN3952"><P
 ><B
 >Example 9.  Resulting SQL </B
 ></P
@@ -527,17 +540,17 @@ CLASS="sql"
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN3941"
+NAME="AEN3955"
 ></A
 ><H2
->fetch</H2
+>::fetch()</H2
 ><P
 >&#13;      Getting the data.
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN3944"><P
+NAME="AEN3958"><P
 ></P
 ><P
 ><CODE
@@ -553,7 +566,8 @@ CLASS="function"
 ></P
 ></DIV
 ><P
->&#13;        The fetch method gets the next row and  sets the objects variables to the rows data.
+>&#13;        The fetch method gets the next row and  sets the objects variables to the rows data. It returns true if data
+        has been collected, and false when there is no more data.
         <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -565,9 +579,9 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3951"><P
+NAME="AEN3965"><P
 ><B
->Example 10.  Simple fetch of data based on Object Vars</B
+>Example 10.  Simple find and fetch of data based on Object Vars</B
 ></P
 ><TABLE
 WIDTH="100%"

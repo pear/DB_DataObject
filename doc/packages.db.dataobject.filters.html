@@ -76,15 +76,15 @@ NAME="packages.DB.DataObject.filters">Advanced Filters</H1
 ><DIV
 CLASS="refnamediv"
 ><A
-NAME="AEN4013"
+NAME="AEN4033"
 ></A
 >Advanced Filters&nbsp;--&nbsp;
-       Advanced Filters - ::query, ::SelectAdd, ::whereAdd, ::Limit, ::OrderBy, ::GroupBy, 
+       Advanced Filters - ::query(), ::SelectAdd(), ::whereAdd(), ::Limit(), ::OrderBy(), ::GroupBy(), 
       </DIV
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN4016"
+NAME="AEN4036"
 ></A
 ><H2
 >More advanced Querying</H2
@@ -104,17 +104,17 @@ NAME="AEN4016"
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN4020"
+NAME="AEN4040"
 ></A
 ><H2
->Query</H2
+>::query()</H2
 ><P
 >&#13;      Raw Database Queries
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN4023"><P
+NAME="AEN4043"><P
 ></P
 ><P
 ><CODE
@@ -142,7 +142,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4030"><P
+NAME="AEN4050"><P
 ><B
 >Example 1.  raw Queries on the database </B
 ></P
@@ -177,17 +177,17 @@ while ($person-&#62;fetch()) {
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN4033"
+NAME="AEN4053"
 ></A
 ><H2
->selectAdd</H2
+>::selectAdd()</H2
 ><P
 >&#13;      Adding and removing Items from select query
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN4036"><P
+NAME="AEN4056"><P
 ></P
 ><P
 ><CODE
@@ -203,8 +203,9 @@ CLASS="function"
 ></P
 ></DIV
 ><P
->&#13;        By default a select query will request all items '*', to change this behaviour you must first call
-        selectAdd() without any arguments and the add the specific items you require.
+>&#13;        By default a select query will request all items '*', to change this behaviour you can first call
+        selectAdd() without any arguments to clear the current request and then add the specific items 
+        you require.
         <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -216,7 +217,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4044"><P
+NAME="AEN4064"><P
 ><B
 >Example 2.  Adding select statements</B
 ></P
@@ -255,8 +256,9 @@ echo "$person-&#62;name} {$person-&#62;birthday_formated}&#60;BR&#62;";
 ></TR
 ></TABLE
 >
-        
-        This would execute the following SQL statements, 
+      </P
+><P
+>&#13;        This would execute the following SQL statements, 
        <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -268,7 +270,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4047"><P
+NAME="AEN4068"><P
 ><B
 >Example 3.  Resulting SQL </B
 ></P
@@ -292,24 +294,27 @@ SELECT *, birthday_formated as date('%d %M %y') FROM person WHERE id=12</PRE
 ></TR
 ></TABLE
 >
-        
+      </P
+><P
+>&#13;        You can also set up a default selection query by adding SelectAdd() method calls in the object
+        initialization method (the one with the same name as the class)
         
       </P
 ></DIV
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN4050"
+NAME="AEN4072"
 ></A
 ><H2
->whereAdd</H2
+>::whereAdd()</H2
 ><P
 >&#13;      Adds conditions to the Where part of the query
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN4053"><P
+NAME="AEN4075"><P
 ></P
 ><P
 ><CODE
@@ -319,14 +324,15 @@ CLASS="FUNCDEF"
 CLASS="function"
 >::whereAdd</B
 ></CODE
-> ([string Where Items [, string Condition (eg. OR)]])</CODE
+> ([string Where [, string OR]])</CODE
 ></P
 ><P
 ></P
 ></DIV
 ><P
->&#13;        Adds items to the where part of a SQL query.
-        Calling this without any arguments clears the where condition.
+>&#13;        Adds items to the where part of a SQL query. Calling this without any arguments clears, 
+        the where condition. The default behaviour is to add 'AND' queries, send the string 'OR' to 
+        append OR conditions.
         <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -338,7 +344,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4064"><P
+NAME="AEN4086"><P
 ><B
 >Example 4.  Adding Where Statements</B
 ></P
@@ -370,8 +376,6 @@ while ($person-&#62;fetch()) {
     echo "$person-&#62;id} {$person-&#62;name}&#60;BR&#62;";
 }
  
-
-
 ?&#62;</PRE
 ></TD
 ></TR
@@ -381,7 +385,9 @@ while ($person-&#62;fetch()) {
 ></TR
 ></TABLE
 >
-        
+      </P
+><P
+>&#13;        
         This would execute the following SQL statements, 
        <TABLE
 WIDTH="100%"
@@ -394,7 +400,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4067"><P
+NAME="AEN4090"><P
 ><B
 >Example 5.  Resulting SQL </B
 ></P
@@ -420,23 +426,22 @@ SELECT * FROM person WHERE age &#60; 12 OR age &#62; 30</PRE
 ></TABLE
 >
         
-        
       </P
 ></DIV
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN4070"
+NAME="AEN4093"
 ></A
 ><H2
->limit</H2
+>::limit()</H2
 ><P
 >&#13;      Sets the limit of a query
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN4073"><P
+NAME="AEN4096"><P
 ></P
 ><P
 ><CODE
@@ -446,7 +451,7 @@ CLASS="FUNCDEF"
 CLASS="function"
 >::limit</B
 ></CODE
-> ([int Limit Range Start or Number [, int Limit Range Number]])</CODE
+> ([int (Limit Range Start or Number) [, int (Limit Range Number)]])</CODE
 ></P
 ><P
 ></P
@@ -465,7 +470,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4084"><P
+NAME="AEN4107"><P
 ><B
 >Example 6.  Setting the Limit</B
 ></P
@@ -507,7 +512,9 @@ while ($person-&#62;fetch()) {
 ></TR
 ></TABLE
 >
-        
+      </P
+><P
+>&#13;        
         This would execute the following SQL statements, 
        <TABLE
 WIDTH="100%"
@@ -520,7 +527,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4087"><P
+NAME="AEN4111"><P
 ><B
 >Example 7.  Resulting SQL </B
 ></P
@@ -552,17 +559,17 @@ SELECT * FROM person LIMIT 2,4</PRE
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN4090"
+NAME="AEN4114"
 ></A
 ><H2
->orderBy</H2
+>::orderBy()</H2
 ><P
 >&#13;      Appends to the 'order by' part of the query
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN4093"><P
+NAME="AEN4117"><P
 ></P
 ><P
 ><CODE
@@ -578,7 +585,7 @@ CLASS="function"
 ></P
 ></DIV
 ><P
->&#13;        Appends an Order condition
+>&#13;        Appends an Order condition.
         Calling this without any arguments clears the order
         <TABLE
 WIDTH="100%"
@@ -591,7 +598,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4101"><P
+NAME="AEN4125"><P
 ><B
 >Example 8.  setting the order by</B
 ></P
@@ -606,13 +613,12 @@ BGCOLOR="#EEEEEE"
 ><PRE
 CLASS="php"
 >&#60;?
+
 $person = new DataObjects_Person;
 $person-&#62;orderBy('name');
 $person-&#62;orderBy('age, eye');
 $person-&#62;find();
  
-
-
 ?&#62;</PRE
 ></TD
 ></TR
@@ -622,7 +628,9 @@ $person-&#62;find();
 ></TR
 ></TABLE
 >
-        
+      </P
+><P
+>&#13;        
         This would execute the following SQL statement, 
        <TABLE
 WIDTH="100%"
@@ -635,7 +643,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4104"><P
+NAME="AEN4129"><P
 ><B
 >Example 9.  Resulting SQL </B
 ></P
@@ -665,17 +673,17 @@ CLASS="sql"
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN4107"
+NAME="AEN4132"
 ></A
 ><H2
->groupBy</H2
+>::groupBy()</H2
 ><P
 >&#13;      Appends a to the 'group by' part of the query
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN4110"><P
+NAME="AEN4135"><P
 ></P
 ><P
 ><CODE
@@ -691,7 +699,7 @@ CLASS="function"
 ></P
 ></DIV
 ><P
->&#13;        Appends a Group condition
+>&#13;        Appends a Group condition.
         Calling this without any arguments clears the Group Condition
         <TABLE
 WIDTH="100%"
@@ -704,7 +712,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4118"><P
+NAME="AEN4143"><P
 ><B
 >Example 10.  Settin the Group by </B
 ></P
@@ -719,13 +727,12 @@ BGCOLOR="#EEEEEE"
 ><PRE
 CLASS="php"
 >&#60;?
+
 $person = new DataObjects_Person;
 $person-&#62;groupBy('name');
 $person-&#62;groupBy('age, eye');
 $person-&#62;find();
  
-
-
 ?&#62;</PRE
 ></TD
 ></TR
@@ -735,7 +742,9 @@ $person-&#62;find();
 ></TR
 ></TABLE
 >
-        
+      </P
+><P
+>&#13;        
         This would execute the following SQL statement, 
        <TABLE
 WIDTH="100%"
@@ -748,7 +757,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4121"><P
+NAME="AEN4147"><P
 ><B
 >Example 11.  Resulting SQL </B
 ></P

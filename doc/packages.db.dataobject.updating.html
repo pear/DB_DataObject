@@ -76,25 +76,25 @@ NAME="packages.DB.DataObject.updating">Modifying the database</H1
 ><DIV
 CLASS="refnamediv"
 ><A
-NAME="AEN3955"
+NAME="AEN3969"
 ></A
 >Modifying the database&nbsp;--&nbsp;
-        ::update, ::insert, ::delete,
+        ::update(), ::insert(), ::delete(),
       </DIV
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN3958"
+NAME="AEN3972"
 ></A
 ><H2
->Update</H2
+>::update()</H2
 ><P
 >&#13;      Updating the data.
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN3961"><P
+NAME="AEN3975"><P
 ></P
 ><P
 ><CODE
@@ -110,7 +110,8 @@ CLASS="function"
 ></P
 ></DIV
 ><P
->&#13;        updates the database using the objects variables
+>&#13;        updates the database using the objects variables, returns TRUE on success
+        
         <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -122,9 +123,9 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3968"><P
+NAME="AEN3982"><P
 ><B
->Example 1.  Simple fetch and updated</B
+>Example 1.  Simple fetch and update</B
 ></P
 ><TABLE
 WIDTH="100%"
@@ -150,7 +151,9 @@ $person-&#62;update();
 ></TR
 ></TABLE
 >
-        
+      </P
+><P
+>&#13;        
        This would execute the following SQL statements, both fetching and updating the database.
         <TABLE
 WIDTH="100%"
@@ -163,7 +166,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3971"><P
+NAME="AEN3986"><P
 ><B
 >Example 2.  Resulting SQL </B
 ></P
@@ -187,7 +190,9 @@ UPDATE person SET name='fred', age='21', eyes='blue' WHERE id = 12</PRE
 ></TR
 ></TABLE
 >
-        To perform a general update on a table, use the WhereAdd() method
+      </P
+><P
+>&#13;        To perform a general update on a table, use the WhereAdd() method
         <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -199,7 +204,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3974"><P
+NAME="AEN3990"><P
 ><B
 >Example 3.  Simple fetch and updated</B
 ></P
@@ -227,7 +232,9 @@ $person-&#62;update();
 ></TR
 ></TABLE
 >
-        
+      </P
+><P
+>&#13;        
         This would execute the following SQL statements, both fetching and updating the database.
        <TABLE
 WIDTH="100%"
@@ -240,7 +247,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3977"><P
+NAME="AEN3994"><P
 ><B
 >Example 4.  Resulting SQL </B
 ></P
@@ -270,17 +277,17 @@ UPDATE person SET removed=1 WHERE age &#62; 21</PRE
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN3980"
+NAME="AEN3997"
 ></A
 ><H2
->Insert</H2
+>::insert()</H2
 ><P
 >&#13;      Inserting data.
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN3983"><P
+NAME="AEN4000"><P
 ></P
 ><P
 ><CODE
@@ -308,7 +315,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3990"><P
+NAME="AEN4007"><P
 ><B
 >Example 5.  Simple insert </B
 ></P
@@ -335,7 +342,9 @@ $id = $person-&#62;insert();
 ></TR
 ></TABLE
 >
-        
+      </P
+><P
+>&#13;        
        This would execute the following SQL statements, (It may also do sequences on some databases, it
        uses mysql_next_id on mysql)
         <TABLE
@@ -349,7 +358,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN3993"><P
+NAME="AEN4011"><P
 ><B
 >Example 6.  Resulting SQL </B
 ></P
@@ -377,17 +386,17 @@ CLASS="sql"
 ><DIV
 CLASS="refsect1"
 ><A
-NAME="AEN3996"
+NAME="AEN4014"
 ></A
 ><H2
->Delete</H2
+>::delete()</H2
 ><P
 >&#13;      Deleting data.
       </P
 ><DIV
 CLASS="funcsynopsis"
 ><A
-NAME="AEN3999"><P
+NAME="AEN4017"><P
 ></P
 ><P
 ><CODE
@@ -397,13 +406,15 @@ CLASS="FUNCDEF"
 CLASS="function"
 >::delete</B
 ></CODE
-> ()</CODE
+> ([boolean UseWhere])</CODE
 ></P
 ><P
 ></P
 ></DIV
 ><P
->&#13;        Deletes data from the data, either using primary key or based on a WhereAdd() method call.
+>&#13;        Deletes data from the database, either using primary key or based on a WhereAdd() method call.
+        by default the delete will base it's query on the set variables, however if you wish to use the WhereAdd
+        method you should set the UseWhere parameter to TRUE
         <TABLE
 WIDTH="100%"
 BORDER="0"
@@ -415,9 +426,9 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4006"><P
+NAME="AEN4025"><P
 ><B
->Example 7.  Simple insert </B
+>Example 7.  Simple Delete </B
 ></P
 ><TABLE
 WIDTH="100%"
@@ -437,7 +448,7 @@ $person-&#62;delete();
 
 $person = new DataObjects_Person;
 $person-&#62;whereAdd('age &#60; 21');
-$person-&#62;delete();
+$person-&#62;delete(TRUE);
 
 
 ?&#62;</PRE
@@ -449,7 +460,9 @@ $person-&#62;delete();
 ></TR
 ></TABLE
 >
-        
+      </P
+><P
+>&#13;        
        This would execute the following SQL statements, 
         <TABLE
 WIDTH="100%"
@@ -462,7 +475,7 @@ CLASS="EXAMPLE"
 ><DIV
 CLASS="example"
 ><A
-NAME="AEN4009"><P
+NAME="AEN4029"><P
 ><B
 >Example 8.  Resulting SQL </B
 ></P

@@ -155,11 +155,8 @@ CLASS="php"
         // use one of the extended classes.
         
         require_once('DataObjects/Person.php');
-        
         $person = new DataObjects_Person;
-     
         $person-&#62;get(12);
-     
         echo $person-&#62;name;
         
         
@@ -173,13 +170,14 @@ CLASS="php"
 ></TABLE
 ><P
 >&#13;        The above example illustrates the two components of the DataManager, By setting the options, all 
-        The core objects will autoload the data definitons from a generated ini file. and know how to access 
-        the database. (multiple databases are supported - see section on configuration)
+        the core objects will be able to autoload the data definitons from a generated ini file, and know 
+        how to access the database. (multiple databases are supported - see section on configuration)
       </P
 ><P
->&#13;        The later half illustrates how to query and get the result for a single row. the $person-&#62;get() would connect
-        to the database, perform the query, fetch the result and assign the objects variables to the values from 
-        the row returned.
+>&#13;        The later half illustrates how to query and get the result for a single row. The $person-&#62;get() would connect
+        to the database, perform the query, fetch the result and assign the objects variables to the data returned
+        from the query.
+        
       </P
 ><P
 >&#13;        In the above example, this query would be performed.
@@ -199,8 +197,8 @@ CLASS="php"
 ></TR
 ></TABLE
 ><P
->&#13;        to Make a change to the Object you would just change the value of the objects variables and call
-        the update method
+>&#13;        To make a change to the Database you would just change the value of the objects variables and call
+        the update method.
       </P
 ><TABLE
 WIDTH="100%"
@@ -215,11 +213,8 @@ CLASS="php"
 >&#60;?
         
         $person = new DataObjects_Person;
-        
         $person-&#62;get(12);
-         
         $person-&#62;name = 'Fred';
-         
         $person-&#62;update();
         
 ?&#62;</PRE
