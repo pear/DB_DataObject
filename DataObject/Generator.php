@@ -213,6 +213,7 @@ class DB_DataObject_Generator extends DB_DataObject {
             switch (strtoupper($t->type)) {
             
                 case "INT":
+                case "INT4": // postgres
                 case "REAL":
                 case "INTEGER":
                 case "TINYINT":
@@ -244,6 +245,8 @@ class DB_DataObject_Generator extends DB_DataObject {
                 case "DATETIME":
                 case "ENUM":
                 case "SET": // not really but oh well
+                case "TIMESTAMPTZ": // postgres
+                case "BPCHAR":// postgres
                     $type=DB_DATAOBJECT_STR;
                     break;
             }
@@ -253,13 +256,13 @@ class DB_DataObject_Generator extends DB_DataObject {
             // i've no idea if this will work well on other databases?
             // only use primary key, cause the setFrom blocks you setting all key items...
             
-            if (preg_match("/primary_key/i",$t->flags)) {
+            if (preg_match("/primary/i",$t->flags)) {
                 $keys_out .= "{$t->name} = $type\n";
                 //$this->_newConfig->setValue("/{$this->table}__keys",$t->name, $type);
             }
             
         }
-            $this->_newConfig .= $keys_out;
+        $this->_newConfig .= $keys_out;
         
     }
 
