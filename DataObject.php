@@ -1034,7 +1034,7 @@ Class DB_DataObject
         }
 
         $r = $this->_query(
-            "SELECT count({$this->__table}.{$keys[0]}) as dataobject_num
+            "SELECT count({$this->__table}.{$keys[0]}) as DATAOBJECT_NUM
                 FROM {$this->__table} {$this->_join} {$this->_condition}");
         if (PEAR::isError($r)) {
             return false;
@@ -1042,7 +1042,7 @@ Class DB_DataObject
         $this->_condition = $tmpcond;
         $result  = &$_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid];
         $l = $result->fetchRow(DB_FETCHMODE_ASSOC,0);
-        return $l['dataobject_num'];
+        return $l['DATAOBJECT_NUM'];
     }
 
     /**
