@@ -87,17 +87,17 @@ CLASS="refsect1"
 NAME="AEN4154"
 ></A
 ><H2
->Automating the colleciton of related data</H2
+>Automating the collection of related data</H2
 ><P
 >&#13;        When designing a database, often some tables are related to others - a membership table would contain
         a reference to a person's id and the group id that they are a member of. Using the Link methods, you 
         can automatically fetch objects into the parents variables.
       </P
 ><P
->&#13;        The Automated method of doing this is heavily dependant on naming columns relating to databases, for example in the
+>&#13;        The Automated method of doing this is heavily dependent on naming columns relating to databases, for example in the
         membership described above, you would have to have a column called person_id, group_id for the automated Link 
         methods to understand which table to fetch the data from. The principle is TABLENAME_ANYTHING, and it 
-        will always attempt to find primary keys that match the value of field, the getLinks() methods will autoload 
+        will always attempt to find primary keys that match the value of field, the getLinks() methods will auto load 
         the related object into $object-&#62;_tablename_anything
       </P
 ><P
