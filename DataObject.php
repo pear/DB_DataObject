@@ -160,7 +160,7 @@ Class DB_DataObject {
     * @return 	int No. of rows
     */
 
-    function get($k,$v=NULL) 
+    function get($k=NULL,$v=NULL) 
     {
         if ($v === NULL) {
             $v= $k;
@@ -174,7 +174,7 @@ Class DB_DataObject {
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("$k $v " .serialize(@$keys), "GET");
         }
-        if (!$v) {
+        if ($v === NULL) {
             DB_DataObject::raiseError("No Value specified for get", DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
         }
