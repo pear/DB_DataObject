@@ -1,152 +1,37 @@
 
+add a clone method,  to make is Forward compatible to PHP5
+-- need to test PHP5
 
+the principle is that this code (which is common with DB_DataObject usage), will probably break
 
-Data Validation
-
-Although techically Data Validation really should fall under the responsibility of the 
-controller, not the Model.. , there is still good reason to add data validation to the 
-DataObject class. - Ideally using the PEAR Validate class..
-
-Proposal:
-
-$validate = $dataobject->validate()
-if ($validate === TRUE) {
-    echo "everything is OK!";
-} else {
-    foreach($validate as $key=>$error) {
-        $tag = "o_error_".$key;
-        if ($error) {
-            $this->$tag = TRUE;
-        }
-    }
-}
-
-Implementation - after first attempting to use Validate::multiple, it became very clear that
-alot of time each field has special validation that would be outside the scope of the Validate class
-so a callback method was used for each field eg. to validate email you would define a method like 
-this in your DataObjects_Person Class
-
-function ValidateEmail () {
-	return Validate::email($this->email,TRUE);
-}
-
-function ValidateCountry () {
-	$country = new I18N::country;
-	return in_array(array_keys($country->getAllCodes()));
+$person = new DataObject_Person;
+$people = array();
+$person->find();
+while ($person->fetch()) {
+	$people[] = $person;
 }
 
 
+will probably have to change to 
 
 
-
-/*-------------------------------------------------------------------------------*/
-
-Advanced Linking Methods : 
-
-At present the link method assumes that you have set up the database in a  certian way - 
-in reality it is unlikely that DB_DataObject is going to be always used with table formated this 
-way. So it's worth adding an alternative method to gather what the table links are:
+$person = new DataObject_Person;
+$people = array();
+$person->find();
+while ($person->fetch()) {
+	$people[] = $person->clone();
+}
 
 
-use an extra ini file: {databasename}.links.ini
-[member]
-group = grp:id
-person = person:id
+clone method will probably look something like this.
 
-[group]
-owner_group = grp:id
-read_group  = grp:id
-write_group = grp:id
-
-[stock_groups]
-manager_group = grp:id
-createdby = person:id
-modifiedby = person:id
-
-
------
-Modifications needed to getLink:
-
-<?
-
-    function &getLink($row, $table=NULL) {
-        $links = &PEAR::getStaticProperty('DB_DataObject',"{$this->database}.links");
-        $link = FALSE;
-        if ($table === NULL) {
-            if (@$links[$this->table]) {
-                if ( @$links[$this->table][$row]) {
-                   list($table,$link) = explode(':',$links[$this->table][$row]);
-                } else {
-                    return; // technically a possible error condition? 
-                }
-            } else { // use the old _ method
-                if (!($p = strpos($row,'_'))) { 
-                    return;
-                }
-                $table = substr($row,0,$p);
-            }
-        }
-        if (!isset($this->$row)) {
-            DB_DataObject::raiseError("getLink: row not set $row", DB_DATAOBJECT_ERROR_NODATA);
-            return;
-        }
-        
-        
-        $class = $this->_autoloadTable($table);
-        if (!$class) {
-            DB_DataObject::raiseError("getLink:Could not find class for row $row, table $table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            return;
-        }
-        if ($link) {
-            return DB_DataObject::staticGet($class,$link,$this->$row);
-        }
-        
-        return DB_DataObject::staticGet($class,$this->$row);
-    }
-
-
-?>
-
-
-Modifications needed to getLinks:
-
-<?
-
-
- function getLinks() {
-       
-        if ($this->_link_loaded) {
-            return;
-        }
-        $cols = $this->_get_table();
-        $links = &PEAR::getStaticProperty('DB_DataObject',"{$this->database}.links");
-        if (@$links[$this->table]) {
-            foreach(array_keys($links[$this->table]) as $key) {
-                $this->$k = $this->getLink($key);
-            }
-            return;
-        }
-        foreach (array_keys($cols) as $key) {
-            
-            if (!($p = strpos($key,'_'))) {
-                continue;
-            }
-            // does the table exist.
-            $k = "_{$key}";
-            $this->$k = $this->getLink($key);
-        }    
-        $this->_link_loaded=TRUE;
-    }
-
-
-?>
---- 
-
-need to 'position the loadlinks somewhere' ...
-
-
-
-
+funtion clone() {
+	if (phpversion() < 5) {
+		return $this;
+	}
+	return $this->__clone();
+}
+	
 
 
 
