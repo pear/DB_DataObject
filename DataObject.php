@@ -968,7 +968,10 @@ Class DB_DataObject extends DB_DataObject_Overload
         global $_DB_DATAOBJECT;
         // connect will load the config!
         $this->_connect();
-
+        
+        
+        $original_query = isset($this->_query) ? $this->_query : null;
+        
         $items = $this->table();
         $keys  = $this->keys();
         
@@ -1047,6 +1050,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         
             $r = $this->_query("UPDATE  {$table}  SET {$settings} {$this->_query['condition']} ");
             
+            // restore original query conditions.
+            $this->_query = $original_query;
+            
             if (PEAR::isError($r)) {
                 $this->raiseError($r);
                 return false;
@@ -1059,6 +1065,9 @@ Class DB_DataObject extends DB_DataObject_Overload
             $this->_clear_cache();
             return $r;
         }
+        // restore original query conditions.
+        $this->_query = $original_query;
+        
         DB_DataObject::raiseError(
             "update: No Data specifed for query $settings , {$this->_query['condition']}", 
             DB_DATAOBJECT_ERROR_NODATA);
