@@ -2761,7 +2761,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         
         $fullJoinAs = '';
-        if ($obj->__table != $joinAs) {
+        if ($DB->quoteIdentifier($obj->__table) != $joinAs) {
             $fullJoinAs = "AS {$joinAs}";
         }
         
