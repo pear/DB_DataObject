@@ -1133,8 +1133,8 @@ Class DB_DataObject {
         }
         $c = new $class;
         // if the user defined method list exists - use it...
-        if (method_exists($c,'list')) {
-            $c->list($this->id);
+        if (method_exists($c,'listFind')) {
+            $c->listFind($this->id);
         } else {
             $c->find();
         }
