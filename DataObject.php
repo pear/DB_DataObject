@@ -2927,13 +2927,27 @@ Class DB_DataObject extends DB_DataObject_Overload
             $this->$col = $value;
             return true;
         }
-        
+        //echo "FROM VALUE $col, {$cols[$col]}, $value\n";
         switch (true) {
+        
+            case ((strtolower($value) == 'null') && (!($cols[$col] & DB_DATAOBJECT_NOTNULL))):
+            case (is_object($value) && is_a($value,'DB_DataObject_Cast')): 
+            
+                $this->$col = $value;
+                return true;
+                
+            // fail on setting null on a not null field..
+            case ((strtolower($value) == 'null') && ($cols[$col] & DB_DATAOBJECT_NOTNULL)):
+                return false;
+        
             case (($cols[$col] & DB_DATAOBJECT_DATE) &&  ($cols[$col] & DB_DATAOBJECT_TIME)):
                 $guess = strtotime($value);
+                
                 if ($guess != -1) {
                     $this->$col = date('Y-m-d H:i:s', $guess);
+                    return true;
                 }
+              
                 // eak... - no way to validate date time otherwise...
                 $this->$col = (string) $value;
                 return true;
@@ -2962,6 +2976,7 @@ Class DB_DataObject extends DB_DataObject_Overload
            
             
             case ($cols[$col] & DB_DATAOBJECT_STR):
+                
                 $this->$col = (string) $value;
                 return true;
                 
