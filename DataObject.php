@@ -187,7 +187,7 @@ if ( substr(phpversion(),0,1) == 5) {
     eval('
         class DB_DataObject_Overload {
             function __call($method,$args,&$return) {
-                return $this->_call($method,$args,$return);;
+                return $this->_call($method,$args,$return); 
             }
         }
     ');
@@ -1145,6 +1145,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         
         $this->_build_condition($items,$keys);
+        
         //  echo " $settings, $this->condition ";
         if ($settings && isset($this->_query) && $this->_query['condition']) {
             
@@ -1214,7 +1215,8 @@ class DB_DataObject extends DB_DataObject_Overload
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
         $quoteIdentifiers  = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         
-        $extra_cond = " {$this->_query['order_by']} {$this->_query['limit']}";
+        $extra_cond = ' ' . (isset($this->_query['order_by']) ? $this->_query['order_by'] : '') . 
+                      ' ' . (isset($this->_query['limit']) ? $this->_query['limit'] : '');
         
         if (!$useWhere) {
 
