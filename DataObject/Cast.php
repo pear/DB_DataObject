@@ -178,6 +178,7 @@ class DB_DataObject_Cast {
                 } else {
                     $bits = explode('-',$args[0]);
                 }
+                break;
             default: // 2 or more..
                 $bits = $args;
         }
