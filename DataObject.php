@@ -1414,7 +1414,7 @@ Class DB_DataObject
      * @access  private
      * @return  string
      */
-    function _build_condition(&$keys, $filter = array(),$negative_filter=array())
+    function _build_condition($keys, $filter = array(),$negative_filter=array())
     {
         global $_DB_DATAOBJECT;
         $this->_connect();
