@@ -519,7 +519,7 @@ class DB_DataObject extends DB_DataObject_Overload
         foreach($array as $k=>$v) {
             $kk = str_replace(".", "_", $k);
             $kk = str_replace(" ", "_", $kk);
-             if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
+            if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                 $this->debug("$kk = ". $array[$k], "fetchrow LINE", 3);
             }
             $this->$kk = $array[$k];
@@ -3483,8 +3483,16 @@ class DB_DataObject extends DB_DataObject_Overload
                 $x = new Date($this->$col);
                 
                 return $x->format($format);
+                
+            case ($cols[$col] &  DB_DATAOBJECT_BOOLEAN):
+                
+                if ($cols[$col] && DB_DATAOBJECT_STR) {
+                    // it's a 't'/'f' !
+                    return ($cols[$col] = 't');
+                }
+                return (bool) $cols[$col];
             
-            
+               
             default:
                 return sprintf($format,$this->col);
         }
