@@ -1798,8 +1798,9 @@ Class DB_DataObject
                 continue; // ignore empty keys!!! what
             }
             if (is_object($from) && isset($from->{sprintf($format,$k)})) {
-                if ($_DB_DATAOBJECT['OVERLOADED'] && (strtolower($k) != 'from') ) {
-                    $ret = $this->{'set'.$k}($from->{sprintf($format,$k)});
+                if ($_DB_DATAOBJECT['OVERLOADED'] ) {
+                    $kk = (strtolower($k) == 'from') ? '_from' : $k;
+                    $ret = $this->{'set'.$kk}($from->{sprintf($format,$k)});
                     if (is_string($ret)) {
                         $overload_return[$k] = $ret;
                     }
@@ -1822,8 +1823,9 @@ Class DB_DataObject
             if (is_array($from[sprintf($format,$k)])) {
                 continue;
             }
-            if ($_DB_DATAOBJECT['OVERLOADED'] && (strtolower($k) != 'from') ) {
-                $ret =  $this->{'set'.$k}($from[sprintf($format,$k)]);
+            if ($_DB_DATAOBJECT['OVERLOADED']) {
+                $kk = (strtolower($k) == 'from') ? '_from' : $k;
+                $ret =  $this->{'set'.$kk}($from[sprintf($format,$k)]);
                 if (is_string($ret)) {
                     $overload_return[$k] = $ret;
                 }
@@ -1992,6 +1994,13 @@ Class DB_DataObject
         }
          
         
+        
+        // deal with naming conflick of setFrom
+        
+        if (strtolower($method) == 'set_from') {
+            $this->from = $params[0];
+            return $return = true;
+        }
         
         $element = substr($method,3);
         if ($element{0} == '_') {
