@@ -967,7 +967,7 @@ Class DB_DataObject
             if (!$this->_database) {
                 $this->_database = @$options["table_{$this->__table}"];
             }
-            if (@$this->_database)  {
+            if (@$this->_database && @$options["database_{$this->_database}"])  {
                 $dsn = $options["database_{$this->_database}"];
             } else if ($options['database']) {
                 $dsn = $options['database'];
