@@ -324,6 +324,12 @@ class DB_DataObject_Generator extends DB_DataObject
                 case 'TIMESTAMPTZ': // postgres
                 case 'BPCHAR':      // postgres
                 case 'INTERVAL':    // postgres (eg. '12 days')
+                
+                case 'CIDR':        // postgres IP net spec
+                case 'INET':        // postgres IP
+                case 'MACADDR':     // postgress network Mac address.
+                
+                
                     $type = DB_DATAOBJECT_STR;
                     break;
                     
