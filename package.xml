@@ -21,28 +21,21 @@
     </maintainer>
   </maintainers>
   
-  
   <release>
-     <version>1.7.8</version>
+     <version>1.7.9</version>
       <date>2004-03-12</date>
       <notes><![CDATA[
         Minor Bugfix release. 
       
       
-        #3764 - toValue(), and hence toArray() cast booleans to true|false.
-        #3763 - createTables.php defines NO_OVERLOAD to prevent warnings on PHP4.3.10.
-        
-        #3768 - Hopefully last fix to joinAdd() / database prefixing and  quoteIdentifiers
-        #3761 - Fixed DB_DataObject::datetime() bad code.
-        #3783 - count('distinct') builds the query distinct [primary_key], should help in some situations
-                using joinAdd + group By etc.
-                
+        #3764 - toValue(), and hence toArray() cast booleans to true|false. (previous fix was buggy) 
            
  
       ]]></notes>
       <state>stable</state>
     </release> 
    
+  
   
     <filelist>
         <dir name="/" baseinstalldir="DB" role="php">
@@ -73,6 +66,28 @@
 
   <changelog>
     
+  <release>
+     <version>1.7.8</version>
+      <date>2004-03-12</date>
+      <notes><![CDATA[
+        Minor Bugfix release. 
+      
+      
+        #3764 - toValue(), and hence toArray() cast booleans to true|false.
+        #3763 - createTables.php defines NO_OVERLOAD to prevent warnings on PHP4.3.10.
+        
+        #3768 - Hopefully last fix to joinAdd() / database prefixing and  quoteIdentifiers
+        #3761 - Fixed DB_DataObject::datetime() bad code.
+        #3783 - count('distinct') builds the query distinct [primary_key], should help in some situations
+                using joinAdd + group By etc.
+                
+           
+ 
+      ]]></notes>
+      <state>stable</state>
+    </release> 
+   
+  
   <release>
      <version>1.7.7</version>
       <date>2004-03-07</date>
