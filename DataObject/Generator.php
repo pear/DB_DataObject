@@ -417,7 +417,7 @@ class DB_DataObject_Generator extends DB_DataObject
         if (!($class_rewrite = @$options['generator_class_rewrite'])) {
             $class_rewrite = 'DB_DataObject';
         }
-        if ($class_rewrite = 'ANY') {
+        if ($class_rewrite == 'ANY') {
             $class_rewrite = '[a-z_]+';
         }
         
