@@ -102,21 +102,24 @@ class DB_DataObject_Generator extends DB_DataObject
         $databases = array();
         foreach($options as $k=>$v) {
             if (substr($k,0,9) == 'database_') {
-                $databases[] = $v;
+                $databases[substr($k,9)] = $v;
             }
         }
 
-        if (@$options['database'] && !in_array($options['database'],$databases)) {
-            $databases[] = $options['database'];
+        if (@$options['database']) {
+            $dsn = DB::parseDSN($options['database']);
+            if (!isset($database[$dsn['database']])) {
+                $databases[$dsn['database']] = $options['database'];
+            }
         }
 
-        foreach($databases as $database) {
+        foreach($databases as $databasename => $database) {
             if (!$database) continue;
-            echo "CREATING FOR $database\n";
+            echo "CREATING FOR $databasename\n";
             $class = get_class($this);
             $t = new $class;
             $t->_database_dsn = $database;
-
+            $t->_database = $databasename;
             $t->_createTableList();
 
             foreach(get_class_methods($class) as $method) {
@@ -198,9 +201,15 @@ class DB_DataObject_Generator extends DB_DataObject
             return;
         }
         $base =  $options['schema_location'];
-        $file = "{$base}/{$this->_database}.ini";
-        if (!file_exists($base))
-            mkdir($base,0755);
+        if (isset($options["ini_{$this->_database}"])) {
+            $file = $options["ini_{$this->_database}"];
+        } else {
+            $file = "{$base}/{$this->_database}.ini";
+        }
+        if (!file_exists($base)) {
+            require_once 'System.php';
+            System::mkdir(array('-p','-m',0755,$base));
+        }
         echo "{$file}\n";
         touch($file);
         //print_r($this->_newConfig);
@@ -463,7 +472,8 @@ class DB_DataObject_Generator extends DB_DataObject
         if ($padding < 2) $padding =2;
         $p =  str_repeat(' ',$padding) ;
         $body .= "    var \$__table = '{$this->table}';  {$p}// table name\n";
-
+        
+        
         $defs = $this->_definitions[$this->table];
 
         // show nice information!

@@ -1451,28 +1451,30 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         // if you supply this with arguments, then it will take those
         // as the database and links array...
-        if (!@$_DB_DATAOBJECT['CONFIG']['schema_location']) {
-            return true;
-        }
-        $location = $_DB_DATAOBJECT['CONFIG']['schema_location'];
-
-        $ini   = $location . "/{$this->_database}.ini";
-
+         
+        $schemas = isset($_DB_DATAOBJECT['CONFIG']['schema_location']) ?
+            array("{$_DB_DATAOBJECT['CONFIG']['schema_location']}/{$this->_database}.ini") :
+            array() ;
+                 
         if (isset($_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"])) {
-            $ini = $_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"];
+            $schemas = is_array($_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"]) ?
+                $_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"] :
+                explode(PATH_SEPERATOR,$_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"]);
         }
-        $links = str_replace('.ini','.links.ini',$ini);
+                    
+         
         
-        if (file_exists($ini)) {
-            $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);    
+        foreach ($schemas as $ini) {
+            $links = str_replace('.ini','.links.ini',$ini);
+        
+            if (file_exists($ini)) {
+                $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);
+            }
+            if (empty($_DB_DATAOBJECT['LINKS'][$this->_database]) && file_exists($links)) {
+                /* not sure why $links = ... here  - TODO check if that works */
+                $_DB_DATAOBJECT['LINKS'][$this->_database] = parse_ini_file($links, true);
+            }
         }
-        
-        
-        if (empty($_DB_DATAOBJECT['LINKS'][$this->_database]) && file_exists($links)) {
-            /* not sure why $links = ... here  - TODO check if that works */
-            $_DB_DATAOBJECT['LINKS'][$this->_database] = parse_ini_file($links, true);
-        }
-        
         // now have we loaded the structure.. - if not try building it..
         
         if (empty($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
@@ -1480,7 +1482,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             $x = new DB_DataObject_Generator;
             $x->fillTableSchema($this->_database,$this->__table);
         }
-        
+    
         
         return true;
     }
