@@ -1,6 +1,17 @@
 
+2004-08-09 Monday  alan_k
+
+	* fix typo on generator
+	* fix generator not having DB available
+
+2004-08-08 Sunday  alan_k
+
+	* fix bug #2088 - allow class_prefix to be defaulted to ""
+
 2004-08-07 Saturday  alan_k
 
+	* Release notes lied about 4.2 compatibility
+	* prep for release
 	* fix bug #1980 = logic error in JoinAs+quoteIdentifier code
 	* fix bug #1835  - auto_linking
 	* really nasty kludgy fix to bug #2068
