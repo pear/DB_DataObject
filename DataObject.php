@@ -1931,7 +1931,12 @@ Class DB_DataObject extends DB_DataObject_Overload
             $this->debug(serialize($result), 'RESULT',5);
         }
         if (method_exists($result, 'numrows')) {
+            $DB->expectError(DB_ERROR_UNSUPPORTED);
             $this->N = $result->numrows();
+    	    if (DB::isError($this->N)) {
+                $this->N = 1;
+            }
+            $DB->popExpect();
         }
     }
 
