@@ -1800,12 +1800,21 @@ Class DB_DataObject
         $ret   = array();
 
         foreach($table as $key => $val) {
-            if (!isset($this->$key)) continue;
+            // ignore things that are not set. ?
+            if (!isset($this->$key)) {
+                continue;
+            }
+            // call user defined validation
             $method = "Validate" . ucfirst($key);
             if (method_exists($this, $method)) {
                 $ret[$key] = $this->$method();
                 continue;
             }
+            // if the string is empty.. assume it is ok..
+            if (!strlen($this->$key)) {
+                continue;
+            }
+            
             switch ($val) {
                 case  DB_DATAOBJECT_STR:
                     $ret[$key] = Validate::string($this->$key, VALIDATE_PUNCTUATION . VALIDATE_NAME);

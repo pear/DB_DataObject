@@ -28,7 +28,7 @@
       <date>2003-05-18</date>
       <notes>
         - fix generator overwriting code when file was edited in a Windows editor           (Robert Janeczek)
-        
+        - validation will not produce errors on empty numeric data by default.
       </notes>
       <state>stable</state>
     </release>
