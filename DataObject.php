@@ -1172,7 +1172,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         // if you manually specified a dataobject, and there where no changes - then it's ok..
         if ($dataObject !== false) {
-            return false;
+            return true;
         }
         
         $this->raiseError(
