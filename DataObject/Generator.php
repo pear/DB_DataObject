@@ -285,7 +285,7 @@ class DB_DataObject_Generator extends DB_DataObject
         if (!file_exists($base))
             mkdir($base,0755);
         $class_prefix  = $options['class_prefix'];
-        if ($extends = $options['extends']) {
+        if ($extends = @$options['extends']) {
             $this->_extends = $extends;
             $this->_extendsFile = $options['extends_location'];
         }
