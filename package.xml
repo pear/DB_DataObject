@@ -29,6 +29,14 @@
       <notes>
         - fix generator overwriting code when file was edited in a Windows editor           (Robert Janeczek)
         - validation will not produce errors on empty numeric data by default.
+        - overload extension enabled to relay setFrom and toArray calls to get*, set*
+          methods, which are predefined as
+          getXXX = returns $object->XXX
+          setXXX($V) = returns true (or an error string if you create your own)
+        - selectAs($dataobject,'prefix_%s') to help control the way join queries return 
+          their data * doing selectAs() - clears the select and sets it to table.id as id ... etc.
+        
+          
       </notes>
       <state>stable</state>
     </release>
