@@ -75,7 +75,6 @@ define('DB_DATAOBJECT_ERROR_INVALIDARGS',   -1);  // wrong args to function
 define('DB_DATAOBJECT_ERROR_NODATA',        -2);  // no data available
 define('DB_DATAOBJECT_ERROR_INVALIDCONFIG', -3);  // something wrong with the config
 define('DB_DATAOBJECT_ERROR_NOCLASS',       -4);  // no class exists
-define('DB_DATAOBJECT_ERROR_NOAFFECTEDROWS',-5);  // no rows where affected by update/insert/delete
 define('DB_DATAOBJECT_ERROR_NOTSUPPORTED'  ,-6);  // limit queries on unsuppored databases
 define('DB_DATAOBJECT_ERROR_INVALID_CALL'  ,-7);  // overlad getter/setter failure
 
@@ -818,7 +817,7 @@ class DB_DataObject extends DB_DataObject_Overload
      * echo $object->insert();
      *
      * @access public
-     * @return  mixed|false key value or false on failure
+     * @return mixed True on success, false on failure, 0 on no data affected
      */
     function insert()
     {
@@ -950,8 +949,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
             if ($r < 1) {
-                $this->raiseError('No Data Affected By insert',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
-                return false;
+                return 0;
             }
             
             
@@ -1147,8 +1145,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 return false;
             }
             if ($r < 1) {
-                $this->raiseError('No Data Affected By update',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
-                return false;
+                return 0;
             }
 
             $this->_clear_cache();
@@ -1184,7 +1181,7 @@ class DB_DataObject extends DB_DataObject_Overload
      *             build the condition only using the object parameters.
      *
      * @access public
-     * @return bool True on success
+     * @return mixed True on success, false on failure, 0 on no data affected
      */
     function delete($useWhere = false)
     {
@@ -1219,8 +1216,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 return false;
             }
             if ($r < 1) {
-                $this->raiseError('No Data Affected By delete',DB_DATAOBJECT_ERROR_NOAFFECTEDROWS);
-                return false;
+                return 0;
             }
             $this->_clear_cache();
             return $r;
