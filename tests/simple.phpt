@@ -109,6 +109,9 @@ class test extends DB_DataObject {
               name varchar(255) NOT NULL default '',
               gender SET('male','female', 'not quite sure')
             )"); 
+            
+            
+      
          
     }
     
@@ -268,6 +271,7 @@ class test extends DB_DataObject {
         $options['dont_use_pear_sequences'] = true;
         $x  = new DB_DataObject;
         
+        
         $x->query("DROP TABLE  IF EXISTS player_has_stats");
         
         
@@ -289,6 +293,8 @@ class test extends DB_DataObject {
         $player_has_stats-> player_id = 13;
         $player_has_stats-> insert();
     }
+    
+    
 
 
     function test82() {
@@ -322,7 +328,51 @@ class test extends DB_DataObject {
         print_r($x->toArray());
         
     }
+    
+    function test83() {     // bug #2116
+        DB_DataObject::debugLevel(3);
+        //$options = &PEAR::getStaticProperty('DB_DataObject','options');
+        $x = new DB_DataObject;
+        $x->query('DROP TABLE IF EXISTS resource');
         
+        $x->query("CREATE TABLE `resource` (
+              `id` int(11) NOT NULL auto_increment,
+              `standard_number` varchar(20) NOT NULL default '',
+              `callnumber` varchar(50) default NULL,
+              `title` varchar(200) NOT NULL default '',
+              `holding` varchar(100) default NULL,
+              `status` tinyint(4) default NULL,
+              `format` set('Electronic','Print','Microfilm') NOT NULL default
+            'Electronic',
+              `department_id` int(11) default NULL,
+              `cost` double default NULL,
+              `location` varchar(100) default NULL,
+              `type_id` int(11) NOT NULL default '0',
+              PRIMARY KEY  (`id`)
+            )"
+        );
+        
+        
+        $resource = DB_DataObject::factory('resource');
+        
+        $resource->standard_number = '.NULL';
+        $resource->title = 'ATLA Religion Database';
+        $resource->format = 'Electronic';
+        $resource->type_id = 2;
+        $resource->insert();
+        
+        $resource = DB_DataObject::factory('resource');
+        print_r($resource->keys());
+        if ($resource->find()) {
+            while ($resource->fetch()) {
+                print_r($resource);
+                print_r($resource->toArray());
+            }
+        }
+        
+        
+    
+    }
 	function test90() {
   
         
