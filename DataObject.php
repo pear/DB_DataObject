@@ -1801,8 +1801,12 @@ Class DB_DataObject extends DB_DataObject_Overload
             /* actualy make a connection */
             $this->debug("{$dsn} {$this->_database_dsn_md5}", "CONNECT",3);
         }
-
-        $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn);
+        $db_options = PEAR::getStaticProperty('DB','options');
+        if ($db_options) {
+            $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn,$db_options);
+        } else {
+            $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn);
+        }
         
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
             $this->debug(serialize($_DB_DATAOBJECT['CONNECTIONS']), "CONNECT",5);
@@ -1821,10 +1825,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         // Oracle need to optimize for portibility - not sure exactly what this does though :)
         $c = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-        if ($c->phptype == 'oci8') {
-            $c->setOption('optimize','portability');
-
-		}
+        
         
         
         
@@ -2021,7 +2022,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . preg_replace('/[^A-Z0-9]/i','_',ucfirst(strtolower($table)));
+        $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . preg_replace('/[^A-Z0-9]/i','_',ucfirst($table));
         $class = (class_exists($class)) ? $class  : DB_DataObject::_autoloadClass($class);
         return $class;
     }
@@ -2051,7 +2052,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . preg_replace('/[^A-Z0-9]/i','_',ucfirst(strtolower($table)));
+        $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . preg_replace('/[^A-Z0-9]/i','_',ucfirst($table));
         
         $class = (class_exists($class)) ? $class  : DB_DataObject::_autoloadClass($class);
         
@@ -2098,7 +2099,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             return false;
         }
         
-        $file = $_DB_DATAOBJECT['CONFIG']['class_location'].'/'.preg_replace('/[^A-Z0-9]/i','_',ucfirst(strtolower($table))).".php";
+        $file = $_DB_DATAOBJECT['CONFIG']['class_location'].'/'.preg_replace('/[^A-Z0-9]/i','_',ucfirst($table)).".php";
         
         if (!file_exists($file)) {
             DB_DataObject::raiseError(
