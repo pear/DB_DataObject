@@ -217,12 +217,17 @@ class DB_DataObject_Generator extends DB_DataObject
      */
     function _generateDefinitionsTable()
     {
+        global $_DB_DATAOBJECT;
+        
         $defs = $this->_definitions[$this->table];
         $this->_newConfig .= "\n[{$this->table}]\n";
         $keys_out =  "\n[{$this->table}__keys]\n";
         $keys_out_primary = '';
         $keys_out_secondary = '';
-        
+        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+            echo "TABLE STRUCTURE FOR {$this->table}\n";
+            print_r($defs);
+        }
         foreach($defs as $t) {
              
             $n=0;
@@ -516,4 +521,3 @@ class DB_DataObject_Generator extends DB_DataObject
         return "";
     }
 }
-?>

@@ -40,7 +40,7 @@ if (!$options) {
     PEAR::raiseError("\nERROR: could not read ini file\n\n", null, PEAR_ERROR_DIE);
     exit;
 }
-//DB_DataObject::debugLevel(5);
+DB_DataObject::debugLevel(5);
 $generator = new DB_DataObject_Generator;
 $generator->start();
-?>
+ 

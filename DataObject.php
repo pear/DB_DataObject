@@ -2707,5 +2707,3 @@ if (!defined('DB_DATAOBJECT_NO_OVERLOAD')) {
        $GLOBALS['_DB_DATAOBJECT']['OVERLOADED'] = true;
     }
 }
-
-?>
