@@ -3035,6 +3035,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (is_null($format)) {
             return $this->$col;
         }
+        $cols = $this->table();
         switch (true) {
             case (($cols[$col] & DB_DATAOBJECT_DATE) &&  ($cols[$col] & DB_DATAOBJECT_TIME)):
                 $guess = strtotime($this->$col);
@@ -3044,10 +3045,11 @@ Class DB_DataObject extends DB_DataObject_Overload
                 // eak... - no way to validate date time otherwise...
                 return $this->$col;
             case ($cols[$col] & DB_DATAOBJECT_DATE):
+                 
                 $guess = strtotime($this->$col);
-                if ($guess != -1) {
-                    $this->$col = strftime($format,$guess);
-                    return true;
+                if ($guess > -1) {
+                   
+                    return strftime($format,$guess);
                 }
                 // try date!!!!
                 require_once 'Date.php';
@@ -3057,7 +3059,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                 
             case ($cols[$col] & DB_DATAOBJECT_TIME):
                 $guess = strtotime($this->$col);
-                if ($guess != -1) {
+                if ($guess > -1) {
                     return strftime($format, $guess);
                 }
                 // otherwise an error in type...
