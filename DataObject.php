@@ -1712,7 +1712,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         $this->_connect();
         
 
-        $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]
+        $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
 
         $options = &$_DB_DATAOBJECT['CONFIG'];
 
@@ -1722,7 +1722,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         
         if (strtoupper($string) == 'BEGIN') {
-            $DB->autoCommit($onoff);
+            $DB->autoCommit(false);
         }
          
         
