@@ -145,6 +145,7 @@ define('DB_DATAOBJECT_WHEREADD_ONLY', true);
  * - includes sub arrays
  *   - connections = md5 sum mapp to pear db object
  *   - results     = [id] => map to pear db object
+ *   - resultseq   = sequence id for results & results field
  *   - resultfields = [id] => list of fields return from query (for use with toArray())
  *   - ini         = mapping of database to ini file results
  *   - links       = mapping of database to links file
@@ -152,7 +153,8 @@ define('DB_DATAOBJECT_WHEREADD_ONLY', true);
  *   - config      = aliased view of PEAR::getStaticPropery('DB_DataObject','options') * done for performance.
  *   - array of loaded classes by autoload method - to stop it doing file access request over and over again!
  */
-$GLOBALS['_DB_DATAOBJECT']['RESULTS'] = array();
+$GLOBALS['_DB_DATAOBJECT']['RESULTS']   = array();
+$GLOBALS['_DB_DATAOBJECT']['RESULTSEQ'] = 1;
 $GLOBALS['_DB_DATAOBJECT']['RESULTFIELDS'] = array();
 $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'] = array();
 $GLOBALS['_DB_DATAOBJECT']['INI'] = array();
@@ -481,8 +483,8 @@ class DB_DataObject extends DB_DataObject_Overload
                     "FETCH", 1);
             }
             // reduce the memory usage a bit... (but leave the id in, so count() works ok on it)
-            $_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid] = null;
-            $this->_DB_resultid = null;
+            unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]);
+            
             // this is probably end of data!!
             //DB_DataObject::raiseError("fetch: no data returned", DB_DATAOBJECT_ERROR_NODATA);
             return false;
@@ -2067,7 +2069,8 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         if (is_object($result)) {
             // lets hope that copying the result object is OK!
-            $_DB_resultid  = count($_DB_DATAOBJECT['RESULTS']); // add to the results stuff...
+            
+            $_DB_resultid  = $GLOBALS['_DB_DATAOBJECT']['RESULTSEQ']++;
             $_DB_DATAOBJECT['RESULTS'][$_DB_resultid] = $result; 
             $this->_DB_resultid = $_DB_resultid;
         }
@@ -3464,7 +3467,31 @@ class DB_DataObject extends DB_DataObject_Overload
 
 
     }
-    
+     /**
+     * Free global arrays associated with this object.
+     *
+     * Note: as we now store resultfields in a global, it is never freed, if you do alot of calls to find(), 
+     * memory will grow gradually.
+     * 
+     *
+     * @access   public
+     * @return   none
+     */
+    function free() 
+    {
+        global $_DB_DATAOBJECT;
+          
+        if (isset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid])) {
+            unset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid]);
+        }
+        if (isset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid])) {     
+            unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]);
+        }
+        // this is a huge bug in DB!
+        $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->num_rows = array();
+        
+    }
+     
     
     /* ---- LEGACY BC METHODS - NOT DOCUMENTED - See Documentation on New Methods. ---*/
     
