@@ -826,6 +826,7 @@ Class DB_DataObject
             /* special values ... at least null is handled...*/
             if (strtolower($this->$k) === 'null') {
                 $settings .= "$k = NULL";
+                continue;
             }
 
             if ($v & DB_DATAOBJECT_STR) {
