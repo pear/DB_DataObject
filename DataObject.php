@@ -1569,8 +1569,11 @@ class DB_DataObject extends DB_DataObject_Overload
          
         
         foreach ($schemas as $ini) {
-            $links = str_replace('.ini','.links.ini',$ini);
-        
+            $links =
+                isset($_DB_DATAOBJECT['CONFIG']["links_{$this->_database}"]) ?
+                    $_DB_DATAOBJECT['CONFIG']["links_{$this->_database}"] :
+                    str_replace('.ini','.links.ini',$ini);
+
             if (file_exists($ini)) {
                 $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);
             }
