@@ -2782,6 +2782,57 @@ Class DB_DataObject extends DB_DataObject_Overload
             return true;
         }
         $this->$element = $params[0];
+        
+        // now typecast!!!!!!!
+        // This is based on the code and ideas for DB_Table by Paul M Jones
+        //
+        //
+        $cols = $this->table();
+        // dont know anything about this col..
+        if (!isset($cols[$element])) {
+            return $return = true;
+        }
+        switch ($cols[$element]) {
+            case DB_DATAOBJECT_DATE:
+                $guess = strtotime($params[0]);
+                if ($guess != -1) {
+                    $this->$element = date('Y-m-d',$guess);
+                    return $return = true;
+                }
+                // try date!!!!
+                require_once 'Date.php';
+                $x = new Date($params[0]);
+                $this->$element = $x->format("%Y-%m-%d");
+                return $return = true;
+            
+            case DB_DATAOBJECT_TIME:
+                $guess = strtotime($params[0]);
+                if ($guess != -1) {
+                     $this->$element = date('H:i:s', $guess);
+                    return $return = true;
+                }
+                // otherwise an error in type...
+                $return = false;
+                return true;
+            
+            case (DB_DATAOBJECT_DATE + DB_DATAOBJECT_TIME) :
+                $guess = strtotime($params[0]);
+                if ($guess != -1) {
+                    $this->$element = date('Y-m-d H:i:s', $guess);
+                }
+                // eak... - no way to validate date time otherwise...
+                $this->$element = (string) $this->$element;
+                return $return = true;
+            
+            case DB_DATAOBJECT_STR:
+                $this->$element = (string) $this->$element;
+                return $return = true;
+                
+            // todo : floats numerics and ints...
+                
+        }
+        
+        
         return $return = true;
     }
         
@@ -2925,7 +2976,9 @@ Class DB_DataObject extends DB_DataObject_Overload
 if (!defined('DB_DATAOBJECT_NO_OVERLOAD')) {
 
     if ((phpversion() != '4.3.2-RC1') && (version_compare( phpversion(), "4.3.1") > 0)) {
-       overload('DB_DataObject');
-       $GLOBALS['_DB_DATAOBJECT']['OVERLOADED'] = true;
+        if (version_compare( phpversion(), "5") < 0) {
+           overload('DB_DataObject');
+        } 
+        $GLOBALS['_DB_DATAOBJECT']['OVERLOADED'] = true;
     }
 }

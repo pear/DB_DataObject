@@ -2,9 +2,9 @@
 DB::DataObject test
 --SKIPIF--
 <?php
- define('DB_DATAOBJECT_NO_OVERLOAD',true);  
+// define('DB_DATAOBJECT_NO_OVERLOAD',true);  
 
-if (!@include(dirname(__FILE__)."/../DataObject.php")) print "skip"; ?>
+if (!include(dirname(__FILE__)."/../DataObject.php")) print "skip"; ?>
 --FILE--
 <?php // -*- C++ -*-
 
@@ -156,7 +156,7 @@ class test extends DB_DataObject {
         
         $t->dumpTest('test2');
         
-        $t = DB_DataObjecT::factory('testproxy');
+        $t = DB_DataObject::factory('testproxy');
         print_R($t);
 	
 	
