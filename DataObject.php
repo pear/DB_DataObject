@@ -909,35 +909,31 @@ Class DB_DataObject
      * Autoload  the table definitions
      *
      *
-     * @param  string $database  database name
-     * @param  string $table     table name
      * @access private
      * @return boolean 
      */
-    function _staticGetDefinitions($database)
+    function _loadDefinitions()
     {
          
         
-        
-        
-        if (isset($GLOBALS['_DB_DATAOBJECT']['INI'][$database])) {
+        if (isset($GLOBALS['_DB_DATAOBJECT']['INI'][$this->_database])) {
             return true;
         }
         $options  = &PEAR::getStaticProperty('DB_DataObject','options');
         $location = $options['schema_location'];
         
-        $ini   = $location . "/{$database}.ini";
+        $ini   = $location . "/{$this->_database}.ini";
         
-        if (isset($options["ini_{$database}"])) {
-            $ini = $options["ini_{$database}"];
+        if (isset($options["ini_{$this->_database}"])) {
+            $ini = $options["ini_{$this->_database}"];
         }
         $links = str_replace('.ini','.links',$ini);
         
-        $GLOBALS['_DB_DATAOBJECT']['INI'][$database] = parse_ini_file($ini, true);
+        $GLOBALS['_DB_DATAOBJECT']['INI'][$this->_database] = parse_ini_file($ini, true);
         /* load the link table if it exists. */
         if (file_exists($links)) {
             /* not sure why $links = ... here  - TODO check if that works */
-            $GLOBALS['_DB_DATAOBJECT']['LINKS'][$database] = parse_ini_file($links, true);
+            $GLOBALS['_DB_DATAOBJECT']['LINKS'][$this->_database] = parse_ini_file($links, true);
         }
         return true;
     }
@@ -953,7 +949,7 @@ Class DB_DataObject
         if (!@$this->_database) {
             $this->_connect();
         }
-        DB_DataObject::_staticGetDefinitions($this->_database);
+        $this->_loadDefinitions();
         
         
         $ret = array();
@@ -976,7 +972,7 @@ Class DB_DataObject
         if (!@$this->_database) {
             $this->_connect();
         }
-        DB_DataObject::_staticGetDefinitions($this->_database);
+        $this->_loadDefinitions();
         
         if (isset($GLOBALS['_DB_DATAOBJECT']['INI'][$this->_database][$this->__table."__keys"])) {
             return array_keys($GLOBALS['_DB_DATAOBJECT']['INI'][$this->_database][$this->__table."__keys"]);
