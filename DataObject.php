@@ -1346,8 +1346,8 @@ class DB_DataObject extends DB_DataObject_Overload
             return false;
             
         }
+        $table   = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
         if (!is_string($countWhat)) {
-            $table   = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
             $key_col = ($quoteIdentifiers ? $DB->quoteIdentifier($keys[0]) : $keys[0]);
         }
         
