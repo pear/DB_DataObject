@@ -2839,12 +2839,13 @@ class DB_DataObject extends DB_DataObject_Overload
         // not sure  how portable adding database prefixes is..
         $objTable = $quoteIdentifiers ? 
                 $DB->quoteIdentifier($database_prefix  . '.' . $obj->__table) : 
-                $database_prefix  . '.' . $obj->__table ;
+                $database_prefix  .   $obj->__table ;
                 
         // add database prefix if they are different databases
         if ($database_prefix && ($obj->_database != $this->_database) && strlen($obj->_database )) {
             // ojbjTable is already quoted????
-            $objTable = ($quoteIdentifiers ? $DB->quoteIdentifier($obj->_database) : $obj->_database) . '.' . $objTable;
+            $objTable = ($quoteIdentifiers ? 
+                $DB->quoteIdentifier($obj->_database) : $obj->_database) . '.' . $objTable;
         }
         
         

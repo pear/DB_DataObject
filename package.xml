@@ -20,22 +20,19 @@
       <email>alan@akbkhome.com</email>
     </maintainer>
   </maintainers>
-<release>
-     <version>1.7.6</version>
-      <date>2004-03-05</date>
+  
+  <release>
+     <version>1.7.7</version>
+      <date>2004-03-07</date>
       <notes><![CDATA[
       
-      Nothing like a big release to create bugs..
-      
-      Note: the last release also included method creation for setters and getters, 
-        which got missed out from the changelog.
-     
+      Minor bug fix release - join add with table fixes broke for mysql with last release
       Bug Fixes:
-        #3708 - Generator did not clear last files contents when generating new files.
-        #3706 - Joins broke on everything except mysql (database prefix now only added to mysql)
+
+        #---- - Joins incorrectly prefect database name for mysql/mysqli
+             (Thanks to Mark Mitchenall for spotting this) 
         
         
-          
  
       ]]></notes>
       <state>stable</state>
@@ -70,6 +67,28 @@
     </deps>
 
   <changelog>
+  
+    <release>
+     <version>1.7.6</version>
+      <date>2004-03-05</date>
+      <notes><![CDATA[
+      
+      Nothing like a big release to create bugs..
+      
+      Note: the last release also included method creation for setters and getters, 
+        which got missed out from the changelog.
+     
+      Bug Fixes:
+        #3708 - Generator did not clear last files contents when generating new files.
+        #3706 - Joins broke on everything except mysql (database prefix now only added to mysql)
+        
+        
+          
+ 
+      ]]></notes>
+      <state>stable</state>
+    </release> 
+    
     
   <release>
      <version>1.7.5</version>
