@@ -390,17 +390,20 @@ class DB_DataObject extends DB_DataObject_Overload
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
-
-        $this->_query('SELECT ' .
+        $sql = 'SELECT ' .
             $this->_query['data_select'] .
             ' FROM ' . ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table) . " " .
             $this->_join .
             $this->_query['condition'] . ' '.
             $this->_query['group_by']  . ' '.
             $this->_query['having']    . ' '.
-            $this->_query['order_by']  . ' '.
-            
-            $this->_query['limit']); // is select
+            $this->_query['order_by']  . ' '
+        ;
+        if (isset($this->_query['limit_start']) && strlen($this->_query['limit_start'] . $this->_query['limit_count'])) {
+            $sql = $DB->modifyLimitQuery($sql,$this->_query['limit_start'], $this->_query['limit_count']);
+        }
+        
+        $this->_query($sql);
         
         if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("CHECK autofetchd $n", "__find", 1);
@@ -689,7 +692,8 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         
         if ($a === null) {
-           $this->_query['limit'] = '';
+           $this->_query['limit_start'] = '';
+           $this->_query['limit_count'] = '';
            return;
         }
         // check input...= 0 or '    ' == error!
@@ -700,22 +704,10 @@ class DB_DataObject extends DB_DataObject_Overload
         global $_DB_DATAOBJECT;
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-       
-        if (($DB->features['limit'] == 'alter') && ($DB->phptype != 'oci8')) {
-            if ($b === null) {
-               $this->_query['limit'] = " LIMIT $a";
-               return;
-            }
-             
-            $this->_query['limit'] = $DB->modifyLimitQuery('',$a,$b);
-            
-        } else {
-            $this->raiseError(
-                "DB_DataObjects only supports limit queries on some databases,\n".
-                "Check with pear bugs for the package, or the dataobjects manual.\n",
-                "or Refer to your Database manual to find out how to do limit queries manually.\n",
-                DB_DATAOBJECT_ERROR_NOTSUPPORTED, PEAR_ERROR_DIE);
-        }
+        
+        $this->_query['limit_start'] = ($b == null) ? 0 : (int)$a;
+        $this->_query['limit_count'] = ($b == null) ? (int)$a : (int)$b;
+        
     }
 
     /**
@@ -1215,8 +1207,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
         $quoteIdentifiers  = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         
-        $extra_cond = ' ' . (isset($this->_query['order_by']) ? $this->_query['order_by'] : '') . 
-                      ' ' . (isset($this->_query['limit']) ? $this->_query['limit'] : '');
+        $extra_cond = ' ' . (isset($this->_query['order_by']) ? $this->_query['order_by'] : ''); 
         
         if (!$useWhere) {
 
@@ -1236,8 +1227,14 @@ class DB_DataObject extends DB_DataObject_Overload
         if (isset($this->_query) && $this->_query['condition']) {
         
             $table = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
-        
-            $r = $this->_query("DELETE FROM {$table} {$this->_query['condition']}{$extra_cond}");
+            $sql = "DELETE FROM {$table} {$this->_query['condition']}{$extra_cond}";
+            // add limit..
+            if (isset($this->_query['limit_start']) && strlen($this->_query['limit_start'] . $this->_query['limit_count'])) {
+                $sql = $DB->modifyLimitQuery($sql,$this->_query['limit_start'], $this->_query['limit_count']);
+            }
+            
+            
+            $r = $this->_query($sql);
             
             
             if (PEAR::isError($r)) {
@@ -1475,7 +1472,8 @@ class DB_DataObject extends DB_DataObject_Overload
         'group_by'    => '', // the GROUP BY condition
         'order_by'    => '', // the ORDER BY condition
         'having'      => '', // the HAVING condition
-        'limit'       => '', // the LIMIT condition
+        'limit_start' => '', // the LIMIT condition
+        'limit_count' => '', // the LIMIT condition
         'data_select' => '*', // the columns to be SELECTed
     );
         
