@@ -1272,8 +1272,8 @@ Class DB_DataObject extends DB_DataObject_Overload
      * $object = new mytable();
      * $object->name = "fred";
      * echo $object->count();
-     * echo $object->count(true);   // 
-     * echo $object->count('distinct mycol'); // dont use object vars.
+     * echo $object->count(true);  // dont use object vars.
+     * echo $object->count('distinct mycol'); 
      * echo $object->count('distinct mycol',true); // dont use object vars.
      *
      *
