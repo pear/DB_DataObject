@@ -1553,47 +1553,53 @@ Class DB_DataObject
      * xxxxxx = related table; (yyyyy = user defined..)
      * looks up table xxxxx, for value id=$this->xxxxx
      * stores it in $this->_xxxxx_yyyyy
+     * you can change what object vars the links are stored in by 
+     * changeing the format parameter
      *
+     *
+     * @param  string format (default _%s) where %s is the table name.
      * @author Tim White <tim@cyface.com>
      * @access public
      * @return boolean , true on success
      */
-    function getLinks()
+    function getLinks($format = '_%s')
     {
         global $_DB_DATAOBJECT;
         // get table will load the options.
         if ($this->_link_loaded) {
-            return;
+            return true;
         }
         $cols  = $this->_get_table();
         if (!isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
-            return;
+            return false;
         }
         $links = &$_DB_DATAOBJECT['LINKS'][$this->_database];
         /* if you define it in the links.ini file with no entries */
         if (isset($links[$this->__table]) && (!@$links[$this->__table])) {
-            return;
+            return false;
         }
         if (@$links[$this->__table]) {
             foreach($links[$this->__table] as $key => $match) {
                 list($table,$link) = explode(':', $match);
-                $k = '_' . str_replace('.', '_', $key);
+                $k = sprintf($format, str_replace('.', '_', $key));
+                // makes sure that '.' is the end of the key;
                 if ($p = strpos($key,".")) {
                       $key = substr($key, 0, $p);
                 }
                 $this->$k = $this->getLink($key, $table, $link);
             }
-            return;
+            return true;
         }
         foreach (array_keys($cols) as $key) {
             if (!($p = strpos($key, '_'))) {
                 continue;
             }
             // does the table exist.
-            $k = "_{$key}";
+            $k =sprintf($format, $key);
             $this->$k = $this->getLink($key);
         }
         $this->_link_loaded = true;
+        return true;
     }
 
     /**
