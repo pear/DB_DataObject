@@ -21,15 +21,10 @@
     </maintainer>
   </maintainers>
   <release>
-      <version>0.3</version>
-      <date>2002-08-16</date>
+      <version>0.4</version>
+      <date>2002-08-21</date>
       <notes>
-      - Fixed Globals requirement in createTables,
-      - Added Validation Utilities
-      - Fixed SetFrom Object
-      - Added database.links.ini support (by Tim White)
-      - added production option to configuration
-      - added DB_DataObject::staticAutoLoadTable($tablename);
+      - Bug fix release - createTables used wrong argv
       </notes>
       <state>beta</state>
     <filelist>
@@ -44,7 +39,16 @@
     </filelist>
   </release>
   <changelog>
+      <release>
+        <version>0.4</version>
+      <date>2002-08-21</date>
+      <notes>
+      - Bug fix release - createTables used wrong argv
+      </notes>
+      <state>beta</state>
+    </release>
     <release>
+    
       <version>0.3</version>
       <date>2002-08-16</date>
       <notes>
