@@ -30,7 +30,9 @@
         - add table prefix to autobuilt queries (assist in ambigous querys for joins)
           (Daniel Von Fange)
         - change update and delete to return the number of rows affected or false on failure
-        
+        - various code tidy ups - standards etc. (Arnaud Limbourg)
+        - fix generator for postgres and mdb - use unique keys as keys.
+      
       </notes>
       <state>stable</state>
     </release>
