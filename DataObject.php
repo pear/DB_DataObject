@@ -765,7 +765,7 @@ Class DB_DataObject
             $tryAutoIncrement = !$usedSequence;
             
             // then check again to see if we manually said NO TO ALL SEQUENCES...
-            if ($options['ignore_sequence_keys'] == 'ALL') {
+            if (@$options['ignore_sequence_keys'] == 'ALL') {
                 $tryAutoIncrement = false;
             }
             
