@@ -6,10 +6,10 @@
   <description>DataObject performs 2 tasks:
   1. Builds SQL statements based on the objects vars and the builder methods.
   2. acts as a datastore for a table row.
-  The core class is designed to be extended for each of your tables so that you put the 
+  The core class is designed to be extended for each of your tables so that you put the
   data logic inside the data classes.
   included is a Generator to make your configuration files and your base classes.
-  nd 
+  nd
 </description>
   <license>PHP License</license>
   <maintainers>
@@ -20,35 +20,29 @@
       <email>alan@akbkhome.com</email>
     </maintainer>
   </maintainers>
-  
-  
- 
-    <release>
+
+  <release>
       <version>1.2.1</version>
       <date>2003-08-20</date>
       <notes>
-         
+
         New Features
         - MsSQL native get_last_insert ID using SELECT @@IDENTITY
           you may wat not consider using this with transactions eg.
           $dataobject->query('BEGIN') and $dataobject->query('COMMIT')
           to ensure thread safety. (Markus Wolff)
-        
+
         Fixes:
         - Validate is an optional dependancy (Arnaud Limbourg)
-          
+
       </notes>
       <state>stable</state>
     </release>
-     
-     
-     
-     
-     
-     
+
     <filelist>
         <dir name="/" baseinstalldir="DB" role="php">
-            <file name="DataObject.php" role="php">              <replace from="@version@" to="version" type="package-info"/>
+            <file name="DataObject.php" role="php">
+              <replace from="@version@" to="version" type="package-info"/>
             </file>
             <dir name="DataObject" role="php">
                 <file>Generator.php</file>
@@ -59,46 +53,42 @@
             <file>example.ini</file>
         </dir>
     </filelist>
-    
+
    <deps>
       <dep type="php" rel="ge" version="4.1"/>
       <dep type="pkg" rel="ge" version="1.3">DB</dep>
       <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
     </deps>
-    
 
-   
   <changelog>
-  
    <release>
       <version>1.2</version>
       <date>2003-08-07</date>
       <notes>
-         
+
         New Features:
         - A Number of the private methods have been made Public,
-        
+
           changes:
             - _get_table()  = table()
             - _get_keys()   = keys()
           additions
             - tableName()  = returns or assign the table name
             - database()   = returns or assign the database name
-          
+
           changes by Markus Wolff
-        
+
         POSSIBLE BC IMPLICATIONS: If you define _get_table or _get_keys manually (rather than using the ini file)
           you should rename your methods table() and keys()
-        
+
         Fixes:
         - Generator is now more tollerant of editors that alter the spaces before
           the autocode markers ### (Andreas Ljunggren)
-          
+
       </notes>
       <state>stable</state>
     </release>
-     
- 
+
     <release>
       <version>1.1</version>
       <date>2003-08-07</date>
@@ -106,32 +96,25 @@
         Bug Fixes
         - limit argument testing now accepts &quot;10&quot; (a string with an integer
         in it, as a valid argument) (Demian Turner)
-      
+
         New Features
-        - JoinAdd has additional Argument $joinCol, so you can specify 
-          multiple targets links of the  same table, eg. user->friend, 
+        - JoinAdd has additional Argument $joinCol, so you can specify
+          multiple targets links of the  same table, eg. user->friend,
           user->parent both connect to the user table..  (Andy Crain)
-        
-        
       </notes>
       <state>stable</state>
     </release>
-     
- 
+
     <release>
       <version>1.0.2</version>
       <date>2003-07-31</date>
       <notes>
         Minor Bugfix Release
         - Fix static Get call, case sensitivity properly.
-        
-        
       </notes>
       <state>stable</state>
     </release>
-     
-  
- 
+
     <release>
       <version>1.0.1</version>
       <date>2003-07-18</date>
@@ -139,20 +122,18 @@
         Minor Bugfix Release
         - Fix Select defaults back to * after an fetch
         - Fix Update with NULL values
-        
+
       </notes>
       <state>stable</state>
     </release>
-     
-  
   <release>
       <version>1.0</version>
       <date>2003-07-16</date>
       <notes>
-        - Gold 1.0 Release.. - final stable release in this series. Future versions 
-          (eg. 1.1.*(dev)-&gt;1.2.*(release)) series will be generally API compatible, 
+        - Gold 1.0 Release.. - final stable release in this series. Future versions
+          (eg. 1.1.*(dev)-&gt;1.2.*(release)) series will be generally API compatible,
           however is likely to use MDB rather than DB.
-      
+
         - fix bug #23983 - argument checking on whereAdd, orderBy, limit and a few others
           (Mike Carter)
         - fix bug with cache clearing not working with staticGet and update/insert
@@ -167,10 +148,8 @@
           you will have to print_r() the object after find(), and before fetch(), or just use
           debugLevel(1)
         - overload calls from setFrom and toArray do method checks, as overload is still proving to
-          be a little unstable especially with Zend Encoder. (Note: if DataObjects causes crashes 
+          be a little unstable especially with Zend Encoder. (Note: if DataObjects causes crashes
           , remove the overload code at the bottom of DataObjects.php)
-          
-        
       </notes>
       <state>stable</state>
     </release>
@@ -178,22 +157,23 @@
       <version>0.19</version>
       <date>2003-05-22</date>
       <notes>
-        - fix bug #23712 - deleting (and probably updating as well) an object while 
+        - fix bug #23712 - deleting (and probably updating as well) an object while
           being fetched. (Michael McCarthy for spotting this)
-        
-        - fix generator overwriting code when file was edited in a Windows editor           (Robert Janeczek)
-          
+
+        - fix generator overwriting code when file was edited in a Windows editor
+          (Robert Janeczek)
+
         - validation will not produce errors on empty numeric data by default.
-        
+
         - overload extension enabled to relay setFrom and toArray calls to get*, set*
           methods, which are predefined as
           getXXX = returns $object->XXX
           setXXX($V) = returns true (or an error string if you create your own)
           (only affects php-4.3.2RC2 or later..)
-          
-        - selectAs($dataobject,'prefix_%s') to help control the way join queries return 
+
+        - selectAs($dataobject,'prefix_%s') to help control the way join queries return
           their data * doing selectAs() - clears the select and sets it to table.id as id ... etc.
-          
+
         - joinAdd has 2 extra optional arguments
           $dataObject->joinAdd($otherDataObject, $joinType, $joinAs)
           existing behaviour (INNER Joins) is default (eg. no value)
@@ -202,22 +182,20 @@
             '' = just added with a , and the link conditions are added with a WHERE statement.
           $joinAs can be used to name the table differently in the join eg.
             SELECT .. FROM person INNER JOIN address as homeaddress ......
-            
+
         - setFrom has an extra optional parameter for formating: eg.
           $object->setFrom($_POST,'prefix_%s') would map prefix_name to $object->name
           the default is '%s' which is the same as the previous behaviour
-          
+
         - added option dont_die (default no) to ini file
-          default (no) means that DataObjects will emit a PEAR_ERROR_DIE on configuration and 
+          default (no) means that DataObjects will emit a PEAR_ERROR_DIE on configuration and
           programming errors
           true or 1 means that you can write a PEAR::error handler to catch the errors and
           display a nice it's not working message
-          
-          
       </notes>
       <state>stable</state>
     </release>
-     
+
     <release>
       <version>0.18</version>
       <date>2003-05-17</date>
@@ -232,24 +210,21 @@
         - staticAutoloadTable(), now handles parse errors in included files alot cleaner
         - added dependancies on PHP4.3, DB 1.3 and Validate (although Validate is optional)
         - added table prefix to count query (Richard Wallace)
-        
+
       </notes>
       <state>stable</state>
     </release>
-     
-     
-  
+
    <release>
       <version>0.17</version>
       <date>2003-03-12</date>
       <notes>
         - Usual post feature bug fix release
         - fix loading of links.ini for joinAdd, getLinks etc. (Geoff Hopson)
-          
       </notes>
       <state>stable</state>
     </release>
-      
+
     <release>
       <version>0.16</version>
       <date>2003-03-06</date>
@@ -259,18 +234,16 @@
         - bugfix : added checks for is_array on ignore_sequence_keys (Hermen Heinen)
         - add toArray($format) which supports sprintf to enable easy integration with
           Quickforms etc. (Demian Turner)
-        - add optional dataobject as variable to update(), so you can update will 
+        - add optional dataobject as variable to update(), so you can update will
           only create an update based on what has changed. (Geoff Hopson)
         - add join condition to count() (Daniel Von Fange)
-        - modify limit() to work with postgresql and make it emit a fatal error if you 
+        - modify limit() to work with postgresql and make it emit a fatal error if you
           try this on databases that do not directly support limit queries. (Geoff Hopson)
           * I'm open on better ideas for this - probably wrapping the find() select call
-          
       </notes>
       <state>stable</state>
     </release>
-     
-   
+
     <release>
       <version>0.15</version>
       <date>2003-02-13</date>
@@ -281,24 +254,19 @@
         - added escape method as a quasi quote wrapper into pear::DB - useful for
           building your own queries - eg. like requests.. (does not add quotes)
         - fixed bug with delete not using primary key if it was set. (Ian Eure)
-        
       </notes>
       <state>stable</state>
     </release>
-     
-      
+
   <release>
       <version>0.14</version>
       <date>2003-02-06</date>
       <notes>
         - added get affected rows to update/insert/delete
-          they will return false if no data is affected and set 
+          they will return false if no data is affected and set
           the Objects lastError value.
-          Note: databases that do not support affectedRows(), will always 
+          Note: databases that do not support affectedRows(), will always
           return false.
-     
-          
-        
       </notes>
       <state>stable</state>
     </release>
@@ -307,11 +275,10 @@
       <date>2003-01-23</date>
       <notes>
         - bug fix release - debug_ignore_updates worked in reverse.. (Alexander Mazurov)
-        
       </notes>
       <state>stable</state>
     </release>
-     
+
    <release>
       <version>0.12</version>
       <date>2003-01-22</date>
@@ -320,45 +287,41 @@
         - fixes *.links.ini incorrectly using *.links (Damian Turner)
         - Adds the ability to get PEAR Connection and result objects
           getDatabaseConnection() and getDatabaseResult() (jason rust)
-        
       </notes>
       <state>stable</state>
     </release>
-     
-  
-  
+
    <release>
       <version>0.11</version>
       <date>2003-01-21</date>
       <notes>
         - changed connecition and result caching to use global private variable, rather
           than getStaticProperty
-        - results objects are not stored on insert/update/delete (speed increase 
+        - results objects are not stored on insert/update/delete (speed increase
           on large inserts can be as much as 10x faster)
         - bug fix - Checks that primary keys are integers (Anthony Juou)
         - typo on No data returned warning
         - unit tests in CVS
         - new configuration option for whether to use insert id's and sequences.
         - Generator no creates boolean bit (mitchell perilstein)
-        
+
       </notes>
       <state>stable</state>
     </release>
-     
-     
+
    <release>
       <version>0.10</version>
       <date>2002-12-09</date>
       <notes>
         - bug fix - Generator incorrectly set _database, causing generation of database.ini files to fail
         - change addslashes to PEAR::DB::quote()
-        - generator now only replaces DB_DataObjects with extends variable if set, 
+        - generator now only replaces DB_DataObjects with extends variable if set,
           you can use generator_rewrite_class to set what is a valid replacement.
-        
+
       </notes>
       <state>stable</state>
     </release>
-     
+
   <release>
       <version>0.9</version>
       <date>2002-12-06</date>
@@ -367,7 +330,7 @@
       </notes>
       <state>stable</state>
      </release>
-  
+
   <release>
       <version>0.8</version>
       <date>2002-09-21</date>
@@ -375,7 +338,7 @@
         - changed to stable status as it appears to be pretty stable now.
         - update and insert now return FALSE on error conditions (Peter Gebauer)
           which can be checked using === FALSE, and the error obtained using $object->_lastError
-        - delete will only use primary keys if they are set, otherwise it will use all object 
+        - delete will only use primary keys if they are set, otherwise it will use all object
           variables to build the condition. (Daniel Ferreira)
         - Added derivedHookFunctions(), and derivedHookVar() to enable extensions to generator to
           make user defined methods. (Michael Lund Rasmussen)
@@ -386,9 +349,7 @@
       </notes>
       <state>stable</state>
      </release>
-     
-     
-  
+
   <release>
       <version>0.6</version>
       <date>2002-09-10</date>
@@ -408,7 +369,7 @@
       </notes>
       <state>beta</state>
     </release>
-      
+
      <release>
        <version>0.4</version>
       <date>2002-08-21</date>
@@ -418,7 +379,6 @@
       <state>beta</state>
     </release>
     <release>
-    
       <version>0.3</version>
       <date>2002-08-16</date>
       <notes>
