@@ -130,7 +130,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 $t->$method();
             }
         }
-        echo "DONE\n\n";
+        $this->debug("DONE\n\n");
     }
 
     /**
@@ -181,9 +181,9 @@ class DB_DataObject_Generator extends DB_DataObject
      */
     function generateDefinitions()
     {
-        echo "Generating Definitions file:        ";
+        $this->debug("Generating Definitions file:        ");
         if (!$this->tables) {
-            echo "-- NO TABLES -- \n";
+            $this->debug("-- NO TABLES -- \n");
             return;
         }
 
@@ -201,15 +201,16 @@ class DB_DataObject_Generator extends DB_DataObject
         if (!@$options['schema_location'] && @!$options["ini_{$this->_database}"] ) {
             return;
         }
-        $base =  $options['schema_location'];
+        $base =  @$options['schema_location'];
         if (isset($options["ini_{$this->_database}"])) {
             $file = $options["ini_{$this->_database}"];
         } else {
             $file = "{$base}/{$this->_database}.ini";
         }
-        if (!file_exists($base)) {
+        
+        if (!file_exists(dirname($file))) {
             require_once 'System.php';
-            System::mkdir(array('-p','-m',0755,$base));
+            System::mkdir(array('-p','-m',0755,dirname($file)));
         }
         $this->debug("Writing ini as {$file}\n");
         touch($file);
