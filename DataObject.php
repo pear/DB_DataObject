@@ -1025,7 +1025,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             
             $table = ($quoteEntities ? $DB->quoteEntity($this->__table) : $this->__table);
         
-            $r = $this->_query("UPDATE  {$ttable}  SET {$settings} {$this->_query['condition']} ");
+            $r = $this->_query("UPDATE  {$table}  SET {$settings} {$this->_query['condition']} ");
             
             if (PEAR::isError($r)) {
                 $this->raiseError($r);
