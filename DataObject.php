@@ -2213,18 +2213,29 @@ class DB_DataObject extends DB_DataObject_Overload
      * (this also helps proxy creation)
      *
      *
-     * @param  string  $table  table
+     * @param  string  $table  tablename (use blank to create a new instance of the same class.)
      * @access private
      * @return DataObject|PEAR_Error 
      */
     
     
 
-    function factory($table) {
+    function factory($table = '') {
         global $_DB_DATAOBJECT;
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
+        
+        if ($table === '') {
+            if (is_a($this,'DB_DataObject') && strlen($this->__table)) {
+                $table = $this->__table;
+            } else {
+                return DB_DataObject::raiseError(
+                    "factory did not recieve a table name",
+                    DB_DATAOBJECT_ERROR_INVALIDARGS);
+            }
+        }
+        
         
         $p = isset($_DB_DATAOBJECT['CONFIG']['class_prefix']) ?
             $_DB_DATAOBJECT['CONFIG']['class_prefix'] : '';
