@@ -515,7 +515,9 @@ class DB_DataObject_Generator extends DB_DataObject
         }
         
         $var = (substr(phpversion(),0,1) > 4) ? 'public' : 'var';
-        
+        if (empty($options['generator_novars'])) {
+            $var = '//'.$var;
+        }
         
         $defs = $this->_definitions[$this->table];
 
@@ -529,9 +531,9 @@ class DB_DataObject_Generator extends DB_DataObject
             $padding = (30 - strlen($t->name));
             if ($padding < 2) $padding =2;
             $p =  str_repeat(' ',$padding) ;
-            if (empty($options['generator_novars'])) {
-                $body .="    {$var} \${$t->name};  {$p}// {$t->type}({$t->len})  {$t->flags}\n";
-            }
+           
+            $body .="    {$var} \${$t->name};  {$p}// {$t->type}({$t->len})  {$t->flags}\n";
+             
             // can not do set as PEAR::DB table info doesnt support it.
             //if (substr($t->Type,0,3) == "set")
             //    $sets[$t->Field] = "array".substr($t->Type,3);
