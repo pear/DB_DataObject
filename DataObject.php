@@ -1776,10 +1776,11 @@ Class DB_DataObject
      *
      *
      * @param    array | object  $from
+     * @param    string  $format eg. map xxxx_name to $object->name using 'xxxx_%s' (defaults to %s - eg. name -> $object->name
      * @access   public
      * @return   true on success or array of key=>setValue error message
      */
-    function setFrom(&$from)
+    function setFrom(&$from, $format = '%s')
     {
         global $_DB_DATAOBJECT;
         $keys  = $this->_get_keys();
@@ -1796,15 +1797,15 @@ Class DB_DataObject
             if (!$k) {
                 continue; // ignore empty keys!!! what
             }
-            if (is_object($from) && isset($from->$k)) {
+            if (is_object($from) && isset($from->{sprintf($format,$k)})) {
                 if ($_DB_DATAOBJECT['OVERLOADED'] && (strtolower($k) != 'from') ) {
-                    $ret = $this->{'set'.$k}($from->$k);
+                    $ret = $this->{'set'.$k}($from->{sprintf($format,$k)});
                     if (is_string($ret)) {
                         $overload_return[$k] = $ret;
                     }
                     continue;
                 }
-                $this->$k = $from->$k;
+                $this->$k = $from->{sprintf($format,$k)};
                 continue;
             }
             
@@ -1812,23 +1813,23 @@ Class DB_DataObject
                 continue;
             }
             
-            if (!isset($from[$k])) {
+            if (!isset($from[sprintf($format,$k)])) {
                 continue;
             }
-            if (is_object($from[$k])) {
+            if (is_object($from[sprintf($format,$k)])) {
                 continue;
             }
-            if (is_array($from[$k])) {
+            if (is_array($from[sprintf($format,$k)])) {
                 continue;
             }
             if ($_DB_DATAOBJECT['OVERLOADED'] && (strtolower($k) != 'from') ) {
-                $ret =  $this->{'set'.$k}($from[$k]);
+                $ret =  $this->{'set'.$k}($from[sprintf($format,$k)]);
                 if (is_string($ret)) {
                     $overload_return[$k] = $ret;
                 }
                 continue;
             }
-            $this->$k = $from[$k];
+            $this->$k = $from[sprintf($format,$k)];
         }
         if ($overload_return) {
             return $overload_return;
