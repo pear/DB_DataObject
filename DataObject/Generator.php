@@ -167,7 +167,10 @@ class DB_DataObject_Generator extends DB_DataObject
                     continue;
             }
             $defs =  $__DB->tableInfo($table);
-            
+            if (is_a($defs,'PEAR_Error')) {
+                echo $defs->toString();
+                exit;
+            }
             // cast all definitions to objects - as we deal with that better.
             foreach($defs as $def) {
                 if (is_array($def)) {
