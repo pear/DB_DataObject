@@ -1572,6 +1572,10 @@ Class DB_DataObject
     
      /**
      * classic factory method for loading a table class
+     * usage: $do = DB_DataObject::factory('person')
+     * WARNING - this may emit a include error if the file does not exist..
+     * use @ to silence it (if you are sure it is acceptable)
+     * eg. $do = @DB_DataObject::factory('person')
      *
      * @param  string  $table  table
      * @access private
@@ -1613,14 +1617,9 @@ Class DB_DataObject
         
         $file = $_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).'.php';
         
-        if (version_compare( phpversion(), "4.3") > 0) {
-            if (!isset($_DB_DATAOBJECT['LOADED'][$file]) && $fh = @fopen($file,'r',1)) {
-                fclose($fh);
-                include_once $_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).".php";
-            }
-        } else {
-            include_once $_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).".php";
-        }
+         
+        include_once $_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).".php";
+        
         
         $_DB_DATAOBJECT['LOADED'][$file] = true;
         
