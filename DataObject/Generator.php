@@ -387,6 +387,7 @@ class DB_DataObject_Generator extends DB_DataObject
         }
 
         foreach($this->tables as $this->table) {
+            $this->table = trim($this->table);
             $this->classname = $class_prefix.preg_replace('/[^A-Z]/i','_',ucfirst($this->table));
             $i = '';
             $outfilename = "{$base}/".preg_replace('/[^A-Z]/i','_',ucfirst($this->table)).".php";
@@ -597,7 +598,7 @@ class DB_DataObject_Generator extends DB_DataObject
         }
 
         
-        $classname = $this->classname = $class_prefix.preg_replace('/[^A-Z]/i','_',ucfirst($this->table));
+        $classname = $this->classname = $class_prefix.preg_replace('/[^A-Z]/i','_',ucfirst(trim($this->table)));
 
         $out = $this->_generateClassTable();
         //echo $out;
@@ -621,7 +622,7 @@ class DB_DataObject_Generator extends DB_DataObject
         global $_DB_DATAOBJECT;
         $this->_database  = $database; 
         $this->_connect();
-        
+        $table = trim($table);
         
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
         
@@ -642,7 +643,7 @@ class DB_DataObject_Generator extends DB_DataObject
             }
         }
 
-        $this->table = $table;
+        $this->table = trim($table);
         $ret = $this->_generateDefinitionsTable();
         
         $_DB_DATAOBJECT['INI'][$database][$table] = $ret['table'];
