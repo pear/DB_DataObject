@@ -140,9 +140,13 @@ class DB_DataObject_Generator extends DB_DataObject
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
 
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
-
-        $this->tables = $__DB->getListOf('tables');
         
+        // try getting a list of schema tables first. (postgres)
+        $this->tables = $__DB->getListOf('schema.tables');
+        if (empty($this->tables) || is_a($this->tables , 'PEAR_Error')) {
+            //if that fails fall back to clasic tables list.
+            $this->tables = $__DB->getListOf('tables');
+        }
         if (is_a($this->tables , 'PEAR_Error')) {
             return PEAR::raiseError($this->tables->toString(), null, PEAR_ERROR_DIE);
         }
