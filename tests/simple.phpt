@@ -4,11 +4,11 @@ DB::DataObject test
 <?php
 // define('DB_DATAOBJECT_NO_OVERLOAD',true);  
 
-if (!include(dirname(__FILE__)."/../DataObject.php")) print "skip"; ?>
+if (!require(dirname(__FILE__)."/../DataObject.php")) print "skip"; ?>
 --FILE--
 <?php // -*- C++ -*-
 
-
+error_reporting(E_ALL);
 
 // Test for: DB::parseDSN()
 include_once dirname(__FILE__)."/../DataObject.php";
@@ -164,6 +164,16 @@ class test extends DB_DataObject {
         
         $t->query('COMMIT');
         
+        
+         // uncommitted.. 
+        $this->dumpTest('testproxy2');
+        
+        
+        $t->username = 'qqqqqq';
+        $t->insert();
+        
+        exit;
+          
       
         
         echo "\n\n\n******sequences.\n";

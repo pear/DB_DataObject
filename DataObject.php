@@ -987,7 +987,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             
             if (is_a($this->$k,'db_dataobject_cast')) {
                 $value = $this->$k->toString($v,$dbtype);
-                if (PEAR::isError($vale)) {
+                if (PEAR::isError($value)) {
                     DB_DataObject::raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
                     return false;
                 }
@@ -1760,8 +1760,22 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         if (strtoupper($string) == 'BEGIN') {
             $DB->autoCommit(false);
+            echo "\nAUTOCOMMIT?";   var_dump($DB->autocommit);
+           
         }
-         
+        if (strtoupper($string) == 'COMMIT') {
+            $DB->commit();
+            $DB->autoCommit(true);
+            echo "\nAUTOCOMMIT?";var_dump($DB->autocommit);
+            return true;
+        }
+        
+        if (strtoupper($string) == 'ROLLBACK') {
+            $DB->rollback();
+            $DB->autoCommit(true);
+            echo "\nAUTOCOMMIT?";var_dump($DB->autocommit);
+            return true;
+        }
         
 
         if (@$options['debug_ignore_updates'] &&
@@ -1785,6 +1799,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         $result = $DB->query($string);
         
         
+       
 
         if (DB::isError($result)) {
             if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
