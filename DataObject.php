@@ -262,8 +262,8 @@ Class DB_DataObject
             DB_DataObject::debug("$class $key","STATIC GET");
         }
 
-        $obj = DB_DataObject::factory($class);
-        if (!PEAR::isError($newclass)) {
+        $obj = DB_DataObject::factory(substr($class,strlen($_DB_DATAOBJECT['CONFIG']['class_prefix'])));
+        if (PEAR::isError($obj)) {
             DB_DataObject::raiseError("could not autoload $class", DB_DATAOBJECT_ERROR_NOCLASS);
             return false;
         }
@@ -1484,7 +1484,8 @@ Class DB_DataObject
         $class   = DB_DataObject::_autoloadClass($_DB_DATAOBJECT['CONFIG']['class_prefix'] . ucfirst($table));
         
         if (!$class) {
-            return DB_DataObject::raiseError("getLinkArray:Could not find class for row $row, table $table",
+            trigger_error( "factory could not find class $table");
+            return DB_DataObject::raiseError("factory could not find class $class from $table",
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
         }
 
