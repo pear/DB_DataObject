@@ -2671,7 +2671,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
          /* look up the links for obj table */
 
-        if (!$ofield && ($olinks = $obj->links()) {
+        if (!$ofield && ($olinks = $obj->links())) {
             foreach ($olinks as $k => $v) {
                 /* link contains {this column} = {linked table}:{linked column} */
                 $ar = explode(':', $v);
