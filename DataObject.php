@@ -200,8 +200,10 @@ Class DB_DataObject
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-
-        if ($v === null) {
+        
+        // if you send it one argument.. - then v=k, k='first key'
+        
+        if (count(func_get_args()) === 1) {
             $v = $k;
             $keys = $this->keys();
             if (!$keys) {
@@ -214,8 +216,8 @@ Class DB_DataObject
             $this->debug("$k $v " .serialize(@$keys), "GET");
         }
         
-        if ($v === null) {
-            DB_DataObject::raiseError("No Value specified for get", DB_DATAOBJECT_ERROR_INVALIDARGS);
+        if (($v === null) || ($k === null)) {
+            DB_DataObject::raiseError("Invalid Values specified for get", DB_DATAOBJECT_ERROR_INVALIDARGS);
             return false;
         }
         $this->$k = $v;
@@ -250,7 +252,7 @@ Class DB_DataObject
         
 
         $key = "$k:$v";
-        if ($v === null) {
+        if (count(func_get_args()) === 2) {
             $key = $k;
         }
         if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
