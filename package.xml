@@ -24,13 +24,10 @@
   
   
     <release>
-      <version>0.12</version>
-      <date>2003-01-22</date>
+      <version>0.13</version>
+      <date>2003-01-23</date>
       <notes>
-        - Usual post release bug fix.
-        - fixes *.links.ini incorrectly using *.links (Damian Turner)
-        - Adds the ability to get PEAR Connection and result objects
-          getDatabaseConnection() and getDatabaseResult() (jason rust)
+        - bug fix release - debug_ignore_updates worked in reverse.. (Alexander Mazurov)
         
       </notes>
       <state>stable</state>
@@ -53,7 +50,18 @@
    
    
   <changelog>
+    
   
+    <release>
+      <version>0.13</version>
+      <date>2003-01-23</date>
+      <notes>
+        - bug fix release - debug_ignore_updates worked in reverse.. (Alexander Mazurov)
+        
+      </notes>
+      <state>stable</state>
+    </release>
+     
    <release>
       <version>0.12</version>
       <date>2003-01-22</date>
