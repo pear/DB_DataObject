@@ -3380,7 +3380,7 @@ class DB_DataObject extends DB_DataObject_Overload
         global $_DB_DATAOBJECT;
 
         if (empty($_DB_DATAOBJECT['CONFIG']['debug'])  || 
-            (is_int($_DB_DATAOBJECT['CONFIG']['debug']) &&  $_DB_DATAOBJECT['CONFIG']['debug'] < $level)) {
+            (is_numeric($_DB_DATAOBJECT['CONFIG']['debug']) &&  $_DB_DATAOBJECT['CONFIG']['debug'] < $level)) {
             return;
         }
         // this is a bit flaky due to php's wonderfull class passing around crap..
@@ -3390,7 +3390,7 @@ class DB_DataObject extends DB_DataObject_Overload
         if (!is_string($message)) {
             $message = print_r($message,true);
         }
-        if (!is_int( $_DB_DATAOBJECT['CONFIG']['debug']) && is_callable( $_DB_DATAOBJECT['CONFIG']['debug'])) {
+        if (!is_numeric( $_DB_DATAOBJECT['CONFIG']['debug']) && is_callable( $_DB_DATAOBJECT['CONFIG']['debug'])) {
             return call_user_func($_DB_DATAOBJECT['CONFIG']['debug'], $class, $message, $logtype, $level);
         }
         
