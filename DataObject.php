@@ -240,7 +240,7 @@ Class DB_DataObject
      */
     function &staticGet($class, $k, $v = null)
     {
-
+        $class = strtolower($class);
         global $_DB_DATAOBJECT;
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
@@ -1247,6 +1247,11 @@ Class DB_DataObject
         global $_DB_DATAOBJECT;
         
         $class = get_class($this);
+        
+        if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
+            $this->debug("Clearing Cache for ".$class,1);
+        }
+        
         if (@$_DB_DATAOBJECT['CACHE'][$class]) {
             unset($_DB_DATAOBJECT['CACHE'][$class]);
         }
