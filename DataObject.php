@@ -1372,15 +1372,23 @@ Class DB_DataObject
         }
         $table   = substr($class,strlen($_DB_DATAOBJECT['CONFIG']['class_prefix']));
 
-        // this should/could autoload
-        @include_once($_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).".php");
+        // only include the file if it exists - and barf badly if it has parse errors :)
+         
+        if ($fh = @fopen($_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).".php",'r',1)) {
+            fclose($fh);
+            include_once $_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).".php";
+        }
+        
+        
         if (!class_exists($class)) {
             DB_DataObject::raiseError("autoload:Could not autoload {$class}", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
         }
         return $class;
     }
-
+    
+    
+    
     /**
      * Have the links been loaded?
      *
