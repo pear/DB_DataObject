@@ -457,7 +457,7 @@ class DB_DataObject_Generator extends DB_DataObject
             $input);
 
         return preg_replace(
-            '/(\n|\r\n)\s*###START_AUTOCODE\n.*\n\s*###END_AUTOCODE(\n|\r\n)/s',
+            '/(\n|\r\n)\s*###START_AUTOCODE(\n|\r\n).*(\n|\r\n)\s*###END_AUTOCODE(\n|\r\n)/s',
             $body,$input);
     }
 
