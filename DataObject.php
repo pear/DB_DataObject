@@ -703,7 +703,7 @@ Class DB_DataObject
         }
 
         foreach($items as $k => $v) {
-            if (!isset($this->$k) && !@is_null($this->$k)) {
+            if (!isset($this->$k)) {
                 continue;
             }
             if ($leftq) {
@@ -712,7 +712,7 @@ Class DB_DataObject
             }
             $leftq .= "$k ";
 
-            if ($this->$k === null) {
+            if (strtolower($this->$k) === 'null') {
                 $rightq .= " NULL ";
                 continue;
             }
@@ -812,7 +812,7 @@ Class DB_DataObject
         $__DB  = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
 
         foreach($items as $k => $v) {
-            if (!isset($this->$k) && !@is_null($this->$k)) {
+            if (!isset($this->$k)) {
                 continue;
             }
             if (($dataObject !== false) && (@$dataObject->$k == $this->$k)) {
@@ -824,7 +824,7 @@ Class DB_DataObject
                 $settings .= ', ';
             }
             /* special values ... at least null is handled...*/
-            if ($this->$k === null) {
+            if (strtolower($this->$k) === 'null') {
                 $settings .= "$k = NULL";
             }
 
@@ -1436,11 +1436,11 @@ Class DB_DataObject
                     continue;
                 }
             }
-            if (!isset($this->$k) && !@is_null($this->$k)) {
+            if (!isset($this->$k)) {
                 continue;
             }
-            
-            if (is_null($this->$k)) {
+                        
+            if (strtolower($this->$k) === 'null') {
                 $this->whereAdd(" {$this->__table}.{$k}  IS NULL");
                 continue;
             }
