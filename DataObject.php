@@ -1378,13 +1378,13 @@ Class DB_DataObject extends DB_DataObject_Overload
      * It should append to the table structure array 
      *
      *     
-     * @param optional string  name of database to assign
+     * @param optional string  name of database to assign / read
      * @param optional array   structure of database, and keys
      * @param optional array  table links
      *
      * @access public
-     * @static
      * @return true or PEAR:error on wrong paramenters.. or false if no file exists..
+     *              or the array(tablename => array(column_name=>type)) if called with 1 argument.. (databasename)
      */
     function databaseStructure()
     {
@@ -1396,22 +1396,31 @@ Class DB_DataObject extends DB_DataObject_Overload
         if ($args = func_get_args()) {
         
             if (count($args) == 1) {
-                // this an error condition!!!
-                return DB_DataObject::raiseError(
-                    "DB_DataObjects::databaseStructure() takes 2 or 3 arguments \n".
-                    "string databasename, array structure, array links.\n",
-                    DB_DATAOBJECT_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
                 
-            }
+                // this returns all the tables and their structure..
+                
+                $x = new DB_DataObject;
+                $x->_database = $args[0];
+                $DB  = $x->getDatabaseConnection();
+                $tables = $DB->getListOf('tables');
+                require_once 'DB/DataObject/Generator.php';
+                foreach($tables as $table) {
+                    $y = new DB_DataObject_Generator;
+                    $y->fillTableSchema($x->_database,$table);
+                }
+                return $_DB_DATAOBJECT['INI'][$x->_database];            
+            } else {
         
-            $_DB_DATAOBJECT['INI'][$args[0]] = isset($_DB_DATAOBJECT['INI'][$args[0]]) ?
-                $_DB_DATAOBJECT['INI'][$args[0]] + $args[1] : $args[1];
-            
-            if (isset($args[1])) {
-                $_DB_DATAOBJECT['LINKS'][$args[0]] = isset($_DB_DATAOBJECT['LINKS'][$args[0]]) ?
-                    $_DB_DATAOBJECT['LINKS'][$args[0]] + $args[2] : $args[2];
+                $_DB_DATAOBJECT['INI'][$args[0]] = isset($_DB_DATAOBJECT['INI'][$args[0]]) ?
+                    $_DB_DATAOBJECT['INI'][$args[0]] + $args[1] : $args[1];
+                
+                if (isset($args[1])) {
+                    $_DB_DATAOBJECT['LINKS'][$args[0]] = isset($_DB_DATAOBJECT['LINKS'][$args[0]]) ?
+                        $_DB_DATAOBJECT['LINKS'][$args[0]] + $args[2] : $args[2];
+                }
+                return true;
             }
-            return true;
+          
         }
         
         

@@ -258,7 +258,7 @@ class test extends DB_DataObject {
         print_R($x);
         
         
-      
+        print_r(DB_DataObject::databaseStructure('test'));
         
         $this->postgresTest();
         
