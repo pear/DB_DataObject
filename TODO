@@ -11,37 +11,36 @@ Features from the NG version can then be carefully moved back into the core Data
 
 Current TODO list:
 ----------------------------------
+    Issue: float support..
+	Add type support for floats, testing and casting etc..
+	
+	
+    Issue: ini structure is big when using many tables.
+	
+	Intend to move the structure to to footer of the class file.
+	where it sets the $GLOBALS[_DB_DATAOBJECT][ini][{databasename}]....
+	
+
+    	
+
 
 
     Issue: More detailed cached table information
 
         make available an extra ini file database.details.ini, which contains
-        [table]
-        column = type:size:notnull: etc. 
-        from the tableInfo() call
+        [table__sizes]
+        column = size
         
-        to allow quick lookup/retrieval of this data for any purpose...
-        
-        *****Updated based on DB_DataObject_NG 
-        
-        the plan here is to move to an XML based caching format, along with a class based
-        description layer, 
-        
-        Add:method - getTableColumnObject('column name'); 
-            returns an object (which includes utililites specifically useful for that type of object)
-            // eg. validation?, date conversion...???/
-            
-        
+	** initially to enable testing of field lenghts etc..
+	** secondarily to enable database creation...!!
+	
+	
+	
+	 
 
     Issue: Table Rebuilds
         
-        If you modify the database table, then DB_DataObject will be unaware of the change until you
-        run createTables.php again.
-        
-        
-        Solution:
-        if the 'production' option is off, then it should rebuild the table information at the same time as loading
-        the table description. and compare the current definition to the new generated one...
+        ** not really practicall - running with on-the-fly querying should solve this for the most part..
         
         
      
@@ -52,6 +51,8 @@ Current TODO list:
         Solution:
         Add a method, if the database is mysql, use the native 'REPLACE call'
         otherwise, do a select on ID then insert|update..
+	
+	Maybe???  - bloated api already????
 
     
     
@@ -62,29 +63,22 @@ Current TODO list:
         with 
             default_database = dsn
         and treat default more like a database name
+	
+	
 
     Issue: adding more realms to configuration
         
         Proposal here is to add realms for database dsn's, table mappings etc. along
         with hard coding the location of database cache files...
         
+	mostly fixed with
+	{project}_database = dsn
+	{project}_ini      = /location/.....
+	
+	need to add {project}/dataobject to factory...
         
         
-    Issue: connection Pooling and resources (Mostly Done)
-    
-        Connections and Results have just been moved out of the getStaticProperty method, to
-        a $GLOBALS array, and results are only stored when you do find (Eg. not for insert/update/delete)
-         - this already has a significant speed improvement. (over 10x faster when doing 3000+ inserts)
-         
-        It has been suggested that storing the connection/result in the object may be an idea, this 
-        needs more study on what performance impact (both speed and memory)
-        it has when doing things like
-        
-        while ($dbo->fetch()) {
-            $array[] = $dbo->__clone();
-        }
-        
-        along with this, it may be worth considering if a Connection Manager class can be spun off.?
+     
         
         
     Issue: Persistant Storage..
@@ -107,12 +101,7 @@ Current TODO list:
         either this, or a method, that specifically tags something as cachable.......
         
         
-        
-    Issue: RaiseError, should really use the dynamic, not static methods..
-    
-        DB_DataObject::raiseError should be replaced with $this->raiseError(), in most non static
-        method calls.
-    
+  
     Issue: $__DB->dsn["database'] does not work with oracle.
         
         Need to work around this somehow... ???
@@ -132,50 +121,4 @@ Current TODO list:
         one item..
         (updates & inserts could also do checks..)
         
-/* ----------------------------- OLD - Done or Depreciated ----------------------------------------        
-    
-    
-    Issue: Constructor/initializer is a bit kludgy, (depends on a small piece of global code)..
-        
-        Move to use ZE2's __construct() ?? method, and make generator create object constructors
-        for the time being that call __construct().
-        
-        NOPE - have added global calls to call connect if required now
-
-
-    Issue: Delete -- DONE 0.7
-
-        delete can be called in many ways:
-        
-        $object->get(12);
-        $object->delete();
-        in which case deleting on the primary key is desired.
-        
-        $object->colour = 'red';
-        $object->delete();
-        in which case deleting on the _build_condition is desired
-        (eg. when the primary key is not set)
-        ** THIS DOES NOT APPEAR TO WORK *** CHECK THIS!!!
-        
-        $object->whereAdd("colour like 'r%');
-        $object->delete(TRUE);
-        works OK - just uses the where condition, not the values.
-
-
  
- 
-    Issue: Crosstable Joins - DONE 0.11 (or somewhere abou then)
-
-        Althought the main documents indicate that a join version ended up being too complex, this
-        was based on doing multiple joins on many tables. - It has been suggested (and code provided),
-        that doing a simpler version may be possible:
-        
-         
-        This is   currently implemented - check the source at present for usage examples 
-            ** this need documenting...
-            
-        It would also be nice to have a better way to return join or link results...
-            eg.
-            getJoin('table'); // returns the dataobject for that table, based on the join results.
-            in a similar way to the getLinks stuff..
-
