@@ -1459,7 +1459,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (isset($_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"])) {
             $schemas = is_array($_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"]) ?
                 $_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"] :
-                explode(PATH_SEPERATOR,$_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"]);
+                explode(PATH_SEPARATOR,$_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"]);
         }
                     
          

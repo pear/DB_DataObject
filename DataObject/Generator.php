@@ -115,7 +115,7 @@ class DB_DataObject_Generator extends DB_DataObject
 
         foreach($databases as $databasename => $database) {
             if (!$database) continue;
-            echo "CREATING FOR $databasename\n";
+            $this->debug("CREATING FOR $databasename\n");
             $class = get_class($this);
             $t = new $class;
             $t->_database_dsn = $database;
@@ -126,6 +126,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 if (substr($method,0,8 ) != 'generate') {
                     continue;
                 }
+                $this->debug("calling $method");
                 $t->$method();
             }
         }
@@ -416,7 +417,7 @@ class DB_DataObject_Generator extends DB_DataObject
             if (file_exists($outfilename))
                 $i = implode('',file($outfilename));
             $out = $this->_generateClassTable($i);
-            //echo "writing $this->classname\n";
+            $this->debug( "writing $this->classname\n");
             $fh = fopen($outfilename, "w");
             fputs($fh,$out);
             fclose($fh);
