@@ -3483,12 +3483,13 @@ class DB_DataObject extends DB_DataObject_Overload
                 $x = new Date($this->$col);
                 
                 return $x->format($format);
-                
+            
+             
             case ($cols[$col] &  DB_DATAOBJECT_BOOLEAN):
                 
-                if ($cols[$col] && DB_DATAOBJECT_STR) {
+                if ($cols[$col] &  DB_DATAOBJECT_STR) {
                     // it's a 't'/'f' !
-                    return ($cols[$col] = 't');
+                    return ($cols[$col] == 't');
                 }
                 return (bool) $cols[$col];
             
