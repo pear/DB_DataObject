@@ -555,6 +555,12 @@ Class DB_DataObject
                 $rightq .= ', ';
             }
             $leftq .= "$k ";
+            
+            if ($this->$k === null) {
+                $rightq .= " NULL ";
+                continue;
+            }
+            
             if ($v & DB_DATAOBJECT_STR) {
                 $rightq .= $__DB->quote($this->$k) . " ";
                 continue;
@@ -633,6 +639,11 @@ Class DB_DataObject
             if ($settings)  {
                 $settings .= ', ';
             }
+            /* special values ... at least null is handled...*/
+            if ($this->$k === null) {
+                $settings .= "$k = NULL";
+            }
+            
             if ($v & DB_DATAOBJECT_STR) {
                 $settings .= $k .' = '. $__DB->quote($this->$k) . ' ';
                 continue;
