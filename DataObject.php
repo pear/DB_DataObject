@@ -984,7 +984,7 @@ Class DB_DataObject {
                 continue;
             }
             /* this is probably an error condition! */
-            $this->condition_append("$k = 0");
+            $this->whereAdd("$k = 0");
         }
     }
     /**
