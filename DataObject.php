@@ -195,7 +195,7 @@ if ( substr(phpversion(),0,1) == 5) {
  * @since    PHP 4.0
  */
  
-Class DB_DataObject extends DB_DataObject_Overload
+class DB_DataObject extends DB_DataObject_Overload
 {
    /**
     * The Version - use this to check feature changes
@@ -518,30 +518,32 @@ Class DB_DataObject extends DB_DataObject_Overload
      * @param    string  $cond  condition
      * @param    string  $logic optional logic "OR" (defaults to "AND")
      * @access   public
-     * @return   none|PEAR::Error - invalid args only
+     * @return   string|PEAR::Error - previous condition or Error when invalid args found
      */
     function whereAdd($cond = false, $logic = 'AND')
     {
         if (!isset($this->_query)) {
-            $this->raiseError(
-                "You cannot do two queries on the same object (copy it before finding)", 
+            return $this->raiseError(
+                "You cannot do two queries on the same object (clone it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
-            return false;
         }
         
         if ($cond === false) {
+            $r = $this->_query['condition'];
             $this->_query['condition'] = '';
-            return;
+            return $r;
         }
         // check input...= 0 or '   ' == error!
         if (!trim($cond)) {
             return $this->raiseError("WhereAdd: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
         }
+        $r = $this->_query['condition'];
         if ($this->_query['condition']) {
             $this->_query['condition'] .= " {$logic} {$cond}";
-            return;
+            return $r;
         }
         $this->_query['condition'] = " WHERE {$cond}";
+        return $r;
     }
 
     /**
@@ -3084,10 +3086,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         //echo "FROM VALUE $col, {$cols[$col]}, $value\n";
         switch (true) {
-        
+            // set to null and column is can be null...
             case ((strtolower($value) == 'null') && (!($cols[$col] & DB_DATAOBJECT_NOTNULL))):
             case (is_object($value) && is_a($value,'DB_DataObject_Cast')): 
-            
                 $this->$col = $value;
                 return true;
                 
@@ -3096,7 +3097,6 @@ Class DB_DataObject extends DB_DataObject_Overload
                 return false;
         
             case (($cols[$col] & DB_DATAOBJECT_DATE) &&  ($cols[$col] & DB_DATAOBJECT_TIME)):
-                
                 if (is_numeric($value)) {
                     $this->$col = date('Y-m-d H:i:s', $value);
                     return true;
@@ -3111,6 +3111,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                     $this->$col = date('Y-m-d',$value);
                     return true;
                 }
+                 
                 // try date!!!!
                 require_once 'Date.php';
                 $x = new Date($value);
@@ -3118,6 +3119,7 @@ Class DB_DataObject extends DB_DataObject_Overload
                 return true;
             
             case ($cols[$col] & DB_DATAOBJECT_TIME):
+               
                 $guess = strtotime($value);
                 if ($guess != -1) {
                      $this->$col = date('H:i:s', $guess);
@@ -3125,8 +3127,6 @@ Class DB_DataObject extends DB_DataObject_Overload
                 }
                 // otherwise an error in type...
                 return false;
-            
-           
             
             case ($cols[$col] & DB_DATAOBJECT_STR):
                 
@@ -3237,13 +3237,18 @@ Class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
 
-        if (DB_DataObject::debugLevel()<$level) {
+        if (is_int( $_DB_DATAOBJECT['CONFIG']['debug']) &&  $_DB_DATAOBJECT['CONFIG']['debug']<$level) {
             return;
         }
         $class = isset($this) ? get_class($this) : __CLASS__;
+        
         if (!is_string($message)) {
             $message = print_r($message,true);
         }
+        if (!is_int( $_DB_DATAOBJECT['CONFIG']['debug']) && is_callable( $_DB_DATAOBJECT['CONFIG']['debug'])) {
+            return call_user_func($_DB_DATAOBJECT['CONFIG']['debug'], $message, $logtype, $level);
+        }
+        
         if (!ini_get('html_errors')) {
             echo "$class   : $logtype       : $message\n";
             flush();
@@ -3271,7 +3276,9 @@ Class DB_DataObject extends DB_DataObject_Overload
             DB_DataObject::_loadConfig();
         }
         if ($v !== null) {
+            $r = $_DB_DATAOBJECT['CONFIG']['debug'];
             $_DB_DATAOBJECT['CONFIG']['debug']  = $v;
+            return $r;
         }
         return @$_DB_DATAOBJECT['CONFIG']['debug'];
     }
