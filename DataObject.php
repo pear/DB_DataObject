@@ -56,7 +56,6 @@ define('DB_DATAOBJECT_BLOB', 64); // is blob type
 
 
 define('DB_DATAOBJECT_NOTNULL', 128);           // not null col.
-define('DB_DATAOBJECT_NATIVESEQUENCE', 256);    // is a native sequence col..
 
 /*
  * Define this before you include DataObjects.php to  disable overload - if it segfaults due to Zend optimizer..
@@ -1611,6 +1610,9 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         $usekey = $keys[0];
         
+        
+        
+        
         if (@$_DB_DATAOBJECT['CONFIG']['sequence_'.$this->__table]) {
             $usekey = $_DB_DATAOBJECT['CONFIG']['sequence_'.$this->__table];
         }  
@@ -1635,12 +1637,30 @@ Class DB_DataObject extends DB_DataObject_Overload
         }
         
         
-         
+        $realkeys = $_DB_DATAOBJECT['INI'][$this->_database][$this->__table."__keys"];
+        
+        
+        //echo "--keys--\n";
+        //print_R(array($realkeys[$usekey], count($keys))) ;
+        //echo "\n-/keys--\n";
+        
+        // if you are using an old ini file - go back to old behaviour...
+        if (is_numeric($realkeys[$usekey])) {
+            $realkeys[$usekey] = 'N';
+        }
+        
+        // multiple unique primary keys without a native sequence...
+        if (($realkeys[$usekey] == 'K') && (count($keys) > 1)) {
+            return array(false,false);
+        }
         // use native sequence keys...
         // technically postgres native here...
         // we need to get the new improved tabledata sorted out first.
         
-        if (in_array($dbtype , array( 'mysql', 'mssql')) && ($table[$usekey] & DB_DATAOBJECT_INT)) {
+        if (    in_array($dbtype , array( 'mysql', 'mssql')) && 
+                ($table[$usekey] & DB_DATAOBJECT_INT) && 
+                (@$realkeys[$usekey] == 'N')
+                ) {
             return array($usekey,true);
         }
         // I assume it's going to try and be a nextval DB sequence.. (not native)

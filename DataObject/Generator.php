@@ -327,27 +327,43 @@ class DB_DataObject_Generator extends DB_DataObject
                     
                     
             }
+            
+            
             if (!strlen(trim($t->name))) {
                 continue;
             }
+            
+            if (preg_match('/not_null/i',$t->flags)) {
+                $type += DB_DATAOBJECT_NOTNULL;
+            }
+            
             $this->_newConfig .= "{$t->name} = $type\n";
             $ret['table'][$t->name] = $type;
             // i've no idea if this will work well on other databases?
             // only use primary key or nextval(), cause the setFrom blocks you setting all key items...
             // if no keys exist fall back to using unique
-
-            if (preg_match("/(primary|nextval\()/i",$t->flags)) {
-                $keys_out_primary .= "{$t->name} = $type\n";
-                $ret_keys_primary[$t->name] = $type;
-            } else if (preg_match("/\sunique\s/i",$t->flags)) {
-                $keys_out_secondary .= "{$t->name} = $type\n";
-                $ret_keys_secondary[$t->name] = $type;
+            //echo "\n{$t->name} => {$t->flags}\n";
+            if (preg_match("/(auto_increment|nextval\()/i",$t->flags)) {
+                // native sequences = 2
+                $keys_out_primary .= "{$t->name} = N\n";
+                $ret_keys_primary[$t->name] = 'N';
+            } else if (preg_match("/(primary|unique)/i",$t->flags)) {
+                // keys.. = 1
+                $keys_out_secondary .= "{$t->name} = K\n";
+                $ret_keys_secondary[$t->name] = 'K';
             }
+            
+            
+            
 
         }
         
         $this->_newConfig .= $keys_out . (empty($keys_out_primary) ? $keys_out_secondary : $keys_out_primary);
         $ret['keys'] = empty($keys_out_primary) ? $ret_keys_secondary : $ret_keys_primary;
+        
+        
+        //print_r(array("dump for {$this->table}", $ret));
+        
         return $ret;
         
         

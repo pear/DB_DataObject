@@ -231,7 +231,7 @@ class test extends DB_DataObject {
         $page_module= DB_DataObject::Factory('page_module');
         
         // we should guess better.. but this is a kludgy fix.
-        $page_module->sequenceKey(false,false);
+        //$page_module->sequenceKey(false,false);
         $page_module->page_id=1;
         $page_module->module_id=1;
         $page_module->position='top';
@@ -257,9 +257,7 @@ class test extends DB_DataObject {
         print_R($x);
         
         
-        
-        
-        
+      
         
         
         
