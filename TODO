@@ -1,10 +1,7 @@
-Development of DB_DataObject_NG (Next Generation DataObject)..
+Development of DB_DataObject  
 
-To assist in the development of addtional features for the growth of DB_DataObject, 
-the plan is to develop an extended version DB_DataObject_NG, which extends the current
-version and adds alot of the more experiemental features as listed below..
+Ok.. major revamp (or 2nd NG thread not feasible... - features will continue to be added gradually..)
 
-Features from the NG version can then be carefully moved back into the core DataObject.
 
 
 
