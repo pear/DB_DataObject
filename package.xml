@@ -22,13 +22,14 @@
   </maintainers>
   
   <release>
-     <version>1.7.10</version>
-      <date>2004-03-16</date>
+     <version>1.7.11</version>
+      <date>2004-03-22</date>
       <notes><![CDATA[
         Minor Bugfix release. 
       
-        #3829 - joinAdd fix for database prefixing (yet again)
-           
+        #3898 - fix count , which got broken by previous distinct argument changes
+        #------ support $x IS NOT NULL using $obj->value = DB_DataObject_Cast::sql("NOT NULL");
+        
  
       ]]></notes>
       <state>stable</state>
@@ -64,6 +65,24 @@
     </deps>
 
   <changelog>
+  
+  
+  <release>
+     <version>1.7.10</version>
+      <date>2004-03-16</date>
+      <notes><![CDATA[
+        Minor Bugfix release. 
+      
+        #3829 - joinAdd fix for database prefixing (yet again)
+           
+ 
+      ]]></notes>
+      <state>stable</state>
+    </release> 
+   
+  
+  
+  
     <release>
      <version>1.7.9</version>
       <date>2004-03-12</date>
