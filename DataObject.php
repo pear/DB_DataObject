@@ -160,7 +160,8 @@ Class DB_DataObject {
     * @return 	int No. of rows
     */
 
-    function get($k,$v=NULL) {
+    function get($k,$v=NULL) 
+    {
         if ($v === NULL) {
             $v= $k;
             $keys = $this->_get_keys();
@@ -199,7 +200,8 @@ Class DB_DataObject {
     * @return 	object
     */
 
-    function &staticGet($class,$k,$v=NULL) {
+    function &staticGet($class,$k,$v=NULL) 
+    {
 
         $cache = &PEAR::getStaticProperty('DB_DataObject','cache');
 
@@ -257,7 +259,8 @@ Class DB_DataObject {
     */
 
 
-    function find($n=FALSE) {
+    function find($n=FALSE) 
+    {
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug($n, "__find",1);
         }
@@ -321,7 +324,8 @@ Class DB_DataObject {
     * @return 	boolean on success
     */
 
-    function fetch() {
+    function fetch() 
+    {
         $results = &PEAR::getStaticProperty('DB_DataObject','results');
 
         if (!@$this->N) {
@@ -370,7 +374,8 @@ Class DB_DataObject {
     * @return   none
     */
 
-    function whereAdd($cond=FALSE,$logic="AND") {
+    function whereAdd($cond=FALSE,$logic="AND") 
+    {
         if ($cond === FALSE) {
             $this->_condition = '';
             return;
@@ -393,7 +398,8 @@ Class DB_DataObject {
     * @access public
     * @return none
     */
-    function orderBy($order=FALSE) {
+    function orderBy($order=FALSE) 
+    {
         if ($order === FALSE) {
             $this->_order_by = "";
             return;
@@ -416,7 +422,8 @@ Class DB_DataObject {
     * @access public
     * @return  none
     */
-    function groupBy($group=FALSE) {
+    function groupBy($group=FALSE) 
+    {
         if ($group === FALSE) {
             $this->_group_by = "";
             return;
@@ -441,7 +448,8 @@ Class DB_DataObject {
     * @return  none
     */
 
-    function limit($a=NULL,$b=NULL) {
+    function limit($a=NULL,$b=NULL) 
+    {
         if ($a===NULL) {
            $this->_limit = "";
            return;
@@ -468,7 +476,8 @@ Class DB_DataObject {
     */
 
 
-    function selectAdd($k=NULL) {
+    function selectAdd($k=NULL) 
+    {
         if ($k===NULL) {
             $this->_data_select ='';
             return;
@@ -496,7 +505,8 @@ Class DB_DataObject {
     * @return  int
     */
 
-    function insert() {
+    function insert() 
+    {
         $this->_connect();
         $connections = &PEAR::getStaticProperty('DB_DataObject','connections');
         $__DB= &$connections[$this->_database_dsn_md5];
@@ -569,7 +579,8 @@ Class DB_DataObject {
     * @return  boolean TRUE = success
     */
 
-    function update() {
+    function update() 
+    {
         $items = $this->_get_table();
         $keys = $this->_get_keys();
 
@@ -641,7 +652,8 @@ Class DB_DataObject {
     * @param boolean use the whereAdd conditions (default = no - use current values.)
     * @return  boolean TRUE on success
     */
-    function delete($use_where=FALSE) {
+    function delete($use_where=FALSE) 
+    {
         $keys = $this->_get_keys();
         if (!$use_where) {
             $this->_condition=""; // default behaviour not to use where condition
@@ -678,7 +690,8 @@ Class DB_DataObject {
 
 
 
-    function fetchRow($row=NULL) {
+    function fetchRow($row=NULL) 
+    {
         if (!$GLOBALS['_DB_DATAOBJECT_PRODUCTION']) {
             $this->debug("{$this->__table} $row of {$this->N}", "fetchrow",3);
         }
@@ -737,7 +750,8 @@ Class DB_DataObject {
 
 
 
-    function count() {
+    function count() 
+    {
 
         $items = $this->_get_table();
         $tmpcond = $this->_condition;
@@ -776,7 +790,8 @@ Class DB_DataObject {
     * @return  none or PEAR_Error
     */
 
-    function query($string) {
+    function query($string) 
+    {
         return $this->_query($string);
     }
 
