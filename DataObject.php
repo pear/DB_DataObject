@@ -467,7 +467,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             $this->debug(serialize($array),"FETCH");
         }
 
-        if (!is_array($array)) {
+        if ($array === null) {
             if (@$_DB_DATAOBJECT['CONFIG']['debug']) {
                 $t= explode(' ',microtime());
             
