@@ -1041,7 +1041,7 @@ Class DB_DataObject
         }
         $this->_condition = $tmpcond;
         $result  = &$_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid];
-        $l = $result->fetchRow(DB_FETCHMODE_ASSOC,0);
+        $l = $result->fetchRow(DB_FETCHMODE_ASSOC);
         return $l['DATAOBJECT_NUM'];
     }
 
