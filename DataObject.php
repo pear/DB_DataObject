@@ -2068,7 +2068,7 @@ class DB_DataObject extends DB_DataObject_Overload
             if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) { 
                 $this->debug($result->toString(), "Query Error",1 );
             }
-            return $result;
+            return $this->raiseError($result);
         }
         if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $t= explode(' ',microtime());

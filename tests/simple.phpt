@@ -125,8 +125,13 @@ class test extends DB_DataObject {
         $t->delete();
         $this->dumpTest(); 
     }
+    function test11() { // bug #2928
+        DB_DataObject::debugLevel(1);
+        $t = new test;
+        $t->query("SELECT * FROMs {$t->__table} where id < 5 ORDER BY id");
+        print_r($t);
     
-    
+    }
     
 	function test30() {
 	
