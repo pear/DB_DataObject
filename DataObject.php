@@ -2610,7 +2610,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (is_array($message)) {
             $message = print_r($message,true);
         }
-        echo "<code><B>$logtype:</B> $message</code><BR>\n";
+        echo "<code><B>DB_DataObject: $logtype:</B> $message</code><BR>\n";
         flush();
     }
 
