@@ -1165,6 +1165,11 @@ class DB_DataObject extends DB_DataObject_Overload
         // restore original query conditions.
         $this->_query = $original_query;
         
+        // if you manually specified a dataobject, and there where no changes - then it's ok..
+        if ($dataObject !== false) {
+            return false;
+        }
+        
         $this->raiseError(
             "update: No Data specifed for query $settings , {$this->_query['condition']}", 
             DB_DATAOBJECT_ERROR_NODATA);
