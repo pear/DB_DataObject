@@ -1,4 +1,4 @@
-<?php
+a-<?php
 // +----------------------------------------------------------------------+
 // | PHP Version 4                                                        |
 // +----------------------------------------------------------------------+
@@ -1251,8 +1251,11 @@ Class DB_DataObject extends DB_DataObject_Overload
         $keys = $this->keys();
 
         if (!$keys[0]) {
-            echo 'CAN NOT COUNT WITHOUT PRIMARY KEYS';
-            exit;
+            $this->raiseError(
+                "You cannot do run count without keys - use \$do->keys('id');", 
+                DB_DATAOBJECT_ERROR_INVALIDARGS,PEAR_ERROR_DIE);
+            return false;
+            
         }
         
         $table   = ($quoteEntities ? $DB->quoteEntity($this->__table) : $this->__table);
@@ -2013,7 +2016,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . preg_replace('/[^A-Z]/i','_',ucfirst($table));
+        $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . preg_replace('/[^A-Z0-9]/i','_',ucfirst(strtolower($table)));
         $class = (class_exists($class)) ? $class  : DB_DataObject::_autoloadClass($class);
         return $class;
     }
@@ -2043,7 +2046,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . preg_replace('/[^A-Z]/i','_',ucfirst($table));
+        $class = $_DB_DATAOBJECT['CONFIG']['class_prefix'] . preg_replace('/[^A-Z0-9]/i','_',ucfirst(strtolower($table)));
         
         $class = (class_exists($class)) ? $class  : DB_DataObject::_autoloadClass($class);
         
@@ -2090,7 +2093,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             return false;
         }
         
-        $file = $_DB_DATAOBJECT['CONFIG']['class_location'].'/'.preg_replace('/[^A-Z]/i','_',ucfirst($table)).".php";
+        $file = $_DB_DATAOBJECT['CONFIG']['class_location'].'/'.preg_replace('/[^A-Z0-9]/i','_',ucfirst(strtolower($table))).".php";
         
         if (!file_exists($file)) {
             DB_DataObject::raiseError(
