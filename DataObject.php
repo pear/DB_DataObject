@@ -1244,16 +1244,22 @@ Class DB_DataObject {
     function &getLinkArray($row,$table = NULL) {
         $ret = array();
         if (!$table) {
-            if (!($p = strpos($row,'_'))) {
-                return $ret;
+            $links = &PEAR::getStaticProperty('DB_DataObject',"{$this->_database}.links");
+            if (@$links[$this->__table][$row]) {
+                list($table,$link) = explode(':',$links[$this->__table][$row]);
+            } else {
+                if (!($p = strpos($row,'_'))) {
+                    return $ret;
+                }
+                $table = substr($row,0,$p);
             }
-            $table = substr($row,0,$p);
         }
         $class = $this->staticAutoloadTable($table);
         if (!$class) {
             DB_DataObject::raiseError("getLinkArray:Could not find class for row $row, table $table", DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return $ret;
         }
+        
         $c = new $class;
         // if the user defined method list exists - use it...
         if (method_exists($c,'listFind')) {
