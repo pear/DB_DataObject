@@ -47,11 +47,16 @@ require_once 'PEAR.php';
  */
 define('DB_DATAOBJECT_INT',  1);  // does not require ''
 define('DB_DATAOBJECT_STR',  2);  // requires ''
+
 define('DB_DATAOBJECT_DATE', 4);  // is date #TODO
 define('DB_DATAOBJECT_TIME', 8);  // is time #TODO
 define('DB_DATAOBJECT_BOOL', 16); // is boolean #TODO
 define('DB_DATAOBJECT_TXT',  32); // is long text #TODO
 define('DB_DATAOBJECT_BLOB', 64); // is blob type
+
+
+define('DB_DATAOBJECT_NOTNULL', 128);           // not null col.
+define('DB_DATAOBJECT_NATIVESEQUENCE', 256);    // is a native sequence col..
 
 /*
  * Define this before you include DataObjects.php to  disable overload - if it segfaults due to Zend optimizer..

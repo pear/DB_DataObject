@@ -213,6 +213,30 @@ class test extends DB_DataObject {
         print_r($newid);
         
         
+        
+        // bug #547
+        
+        
+        $this->query("
+            CREATE TABLE `page_module` (
+                `page_id` mediumint(8) unsigned NOT NULL default '0',
+                `module_id` mediumint(8) unsigned NOT NULL default '0',
+                `place` tinyint(3) unsigned NOT NULL default '0',
+                `title` varchar(50) NOT NULL default '',
+                `position` varchar(10) NOT NULL default 'top',
+                PRIMARY KEY  (`page_id`,`module_id`)
+            ) TYPE=MyISAM;");
+        
+        
+        $page_module= DB_DataObject::Factory('page_module');
+        
+        // we should guess better.. but this is a kludgy fix.
+        $page_module->sequenceKey(false,false);
+        $page_module->page_id=1;
+        $page_module->module_id=1;
+        $page_module->position='top';
+        $page_module->insert();
+        
     }
     
     function createRecordWithName($name) {
