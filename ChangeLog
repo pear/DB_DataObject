@@ -1,6 +1,79 @@
 
+2004-08-07 Saturday  alan_k
+
+	* fix bug #1980 = logic error in JoinAs+quoteIdentifier code
+	* fix bug #1835  - auto_linking
+	* really nasty kludgy fix to bug #2068
+
+2004-08-04 Wednesday  alan_k
+
+	* add free method to enable flat memory consumtion, add test to
+	illustrate fix.  NOTE: num_rows in DB object is stacked.. and
+	stored in the connection - WHY?
+
+2004-07-26 Monday  alan_k
+
+	* update test results
+	* fix bug with last @ hidding fix
+
+2004-07-24 Saturday  alan_k
+
+	* fix bug #1935 - double quoting of selectAs(), make DB lazy loaded
+	* fix bug #1935 double quoting of identifiers in selectAs
+	* fix bug #1923 - most @ silencers removed, adding test results so
+	I can monitor BC breaks PART 3
+	* fix bug #1923 - most @ silencers removed, adding test results so
+	I can monitor BC breaks PART 2
+	* fix bug #1923 - most @ silencers removed, adding test results so
+	I can monitor BC breaks
+	* attempt to fix #1835 - so links() can be used to store local
+	links arrays...
+	* fix bug #1833 - ok - may as well return an empty array ..
+	* fix bug #1833 - return null rather than false, so casting to
+	array works
+	* apply fatal error to table lookup failure bug #1828
+
+2004-07-09 Friday  alan_k
+
+	* fix separator
+
+2004-07-03 Saturday  alan_k
+
+	* use include path to do file hunting if file not found.
+	* fix bug #1778 - allow table to be used to return extra virtual
+	columns
+
+2004-06-29 Tuesday  alan_k
+
+	* fix bug #1704 - not null check when using "null" values
+	* probably fix bug #1697 extra line created after definition.
+	* fix bug #1726 - enable orderby and limit to be used.
+
+2004-06-18 Friday  alan_k
+
+	* fix bug #1664 = add configuration option links_{databasename}
+	* make debugging display query errors
+	* typo on last commit
+	* more storage of result fields away from result object, as it gets
+	destroyed after last query.
+
+2004-06-10 Thursday  alan_k
+
+	* Fix bug #1595 - regex include/exclude working correctly (Thanks
+	to Stephane Gully)
+
+2004-06-05 Saturday  alan_k
+
+	* fix bug #1559 - __FUNCTION__ not needed.. - so deps of 4.2 should
+	be valid again..
+
+2004-06-03 Thursday  alan_k
+
+	* fix bug #1548
+
 2004-06-02 Wednesday  alan_k
 
+	* update package.xml - for release
 	* emit error if table info is not supported - bug #1354
 	* fix bug #1000 - cidr, inet, macaddr for postgres.
 	* add generator_(in|ex)clude_regex  - note they cannot be used
