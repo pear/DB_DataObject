@@ -2780,33 +2780,49 @@ Class DB_DataObject extends DB_DataObject_Overload
         $ret   = array();
 
         foreach($table as $key => $val) {
-            // ignore things that are not set. ?
-            if (!isset($this->$key)) {
-                continue;
-            }
-            // call user defined validation
+            
+            
+            // call user defined validation always...
             $method = "Validate" . ucfirst($key);
             if (method_exists($this, $method)) {
                 $ret[$key] = $this->$method();
                 continue;
             }
+            
+            // if not null - and it's not set.......
+            
+            if (!isset($this->$key) && ($val & DB_DATAOBJECT_NOTNULL)) {
+                $ret[$key] = false;
+                continue;
+            }
+            // ignore things that are not set. ?
+           
+            if (!isset($this->$key)) {
+                continue;
+            }
+            
             // if the string is empty.. assume it is ok..
             if (!strlen($this->$key)) {
                 continue;
             }
             
-            switch ($val) {
-                case  DB_DATAOBJECT_STR:
+            switch (true) {
+                // todo: date time.....
+                
+            
+                case  ($val & DB_DATAOBJECT_STR):
                     $ret[$key] = Validate::string($this->$key, VALIDATE_PUNCTUATION . VALIDATE_NAME);
                     continue;
-                case  DB_DATAOBJECT_INT:
+                case  ($val & DB_DATAOBJECT_INT):
                     $ret[$key] = Validate::number($this->$key, array('decimal'=>'.'));
                     continue;
             }
         }
 
         foreach ($ret as $key => $val) {
-            if ($val == false) return $ret;
+            if ($val === false) {
+                return $ret;
+            }
         }
         return true; // everything is OK.
     }
