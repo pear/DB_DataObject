@@ -4,15 +4,17 @@ DB::DataObject test
 <?php
 //define('DB_DATAOBJECT_NO_OVERLOAD',true);  
 
-if (!require(dirname(__FILE__)."/../DataObject.php")) print "skip"; ?>
+?>
 --FILE--
 <?php // -*- C++ -*-
 
 error_reporting(E_ALL);
 
+
 // Test for: DB::parseDSN()
-include_once dirname(__FILE__)."/../DataObject.php";
-include_once 'PEAR.php';
+
+require_once 'DB/DataObject.php';
+require_once 'PEAR.php';
 
 $options = &PEAR::getStaticProperty('DB_DataObject','options');
 //$options['schema_location'] = dirname(__FILE__);
@@ -32,8 +34,12 @@ class test extends DB_DataObject {
 	 
     function doTests() {
         $this->createDB();
-       
-        for($i=0;$i<100;$i++) {
+        
+        if (isset($_SERVER['argv'][1]) && method_exists($this,'test'.$_SERVER['argv'][1])) {
+            $this->{'test'.$_SERVER['argv'][1]}();
+            return;
+        }
+        for($i=0;$i<110;$i++) {
             if (method_exists($this,'test'.$i)) {
                 $this->{'test'.$i}();
             }
@@ -46,6 +52,7 @@ class test extends DB_DataObject {
         $this->query('DROP TABLE IF EXISTS testproxy');
         $this->query('DROP TABLE IF EXISTS testproxy2');
         $this->query('DROP TABLE IF EXISTS testproxy2_seq');
+        $this->query('DROP TABLE IF EXISTS testset');
        
         $this->query(
             "CREATE TABLE test (
@@ -90,7 +97,14 @@ class test extends DB_DataObject {
                 (id INTEGER UNSIGNED NOT NULL, PRIMARY KEY(id)) 
                 TYPE = InnoDB');
         
-         $this->query("INSERT INTO testproxy2_seq VALUES(0)");
+        $this->query("INSERT INTO testproxy2_seq VALUES(0)");
+        $this->query(
+            "CREATE TABLE testset (
+              id int(11) NOT NULL auto_increment PRIMARY KEY,
+              name varchar(255) NOT NULL default '',
+              gender SET('male','female', 'not quite sure')
+            )"); 
+         
     }
     
     function test10() {
@@ -106,6 +120,7 @@ class test extends DB_DataObject {
         $t->delete();
         $this->dumpTest(); 
     }
+    
 	function test30() {
 	
         echo "\n\n\n***** update everything with username to firstname = 'fred' *\n";
@@ -212,6 +227,39 @@ class test extends DB_DataObject {
        
           
     }
+    
+    
+    function test81() {
+        // bug #992
+        DB_DataObject::debugLevel(3);
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        $options['dont_use_pear_sequences'] = true;
+        $x  = new DB_DataObject;
+        
+        $x->query("DROP TABLE  IF EXISTS player_has_stats");
+        
+        
+       
+         $x->query("
+            CREATE TABLE `player_has_stats` (
+                  `player_id` int(10) unsigned NOT NULL default '0',
+                  `deaths` int(10) unsigned NOT NULL default '0',
+                  `kills` int(10) unsigned NOT NULL default '0',
+                  PRIMARY KEY  (`player_id`)
+                ) TYPE=MyISAM
+                
+             ");
+        
+         
+        $player_has_stats = DB_DataObject::factory('player_has_stats');
+        var_dump($player_has_stats->sequenceKey());
+        print_R($player_has_stats );
+        $player_has_stats-> player_id = 13;
+        $player_has_stats-> insert();
+    }
+
+
+        
 	function test90() {
   
         
@@ -346,9 +394,38 @@ class test extends DB_DataObject {
     }
     
     
+    function test94() {
+    
+        // bug #2116
+        DB_DataObject::debugLevel(1);
+        $s = DB_DataObject::factory('testset');
+        $s->name = 'fred';
+        $s->gender = 'male';
+        $s->insert();
+        $s = DB_DataObject::factory('testset');
+        $s->find(true);
+        print_r($s->toArray());
+        
+        
     
     
-	function test94() {
+    
+    
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /* POSTGRES TESTS */
+    
+	function test100() {
 
     
     
@@ -429,75 +506,44 @@ class test extends DB_DataObject {
         echo "insert ". $x->insert() . "\n";
        
         
+   }
+            
+    
+    
+    
+    
+    
+    function createRecordWithName($name) {
+        $t = new test;
+        $t->name = $name;
+        $t->username = 'username';
+        $r= $t->insert(); 
+        echo "INSERT got $r\n";
     }
-    function test81() {
-        // bug #992
-        DB_DataObject::debugLevel(3);
-        $options = &PEAR::getStaticProperty('DB_DataObject','options');
-        $options['dont_use_pear_sequences'] = true;
-        $x  = new DB_DataObject;
-        
-        $x->query("DROP TABLE  IF EXISTS player_has_stats");
-        
-        
-       
-         $x->query("
-            CREATE TABLE `player_has_stats` (
-                  `player_id` int(10) unsigned NOT NULL default '0',
-                  `deaths` int(10) unsigned NOT NULL default '0',
-                  `kills` int(10) unsigned NOT NULL default '0',
-                  PRIMARY KEY  (`player_id`)
-                ) TYPE=MyISAM
-                
-             ");
-        
-         
-        $player_has_stats = DB_DataObject::factory('player_has_stats');
-        var_dump($player_has_stats->sequenceKey());
-        print_R($player_has_stats );
-        $player_has_stats-> player_id = 13;
-        $player_has_stats-> insert();
-    }
-
-
-        
-        
-
-
-
-
-
-function createRecordWithName($name) {
-    $t = new test;
-    $t->name = $name;
-    $t->username = 'username';
-    $r= $t->insert(); 
-    echo "INSERT got $r\n";
-}
-
-function dumpTest($table = 'test') {
-    $t = DB_DataObject::Factory($table);
-    $t->find();
-    if (!$t->N)  {
-        echo "NO RESULTS!\n";
-        return;
-    }
-    while ($t->fetch()) {
-       $this->debugPrint($t);
-    }
-}
-
-function debugPrint($t) {
-  
-    foreach(get_object_vars($t) as $k=>$v) {
-        if ($k{0}== '_') {
-            unset($t->$k);
+    
+    function dumpTest($table = 'test') {
+        $t = DB_DataObject::Factory($table);
+        $t->find();
+        if (!$t->N)  {
+            echo "NO RESULTS!\n";
+            return;
+        }
+        while ($t->fetch()) {
+           $this->debugPrint($t);
         }
     }
-    print_r($t);
-}
     
-    
+    function debugPrint($t) {
+      
+        foreach(get_object_vars($t) as $k=>$v) {
+            if ($k{0}== '_') {
+                unset($t->$k);
+            }
+        }
+        print_r($t);
+    }
+        
+        
 }
 
 
