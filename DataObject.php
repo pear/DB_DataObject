@@ -126,7 +126,6 @@ define('DB_DATAOBJECT_ERROR_INVALIDARGS',   -1);  // wrong args to function
 define('DB_DATAOBJECT_ERROR_NODATA',        -2);  // no data available
 define('DB_DATAOBJECT_ERROR_INVALIDCONFIG', -3);  // something wrong with the config
 define('DB_DATAOBJECT_ERROR_NOCLASS',       -4);  // no class exists
-define('DB_DATAOBJECT_ERROR_NOTSUPPORTED'  ,-6);  // limit queries on unsuppored databases
 define('DB_DATAOBJECT_ERROR_INVALID_CALL'  ,-7);  // overlad getter/setter failure
 
 /**
