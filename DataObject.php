@@ -1236,7 +1236,7 @@ Class DB_DataObject
      * Return or assign the name of the current table
      *
      *
-     * @param   string table name
+     * @param   string optinal table name to set
      * @access public
      * @return string The name of the current table
      */
@@ -1252,7 +1252,7 @@ Class DB_DataObject
     /**
      * Return or assign the name of the current database
      *
-    * @param   string database name
+     * @param   string optional database name to set
      * @access public
      * @return string The name of the current database
      */
@@ -1266,13 +1266,26 @@ Class DB_DataObject
     }
   
     /**
-     * get an associative array of table columns
+     * get/set an associative array of table columns
      *
-     * @access private
+     * @access public
+     * @param  array key=>type array
      * @return array (associative)
      */
     function table()
     {
+        
+        // for temporary storage of database fields..
+        // note this is not declared as we dont want to bloat the print_r output
+        $args = func_get_args();
+        if (count($args)) {
+            $this->_database_fields = $args[0];
+        }
+        if (isset($this->_database_fields)) {
+            return $this->_database_fields;
+        }
+        
+        
         global $_DB_DATAOBJECT;
         if (!@$this->_database) {
             $this->_connect();
@@ -1290,15 +1303,28 @@ Class DB_DataObject
     }
 
     /**
-     * get an  array of table primary keys
+     * get/set an  array of table primary keys
+     *
+     * set usage: $do->keys('id','code');
      *
      * This is defined in the table definition which should extend this class
-     *
+     * @param  string optional set the key
+     * @param  *   optional  set more keys
      * @access private
      * @return array
      */
     function keys()
     {
+        // for temporary storage of database fields..
+        // note this is not declared as we dont want to bloat the print_r output
+        $args = func_get_args();
+        if (count($args)) {
+            $this->_database_keys = $args;
+        }
+        if (isset($this->_database_keys)) {
+            return $this->_database_keys;
+        }
+        
         global $_DB_DATAOBJECT;
         if (!@$this->_database) {
             $this->_connect();
