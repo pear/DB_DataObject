@@ -247,7 +247,8 @@ class test extends DB_DataObject {
                 a_date date default '',
                 a_time time NOT NULL default '',
                 a_datetime  datetime default '',
-                b_date  datetime default ''
+                b_date  datetime default '',
+                ts timestamp
             ) TYPE=MyISAM;");
             
         $x = DB_DataObject::factory('typetest');
@@ -260,7 +261,10 @@ class test extends DB_DataObject {
         $id = $x->insert();
         $x = DB_DataObject::factory('typetest');
         $x->get($id);
-        var_dump($x);
+        $x->setb_date(strtotime('12/1/1960'));
+        $x->update();
+        echo "TIMESTAMP = ".$x->getTs('%d/%m/%Y %H:%M:%S') . "\n";
+        print_r($x);
         
         
         

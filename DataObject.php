@@ -57,7 +57,7 @@ define('DB_DATAOBJECT_BLOB', 64); // is blob type
 
 
 define('DB_DATAOBJECT_NOTNULL', 128);           // not null col.
-
+define('DB_DATAOBJECT_MYSQLTIMESTAMP'   , 256);           // mysql timestamps (ignored by update/insert)
 /*
  * Define this before you include DataObjects.php to  disable overload - if it segfaults due to Zend optimizer..
  */
@@ -838,7 +838,11 @@ Class DB_DataObject extends DB_DataObject_Overload
             if (!isset($this->$k)) {
                 continue;
             }
-            
+            // dont insert data into mysql timestamps 
+            // use query() if you really want to do this!!!!
+            if ($v & DB_DATAOBJECT_MYSQLTIMESTAMP) {
+                continue;
+            }
             
             if ($leftq) {
                 $leftq  .= ', ';
@@ -1002,6 +1006,12 @@ Class DB_DataObject extends DB_DataObject_Overload
             
             // beta testing.. - dont write keys to left.!!!
             if (in_array($k,$keys)) {
+                continue;
+            }
+            
+             // dont insert data into mysql timestamps 
+            // use query() if you really want to do this!!!!
+            if ($v & DB_DATAOBJECT_MYSQLTIMESTAMP) {
                 continue;
             }
             
@@ -2905,7 +2915,7 @@ Class DB_DataObject extends DB_DataObject_Overload
         
         
         if ($type == 'get') {
-            $return = $this->toValue($element,isset($params[1]) ? $params[1] : null);
+            $return = $this->toValue($element,isset($params[0]) ? $params[0] : null);
             return true;
         }
         
@@ -3064,6 +3074,15 @@ Class DB_DataObject extends DB_DataObject_Overload
                 }
                 // otherwise an error in type...
                 return $this->$col;
+                
+            case ($cols[$col] &  DB_DATAOBJECT_MYSQLTIMESTAMP):
+                require_once 'Date.php';
+                
+                $x = new Date($this->$col);
+                
+                return $x->format($format);
+            
+            
             default:
                 return sprintf($format,$this->col);
         }
