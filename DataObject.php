@@ -1233,18 +1233,7 @@ Class DB_DataObject {
         DB_DataObject::debug($message,"ERROR",1);
     }
    
-    /* -------------------------- BC legacy ----------------------------------*/
-    /* WARNING  - these methods "WILL!!!" be removed  -dont use them          */
-    /* -------------------------- BC legacy ----------------------------------*/
-    function condition_append($c,$l="AND") { $this->whereAdd($c,$l); }
-    function order_by($o) { $this->orderBy($o); }
-    function group_by($o) { $this->groupBy($o); }
-    function select_reset() { $this->selectAdd(); }
-    function select_add($v) { $this->selectAdd($v); }
-    function get_links() { $this->getLinks(); }
-    function &_static_get($class,$k,$v=NULL) { return DB_DataObject::staticGet($class,$k,$v); }
-    function get_link() { $this->getLink(); }
-    function get_link_array() { $this->getLinkArray(); }
+
 }
        
  
