@@ -1636,10 +1636,26 @@ class DB_DataObject extends DB_DataObject_Overload
 
             if (file_exists($ini)) {
                 $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);
+                if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
+                    $this->debug("Loaded ini file: $ini","databaseStructure",1);
+                }
+            } else {
+                if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
+                    $this->debug("Missing ini file: $ini","databaseStructure",1);
+                }
             }
+                
+                
             if (empty($_DB_DATAOBJECT['LINKS'][$this->_database]) && file_exists($links)) {
                 /* not sure why $links = ... here  - TODO check if that works */
                 $_DB_DATAOBJECT['LINKS'][$this->_database] = parse_ini_file($links, true);
+                if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
+                    $this->debug("Loaded links.ini file: $links","databaseStructure",1);
+                }
+            } else {
+                if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
+                    $this->debug("Missing links.ini file: $links","databaseStructure",1);
+                }
             }
         }
         // now have we loaded the structure.. - if not try building it..
