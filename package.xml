@@ -31,11 +31,11 @@
           (Markus Wolff)
         
         - MsSQL native get_last_insert ID using SELECT @@IDENTITY
-          ** you may wat not consider using this with transactions eg.
+          ** you may want to consider using this with transactions eg.
           $dataobject->query('BEGIN') and $dataobject->query('COMMIT')
           to ensure thread safety. (Markus Wolff)
           
-        - DB_DataObject_Cast - a generic casting feature for assigning variables
+        - DB_DataObject_Cast - a experimental generic casting feature for assigning variables
           * Common usages:
             // blobs
             $dataObject->someblobfield = DB_DataObject_Cast::blob(file_get_contents('xxx.jpg'));
