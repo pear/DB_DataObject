@@ -1949,16 +1949,16 @@ Class DB_DataObject extends DB_DataObject_Overload
 
         // only include the file if it exists - and barf badly if it has parse errors :)
         
+        $file = $_DB_DATAOBJECT['CONFIG']['class_location'].'/'.ucfirst($table).".php";
         
-        
-        if (!file_exists($_DB_DATAOBJECT['CONFIG']['class_location'].'/'.ucfirst($table).".php")) {
+        if (!file_exists($file)) {
             DB_DataObject::raiseError(
                 "autoload:Could not find class {$class} using class_location value", 
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
         }
         
-        include_once $_DB_DATAOBJECT['CONFIG']['require_prefix'].ucfirst($table).".php";
+        include_once $file;
         
         
         
