@@ -704,7 +704,7 @@ Class DB_DataObject
              
 
         // big check for using sequences
-        $useSequence  = false;
+        $usedSequence  = false;
         if (    ($key = @$keys[0]) &&
                 (!in_array($dbtype , array( 'mysql', 'mssql'))) &&
                 (@$options['ignore_sequence_keys'] != 'ALL') &&
