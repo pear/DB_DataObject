@@ -29,7 +29,8 @@
       <notes>
         - add table prefix to autobuilt queries (assist in ambigous querys for joins)
           (Daniel Von Fange)
-          
+        - change update and delete to return the number of rows affected or false on failure
+        
       </notes>
       <state>stable</state>
     </release>
