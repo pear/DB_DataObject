@@ -837,7 +837,7 @@ Class DB_DataObject extends DB_DataObject_Overload
             
             if (is_a($this->$k,'db_dataobject_cast')) {
                 $value = $this->$k->toString($v,$dbtype);
-                if (PEAR::isError($vale)) {
+                if (PEAR::isError($value)) {
                     DB_DataObject::raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
                     return false;
                 }
