@@ -648,7 +648,12 @@ Class DB_DataObject {
         if (!$use_where) {
             $this->_condition=""; // default behaviour not to use where condition
         }
-        $this->_build_condition($this->_get_table());
+        
+        $this->_build_condition($keys);
+        // if primary keys are not set then use data from rest of object.
+        if (!$use_where && !$this->_condition) {
+            $this->_build_condition($this->_get_table(),$keys);
+        }
 
         if ($this->_condition) {
             $this->_query("DELETE FROM {$this->__table} {$this->_condition}");

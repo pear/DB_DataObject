@@ -20,7 +20,7 @@ Add a method, if the database is mysql, use the native 'REPLACE call'
 otherwise, do a select on ID then insert|update..
 
 ----------------------------------
-Issue: Delete
+Issue: Delete -- DONE 0.7
 
 delete can be called in many ways:
 
