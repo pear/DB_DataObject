@@ -3,15 +3,17 @@ DB::DataObject test
 --SKIPIF--
 --FILE--
 test   : QUERY       : DROP TABLE IF EXISTS test
-test   : query       : QUERY DONE IN  0.033789157867432 seconds
+test   : query       : QUERY DONE IN  0.0018680095672607 seconds
 test   : QUERY       : DROP TABLE IF EXISTS test2
-test   : query       : QUERY DONE IN  0.0086448192596436 seconds
+test   : query       : QUERY DONE IN  0.0012221336364746 seconds
 test   : QUERY       : DROP TABLE IF EXISTS testproxy
-test   : query       : QUERY DONE IN  0.0045480728149414 seconds
+test   : query       : QUERY DONE IN  0.0011649131774902 seconds
 test   : QUERY       : DROP TABLE IF EXISTS testproxy2
-test   : query       : QUERY DONE IN  0.55518102645874 seconds
+test   : query       : QUERY DONE IN  0.0011639595031738 seconds
 test   : QUERY       : DROP TABLE IF EXISTS testproxy2_seq
-test   : query       : QUERY DONE IN  0.017385959625244 seconds
+test   : query       : QUERY DONE IN  0.0043461322784424 seconds
+test   : QUERY       : DROP TABLE IF EXISTS testset
+test   : query       : QUERY DONE IN  0.0011680126190186 seconds
 test   : QUERY       : CREATE TABLE test (
               id int(11) NOT NULL auto_increment PRIMARY KEY,
               name varchar(255) NOT NULL default '',
@@ -20,7 +22,7 @@ test   : QUERY       : CREATE TABLE test (
               firstname varchar(255) NOT NULL default '',
               lastname varchar(255) NOT NULL default '' 
             )
-test   : query       : QUERY DONE IN  0.080780982971191 seconds
+test   : query       : QUERY DONE IN  0.0014901161193848 seconds
 test   : QUERY       : CREATE TABLE test2 (
               id int(11) NOT NULL PRIMARY KEY,
               name varchar(255) NOT NULL default '',
@@ -29,7 +31,7 @@ test   : QUERY       : CREATE TABLE test2 (
               firstname varchar(255) NOT NULL default '',
               lastname varchar(255) NOT NULL default '' 
             )
-test   : query       : QUERY DONE IN  0.0023069381713867 seconds
+test   : query       : QUERY DONE IN  0.0021421909332275 seconds
 test   : QUERY       : CREATE TABLE testproxy (
               id int(11) NOT NULL  auto_increment PRIMARY KEY,
               name varchar(255) NOT NULL default '',
@@ -38,7 +40,7 @@ test   : QUERY       : CREATE TABLE testproxy (
               firstname varchar(255) NOT NULL default '',
               lastname varchar(255) NOT NULL default '' 
             )
-test   : query       : QUERY DONE IN  0.0016298294067383 seconds
+test   : query       : QUERY DONE IN  0.0015251636505127 seconds
 test   : QUERY       : CREATE TABLE testproxy2 (
               id int(11) NOT NULL PRIMARY KEY,
               name varchar(255) NOT NULL default '',
@@ -47,23 +49,29 @@ test   : QUERY       : CREATE TABLE testproxy2 (
               firstname varchar(255) NOT NULL default '',
               lastname varchar(255) NOT NULL default '' 
             ) TYPE = InnoDB
-test   : query       : QUERY DONE IN  0.058015108108521 seconds
+test   : query       : QUERY DONE IN  0.0015509128570557 seconds
 test   : QUERY       : CREATE TABLE testproxy2_seq
                 (id INTEGER UNSIGNED NOT NULL, PRIMARY KEY(id)) 
                 TYPE = InnoDB
-test   : query       : QUERY DONE IN  0.006364107131958 seconds
+test   : query       : QUERY DONE IN  0.0049238204956055 seconds
 test   : QUERY       : INSERT INTO testproxy2_seq VALUES(0)
-test   : query       : QUERY DONE IN  0.0012369155883789 seconds
+test   : query       : QUERY DONE IN  0.0012340545654297 seconds
+test   : QUERY       : CREATE TABLE testset (
+              id int(11) NOT NULL auto_increment PRIMARY KEY,
+              name varchar(255) NOT NULL default '',
+              gender SET('male','female', 'not quite sure')
+            )
+test   : query       : QUERY DONE IN  0.0014519691467285 seconds
 
 
 
 ******create database' 
 test   : QUERY       : INSERT INTO test (name , username ) VALUES ('test' , 'username' ) 
-test   : query       : QUERY DONE IN  0.0011739730834961 seconds
+test   : query       : QUERY DONE IN  0.0011818408966064 seconds
 INSERT got 1
 myproject_dataobject_test   : __find       : 
 myproject_dataobject_test   : QUERY       : SELECT * FROM test     
-myproject_dataobject_test   : query       : QUERY DONE IN  0.0012750625610352 seconds
+myproject_dataobject_test   : query       : QUERY DONE IN  0.0013301372528076 seconds
 myproject_dataobject_test   : __find       : CHECK autofetchd 
 myproject_dataobject_test   : __find       : DONE
 myproject_dataobject_test   : FETCH       : a:6:{s:2:"id";s:1:"1";s:4:"name";s:4:"test";s:8:"username";s:8:"username";s:8:"password";s:0:"";s:9:"firstname";s:0:"";s:8:"lastname";s:0:"";}
@@ -78,17 +86,17 @@ myproject_dataobject_test Object
     [lastname] => 
 )
 myproject_dataobject_test   : FETCH       : N;
-myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.0038318634033203 seconds
+myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.0044238567352295 seconds
 
 
 
 ******delete everything with test and 'username' 
 test   : QUERY       : DELETE FROM test  WHERE  test.name  = 'test' AND  test.username  = 'username'
-test   : query       : QUERY DONE IN  0.011703968048096 seconds
+test   : query       : QUERY DONE IN  0.0011501312255859 seconds
 test   : 1       : Clearing Cache for test
 myproject_dataobject_test   : __find       : 
 myproject_dataobject_test   : QUERY       : SELECT * FROM test     
-myproject_dataobject_test   : query       : QUERY DONE IN  0.0012400150299072 seconds
+myproject_dataobject_test   : query       : QUERY DONE IN  0.0015521049499512 seconds
 myproject_dataobject_test   : __find       : CHECK autofetchd 
 myproject_dataobject_test   : __find       : DONE
 NO RESULTS!
@@ -97,15 +105,15 @@ NO RESULTS!
 
 ***** update everything with username to firstname = 'fred' *
 test   : QUERY       : INSERT INTO test (name , username ) VALUES ('test' , 'username' ) 
-test   : query       : QUERY DONE IN  0.0036230087280273 seconds
+test   : query       : QUERY DONE IN  0.0010478496551514 seconds
 INSERT got 2
 test   : 3       : got keys as a:1:{i:0;s:2:"id";}
 test   : QUERY       : UPDATE  test  SET firstname = 'fred'   WHERE username = 'username' 
-test   : query       : QUERY DONE IN  0.0010881423950195 seconds
+test   : query       : QUERY DONE IN  0.018035888671875 seconds
 test   : 1       : Clearing Cache for test
 myproject_dataobject_test   : __find       : 
 myproject_dataobject_test   : QUERY       : SELECT * FROM test     
-myproject_dataobject_test   : query       : QUERY DONE IN  0.0012390613555908 seconds
+myproject_dataobject_test   : query       : QUERY DONE IN  0.0012831687927246 seconds
 myproject_dataobject_test   : __find       : CHECK autofetchd 
 myproject_dataobject_test   : __find       : DONE
 myproject_dataobject_test   : FETCH       : a:6:{s:2:"id";s:1:"2";s:4:"name";s:4:"test";s:8:"username";s:8:"username";s:8:"password";s:0:"";s:9:"firstname";s:4:"fred";s:8:"lastname";s:0:"";}
@@ -120,7 +128,7 @@ myproject_dataobject_test Object
     [lastname] => 
 )
 myproject_dataobject_test   : FETCH       : N;
-myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.0038118362426758 seconds
+myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.0036768913269043 seconds
 
 
 
@@ -132,18 +140,18 @@ test   : GET       : id 2 Array
 
 test   : __find       : 1
 test   : QUERY       : SELECT * FROM test  WHERE  test.id = 2    
-test   : query       : QUERY DONE IN  0.0020709037780762 seconds
+test   : query       : QUERY DONE IN  0.0016908645629883 seconds
 test   : __find       : CHECK autofetchd 1
 test   : __find       : ABOUT TO AUTOFETCH
 test   : FETCH       : a:6:{s:2:"id";s:1:"2";s:4:"name";s:4:"test";s:8:"username";s:8:"username";s:8:"password";s:0:"";s:9:"firstname";s:4:"fred";s:8:"lastname";s:0:"";}
 test   : __find       : DONE
 test   : 3       : got keys as a:1:{i:0;s:2:"id";}
 test   : QUERY       : UPDATE  test  SET name = 'test' , username = 'username' , password = '' , firstname = 'brian' , lastname = ''   WHERE  test.id = 2 
-test   : query       : QUERY DONE IN  0.0015771389007568 seconds
+test   : query       : QUERY DONE IN  0.0011780261993408 seconds
 test   : 1       : Clearing Cache for test
 myproject_dataobject_test   : __find       : 
 myproject_dataobject_test   : QUERY       : SELECT * FROM test     
-myproject_dataobject_test   : query       : QUERY DONE IN  0.0012710094451904 seconds
+myproject_dataobject_test   : query       : QUERY DONE IN  0.0013189315795898 seconds
 myproject_dataobject_test   : __find       : CHECK autofetchd 
 myproject_dataobject_test   : __find       : DONE
 myproject_dataobject_test   : FETCH       : a:6:{s:2:"id";s:1:"2";s:4:"name";s:4:"test";s:8:"username";s:8:"username";s:8:"password";s:0:"";s:9:"firstname";s:5:"brian";s:8:"lastname";s:0:"";}
@@ -158,14 +166,14 @@ myproject_dataobject_test Object
     [lastname] => 
 )
 myproject_dataobject_test   : FETCH       : N;
-myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.0038120746612549 seconds
+myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.0050439834594727 seconds
 
 
 
 ****** toArray on only fetched keys.
 test   : __find       : 1
 test   : QUERY       : SELECT  firstname,lastname  FROM test  WHERE  test.id = 2    
-test   : query       : QUERY DONE IN  0.0013070106506348 seconds
+test   : query       : QUERY DONE IN  0.0012819766998291 seconds
 test   : __find       : CHECK autofetchd 1
 test   : __find       : ABOUT TO AUTOFETCH
 test   : FETCH       : a:2:{s:9:"firstname";s:5:"brian";s:8:"lastname";s:0:"";}
@@ -190,18 +198,18 @@ test   : GET       : id 2 Array
 
 test   : __find       : 1
 test   : QUERY       : SELECT * FROM test  WHERE  test.id = 2    
-test   : query       : QUERY DONE IN  0.0013260841369629 seconds
+test   : query       : QUERY DONE IN  0.0013909339904785 seconds
 test   : __find       : CHECK autofetchd 1
 test   : __find       : ABOUT TO AUTOFETCH
 test   : FETCH       : a:6:{s:2:"id";s:1:"2";s:4:"name";s:4:"test";s:8:"username";s:8:"username";s:8:"password";s:0:"";s:9:"firstname";s:5:"brian";s:8:"lastname";s:0:"";}
 test   : __find       : DONE
 test   : 3       : got keys as a:1:{i:0;s:2:"id";}
 test   : QUERY       : UPDATE  test  SET firstname = 'jones'   WHERE  test.id = 2 
-test   : query       : QUERY DONE IN  0.0011558532714844 seconds
+test   : query       : QUERY DONE IN  0.0011799335479736 seconds
 test   : 1       : Clearing Cache for test
 myproject_dataobject_test   : __find       : 
 myproject_dataobject_test   : QUERY       : SELECT * FROM test     
-myproject_dataobject_test   : query       : QUERY DONE IN  0.0012378692626953 seconds
+myproject_dataobject_test   : query       : QUERY DONE IN  0.0012531280517578 seconds
 myproject_dataobject_test   : __find       : CHECK autofetchd 
 myproject_dataobject_test   : __find       : DONE
 myproject_dataobject_test   : FETCH       : a:6:{s:2:"id";s:1:"2";s:4:"name";s:4:"test";s:8:"username";s:8:"username";s:8:"password";s:0:"";s:9:"firstname";s:5:"jones";s:8:"lastname";s:0:"";}
@@ -216,7 +224,7 @@ myproject_dataobject_test Object
     [lastname] => 
 )
 myproject_dataobject_test   : FETCH       : N;
-myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.0039122104644775 seconds
+myproject_dataobject_test   : FETCH       : Last Data Fetch'ed after 0.0041120052337646 seconds
 
 
 
@@ -236,7 +244,7 @@ Array
 ****** limited queries 1
 test   : __find       : 
 test   : QUERY       : SELECT * FROM test      LIMIT 1
-test   : query       : QUERY DONE IN  0.0012578964233398 seconds
+test   : query       : QUERY DONE IN  0.0012538433074951 seconds
 test   : __find       : CHECK autofetchd 
 test   : __find       : DONE
 test   : FETCH       : a:6:{s:2:"id";s:1:"2";s:4:"name";s:4:"test";s:8:"username";s:8:"username";s:8:"password";s:0:"";s:9:"firstname";s:5:"jones";s:8:"lastname";s:0:"";}
@@ -246,7 +254,7 @@ test   : FETCH       : a:6:{s:2:"id";s:1:"2";s:4:"name";s:4:"test";s:8:"username
 ****** limited queries 1,1
 test   : __find       : 
 test   : QUERY       : SELECT * FROM test      LIMIT 1, 1
-test   : query       : QUERY DONE IN  0.0013220310211182 seconds
+test   : query       : QUERY DONE IN  0.0018219947814941 seconds
 test   : __find       : CHECK autofetchd 
 test   : __find       : DONE
 
@@ -273,13 +281,13 @@ test   : GET       : id 2 Array
 
 test   : __find       : 1
 test   : QUERY       : SELECT * FROM test  WHERE  test.id = 2    
-test   : query       : QUERY DONE IN  0.0013279914855957 seconds
+test   : query       : QUERY DONE IN  0.0013020038604736 seconds
 test   : __find       : CHECK autofetchd 1
 test   : __find       : ABOUT TO AUTOFETCH
 test   : FETCH       : a:6:{s:2:"id";s:1:"2";s:4:"name";s:4:"test";s:8:"username";s:8:"username";s:8:"password";s:0:"";s:9:"firstname";s:5:"jones";s:8:"lastname";s:0:"";}
 test   : __find       : DONE
 test   : QUERY       : DELETE FROM test  WHERE  test.id = 2
-test   : query       : QUERY DONE IN  0.0020229816436768 seconds
+test   : query       : QUERY DONE IN  0.0011239051818848 seconds
 test   : 1       : Clearing Cache for test
 
 
@@ -287,29 +295,29 @@ test   : 1       : Clearing Cache for test
 ******changing database stuff.
 test   : QUERY       : BEGIN
 test   : QUERY       : INSERT INTO test (name , username , password , firstname , lastname ) VALUES ('test' , 'xxx' , '' , 'jones' , '' ) 
-test   : query       : QUERY DONE IN  0.0013270378112793 seconds
+test   : query       : QUERY DONE IN  0.0012722015380859 seconds
 test   : QUERY       : ROLLBACK
 myproject_dataobject_testproxy2   : __find       : 
 myproject_dataobject_testproxy2   : QUERY       : SELECT * FROM testproxy2     
-myproject_dataobject_testproxy2   : query       : QUERY DONE IN  0.0013420581817627 seconds
+myproject_dataobject_testproxy2   : query       : QUERY DONE IN  0.0012750625610352 seconds
 myproject_dataobject_testproxy2   : __find       : CHECK autofetchd 
 myproject_dataobject_testproxy2   : __find       : DONE
 NO RESULTS!
 test   : QUERY       : BEGIN
 test   : QUERY       : INSERT INTO test (name , username , password , firstname , lastname ) VALUES ('test' , 'yyy' , '' , 'jones' , '' ) 
-test   : query       : QUERY DONE IN  0.0013659000396729 seconds
+test   : query       : QUERY DONE IN  0.0012869834899902 seconds
 test   : QUERY       : COMMIT
 myproject_dataobject_testproxy2   : __find       : 
 myproject_dataobject_testproxy2   : QUERY       : SELECT * FROM testproxy2     
-myproject_dataobject_testproxy2   : query       : QUERY DONE IN  0.0012779235839844 seconds
+myproject_dataobject_testproxy2   : query       : QUERY DONE IN  0.0012109279632568 seconds
 myproject_dataobject_testproxy2   : __find       : CHECK autofetchd 
 myproject_dataobject_testproxy2   : __find       : DONE
 NO RESULTS!
 test   : QUERY       : INSERT INTO test (name , username , password , firstname , lastname ) VALUES ('test' , 'qqqqqq' , '' , 'jones' , '' ) 
-test   : query       : QUERY DONE IN  0.0010831356048584 seconds
+test   : query       : QUERY DONE IN  0.001072883605957 seconds
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject   : QUERY       : DROP TABLE  IF EXISTS player_has_stats
-db_dataobject   : query       : QUERY DONE IN  0.016120910644531 seconds
+db_dataobject   : query       : QUERY DONE IN  0.018104076385498 seconds
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject   : QUERY       : 
             CREATE TABLE `player_has_stats` (
@@ -320,7 +328,7 @@ db_dataobject   : QUERY       :
                 ) TYPE=MyISAM
                 
              
-db_dataobject   : query       : QUERY DONE IN  0.0015549659729004 seconds
+db_dataobject   : query       : QUERY DONE IN  0.0016341209411621 seconds
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : fillTable       : getting def for test/player_has_stats
@@ -444,7 +452,7 @@ myproject_dataobject_player_has_stats Object
 )
 myproject_dataobject_player_has_stats   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_player_has_stats   : QUERY       : INSERT INTO player_has_stats (player_id ) VALUES ( 13 ) 
-myproject_dataobject_player_has_stats   : query       : QUERY DONE IN  0.0076169967651367 seconds
+myproject_dataobject_player_has_stats   : query       : QUERY DONE IN  0.0011589527130127 seconds
 
 
 
@@ -593,10 +601,10 @@ Array
 
 )
 test2   : CONNECT       : USING CACHED CONNECTION
-test2   : QUERY       : INSERT INTO test2 (id , username ) VALUES ( 223 , 'yyyy' ) 
-test2   : query       : QUERY DONE IN  0.0011610984802246 seconds
+test2   : QUERY       : INSERT INTO test2 (id , username ) VALUES ( 224 , 'yyyy' ) 
+test2   : query       : QUERY DONE IN  0.015545129776001 seconds
 
-RET: 223
+RET: 224
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : fillTable       : getting def for test/test2
@@ -746,11 +754,11 @@ myproject_dataobject_test2   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_test2   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_test2   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_test2   : QUERY       : SELECT * FROM test2     
-myproject_dataobject_test2   : query       : QUERY DONE IN  0.0013191699981689 seconds
+myproject_dataobject_test2   : query       : QUERY DONE IN  0.0013399124145508 seconds
 myproject_dataobject_test2   : __find       : CHECK autofetchd 
 myproject_dataobject_test2   : __find       : DONE
-myproject_dataobject_test2   : FETCH       : a:6:{s:2:"id";s:3:"223";s:4:"name";s:0:"";s:8:"username";s:4:"yyyy";s:8:"password";s:0:"";s:9:"firstname";s:0:"";s:8:"lastname";s:0:"";}
-myproject_dataobject_test2   : fetchrow LINE       : id = 223
+myproject_dataobject_test2   : FETCH       : a:6:{s:2:"id";s:3:"224";s:4:"name";s:0:"";s:8:"username";s:4:"yyyy";s:8:"password";s:0:"";s:9:"firstname";s:0:"";s:8:"lastname";s:0:"";}
+myproject_dataobject_test2   : fetchrow LINE       : id = 224
 myproject_dataobject_test2   : fetchrow LINE       : name = 
 myproject_dataobject_test2   : fetchrow LINE       : username = yyyy
 myproject_dataobject_test2   : fetchrow LINE       : password = 
@@ -760,7 +768,7 @@ myproject_dataobject_test2   : fetchrow       : test2 DONE
 myproject_dataobject_test2 Object
 (
     [N] => 1
-    [id] => 223
+    [id] => 224
     [name] => 
     [username] => yyyy
     [password] => 
@@ -768,7 +776,7 @@ myproject_dataobject_test2 Object
     [lastname] => 
 )
 myproject_dataobject_test2   : FETCH       : N;
-myproject_dataobject_test2   : FETCH       : Last Data Fetch'ed after 0.0044968128204346 seconds
+myproject_dataobject_test2   : FETCH       : Last Data Fetch'ed after 0.0045650005340576 seconds
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : fillTable       : getting def for test/testproxy
@@ -957,10 +965,10 @@ myproject_dataobject_testproxy   : QUERY       : INSERT INTO testproxy () VALUES
 myproject_dataobject_testproxy   : query       : QUERY DONE IN  0.0011429786682129 seconds
 1myproject_dataobject_testproxy   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_testproxy   : QUERY       : INSERT INTO testproxy () VALUES () 
-myproject_dataobject_testproxy   : query       : QUERY DONE IN  0.0016021728515625 seconds
+myproject_dataobject_testproxy   : query       : QUERY DONE IN  0.00098609924316406 seconds
 2test   : CONNECT       : USING CACHED CONNECTION
 test   : QUERY       : DROP TABLE IF EXISTS `page_module`
-test   : query       : QUERY DONE IN  0.045546054840088 seconds
+test   : query       : QUERY DONE IN  0.0014688968658447 seconds
 test   : CONNECT       : USING CACHED CONNECTION
 test   : QUERY       : 
             CREATE TABLE `page_module` (
@@ -971,7 +979,7 @@ test   : QUERY       :
                 `position` varchar(10) NOT NULL default 'top',
                 PRIMARY KEY  (`page_id`,`module_id`)
             ) TYPE=MyISAM;
-test   : query       : QUERY DONE IN  0.053709030151367 seconds
+test   : query       : QUERY DONE IN  0.0016500949859619 seconds
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : fillTable       : getting def for test/page_module
@@ -1100,10 +1108,10 @@ Array
 myproject_dataobject_page_module   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_page_module   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_page_module   : QUERY       : INSERT INTO page_module (page_id , module_id , position ) VALUES ( 1 ,  1 , 'top' ) 
-myproject_dataobject_page_module   : query       : QUERY DONE IN  0.0011749267578125 seconds
+myproject_dataobject_page_module   : query       : QUERY DONE IN  0.0011639595031738 seconds
 test   : CONNECT       : USING CACHED CONNECTION
 test   : QUERY       : DROP TABLE IF EXISTS  typetest
-test   : query       : QUERY DONE IN  0.019850969314575 seconds
+test   : query       : QUERY DONE IN  0.025349855422974 seconds
 test   : CONNECT       : USING CACHED CONNECTION
 test   : QUERY       : 
             CREATE TABLE typetest (
@@ -1114,7 +1122,7 @@ test   : QUERY       :
                 b_date  datetime default '',
                 ts timestamp
             ) TYPE=MyISAM;
-test   : query       : QUERY DONE IN  0.0017189979553223 seconds
+test   : query       : QUERY DONE IN  0.0016250610351562 seconds
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : fillTable       : getting def for test/typetest
@@ -1293,13 +1301,13 @@ it's numberic?myproject_dataobject_typetest Object
     [id] => 
     [a_date] => 2003-01-01
     [a_time] => 12:00:00
-    [a_datetime] => 2004-07-25 01:00:00
+    [a_datetime] => 2004-08-12 01:00:00
     [b_date] => null
     [ts] => 
 )
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_typetest   : QUERY       : INSERT INTO typetest (a_date , a_time , a_datetime , b_date ) VALUES ('2003-01-01' , '12:00:00' , '2004-07-25 01:00:00' ,  NULL ) 
-myproject_dataobject_typetest   : query       : QUERY DONE IN  0.0011720657348633 seconds
+myproject_dataobject_typetest   : QUERY       : INSERT INTO typetest (a_date , a_time , a_datetime , b_date ) VALUES ('2003-01-01' , '12:00:00' , '2004-08-12 01:00:00' ,  NULL ) 
+myproject_dataobject_typetest   : query       : QUERY DONE IN  0.0011980533599854 seconds
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : GET       : id 1 Array
 (
@@ -1311,16 +1319,16 @@ myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : QUERY       : SELECT * FROM typetest  WHERE  typetest.id = 1    
-myproject_dataobject_typetest   : query       : QUERY DONE IN  0.0013179779052734 seconds
+myproject_dataobject_typetest   : query       : QUERY DONE IN  0.0013389587402344 seconds
 myproject_dataobject_typetest   : __find       : CHECK autofetchd 1
 myproject_dataobject_typetest   : __find       : ABOUT TO AUTOFETCH
-myproject_dataobject_typetest   : FETCH       : a:6:{s:2:"id";s:1:"1";s:6:"a_date";s:10:"2003-01-01";s:6:"a_time";s:8:"12:00:00";s:10:"a_datetime";s:19:"2004-07-25 01:00:00";s:6:"b_date";N;s:2:"ts";s:14:"20040726142932";}
+myproject_dataobject_typetest   : FETCH       : a:6:{s:2:"id";s:1:"1";s:6:"a_date";s:10:"2003-01-01";s:6:"a_time";s:8:"12:00:00";s:10:"a_datetime";s:19:"2004-08-12 01:00:00";s:6:"b_date";N;s:2:"ts";s:14:"20040813123735";}
 myproject_dataobject_typetest   : fetchrow LINE       : id = 1
 myproject_dataobject_typetest   : fetchrow LINE       : a_date = 2003-01-01
 myproject_dataobject_typetest   : fetchrow LINE       : a_time = 12:00:00
-myproject_dataobject_typetest   : fetchrow LINE       : a_datetime = 2004-07-25 01:00:00
+myproject_dataobject_typetest   : fetchrow LINE       : a_datetime = 2004-08-12 01:00:00
 myproject_dataobject_typetest   : fetchrow LINE       : b_date = 
-myproject_dataobject_typetest   : fetchrow LINE       : ts = 20040726142932
+myproject_dataobject_typetest   : fetchrow LINE       : ts = 20040813123735
 myproject_dataobject_typetest   : fetchrow       : typetest DONE
 myproject_dataobject_typetest   : __find       : DONE
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
@@ -1328,10 +1336,10 @@ myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : 3       : got keys as a:1:{i:0;s:2:"id";}
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_typetest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_typetest   : QUERY       : UPDATE  typetest  SET a_date = '2003-01-01' , a_time = '12:00:00' , a_datetime = '2004-07-25 01:00:00' , b_date = '1970-01-01 07:59:59'   WHERE  typetest.id = 1 
-myproject_dataobject_typetest   : query       : QUERY DONE IN  0.0018489360809326 seconds
+myproject_dataobject_typetest   : QUERY       : UPDATE  typetest  SET a_date = '2003-01-01' , a_time = '12:00:00' , a_datetime = '2004-08-12 01:00:00' , b_date = '1970-01-01 07:59:59'   WHERE  typetest.id = 1 
+myproject_dataobject_typetest   : query       : QUERY DONE IN  0.0011739730834961 seconds
 myproject_dataobject_typetest   : 1       : Clearing Cache for myproject_dataobject_typetest
-TIMESTAMP = 26/07/2004 14:29:32
+TIMESTAMP = 13/08/2004 12:37:35
 myproject_dataobject_typetest Object
 (
     [_DB_DataObject_version] => @version@
@@ -1340,6 +1348,16 @@ myproject_dataobject_typetest Object
     [_database_dsn] => 
     [_database_dsn_md5] => 2f3fb5552c1aaa2a1ddef961a3506ebc
     [_database] => test
+    [_DB_resultid] => 15
+    [_link_loaded] => 
+    [_join] => 
+    [_lastError] => 
+    [id] => 1
+    [a_date] => 2003-01-01
+    [a_time] => 12:00:00
+    [a_datetime] => 2004-08-12 01:00:00
+    [b_date] => 1970-01-01 07:59:59
+    [ts] => 20040813123735
     [_query] => Array
         (
             [condition] => 
@@ -1350,158 +1368,66 @@ myproject_dataobject_typetest Object
             [data_select] => *
         )
 
-    [_DB_resultid] => 14
-    [_link_loaded] => 
-    [_join] => 
-    [_lastError] => 
-    [id] => 1
-    [a_date] => 2003-01-01
-    [a_time] => 12:00:00
-    [a_datetime] => 2004-07-25 01:00:00
-    [b_date] => 1970-01-01 07:59:59
-    [ts] => 20040726142932
 )
-db_dataobject   : CONNECT       : NEW CONNECTION
-db_dataobject   : CONNECT       : pgsql://@localhost/test acc1933ec1230f41406c1ced83ac1ca7
+myproject_dataobject_testset   : QUERY       : INSERT INTO testset (name , gender ) VALUES ('fred' , 'male' ) 
+myproject_dataobject_testset   : query       : QUERY DONE IN  0.0011420249938965 seconds
+myproject_dataobject_testset   : __find       : 1
+myproject_dataobject_testset   : QUERY       : SELECT * FROM testset     
+myproject_dataobject_testset   : query       : QUERY DONE IN  0.0012171268463135 seconds
+myproject_dataobject_testset   : __find       : CHECK autofetchd 1
+myproject_dataobject_testset   : __find       : ABOUT TO AUTOFETCH
+myproject_dataobject_testset   : FETCH       : a:3:{s:2:"id";s:1:"1";s:4:"name";s:4:"fred";s:6:"gender";s:4:"male";}
+myproject_dataobject_testset   : __find       : DONE
+Array
+(
+    [id] => 1
+    [name] => fred
+    [gender] => male
+)
 db_dataobject   : QUERY       : DROP SEQUENCE response_response_id_seq
-db_dataobject   : query       : QUERY DONE IN  0.20485687255859 seconds
-db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : query       : QUERY DONE IN  0.1931459903717 seconds
 db_dataobject   : QUERY       : DROP TABLE seqtest
-db_dataobject   : query       : QUERY DONE IN  0.2225239276886 seconds
-db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : query       : QUERY DONE IN  0.18075394630432 seconds
 db_dataobject   : QUERY       : CREATE SEQUENCE response_response_id_seq INCREMENT 1 START 1
-db_dataobject   : query       : QUERY DONE IN  0.078149795532227 seconds
-db_dataobject   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : query       : QUERY DONE IN  0.073028087615967 seconds
 db_dataobject   : QUERY       : 
             CREATE TABLE seqtest (
                 id INT NOT NULL UNIQUE   default nextval( 'response_response_id_seq' ),
                 xxx varchar(32),
                 price double precision
             )
-db_dataobject   : query       : QUERY DONE IN  0.19932079315186 seconds
-db_dataobject   : CONNECT       : USING CACHED CONNECTION
-db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
-db_dataobject_generator   : fillTable       : getting def for test/seqtest
-db_dataobject_generator   : defs       : Array
-(
-    [0] => Array
-        (
-            [table] => seqtest
-            [name] => id
-            [type] => int4
-            [len] => 4
-            [flags] => not_null default_nextval%28response_response_id_seq%29 unique_key
-        )
-
-    [1] => Array
-        (
-            [table] => seqtest
-            [name] => xxx
-            [type] => varchar
-            [len] => -1
-            [flags] => 
-        )
-
-    [2] => Array
-        (
-            [table] => seqtest
-            [name] => price
-            [type] => float8
-            [len] => 8
-            [flags] => 
-        )
-
-)
-
-TABLE STRUCTURE FOR seqtest
-Array
-(
-    [0] => stdClass Object
-        (
-            [table] => seqtest
-            [name] => id
-            [type] => int4
-            [len] => 4
-            [flags] => not_null default_nextval%28response_response_id_seq%29 unique_key
-        )
-
-    [1] => stdClass Object
-        (
-            [table] => seqtest
-            [name] => xxx
-            [type] => varchar
-            [len] => -1
-            [flags] => 
-        )
-
-    [2] => stdClass Object
-        (
-            [table] => seqtest
-            [name] => price
-            [type] => float8
-            [len] => 8
-            [flags] => 
-        )
-
-)
-db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
-Array
-(
-    [0] => dump for seqtest
-    [1] => Array
-        (
-            [table] => Array
-                (
-                    [id] => 129
-                    [xxx] => 2
-                    [price] => 1
-                )
-
-            [keys] => Array
-                (
-                    [id] => K
-                )
-
-        )
-
-)
-myproject_dataobject_seqtest   : CONNECT       : USING CACHED CONNECTION
+db_dataobject   : query       : QUERY DONE IN  0.18289494514465 seconds
 Array
 (
     [id] => 129
     [xxx] => 2
     [price] => 1
 )
-myproject_dataobject_seqtest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_seqtest   : QUERY       : INSERT INTO seqtest (xxx ) VALUES ('Fred' ) 
-myproject_dataobject_seqtest   : query       : QUERY DONE IN  0.028103113174438 seconds
-bool(true)
-myproject_dataobject_seqtest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_seqtest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_seqtest   : QUERY       : INSERT INTO seqtest (xxx ) VALUES ('Blogs' ) 
-myproject_dataobject_seqtest   : query       : QUERY DONE IN  0.002593994140625 seconds
-bool(true)
-myproject_dataobject_seqtest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_seqtest   : CONNECT       : USING CACHED CONNECTION
+myproject_dataobject_seqtest   : QUERY       : INSERT INTO seqtest (id , xxx ) VALUES ( 1 , 'Fred' ) 
+myproject_dataobject_seqtest   : query       : QUERY DONE IN  0.0079598426818848 seconds
+string(1) "1"
+myproject_dataobject_seqtest   : QUERY       : INSERT INTO seqtest (id , xxx ) VALUES ( 2 , 'Blogs' ) 
+myproject_dataobject_seqtest   : query       : QUERY DONE IN  0.0024828910827637 seconds
+string(1) "2"
 myproject_dataobject_seqtest   : QUERY       : INSERT INTO seqtest (xxx ) VALUES ('Jones' ) 
-myproject_dataobject_seqtest   : query       : QUERY DONE IN  0.0024158954620361 seconds
+myproject_dataobject_seqtest   : query       : QUERY DONE IN  0.0025489330291748 seconds
 string(1) "3"
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject   : QUERY       : DROP SEQUENCE items_seq
-db_dataobject   : query       : QUERY DONE IN  0.045895099639893 seconds
+db_dataobject   : query       : QUERY DONE IN  0.019654989242554 seconds
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject   : QUERY       : DROP TABLE itemtest
-db_dataobject   : query       : QUERY DONE IN  0.0071258544921875 seconds
+db_dataobject   : query       : QUERY DONE IN  0.0067629814147949 seconds
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject   : QUERY       : CREATE SEQUENCE items_seq INCREMENT 1 START 1
-db_dataobject   : query       : QUERY DONE IN  0.0055160522460938 seconds
+db_dataobject   : query       : QUERY DONE IN  0.0086159706115723 seconds
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject   : QUERY       : 
             create table itemtest (
                 id int not null primary key default nextval('items_seq'),
                 word varchar(100) not null constraint word_unique unique
              )
-db_dataobject   : query       : QUERY DONE IN  0.038692951202393 seconds
+db_dataobject   : query       : QUERY DONE IN  0.063647985458374 seconds
 db_dataobject   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : CONNECT       : USING CACHED CONNECTION
 db_dataobject_generator   : fillTable       : getting def for test/itemtest
@@ -1563,8 +1489,7 @@ Array
 
             [keys] => Array
                 (
-                    [id] => K
-                    [word] => K
+                    [id] => N
                 )
 
         )
@@ -1579,17 +1504,16 @@ Array
 Array
 (
     [0] => id
-    [1] => word
 )
 Array
 (
-    [0] => 
+    [0] => id
     [1] => 
     [2] => 
 )
 myproject_dataobject_itemtest   : CONNECT       : USING CACHED CONNECTION
-myproject_dataobject_itemtest   : QUERY       : INSERT INTO itemtest (word ) VALUES ('test' ) 
-myproject_dataobject_itemtest   : query       : QUERY DONE IN  0.004040002822876 seconds
+myproject_dataobject_itemtest   : QUERY       : INSERT INTO itemtest (id , word ) VALUES ( 27 , 'test' ) 
+myproject_dataobject_itemtest   : query       : QUERY DONE IN  0.0036530494689941 seconds
 myproject_dataobject_itemtest   : CONNECT       : USING CACHED CONNECTION
 Array
 (
@@ -1599,8 +1523,8 @@ Array
 )
 myproject_dataobject_itemtest   : CONNECT       : USING CACHED CONNECTION
 myproject_dataobject_itemtest   : QUERY       : INSERT INTO itemtest (word ) VALUES ('test2' ) 
-myproject_dataobject_itemtest   : query       : QUERY DONE IN  0.0023560523986816 seconds
-insert 2
+myproject_dataobject_itemtest   : query       : QUERY DONE IN  0.0026018619537354 seconds
+insert 1
 --GET--
 --POST--
 --EXPECT--
