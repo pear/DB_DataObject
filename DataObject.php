@@ -27,7 +27,7 @@
 *
 *        !!!!!!!!!!!!!               W A R N I N G                !!!!!!!!!!!
 *
-*     THIS MAY SEGFAULT PHP IF YOU ARE USING THE SEND OPTIMIZER (to fix it, just add 
+*     THIS MAY SEGFAULT PHP IF YOU ARE USING THE ZEND OPTIMIZER (to fix it, just add 
 *     "define('DB_DATAOBJECT_NO_OVERLOAD');" before you include this file.
 *  =====================================================================================
 */
