@@ -927,7 +927,7 @@ Class DB_DataObject
         if (isset($options["ini_{$this->_database}"])) {
             $ini = $options["ini_{$this->_database}"];
         }
-        $links = str_replace('.ini','.links',$ini);
+        $links = str_replace('.ini','.links.ini',$ini);
         
         $GLOBALS['_DB_DATAOBJECT']['INI'][$this->_database] = parse_ini_file($ini, true);
         /* load the link table if it exists. */
@@ -1606,6 +1606,36 @@ Class DB_DataObject
         return true; // everything is OK.
     }
 
+    /**
+     * Gets the DB object related to an object - so you can use funky peardb stuf with it :)
+     *
+     * @access public
+     * @return object The DB connection
+     */
+    function &getDatabaseConnection()
+    {
+        $this->_connect();
+        if (!isset($GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5])) {
+            return false;
+        }
+        return $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
+    }
+
+    /**
+     * Gets the DB result object related to the objects active query
+     *  - so you can use funky pear stuff with it - like pager for example.. :)
+     *
+     * @access public
+     * @return object The DB result object
+     */
+    function &getDatabaseResult()
+    {
+        $this->_connect();
+        if (!isset($GLOBALS['_DB_DATAOBJECT']['RESULTS'][$this->_DB_resultid])) {
+            return false;
+        }
+        return $GLOBALS['_DB_DATAOBJECT']['RESULTS'][$this->_DB_resultid];
+    }
 
     /* ----------------------- Debugger ------------------ */
     /**
@@ -1715,6 +1745,11 @@ Class DB_DataObject
         }
         $GLOBALS['_DB_DATAOBJECT_PRODUCTION']= 0;
     }
+    
+    
+    
+    
+    
 }
 
 DB_DataObject::staticInitialize();
