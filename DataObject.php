@@ -41,6 +41,12 @@ define('DB_DATAOBJECT_BOOL', 16); // is boolean #TODO
 define('DB_DATAOBJECT_TXT',  32); // is long text #TODO
 define('DB_DATAOBJECT_BLOB', 64); // is blob type
 
+/*
+ * Define this before you include DataObjects.php to  disable overload - if it segfaults due to Zend optimizer..
+ */
+//define('DB_DATAOBJECT_NO_OVERLOAD')  
+
+
 /**
  * Theses are the standard error codes, most methods will fail silently - and return false
  * to access the error message either use $table->_lastError
@@ -87,7 +93,30 @@ $GLOBALS['_DB_DATAOBJECT']['CONFIG'] = array();
 $GLOBALS['_DB_DATAOBJECT']['CACHE'] = array();
 $GLOBALS['_DB_DATAOBJECT']['OVERLOADED'] = false;
 $GLOBALS['_DB_DATAOBJECT']['QUERYENDTIME'] = 0;
-/**
+
+ 
+// this will be horrifically slow!!!!
+// NOTE: Overload SEGFAULTS ON PHP4 + Zend Optimizer (see define before..)
+// these two are BC/FC handlers for call in PHP4/5
+
+if ( substr(phpversion(),0,1) == 5) {
+    class DB_DataObject_Overload {
+        function __call($method,$args) {
+            $return = null;
+            $this->_call($method,$args,$return);
+            return $return;
+        }
+    }
+} else {
+    class DB_DataObject_Overload {
+        function __call($method,$args,&$return) {
+            return $this->_call($method,$args,$return);;
+        }
+    }
+
+}
+ 
+ /**
  * The main "DB_DataObject" class is really a base class for your own tables classes
  *
  * // Set up the class by creating an ini file (refer to the manual for more details
@@ -143,7 +172,8 @@ $GLOBALS['_DB_DATAOBJECT']['QUERYENDTIME'] = 0;
  * @author   Alan Knowles <alan@akbkhome.com>
  * @since    PHP 4.0
  */
-Class DB_DataObject
+ 
+Class DB_DataObject extends DB_DataObject_Overload
 {
    /**
     * The Version - use this to check feature changes
@@ -268,7 +298,7 @@ Class DB_DataObject
         $obj = DB_DataObject::factory(substr($class,strlen($_DB_DATAOBJECT['CONFIG']['class_prefix'])));
         if (PEAR::isError($obj)) {
             DB_DataObject::raiseError("could not autoload $class", DB_DATAOBJECT_ERROR_NOCLASS);
-            return false;
+            return $r = false;
         }
         
         if (!@$_DB_DATAOBJECT['CACHE'][$lclass]) {
@@ -276,7 +306,7 @@ Class DB_DataObject
         }
         if (!$obj->get($k,$v)) {
             DB_DataObject::raiseError("No Data return from get $k $v", DB_DATAOBJECT_ERROR_NODATA);
-            return false;
+            return $r = false;
         }
         $_DB_DATAOBJECT['CACHE'][$lclass][$key] = $obj;
         return $_DB_DATAOBJECT['CACHE'][$lclass][$key];
@@ -1918,25 +1948,25 @@ Class DB_DataObject
                     if ($p = strpos($row,".")) {
                         $row = substr($row,0,$p);
                     }
-                    return $this->getLink($row,$table,$link);
+                    return $r = $this->getLink($row,$table,$link);
                 } else {
                     DB_DataObject::raiseError(
                         "getLink: $row is not defined as a link (normally this is ok)", 
                         DB_DATAOBJECT_ERROR_NODATA);
                         
-                    return false; // technically a possible error condition?
+                    return $r = false; // technically a possible error condition?
                 }
             } else { // use the old _ method
                 if (!($p = strpos($row, '_'))) {
-                    return;
+                    return $r = null;
                 }
                 $table = substr($row, 0, $p);
-                return $this->getLink($row, $table);
+                return $r = $this->getLink($row, $table);
             }
         }
         if (!isset($this->$row)) {
             DB_DataObject::raiseError("getLink: row not set $row", DB_DATAOBJECT_ERROR_NODATA);
-            return false;
+            return $r = false;
         }
         
         // check to see if we know anything about this table..
@@ -1947,24 +1977,25 @@ Class DB_DataObject
             DB_DataObject::raiseError(
                 "getLink:Could not find class for row $row, table $table", 
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            return false;
+            return $r = false;
         }
         if ($link) {
             if ($obj->get($link, $this->$row)) {
                 return $obj;
             } else {
-                return false;
+                return $r= false;
             }
         }
         
         if ($obj->get($this->$row)) {
             return $obj;
         }
-        return false;
+        return $r = false;
     }
 
     /**
-     * return a list of options for a linked table
+     * IS THIS SUPPORTED/USED ANYMORE???? 
+     *return a list of options for a linked table
      *
      * This is highly dependant on naming columns 'correctly' :)
      * using colname = xxxxx_yyyyyy
@@ -2421,7 +2452,7 @@ Class DB_DataObject
 
         $this->_connect();
         if (!isset($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
-            return false;
+            return $r = false;
         }
         return $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
     }
@@ -2438,7 +2469,7 @@ Class DB_DataObject
         global $_DB_DATAOBJECT;
         $this->_connect();
         if (!isset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid])) {
-            return false;
+            return $r = false;
         }
         return $_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid];
     }
@@ -2467,7 +2498,7 @@ Class DB_DataObject
      */
 
     
-    function __call($method,$params,&$return) {
+    function _call($method,$params,&$return) {
          
         // ignore constructors : - mm
         if ($method == get_class($this)) {
@@ -2657,9 +2688,12 @@ Class DB_DataObject
 }
 // technially 4.3.2RC1 was broken!!
 // looks like 4.3.3 may have problems too....
-if ((phpversion() != '4.3.2-RC1') && (version_compare( phpversion(), "4.3.1") > 0)) {
-   overload('DB_DataObject');
-   $GLOBALS['_DB_DATAOBJECT']['OVERLOADED'] = true;
+if (!defined('DB_DATAOBJECT_NO_OVERLOAD')) {
+
+    if ((phpversion() != '4.3.2-RC1') && (version_compare( phpversion(), "4.3.1") > 0)) {
+       overload('DB_DataObject');
+       $GLOBALS['_DB_DATAOBJECT']['OVERLOADED'] = true;
+    }
 }
 
 ?>
