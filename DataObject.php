@@ -2362,23 +2362,38 @@ Class DB_DataObject extends DB_DataObject_Overload
             $joinAs = $obj->__table;
         }
         
-        $objTable = $obj->__table;
+        $quoteEntities = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];        
+        
+        $objTable = $quoteEntities ? $DB->quoteEntity($objTable) : $obj->__table ;
+        
+        
+        // nested (join of joined objects..)
+        $appendJoin = '';
         if ($obj->_join) {
-            $objTable = "($objTable {$obj->_join})";
+            // postgres allows nested queries, with ()'s
+            // not sure what the results are with other databases..
+            // may be unpredictable..
+            if (in_array($DB->dsn["phptype"],array('pgsql'))) {
+                $objTable = "($objTable {$obj->_join})";
+            } else {
+                $appendJoin = $obj->_join;
+            }
         }
-        $fullJoinAs = '';
-        if ($obj->__table != $joinAs) {
-            $fullJoinAs = "AS {$joinAs}";
-        }
+        
+        
         $table = $this->__table;
         
-        $quoteEntities = @$_DB_DATAOBJECT['CONFIG']['quote_entities'];
+
         if ($quoteEntities) {
             $joinAs   = $DB->quoteEntity($joinAs);
-            $objTable = $DB->quoteEntity($objTable)  ;
             $table    = $DB->quoteEntity($table);     
             $ofield   = $DB->quoteEntity($ofield);    
             $tfield   = $DB->quoteEntity($tfield);    
+        }
+        
+        $fullJoinAs = '';
+        if ($obj->__table != $joinAs) {
+            $fullJoinAs = "AS {$joinAs}";
         }
         
         switch ($joinType) {
@@ -2386,10 +2401,10 @@ Class DB_DataObject extends DB_DataObject_Overload
             case 'LEFT': 
             case 'RIGHT': // others??? .. cross, left outer, right outer, natural..?
                 $this->_join .= "\n {$joinType} JOIN {$objTable}  {$fullJoinAs}".
-                                " ON {$joinAs}.{$ofield}={$table}.{$tfield} ";
+                                " ON {$joinAs}.{$ofield}={$table}.{$tfield} {$appendJoin} ";
                 break;
             case '': // this is just a standard multitable select..
-                $this->_join .= "\n , {$objTable} {$fullJoinAs} ";
+                $this->_join .= "\n , {$objTable} {$fullJoinAs} {$appendJoin}";
                 $this->whereAdd("{$joinAs}.{$ofield}={$table}.{$tfield}");
         }
          
