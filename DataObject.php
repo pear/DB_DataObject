@@ -421,13 +421,17 @@ Class DB_DataObject
      * @param    string  $cond  condition
      * @param    string  $logic optional logic "OR" (defaults to "AND")
      * @access   public
-     * @return   none
+     * @return   none|PEAR::Error - invalid args only
      */
     function whereAdd($cond = false, $logic = 'AND')
     {
         if ($cond === false) {
             $this->_condition = '';
             return;
+        }
+        // check input...= 0 or '   ' == error!
+        if (!trim($cond)) {
+            return DB_DataObject::raiseError("WhereAdd: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
         }
         if ($this->_condition) {
             $this->_condition .= " {$logic} {$cond}";
@@ -445,7 +449,7 @@ Class DB_DataObject
      *
      * @param  string $order  Order
      * @access public
-     * @return void
+     * @return none|PEAR::Error - invalid args only
      */
     function orderBy($order = false)
     {
@@ -453,6 +457,11 @@ Class DB_DataObject
             $this->_order_by = '';
             return;
         }
+        // check input...= 0 or '    ' == error!
+        if (!trim($order)) {
+            return DB_DataObject::raiseError("orderBy: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
+        }
+        
         if (!$this->_order_by) {
             $this->_order_by = " ORDER BY {$order} ";
             return;
@@ -469,7 +478,7 @@ Class DB_DataObject
      *
      * @param  string  $group  Grouping
      * @access public
-     * @return  none
+     * @return none|PEAR::Error - invalid args only
      */
     function groupBy($group = false)
     {
@@ -477,6 +486,12 @@ Class DB_DataObject
             $this->_group_by = '';
             return;
         }
+        // check input...= 0 or '    ' == error!
+        if (!trim($group)) {
+            return DB_DataObject::raiseError("groupBy: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
+        }
+        
+        
         if (!$this->_group_by) {
             $this->_group_by = " GROUP BY {$group} ";
             return;
@@ -498,15 +513,18 @@ Class DB_DataObject
      * @param  string $a  limit start (or number), or blank to reset
      * @param  string $b  number
      * @access public
-     * @return void
+     * @return none|PEAR::Error - invalid args only
      */
     function limit($a = null, $b = null)
     {
-        if ($a === NULL) {
+        if ($a === null) {
            $this->_limit = '';
            return;
         }
-
+        // check input...= 0 or '    ' == error!
+        if (!is_int($a) && (($b !== null) && !is_int($b))) {
+            return DB_DataObject::raiseError("limit: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
+        }
 
         $db = $this->getDatabaseConnection();
 
@@ -544,6 +562,12 @@ Class DB_DataObject
             $this->_data_select = '';
             return;
         }
+        
+        // check input...= 0 or '    ' == error!
+        if (!trim($k)) {
+            return DB_DataObject::raiseError("selectAdd: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
+        }
+        
         if ($this->_data_select)
             $this->_data_select .= ', ';
         $this->_data_select .= " $k ";
