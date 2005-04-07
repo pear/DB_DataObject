@@ -1999,8 +1999,8 @@ class DB_DataObject extends DB_DataObject_Overload
     function _quote($str) 
     {
         global $_DB_DATAOBJECT;
-        return (empty($GLOBALS['_DB_DATAOBJECT']['CONFIG']['db_driver']) || 
-                ($GLOBALS['_DB_DATAOBJECT']['CONFIG']['db_driver'] == 'DB'))
+        return (empty($_DB_DATAOBJECT['CONFIG']['db_driver']) || 
+                ($_DB_DATAOBJECT['CONFIG']['db_driver'] == 'DB'))
             ? $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->quoteSmart($str)
             : $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->quote($str);
     }
