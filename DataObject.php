@@ -91,6 +91,17 @@
 require_once 'PEAR.php';
 
 /**
+ * We are setting a global fetchmode assoc constant of 2 to be compatible with
+ * both DB and MDB2
+ */
+ 
+define('DB_DATAOBJECT_FETCHMODE_ASSOC',2);
+
+
+
+
+
+/**
  * these are constants for the get_table array
  * user to determine what type of escaping is required around the object vars.
  */
@@ -370,7 +381,7 @@ class DB_DataObject extends DB_DataObject_Overload
      *
      * @param   boolean $n Fetch first result
      * @access  public
-     * @return  int (number of rows returned, or true if numRows fetching is not supported)
+     * @return  mixed (number of rows returned, or true if numRows fetching is not supported)
      */
     function find($n = false)
     {
@@ -401,6 +412,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
+        /* We are checking for method modifyLimitQuery as it is PEAR DB specific */
         $sql = 'SELECT ' .
             $this->_query['data_select'] .
             ' FROM ' . ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table) . " " .
@@ -408,11 +420,22 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->_query['condition'] . ' '.
             $this->_query['group_by']  . ' '.
             $this->_query['having']    . ' '.
-            $this->_query['order_by']  . ' '
-        ;
-        if (isset($this->_query['limit_start']) && strlen($this->_query['limit_start'] . $this->_query['limit_count'])) {
-            $sql = $DB->modifyLimitQuery($sql,$this->_query['limit_start'], $this->_query['limit_count']);
+            $this->_query['order_by']  . ' ';
+        
+        if ((!isset($_DB_DATAOBJECT['CONFIG']['db_driver'])) || 
+            ($_DB_DATAOBJECT['CONFIG']['db_driver'] == 'DB')) {
+            /* PEAR DB specific */
+        
+            if (isset($this->_query['limit_start']) && strlen($this->_query['limit_start'] . $this->_query['limit_count'])) {
+                $sql = $DB->modifyLimitQuery($sql,$this->_query['limit_start'], $this->_query['limit_count']);
+            }
+        } else {
+            /* theoretically MDB! */
+            if (isset($this->_query['limit_start']) && strlen($this->_query['limit_start'] . $this->_query['limit_count'])) {
+	            $DB->setLimit($this->_query['limit_count'],$this->_query['limit_start']);
+	        }
         }
+        
         
         $this->_query($sql);
         
@@ -486,7 +509,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         
         
-        $array = $result->fetchRow(DB_FETCHMODE_ASSOC);
+        $array = $result->fetchRow(DB_DATAOBJECT_FETCHMODE_ASSOC);
         if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug(serialize($array),"FETCH");
         }
@@ -940,7 +963,7 @@ class DB_DataObject extends DB_DataObject_Overload
               
             
             if ($v & DB_DATAOBJECT_STR) {
-                $rightq .= $DB->quoteSmart((string) (
+                $rightq .= $this->_quote((string) (
                         ($v & DB_DATAOBJECT_BOOL) ? (int)(bool)$this->$k : $this->$k
                     )) . " ";
                 continue;
@@ -1157,7 +1180,7 @@ class DB_DataObject extends DB_DataObject_Overload
             
 
             if ($v & DB_DATAOBJECT_STR) {
-                $settings .= "$kSql = ". $DB->quoteSmart((string) (
+                $settings .= "$kSql = ". $this->_quote((string) (
                         ($v & DB_DATAOBJECT_BOOL) ? (int)(bool)$this->$k : $this->$k
                     )) . ' ';
                 continue;
@@ -1279,9 +1302,21 @@ class DB_DataObject extends DB_DataObject_Overload
         
             $table = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
             $sql = "DELETE FROM {$table} {$this->_query['condition']}{$extra_cond}";
+            
             // add limit..
+            
             if (isset($this->_query['limit_start']) && strlen($this->_query['limit_start'] . $this->_query['limit_count'])) {
-                $sql = $DB->modifyLimitQuery($sql,$this->_query['limit_start'], $this->_query['limit_count']);
+                
+                if (!isset($_DB_DATAOBJECT['CONFIG']['db_driver']) ||  
+                    ($_DB_DATAOBJECT['CONFIG']['db_driver'] == 'DB')) {
+                    // pear DB 
+                    $sql = $DB->modifyLimitQuery($sql,$this->_query['limit_start'], $this->_query['limit_count']);
+                    
+                } else {
+                    // MDB
+                    $DB->setLimit( $this->_query['limit_count'],$this->_query['limit_start']);
+                }
+                    
             }
             
             
@@ -1341,7 +1376,7 @@ class DB_DataObject extends DB_DataObject_Overload
 
 
         $result = &$_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid];
-        $array  = $result->fetchrow(DB_FETCHMODE_ASSOC,$row);
+        $array  = $result->fetchrow(DB_DATAOBJECT_FETCHMODE_ASSOC,$row);
         if (!is_array($array)) {
             $this->raiseError("fetchrow: No results available", DB_DATAOBJECT_ERROR_NODATA);
             return false;
@@ -1953,6 +1988,23 @@ class DB_DataObject extends DB_DataObject_Overload
         }
     }
 
+    
+    /**
+     * backend wrapper for quoting, as MDB and DB do it differently...
+     *
+     * @access private
+     * @return string quoted
+     */
+    
+    function _quote($str) 
+    {
+        global $_DB_DATAOBJECT;
+        return ($GLOBALS['_DB_DATAOBJECT']['CONFIG']['db_driver'] == 'DB')
+            ? $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->quoteSmart($str)
+            : $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->quote($str);
+    }
+    
+    
     /**
      * connects to the database
      *
@@ -2033,14 +2085,35 @@ class DB_DataObject extends DB_DataObject_Overload
             /* actualy make a connection */
             $this->debug("{$dsn} {$this->_database_dsn_md5}", "CONNECT",3);
         }
-        $db_options = PEAR::getStaticProperty('DB','options');
-        require_once 'DB.php';
-        if ($db_options) {
-
-            $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn,$db_options);
+        
+        // Note this is verbose deliberatly! 
+        
+        if (!isset($_DB_DATAOBJECT['CONFIG']['db_driver']) || 
+            ($_DB_DATAOBJECT['CONFIG']['db_driver'] == 'DB')) {
+            
+            /* PEAR DB connect */
+            
+            // this allows the setings of compatibility on DB 
+            $db_options = PEAR::getStaticProperty('DB','options');
+            require_once 'DB.php';
+            if ($db_options) {
+                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn,$db_options);
+            } else {
+                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn);
+            }
+            
         } else {
-            $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn);
+            /* assumption is MDB */
+            require_once 'MDB2.php';
+            // this allows the setings of compatibility on MDB2 
+            $db_options = PEAR::getStaticProperty('MDB2','options');
+            if ($db_options) {
+                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = MDB2::connect($dsn,$db_options);
+            } else {
+                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = MDB2::connect($dsn);
+            }
         }
+        
         
         if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug(serialize($_DB_DATAOBJECT['CONNECTIONS']), "CONNECT",5);
@@ -2121,7 +2194,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         //if (@$_DB_DATAOBJECT['CONFIG']['debug'] > 1) {
             // this will only work when PEAR:DB supports it.
-            //$this->debug($DB->getAll('explain ' .$string,DB_FETCHMODE_ASSOC), $log="sql",2);
+            //$this->debug($DB->getAll('explain ' .$string,DB_DATAOBJECT_FETCHMODE_ASSOC), $log="sql",2);
         //}
         
         // some sim
@@ -2148,7 +2221,12 @@ class DB_DataObject extends DB_DataObject_Overload
             case 'insert':
             case 'update':
             case 'delete':
-                return $DB->affectedRows(); 
+                if (empty($_DB_DATAOBJECT['CONFIG']['db_driver']) || 
+                    ($_DB_DATAOBJECT['CONFIG']['db_driver'] == 'DB')) {
+                    // pear DB specific
+                    return $DB->affectedRows(); 
+                }
+                return $result;
         }
         if (is_object($result)) {
             // lets hope that copying the result object is OK!
@@ -2240,7 +2318,7 @@ class DB_DataObject extends DB_DataObject_Overload
             
 
             if ($v & DB_DATAOBJECT_STR) {
-                $this->whereAdd(" $kSql  = " . $DB->quoteSmart((string) (
+                $this->whereAdd(" $kSql  = " . $this->_quote((string) (
                         ($v & DB_DATAOBJECT_BOOL) ? (int)(bool)$this->$k : $this->$k
                     )) );
                 continue;
@@ -2949,7 +3027,7 @@ class DB_DataObject extends DB_DataObject_Overload
             
             
             if ($v & DB_DATAOBJECT_STR) {
-                $this->whereAdd("{$joinAs}.{$kSql} = " . $DB->quoteSmart((string) (
+                $this->whereAdd("{$joinAs}.{$kSql} = " . $this->_quote((string) (
                         ($v & DB_DATAOBJECT_BOOL) ? (int)(bool)$obj->$k : $obj->$k
                     )));
                 continue;
