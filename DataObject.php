@@ -2330,7 +2330,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             /* this is probably an error condition! */
-            $this->whereAdd(" $kSql = ".intval($v));
+            $this->whereAdd(" $kSql = ".intval($this->$k));
         }
     }
 
