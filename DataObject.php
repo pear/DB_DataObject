@@ -1029,13 +1029,27 @@ class DB_DataObject extends DB_DataObject_Overload
                         if (!$seq) {
                             $seq = $DB->getSequenceName($this->__table );
                         }
-                    	$pgsql_key = $DB->getOne("SELECT last_value FROM ".$seq);
+                        $pgsql_key = $DB->getOne("SELECT last_value FROM ".$seq);
                         if (PEAR::isError($pgsql_key)) {
                             $this->raiseError($r);
                             return false;
                         }
                         $this->$key = $pgsql_key;
-                    	break;
+                        break;
+                    
+                    case 'ifx':
+                        $this->$key = array_shift (
+                            ifx_fetch_row (
+                                ifx_query(
+                                    "select DBINFO('sqlca.sqlerrd1') FROM systables where tabid=1",
+                                    $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->connection,
+                                    IFX_SCROLL
+                                ), 
+                                "FIRST"
+                            )
+                        ); 
+                        break;
+                    
                 }
                         
             }
@@ -1944,7 +1958,7 @@ class DB_DataObject extends DB_DataObject_Overload
         // technically postgres native here...
         // we need to get the new improved tabledata sorted out first.
         
-        if (    in_array($dbtype , array( 'mysql', 'mysqli', 'mssql')) && 
+        if (    in_array($dbtype , array( 'mysql', 'mysqli', 'mssql', 'ifx')) && 
                 ($table[$usekey] & DB_DATAOBJECT_INT) && 
                 isset($realkeys[$usekey]) && ($realkeys[$usekey] == 'N')
                 ) {
