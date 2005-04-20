@@ -2053,6 +2053,9 @@ class DB_DataObject extends DB_DataObject_Overload
             if (!$this->_database) {
                 $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['database'];
             }
+            // theoretically we have a md5, it's listed in connections and it's not an error.
+            // so everything is ok!
+            return true;
             
         }
 
