@@ -3179,8 +3179,8 @@ class DB_DataObject extends DB_DataObject_Overload
                 $ret[sprintf($format,$k)] = '';
                 continue;
             }
-            // call the overloaded getXXXX() method.
-            if (method_exists($this,'get'.$k)) {
+            // call the overloaded getXXXX() method. - except getLink and getLinks
+            if (method_exists($this,'get'.$k) && !in_array(strtolower($k),array('links','link'))) {
                 $ret[sprintf($format,$k)] = $this->{'get'.$k}();
                 continue;
             }
