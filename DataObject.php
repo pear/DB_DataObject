@@ -194,7 +194,7 @@ if ( substr(phpversion(),0,1) == 5) {
         }
     }
 } else {
-    if ((phpversion() == '4.3.10') && !defined('DB_DATAOBJECT_NO_OVERLOAD')) {
+    if (version_compare(phpversion(),'4.3.10','eq') && !defined('DB_DATAOBJECT_NO_OVERLOAD')) {
         trigger_error(
             "overload does not work with PHP4.3.10, either upgrade 
             (snaps.php.net) or more recent version 
