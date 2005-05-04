@@ -176,15 +176,6 @@ class DB_DataObject_Generator extends DB_DataObject
                 preg_match($options['generator_exclude_regex'],$table)) {
                     continue;
             }
-            
-            
-            $defs =  $__DB->tableInfo($table);
-            if (is_a($defs,'PEAR_Error')) {
-                echo $defs->toString();
-                exit;
-            }
-            // cast all definitions to objects - as we deal with that better.
-            
                 // postgres strip the schema bit from the 
             if (!empty($options['generator_strip_schema'])) {    
                 $bits = explode('.', $table,2);
@@ -193,6 +184,15 @@ class DB_DataObject_Generator extends DB_DataObject
                     $table = $bits[1];
                 }
             }
+            
+            $defs =  $__DB->tableInfo($table);
+            if (is_a($defs,'PEAR_Error')) {
+                echo $defs->toString();
+                exit;
+            }
+            // cast all definitions to objects - as we deal with that better.
+            
+            
             
             foreach($defs as $def) {
                 if (!is_array($def)) {
