@@ -164,7 +164,6 @@ class DB_DataObject_Generator extends DB_DataObject
             $this->tables = array_merge ($this->tables, $views);
         }
         
-        
         // declare a temporary table to be filled with matching tables names
         $tmp_table = array();
 
@@ -178,24 +177,39 @@ class DB_DataObject_Generator extends DB_DataObject
                     continue;
             }
             
-            // we find a matching table, just  store it into a temporary array
-            $tmp_table[] = $table;            
- 
+            
             $defs =  $__DB->tableInfo($table);
             if (is_a($defs,'PEAR_Error')) {
                 echo $defs->toString();
                 exit;
             }
             // cast all definitions to objects - as we deal with that better.
-            foreach($defs as $def) {
-                if (is_array($def)) {
-                    $this->_definitions[$table][] = (object) $def;
+            
+                // postgres strip the schema bit from the 
+            if (!empty($options['generator_strip_schema'])) {    
+                $bits = explode('.', $table,2);
+                $table = $bits[0];
+                if (count($bits) > 1) {
+                    $table = $bits[1];
                 }
             }
+            
+            foreach($defs as $def) {
+                if (!is_array($def)) {
+                    continue;
+                }
+                
+                $this->_definitions[$table][] = (object) $def;
+                
+            }
+            // we find a matching table, just  store it into a temporary array
+            $tmp_table[] = $table;            
+ 
+            
         }
         // the temporary table array is now the right one (tables names matching 
         // with regex expressions have been removed)
-        $this->tables = $tmp_table;         
+        $this->tables = $tmp_table;
         //print_r($this->_definitions);
     }
 
