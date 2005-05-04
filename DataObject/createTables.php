@@ -49,7 +49,7 @@ if (empty($options)) {
     exit;
 }
 set_time_limit(0);
-DB_DataObject::debugLevel(5);
+DB_DataObject::debugLevel(1);
 $generator = new DB_DataObject_Generator;
 $generator->start();
  
