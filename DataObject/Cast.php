@@ -135,7 +135,8 @@ class DB_DataObject_Cast {
     * @access   public 
     */
   
-    function sql($value) {
+    function sql($value) 
+    {
         $r = new DB_DataObject_Cast;
         $r->type = 'sql';
         $r->value = $value;
@@ -163,7 +164,8 @@ class DB_DataObject_Cast {
     * @access   public 
     */
   
-    function date() {  
+    function date() 
+    {  
         $args = func_get_args();
         switch(count($args)) {
             case 0: // no args = today!
@@ -341,14 +343,15 @@ class DB_DataObject_Cast {
     *
     * 
     * @param   int      $to Type (DB_DATAOBJECT_*
-    * @param   string  $db    (eg. mysql|mssql.....)
+    * @param   object   $db DB Connection Object
     * 
     *
     * @return   string 
     * @access   public
     */
   
-    function toString($to=false,$db='mysql') {
+    function toString($to=false,$db) 
+    {
         // if $this->type is not set, we are in serious trouble!!!!
         // values for to:
         $method = 'toStringFrom'.$this->type;
@@ -360,13 +363,14 @@ class DB_DataObject_Cast {
     *   ** Suppots only blob->postgres::bytea
     *
     * @param   int      $to Type (DB_DATAOBJECT_*
-    * @param   string  $db    (eg. mysql|mssql.....)
+    * @param   object   $db DB Connection Object
     * 
     *
     * @return   string 
     * @access   public
     */
-    function toStringFromBlob($to,$db) {
+    function toStringFromBlob($to,$db) 
+    {
         // first weed out invalid casts..
         // in blobs can only be cast to blobs.!
         
@@ -376,22 +380,21 @@ class DB_DataObject_Cast {
             return PEAR::raiseError('Invalid Cast from a DB_DataObject_Cast::blob to something other than a blob!');
         }
         
-        switch ($db) {
+        switch ($db->dsn["phptype"]) {
             case 'pgsql':
                 return "'".pg_escape_bytea($this->value)."'::bytea";
                 
             case 'mysql':
-                return "'".mysql_escape_string($this->value)."'";
+                return "'".mysql_real_escape_string($this->value,$DB->connection)."'";
             
-            // probably most of the rest could use this! - but it's pretty messy
-            // as we dont pass the database connection here.
             case 'mysqli':
-                return "'".addslashes($this->value)."'";
+                // this is funny - the parameter order is reversed ;)
+                return "'".mysqli_real_escape_string($DB->connection, $this->value)."'";
              
             
                  
             default:
-                return PEAR::raiseError("DB_DataObject_Cast cant handle blobs for Database:$db Yet");
+                return PEAR::raiseError("DB_DataObject_Cast cant handle blobs for Database:{$db->dsn['phptype']} Yet");
         }
     
     }
@@ -402,13 +405,14 @@ class DB_DataObject_Cast {
     * 
     *
     * @param   int      $to Type (DB_DATAOBJECT_*
-    * @param   string  $db    (eg. mysql|mssql.....)
+    * @param   object   $db DB Connection Object
     * 
     *
     * @return   string 
     * @access   public
     */
-    function toStringFromString($to,$db) {
+    function toStringFromString($to,$db) 
+    {
         // first weed out invalid casts..
         // in blobs can only be cast to blobs.!
         
@@ -420,20 +424,20 @@ class DB_DataObject_Cast {
                 ' (why not just use native features)');
         }
         
-        switch ($db) {
+        switch ($db->dsn['phptype']) {
             case 'pgsql':
                 return "'".pg_escape_string($this->value)."'::bytea";
             
             case 'mysql':
-                return "'".mysql_escape_string($this->value)."'";
+                return "'".mysql_real_escape_string($this->value,$DB->connection)."'";
             
-            // this will not work as we dont pass the db connection..! - oops bad design!
-            //case 'mysqli':
-            //    return "'".mysql_escape_string($this->value)."'";
+            
+            case 'mysqli':
+                return "'".mysqli_real_escape_string($DB->connection, $this->value)."'";
 
             
             default:
-                return PEAR::raiseError("DB_DataObject_Cast cant handle blobs for Database:$db Yet");
+                return PEAR::raiseError("DB_DataObject_Cast cant handle blobs for Database:{$db->dsn['phptype']} Yet");
         }
     
     }
@@ -445,13 +449,14 @@ class DB_DataObject_Cast {
     * 
     *
     * @param   int      $to Type (DB_DATAOBJECT_*
-    * @param   string  $db    (eg. mysql|mssql.....)
+    * @param   object   $db DB Connection Object
     * 
     *
     * @return   string 
     * @access   public
     */
-    function toStringFromDate($to,$db) {
+    function toStringFromDate($to,$db) 
+    {
         // first weed out invalid casts..
         // in blobs can only be cast to blobs.!
          // perhaps we should support TEXT fields???
@@ -470,7 +475,7 @@ class DB_DataObject_Cast {
     * 
     *
     * @param   int     $to Type (DB_DATAOBJECT_*
-    * @param   string  $db    (eg. mysql|mssql.....)
+    * @param   object   $db DB Connection Object
     * 
     *
     * @return   string 
@@ -478,7 +483,8 @@ class DB_DataObject_Cast {
     * @author   therion 5 at hotmail
     */
     
-    function toStringFromDateTime($to,$db) {
+    function toStringFromDateTime($to,$db) 
+    {
         // first weed out invalid casts..
         // in blobs can only be cast to blobs.!
         // perhaps we should support TEXT fields???
@@ -497,7 +503,7 @@ class DB_DataObject_Cast {
     * 
     *
     * @param   int     $to Type (DB_DATAOBJECT_*
-    * @param   string  $db    (eg. mysql|mssql.....)
+    * @param   object   $db DB Connection Object
     * 
     *
     * @return   string 
@@ -505,7 +511,8 @@ class DB_DataObject_Cast {
     * @author   therion 5 at hotmail
     */
 
-    function toStringFromTime($to,$db) {
+    function toStringFromTime($to,$db) 
+    {
         // first weed out invalid casts..
         // in blobs can only be cast to blobs.!
         // perhaps we should support TEXT fields???
@@ -521,13 +528,14 @@ class DB_DataObject_Cast {
     * get the string to use in the SQL statement for a raw sql statement.
     *
     * @param   int      $to Type (DB_DATAOBJECT_*
-    * @param   string  $db    (eg. mysql|mssql.....)
+    * @param   object   $db DB Connection Object
     * 
     *
     * @return   string 
     * @access   public
     */
-    function toStringFromSql($to,$db) {
+    function toStringFromSql($to,$db) 
+    {
         return $this->value; 
     }
     

@@ -937,7 +937,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $leftq .= ($quoteIdentifiers ? ($DB->quoteIdentifier($k) . ' ')  : "$k ");
             
             if (is_a($this->$k,'db_dataobject_cast')) {
-                $value = $this->$k->toString($v,$dbtype);
+                $value = $this->$k->toString($v,$DB);
                 if (PEAR::isError($value)) {
                     $this->raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
                     return false;
@@ -1168,7 +1168,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $kSql = ($quoteIdentifiers ? $DB->quoteIdentifier($k) : $k);
             
             if (is_a($this->$k,'db_dataobject_cast')) {
-                $value = $this->$k->toString($v,$dbtype);
+                $value = $this->$k->toString($v,$DB);
                 if (PEAR::isError($value)) {
                     $this->raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
                     return false;
@@ -2317,7 +2317,7 @@ class DB_DataObject extends DB_DataObject_Overload
             
             if (is_a($this->$k,'db_dataobject_cast')) {
                 $dbtype = $DB->dsn["phptype"];
-                $value = $this->$k->toString($v,$dbtype);
+                $value = $this->$k->toString($v,$DB);
                 if (PEAR::isError($value)) {
                     $this->raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
                     return false;
