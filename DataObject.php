@@ -3170,7 +3170,7 @@ class DB_DataObject extends DB_DataObject_Overload
      * @return   array of key => value for row
      */
 
-    function toArray($format = '%s', $hideEmpty = false))
+    function toArray($format = '%s', $hideEmpty = false) 
     {
         global $_DB_DATAOBJECT;
         $ret = array();
