@@ -142,7 +142,10 @@ class DB_DataObject_Generator extends DB_DataObject
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
         
         // try getting a list of schema tables first. (postgres)
+        $__DB->expectError(DB_ERROR_UNSUPPORTED);
         $this->tables = $__DB->getListOf('schema.tables');
+        $__DB->popExpect();
+        
         if (empty($this->tables) || is_a($this->tables , 'PEAR_Error')) {
             //if that fails fall back to clasic tables list.
             $this->tables = $__DB->getListOf('tables');
