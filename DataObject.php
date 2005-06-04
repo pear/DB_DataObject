@@ -3163,12 +3163,14 @@ class DB_DataObject extends DB_DataObject_Overload
      *
      * will also return links converted to arrays.
      *
-     * @param   string sprintf format for array
+     * @param   string  sprintf format for array
+     * @param   bool    empty only return elemnts that have a value set.
+     *
      * @access   public
      * @return   array of key => value for row
      */
 
-    function toArray($format = '%s')
+    function toArray($format = '%s', $hideEmpty = false))
     {
         global $_DB_DATAOBJECT;
         $ret = array();
@@ -3179,7 +3181,9 @@ class DB_DataObject extends DB_DataObject_Overload
         foreach($ar as $k=>$v) {
              
             if (!isset($this->$k)) {
-                $ret[sprintf($format,$k)] = '';
+                if (!$hideEmpty) {
+                    $ret[sprintf($format,$k)] = '';
+                }
                 continue;
             }
             // call the overloaded getXXXX() method. - except getLink and getLinks
