@@ -99,12 +99,20 @@ class DB_DataObject_Generator extends DB_DataObject
         }
 
         foreach($databases as $databasename => $database) {
-            if (!$database) continue;
+            if (!$database) {
+                continue;
+            }
             $this->debug("CREATING FOR $databasename\n");
             $class = get_class($this);
             $t = new $class;
             $t->_database_dsn = $database;
+            
+            
             $t->_database = $databasename;
+            $dsn = DB::parseDSN($database);
+            if (($dsn['phptype'] == 'sqlite') && isfile($databasename)) {
+                $t->_database = basename($t->_database);
+            }
             $t->_createTableList();
 
             foreach(get_class_methods($class) as $method) {
@@ -784,6 +792,7 @@ class DB_DataObject_Generator extends DB_DataObject
     function fillTableSchema($database,$table) {
         global $_DB_DATAOBJECT;
         $this->_database  = $database; 
+        
         $this->_connect();
         $table = trim($table);
         

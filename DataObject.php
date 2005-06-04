@@ -2054,6 +2054,12 @@ class DB_DataObject extends DB_DataObject_Overload
 
             if (!$this->_database) {
                 $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['database'];
+                if (($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'] == 'sqlite') 
+                    && is_file($this->_database)) 
+                {
+                    $this->_database = basename($this->_database);
+                }
+                
             }
             // theoretically we have a md5, it's listed in connections and it's not an error.
             // so everything is ok!
@@ -2069,7 +2075,7 @@ class DB_DataObject extends DB_DataObject_Overload
 
         if (!$dsn) {
             if (!$this->_database) {
-                $this->_database = isset($options["table_{$this->__table}"]) ?$options["table_{$this->__table}"] : null;
+                $this->_database = isset($options["table_{$this->__table}"]) ? $options["table_{$this->__table}"] : null;
             }
             if ($this->_database && !empty($options["database_{$this->_database}"]))  {
                 $dsn = $options["database_{$this->_database}"];
@@ -2097,6 +2103,11 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             if (!$this->_database) {
                 $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["database"];
+                if (($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'] == 'sqlite') 
+                    && is_file($this->_database)) 
+                {
+                    $this->_database = basename($this->_database);
+                }
             }
             return true;
         }
@@ -2149,17 +2160,16 @@ class DB_DataObject extends DB_DataObject_Overload
 
         if (!$this->_database) {
             $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["database"];
+            if (($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'] == 'sqlite') 
+                && is_file($this->_database)) 
+            {
+                $this->_database = basename($this->_database);
+            }
         }
         
         // Oracle need to optimize for portibility - not sure exactly what this does though :)
         $c = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-        
-        
-        
-        
-        
-        
-
+         
         return true;
     }
 
@@ -2253,7 +2263,7 @@ class DB_DataObject extends DB_DataObject_Overload
             case 'insert':
             case 'update':
             case 'delete':
-                if ($_DB_driver == 'DB')  {
+                if ($_DB_driver == 'DB') {
                     // pear DB specific
                     return $DB->affectedRows(); 
                 }
