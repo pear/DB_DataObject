@@ -1528,7 +1528,9 @@ class DB_DataObject extends DB_DataObject_Overload
         global $_DB_DATAOBJECT;
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-        return $DB->escapeSimple($string);
+        // mdb uses escape...
+        $dd = empty($_DB_DATAOBJECT['CONFIG']['db_driver']) ? 'DB' : $_DB_DATAOBJECT['CONFIG']['db_driver'];
+        return ($dd == 'DB') ? $DB->escapeSimple($string) : $DB->escape($string);
     }
 
     /* ==================================================== */
@@ -2178,26 +2180,37 @@ class DB_DataObject extends DB_DataObject_Overload
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
 
         $options = &$_DB_DATAOBJECT['CONFIG'];
-
+        
+        $_DB_driver = empty($_DB_DATAOBJECT['CONFIG']['db_driver']) ? 
+                    'DB':  $_DB_DATAOBJECT['CONFIG']['db_driver'];
+        
         if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug($string,$log="QUERY");
             
         }
         
         if (strtoupper($string) == 'BEGIN') {
-            $DB->autoCommit(false);
+            if ($_DB_driver == 'DB') {
+                $DB->autoCommit(false);
+            } else {
+                $DB->beginTransaction();
+            }
             // db backend adds begin anyway from now on..
             return true;
         }
         if (strtoupper($string) == 'COMMIT') {
             $DB->commit();
-            $DB->autoCommit(true);
+            if ($_DB_driver == 'DB') {
+                $DB->autoCommit(true);
+            }
             return true;
         }
         
         if (strtoupper($string) == 'ROLLBACK') {
             $DB->rollback();
-            $DB->autoCommit(true);
+            if ($_DB_driver == 'DB') {
+                $DB->autoCommit(true);
+            }
             return true;
         }
         
@@ -2240,8 +2253,7 @@ class DB_DataObject extends DB_DataObject_Overload
             case 'insert':
             case 'update':
             case 'delete':
-                if (empty($_DB_DATAOBJECT['CONFIG']['db_driver']) || 
-                    ($_DB_DATAOBJECT['CONFIG']['db_driver'] == 'DB')) {
+                if ($_DB_driver == 'DB')  {
                     // pear DB specific
                     return $DB->affectedRows(); 
                 }
@@ -3087,7 +3099,7 @@ class DB_DataObject extends DB_DataObject_Overload
      * @access   public
      * @return   true on success or array of key=>setValue error message
      */
-    function setFrom(&$from, $format = '%s')
+    function setFrom(&$from, $format = '%s', $checkEmpty=false)
     {
         global $_DB_DATAOBJECT;
         $keys  = $this->keys();
