@@ -110,7 +110,7 @@ class DB_DataObject_Generator extends DB_DataObject
             
             $t->_database = $databasename;
             $dsn = DB::parseDSN($database);
-            if (($dsn['phptype'] == 'sqlite') && isfile($databasename)) {
+            if (($dsn['phptype'] == 'sqlite') && is_file($databasename)) {
                 $t->_database = basename($t->_database);
             }
             $t->_createTableList();
