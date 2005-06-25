@@ -22,12 +22,53 @@
   </maintainers>
   
   <release>
-     <version>1.7.13</version>
-      <date>2004-03-24</date>
+     <version>1.7.14</version>
+      <date>2004-06-25</date>
       <notes><![CDATA[
-        Minor Bugfix release
-      
-        #3943 - postgres booleans broke again due to last fix for mysqli.
+        Bugfix release (Mostly)
+       
+        Special thanks to Dan Rossi for the MDB Backend work on this release.
+        
+        Key changes:
+          - SQLlite support for files.
+          - MDB Backend support (experimental) use:  
+              db_driver = MDB
+              as a config option.
+              NOTE: the generator will probably not work.
+             
+          - toArray() has an extra argument (bool)hideEmpty, 
+            which prevents it returning key/value pair when the value is empty 
+          - DB_DataObject_Cast object was redesigned to enable better quoting of 
+            blobs
+          - PostgresSQL schema  for tablenames can be removed with the 
+              generator_strip_schema = 1
+          - Fetch return value and  object->N are now "true", rather than 1 
+            when numRows is not supported, (also document it on find())
+         
+         
+        Bugs Fixed. 
+          * fix bug #4672 - query(COMMIT) relays return value from DB->commit()
+          * fix bug #4535 - fix update/select etc. for postgres with boolean values.
+          * fix bug #4601 - wrong method used to test if file for sqlite
+          * fix bug #4193 - sqlite names causing invalid .ini files
+          * fix bug #4518 - escape and transactions fixed for MDB backend
+          * fix bug #4431 - add hideEmpty to toArray() - not sure if I really
+                            like this.. - adding args to methods, the root of all evil ;)
+          * fix bug #4383 - generator getListOf() call now expects pear errors
+          * fix bug #4235
+                    #4203 - schema mess with postgres.
+                            generator_strip_schema=1
+                            will strip the schema part from the name of the table.
+          * fix bug #4168 - if connection test is sucessfull, dont try and
+                            connect.. (performance improvement)
+          * fix bug #4040 - prevent toArray from calling getLink and getLinks
+          * fix bug #4019 - createTables uses sets up options for DB
+                            compatibility mode 
+          * fix bug #4000 - better checking for php 4.3.10
+          * fix bug #3944 - support for informix autoincrements
+          * fix bug #4182 - better string and blob support on mysql in cast
+          * fix bug #4135 - boolean values borked in condition building..
+          
         
  
       ]]></notes>
@@ -64,6 +105,20 @@
     </deps>
 
   <changelog>
+  
+  
+    <release>
+     <version>1.7.13</version>
+      <date>2004-03-24</date>
+      <notes><![CDATA[
+        Minor Bugfix release
+      
+        #3943 - postgres booleans broke again due to last fix for mysqli.
+        
+ 
+      ]]></notes>
+      <state>stable</state>
+    </release> 
   
   
   <release>

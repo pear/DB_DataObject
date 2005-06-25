@@ -1,6 +1,91 @@
 
+2005-06-25 Saturday  alan_k
+
+	* fix by #4672, query(COMMIT) relays return value from DB->commit()
+	* fix bug #4535, somedays you wonder what those ****s at postgres
+	where smoking when they came up with t/f for booleans
+
+2005-06-16 Thursday  alan_k
+
+	* fix bug #4601 - wrong method used to test if file..
+
+2005-06-04 Saturday  alan_k
+
+	* fix bug #4193 - sqlite names causing invalid .ini files
+	* fix bug #4518 - escape and transactions fixed for MDB backend
+	* oops php -l before commiting
+	* fix bug #4431 - add hideEmpty to toArray() - not sure if I really
+	like this.. - adding args to methods, the root of all evil ;)
+	* fix bug #4383 -  getListOf() call now expects pear errors
+
+2005-05-19 Thursday  alan_k
+
+	* fix the Cast Object properly.. - send the connection object to
+	the toString methods.
+
+2005-05-04 Wednesday  alan_k
+
+	* revert debugging level to 1
+	* possibly nail bugs #4235 and #4203 - schema mess with postgres.
+	* experimental fix for postgres mess.. generator_strip_schema=1
+	will strip the schema part from the name of the table.
+	* fix bug #4168 - if connection test is sucessfull, dont try and
+	connect.. (performance improvement)
+	* fix bug #4040 - prevent toArray from calling getLink and getLinks
+	- bad choice of names...
+	* fix bug #4019 - createTables uses sets up options for DB
+	compatibility mode
+	* fix bug #4000 - better checking for php 4.3.10
+	* fix bug #3944 - support for informix autoincrements
+	* fix bug #4182 better string and blob support on mysql in cast
+	* fix bug #4135 - boolean values borked in condition building..
+
+2005-04-08 Friday  alan_k
+
+	* remove the usefull error message, and only make it availabe via
+	debugging
+
+2005-04-07 Thursday  alan_k
+
+	* simplify configuration access
+	* that will teach me to copy and paste
+	* first effort at supporting MDB.. (thanks to Dan Rossi)
+	* update dependancies - try and reduce likelyhood of old versions
+	of DB being used..
+	* change fetch / ->N to be "true", rather than 1 when numRows is
+	not supported, (also document it on find())
+	* this fix is dirtier, but a little more dependable..
+	* some days you feel like strangling the idiot at postgress who
+	decided to make a wierd format for booleans
+
+2005-03-23 Wednesday  alan_k
+
+	* oops - admit to owning this mess..
+	* change headers to new standard.
+	* prep for release
+	* allow mysql to support blob writing (theoretically)..
+	* fix byg #3924 - remove quote() usage and replace with cast'ed
+	quoteSmart()
+
+2005-03-22 Tuesday  alan_k
+
+	* prep for release
+	* fix null and not null cast usage, fix distinct test
+
+2005-03-16 Wednesday  alan_k
+
+	* attempt to fix bug #3767 - postgres with schema tables
+	* prep for anothe release
+	* fix bug #3829 yet again...
+	* fix bug #3829 this damn cross database query stuff is proving to
+	be a nightmare..
+
 2005-03-12 Saturday  alan_k
 
+	* prep for second release in 1 day..
+	* boolean test code borked
+	* prep for release - with correct release no.
+	* prep for release
 	* fix bug #3764  PostgreSQL Boolean Doesnt Work (lets see how much
 	code that breaks!)
 	* keep everyone happy with disabling overload for the default
