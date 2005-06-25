@@ -2217,11 +2217,11 @@ class DB_DataObject extends DB_DataObject_Overload
             return true;
         }
         if (strtoupper($string) == 'COMMIT') {
-            $DB->commit();
+            $res = $DB->commit();
             if ($_DB_driver == 'DB') {
                 $DB->autoCommit(true);
             }
-            return true;
+            return $res;
         }
         
         if (strtoupper($string) == 'ROLLBACK') {
