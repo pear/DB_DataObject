@@ -964,7 +964,11 @@ class DB_DataObject extends DB_DataObject_Overload
             
             if ($v & DB_DATAOBJECT_STR) {
                 $rightq .= $this->_quote((string) (
-                        ($v & DB_DATAOBJECT_BOOL) ? (int)(bool)$this->$k : $this->$k
+                        ($v & DB_DATAOBJECT_BOOL) ? 
+                            // this is thanks to the braindead idea of postgres to 
+                            // use t/f for boolean.
+                            (($this->$k == 'f') ? 0 : (int)(bool) $this->$k) :  
+                            $this->$k
                     )) . " ";
                 continue;
             }
@@ -1195,7 +1199,11 @@ class DB_DataObject extends DB_DataObject_Overload
 
             if ($v & DB_DATAOBJECT_STR) {
                 $settings .= "$kSql = ". $this->_quote((string) (
-                        ($v & DB_DATAOBJECT_BOOL) ? (int)(bool)$this->$k : $this->$k
+                        ($v & DB_DATAOBJECT_BOOL) ? 
+                            // this is thanks to the braindead idea of postgres to 
+                            // use t/f for boolean.
+                            (($this->$k == 'f') ? 0 : (int)(bool) $this->$k) :  
+                            $this->$k
                     )) . ' ';
                 continue;
             }
@@ -2360,7 +2368,11 @@ class DB_DataObject extends DB_DataObject_Overload
 
             if ($v & DB_DATAOBJECT_STR) {
                 $this->whereAdd(" $kSql  = " . $this->_quote((string) (
-                        ($v & DB_DATAOBJECT_BOOL) ? (int)(bool)$this->$k : $this->$k
+                        ($v & DB_DATAOBJECT_BOOL) ? 
+                            // this is thanks to the braindead idea of postgres to 
+                            // use t/f for boolean.
+                            (($this->$k == 'f') ? 0 : (int)(bool) $this->$k) :  
+                            $this->$k
                     )) );
                 continue;
             }
@@ -3069,7 +3081,11 @@ class DB_DataObject extends DB_DataObject_Overload
             
             if ($v & DB_DATAOBJECT_STR) {
                 $this->whereAdd("{$joinAs}.{$kSql} = " . $this->_quote((string) (
-                        ($v & DB_DATAOBJECT_BOOL) ? (int)(bool)$obj->$k : $obj->$k
+                        ($v & DB_DATAOBJECT_BOOL) ? 
+                            // this is thanks to the braindead idea of postgres to 
+                            // use t/f for boolean.
+                            (($obj->$k == 'f') ? 0 : (int)(bool) $obj->$k) :  
+                            $obj->$k
                     )));
                 continue;
             }
