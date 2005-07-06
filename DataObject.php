@@ -1482,10 +1482,7 @@ class DB_DataObject extends DB_DataObject_Overload
             
         }
         $table   = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
-        if (!is_string($countWhat)) {
-            $key_col = ($quoteIdentifiers ? $DB->quoteIdentifier($keys[0]) : $keys[0]);
-        }
-        
+        $key_col = ($quoteIdentifiers ? $DB->quoteIdentifier($keys[0]) : $keys[0]);
         $as      = ($quoteIdentifiers ? $DB->quoteIdentifier('DATAOBJECT_NUM') : 'DATAOBJECT_NUM');
         
         // support distinct on default keys.
