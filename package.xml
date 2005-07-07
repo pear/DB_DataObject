@@ -22,6 +22,52 @@
   </maintainers>
   
   <release>
+     <version>1.7.15</version>
+      <date>2004-07-07</date>
+      <notes><![CDATA[
+        Minor Bugfix release 
+
+        * fix bug #4760 - DB_DataObject_Cast blobs broke in last release
+	* fix bug #4715 - count('DISTINCT') broke in last release
+
+        
+      ]]></notes>
+      <state>stable</state>
+    </release> 
+   
+  
+  
+    <filelist>
+        <dir name="/" baseinstalldir="DB" role="php">
+            <file name="DataObject.php" role="php">
+              <replace from="@version@" to="version" type="package-info"/>
+            </file>
+            <dir name="DataObject" role="php">
+                <file>Cast.php</file>            
+                <file>Generator.php</file>
+                <file>createTables.php</file>
+                <file>Error.php</file>
+            </dir>
+        </dir>
+        <dir name="docs" role="doc">
+            <file>example.ini</file>
+        </dir>
+        <dir name="scripts" role="script">
+            <file>DB_DataObject_createTables.bat</file>
+        </dir>
+    </filelist>
+
+   <deps>
+      <dep type="php" rel="ge" version="4.3"/>
+      <dep type="pkg" rel="ge" version="1.7.0">DB</dep>
+      <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
+      <dep type="pkg" rel="ge" version="1.4.3">Date</dep>
+    </deps>
+
+  <changelog>
+  
+  
+  <release>
      <version>1.7.14</version>
       <date>2004-06-25</date>
       <notes><![CDATA[
@@ -75,37 +121,6 @@
       <state>stable</state>
     </release> 
    
-  
-  
-    <filelist>
-        <dir name="/" baseinstalldir="DB" role="php">
-            <file name="DataObject.php" role="php">
-              <replace from="@version@" to="version" type="package-info"/>
-            </file>
-            <dir name="DataObject" role="php">
-                <file>Cast.php</file>            
-                <file>Generator.php</file>
-                <file>createTables.php</file>
-                <file>Error.php</file>
-            </dir>
-        </dir>
-        <dir name="docs" role="doc">
-            <file>example.ini</file>
-        </dir>
-        <dir name="scripts" role="script">
-            <file>DB_DataObject_createTables.bat</file>
-        </dir>
-    </filelist>
-
-   <deps>
-      <dep type="php" rel="ge" version="4.3"/>
-      <dep type="pkg" rel="ge" version="1.7.0">DB</dep>
-      <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
-      <dep type="pkg" rel="ge" version="1.4.3">Date</dep>
-    </deps>
-
-  <changelog>
-  
   
     <release>
      <version>1.7.13</version>

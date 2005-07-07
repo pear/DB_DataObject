@@ -1,6 +1,16 @@
 
+2005-07-07 Thursday  alan_k
+
+	* fix bug #4760 - blobs broke in last release
+
+2005-07-06 Wednesday  alan_k
+
+	* fix bug #4715 - countWhat broken - remove condition around
+	key_col setting
+
 2005-06-25 Saturday  alan_k
 
+	* prep for release
 	* fix by #4672, query(COMMIT) relays return value from DB->commit()
 	* fix bug #4535, somedays you wonder what those ****s at postgres
 	where smoking when they came up with t/f for booleans
