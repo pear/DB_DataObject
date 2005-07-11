@@ -402,7 +402,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         if (!$this->__table) {
             // xdebug can backtrace this!
-            php_error("NO \$__table SPECIFIED in class definition",E_USER_ERROR);
+            trigger_error("NO \$__table SPECIFIED in class definition",E_USER_ERROR);
         }
         $this->N = 0;
         $query_before = $this->_query;
