@@ -1931,7 +1931,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         
         // if the key is not an integer - then it's not a sequence or native
-        if (!($table[$usekey] & DB_DATAOBJECT_INT)) {
+        if (empty($table[$usekey]) || !($table[$usekey] & DB_DATAOBJECT_INT)) {
                 return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] = array(false,false,false);
         }
         
