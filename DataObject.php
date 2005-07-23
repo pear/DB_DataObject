@@ -3241,17 +3241,29 @@ class DB_DataObject extends DB_DataObject_Overload
     }
 
     /**
-     * validate - override this to set up your validation rules
+     * validate the values of the object (usually prior to inserting/updating..)
      *
-     * validate the current objects values either just testing strings/numbers or
-     * using the user defined validate{Row name}() methods.
-     * will attempt to call $this->validate{column_name}() - expects true = ok  false = ERROR
-     * you can the use the validate Class from your own methods.
+     * Note: This was always intended as a simple validation routine.
+     * It lacks understanding of field length, whether you are inserting or updating (and hence null key values)
      *
-     * This should really be in a extenal class - eg. DB_DataObject_Validate.
+     * This should be moved to another class: DB_DataObject_Validate 
+     *      FEEL FREE TO SEND ME YOUR VERSION FOR CONSIDERATION!!!
+     *
+     * Usage:
+     * if (is_array($ret = $obj->validate())) { ... there are problems with the data ... }
+     *
+     * Logic:
+     *   - defaults to only testing strings/numbers if numbers or strings are the correct type and null values are correct
+     *   - validate Column methods : "validate{ROWNAME}()"  are called if they are defined.
+     *            These methods should return 
+     *                  true = everything ok
+     *                  false|object = something is wrong!
+     * 
+     *   - This method loads and uses the PEAR Validate Class.
+     *
      *
      * @access  public
-     * @return  array of validation results or true
+     * @return  array of validation results (where key=>value, value=false|object if it failed) or true (if they all succeeded)
      */
     function validate()
     {
@@ -3308,9 +3320,9 @@ class DB_DataObject extends DB_DataObject_Overload
                     continue;
             }
         }
-
+        // if any of the results are false or an object (eg. PEAR_Error).. then return the array..
         foreach ($ret as $key => $val) {
-            if ($val === false) {
+            if ($val !== true) {
                 return $ret;
             }
         }
