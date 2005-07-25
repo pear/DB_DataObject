@@ -2077,7 +2077,7 @@ class DB_DataObject extends DB_DataObject_Overload
 
         $options= &$_DB_DATAOBJECT['CONFIG'];
         $dsn = isset($this->_database_dsn) ? $this->_database_dsn : null;
-
+        
         if (!$dsn) {
             if (!$this->_database) {
                 $this->_database = isset($options["table_{$this->__table}"]) ? $options["table_{$this->__table}"] : null;
@@ -2099,8 +2099,12 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         
         
-
-        $this->_database_dsn_md5 = md5($dsn);
+        if (is_string($dsn)) {
+            $this->_database_dsn_md5 = md5($dsn);
+        } else {
+            /// support array based dsn's
+            $this->_database_dsn_md5 = md5(serialize($dsn));
+        }
 
         if (!empty($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
             if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
@@ -2119,7 +2123,7 @@ class DB_DataObject extends DB_DataObject_Overload
         if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("NEW CONNECTION", "CONNECT",3);
             /* actualy make a connection */
-            $this->debug("{$dsn} {$this->_database_dsn_md5}", "CONNECT",3);
+            $this->debug(print_r($dsn,true) ." {$this->_database_dsn_md5}", "CONNECT",3);
         }
         
         // Note this is verbose deliberatly! 
