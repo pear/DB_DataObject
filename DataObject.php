@@ -91,10 +91,10 @@
 require_once 'PEAR.php';
 
 /**
- * We are setting a global fetchmode assoc constant of 2 to be compatible with
+ * We are duping fetchmode constants to be compatible with
  * both DB and MDB2
  */
- 
+define('DB_DATAOBJECT_FETCHMODE_ORDERED',1); 
 define('DB_DATAOBJECT_FETCHMODE_ASSOC',2);
 
 
@@ -1499,7 +1499,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
          
         $result  = &$_DB_DATAOBJECT['RESULTS'][$t->_DB_resultid];
-        $l = $result->fetchRow();
+        $l = $result->fetchRow(DB_DATAOBJECT_FETCHMODE_ORDERED);
         return $l[0];
     }
 
