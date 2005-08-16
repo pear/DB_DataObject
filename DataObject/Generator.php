@@ -19,7 +19,18 @@
  * @link       http://pear.php.net/package/DB_DataObject
  */
  
-/**
+ /*
+ * Security Notes:
+ *   This class uses eval to create classes on the fly.
+ *   The table name and database name are used to check the database before writing the
+ *   class definitions, we now check for quotes and semi-colon's in both variables
+ *   so I cant see how it would be possible to generate code even if
+ *   for some crazy reason you took the classname and table name from User Input.
+ *   
+ *   If you consider that wrong, or can prove it.. let me know!
+ */
+ 
+ /**
  * 
  * Config _$ptions
  * [DB_DataObject_Generator]
@@ -584,6 +595,9 @@ class DB_DataObject_Generator extends DB_DataObject
         // then we should add var $_database = here
         // as database names may not always match.. 
         
+        
+            
+        
         if (isset($options["database_{$this->_database}"])) {
             $body .= "    {$var} \$_database = '{$this->_database}';  {$p}// database name (used with database_{*} config)\n";
         }
@@ -768,7 +782,8 @@ class DB_DataObject_Generator extends DB_DataObject
             $this->_extends = $extends;
             $this->_extendsFile = $options['extends_location'];
         }
-
+        
+        
         
         $classname = $this->classname = $class_prefix.preg_replace('/[^A-Z0-9]/i','_',ucfirst(trim($this->table)));
 
@@ -792,11 +807,20 @@ class DB_DataObject_Generator extends DB_DataObject
     */
     function fillTableSchema($database,$table) {
         global $_DB_DATAOBJECT;
+         // a little bit of sanity testing.
+        if ((false != strpos($database,"'")) || (false != strpos($database,";"))) {   
+            return PEAR::raiseError("Error: Database name contains a quote or semi-colon", null, PEAR_ERROR_DIE);
+        }
+        
         $this->_database  = $database; 
         
         $this->_connect();
         $table = trim($table);
         
+        // a little bit of sanity testing.
+        if ((false != strpos($table,"'")) || (false != strpos($table,";"))) {   
+            return PEAR::raiseError("Error: Table contains a quote or semi-colon", null, PEAR_ERROR_DIE);
+        }
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
         
         $defs =  $__DB->tableInfo($table);
