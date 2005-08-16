@@ -808,7 +808,7 @@ class DB_DataObject_Generator extends DB_DataObject
     function fillTableSchema($database,$table) {
         global $_DB_DATAOBJECT;
          // a little bit of sanity testing.
-        if ((false != strpos($database,"'")) || (false != strpos($database,";"))) {   
+        if ((false !== strpos($database,"'")) || (false !== strpos($database,";"))) {   
             return PEAR::raiseError("Error: Database name contains a quote or semi-colon", null, PEAR_ERROR_DIE);
         }
         
@@ -818,7 +818,7 @@ class DB_DataObject_Generator extends DB_DataObject
         $table = trim($table);
         
         // a little bit of sanity testing.
-        if ((false != strpos($table,"'")) || (false != strpos($table,";"))) {   
+        if ((false !== strpos($table,"'")) || (false !== strpos($table,";"))) {   
             return PEAR::raiseError("Error: Table contains a quote or semi-colon", null, PEAR_ERROR_DIE);
         }
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
