@@ -588,6 +588,9 @@ class DB_DataObject_Generator extends DB_DataObject
         
         
         $var = (substr(phpversion(),0,1) > 4) ? 'public' : 'var';
+        $var = !empty($options['generator_var_keyword']) ? $options['generator_var_keyword'] : $var;
+        
+        
         $body .= "    {$var} \$__table = '{$this->table}';  {$p}// table name\n";
     
         
@@ -602,7 +605,7 @@ class DB_DataObject_Generator extends DB_DataObject
             $body .= "    {$var} \$_database = '{$this->_database}';  {$p}// database name (used with database_{*} config)\n";
         }
         
-        $var = (substr(phpversion(),0,1) > 4) ? 'public' : 'var';
+        
         if (!empty($options['generator_novars'])) {
             $var = '//'.$var;
         }
