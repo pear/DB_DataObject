@@ -579,7 +579,7 @@ class DB_DataObject extends DB_DataObject_Overload
         if ($cond === false) {
             $r = $this->_query['condition'];
             $this->_query['condition'] = '';
-            return preg_replace('/\sWHERE\s/','',$r);
+            return preg_replace('/^\s+WHERE\s+/','',$r);
         }
         // check input...= 0 or '   ' == error!
         if (!trim($cond)) {
