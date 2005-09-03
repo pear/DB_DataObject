@@ -2082,7 +2082,12 @@ class DB_DataObject extends DB_DataObject_Overload
             if (!$this->_database) {
                 $this->_database = isset($options["table_{$this->__table}"]) ? $options["table_{$this->__table}"] : null;
             }
+            if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
+                $this->debug("Checking for database database_{$this->_database} in options","CONNECT");
+            }
+            
             if ($this->_database && !empty($options["database_{$this->_database}"]))  {
+                
                 $dsn = $options["database_{$this->_database}"];
             } else if (!empty($options['database'])) {
                 $dsn = $options['database'];
@@ -3695,7 +3700,8 @@ class DB_DataObject extends DB_DataObject_Overload
         if (!is_string($message)) {
             $message = print_r($message,true);
         }
-        echo "<code><B>$class: $logtype:</B> $message</code><BR>\n";
+        $colorize = ($logtype == 'ERROR') ? '<font color="red">' : '<font>';
+        echo "<code>{$colorize}<B>$class: $logtype:</B> $message</font></code><BR>\n";
         flush();
     }
 
@@ -3751,14 +3757,6 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         $error = &PEAR::getStaticProperty('DB_DataObject','lastError');
         
-        if (PEAR::isError($message)) {
-            $error = $message;
-        } else {
-            require_once 'DB/DataObject/Error.php';
-            $error = PEAR::raiseError($message, $type, $behaviour,
-                            $opts=null, $userinfo=null, 'DB_DataObject_Error'
-                        );
-        }
         // this will never work totally with PHP's object model.
         // as this is passed on static calls (like staticGet in our case)
 
@@ -3768,8 +3766,19 @@ class DB_DataObject extends DB_DataObject_Overload
 
         $_DB_DATAOBJECT['LASTERROR'] = $error;
 
-        // no checks for production here?.......
-        DB_DataObject::debug($message,"ERROR",1);
+        // no checks for production here?....... - we log  errors before we throw them.
+        DB_DataObject::debug($message,'ERROR',1);
+        
+        
+        if (PEAR::isError($message)) {
+            $error = $message;
+        } else {
+            require_once 'DB/DataObject/Error.php';
+            $error = PEAR::raiseError($message, $type, $behaviour,
+                            $opts=null, $userinfo=null, 'DB_DataObject_Error'
+                        );
+        }
+   
         return $error;
     }
 
