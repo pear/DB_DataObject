@@ -901,13 +901,18 @@ class DB_DataObject extends DB_DataObject_Overload
         if (($key !== false) && !$useNative) { 
         
             if (!$seq) {
-                $this->$key = $DB->nextId($this->__table);
+                $keyvalue =  $DB->nextId($this->__table);
             } else {
                 $f = $DB->getOption('seqname_format');
                 $DB->setOption('seqname_format','%s');
-                $this->$key =  $DB->nextId($seq);
+                $keyvalue =  $DB->nextId($seq);
                 $DB->setOption('seqname_format',$f);
             }
+            if (PEAR::isError($keyvalue)) {
+                $this->raiseError($keyvalue->toString(), DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+                return false;
+            }
+            $this->$key = $keyvalue;
         }
 
 
@@ -939,15 +944,16 @@ class DB_DataObject extends DB_DataObject_Overload
             if (is_a($this->$k,'DB_DataObject_Cast')) {
                 $value = $this->$k->toString($v,$DB);
                 if (PEAR::isError($value)) {
-                    $this->raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
+                    $this->raiseError($value->toString() ,DB_DATAOBJECT_ERROR_INVALIDARGS);
                     return false;
                 }
                 $rightq .=  $value;
                 continue;
             }
             
+            
 
-            if ((strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
+            if (is_string($this->$k) && (strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
                 $rightq .= " NULL ";
                 continue;
             }
@@ -976,6 +982,11 @@ class DB_DataObject extends DB_DataObject_Overload
                 $rightq .=" {$this->$k} ";
                 continue;
             }
+            /* flag up string values - only at debug level... !!!??? */
+            if (is_object($this->$k) || is_array($this->$k)) {
+                $this->debug('ODD DATA: ' .$k . ' ' .  print_r($this->$k,true),'ERROR');
+            }
+            
             // at present we only cast to integers
             // - V2 may store additional data about float/int
             $rightq .= ' ' . intval($this->$k) . ' ';
