@@ -398,7 +398,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
 
         if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
-            $this->debug($n, "__find",1);
+            $this->debug($n, "find",1);
         }
         if (!$this->__table) {
             // xdebug can backtrace this!
@@ -440,22 +440,26 @@ class DB_DataObject extends DB_DataObject_Overload
         $this->_query($sql);
         
         if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
-            $this->debug("CHECK autofetchd $n", "__find", 1);
+            $this->debug("CHECK autofetchd $n", "find", 1);
         }
-        // unset the 
         
+        // find(true)
         
+        $ret = $this->N;
         if ($n && $this->N > 0 ) {
-             if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
-                $this->debug("ABOUT TO AUTOFETCH", "__find", 1);
+            if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
+                $this->debug("ABOUT TO AUTOFETCH", "find", 1);
             }
-            $this->fetch() ;
+            $fs = $this->fetch();
+            // if fetch returns false (eg. failed), then the backend doesnt support numRows (eg. ret=true)
+            // - hence find() also returns false..
+            $ret = ($ret === true) ? $fs : $ret;
         }
         if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
-            $this->debug("DONE", "__find", 1);
+            $this->debug("DONE", "find", 1);
         }
         $this->_query = $query_before;
-        return $this->N;
+        return $ret;
     }
 
     /**
