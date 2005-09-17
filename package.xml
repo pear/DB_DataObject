@@ -60,7 +60,7 @@
    <deps>
       <dep type="php" rel="ge" version="4.3"/>
       <dep type="pkg" rel="ge" version="1.7.0">DB</dep>
-      <dep type="pkg" rel="ge" version="1.3.0" optional="yes">MDB</dep>
+      <dep type="pkg" rel="ge" version="2.0.0beta5" optional="yes">MDB2</dep>
       <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
       <dep type="pkg" rel="ge" version="1.4.3">Date</dep>
     </deps>
