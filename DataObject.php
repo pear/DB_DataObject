@@ -3041,7 +3041,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $fullJoinAs = '';
         $addJoinAs  = ($quoteIdentifiers ? $DB->quoteIdentifier($obj->__table) : $obj->__table) != $joinAs;
         if ($addJoinAs) {
-            $fullJoinAs = "AS {$joinAs}";
+            $fullJoinAs = in_array($DB->dsn["phptype"],array('mysql','mysql','pgsql')) ? "AS {$joinAs}" :  $joinAs;
         } else {
             // if 
             if (
