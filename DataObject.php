@@ -1656,6 +1656,9 @@ class DB_DataObject extends DB_DataObject_Overload
             if (count($args) == 1) {
                 
                 // this returns all the tables and their structure..
+                if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
+                    $this->debug("Loading Generator as databaseStructure called with args",1);
+                }
                 
                 $x = new DB_DataObject;
                 $x->_database = $args[0];
@@ -1691,8 +1694,15 @@ class DB_DataObject extends DB_DataObject_Overload
         
         // loaded already?
         if (!empty($_DB_DATAOBJECT['INI'][$this->_database])) {
+            
             // database loaded - but this is table is not available..
-            if (empty($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
+            if (
+                    empty($_DB_DATAOBJECT['INI'][$this->_database][$this->__table]) 
+                    && !empty($_DB_DATAOBJECT['CONFIG']['proxy'])
+                ) {
+                if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
+                    $this->debug("Loading Generator to fetch Schema",1);
+                }
                 require_once 'DB/DataObject/Generator.php';
                 $x = new DB_DataObject_Generator;
                 $x->fillTableSchema($this->_database,$this->__table);
@@ -1750,16 +1760,22 @@ class DB_DataObject extends DB_DataObject_Overload
                 }
             }
         }
-        // now have we loaded the structure.. - if not try building it..
+        // now have we loaded the structure.. 
         
-        if (empty($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
+        if (!empty($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
+            return true;
+        }
+        // - if not try building it..
+        if (!empty($_DB_DATAOBJECT['CONFIG']['proxy'])) {
             require_once 'DB/DataObject/Generator.php';
             $x = new DB_DataObject_Generator;
             $x->fillTableSchema($this->_database,$this->__table);
+            // should this fail!!!???
+            return true;
         }
-    
+        return $this->raiseError( "Unable to load schema for database and table", DB_DATAOBJECT_ERROR_INVALIDARGS);
         
-        return true;
+         
     }
 
 
