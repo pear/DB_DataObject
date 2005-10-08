@@ -1773,7 +1773,9 @@ class DB_DataObject extends DB_DataObject_Overload
             // should this fail!!!???
             return true;
         }
-        return $this->raiseError( "Unable to load schema for database and table", DB_DATAOBJECT_ERROR_INVALIDARGS);
+        // we have to die here!! - it causes chaos if we dont (including looping forever!)
+        $this->raiseError( "Unable to load schema for database and table", DB_DATAOBJECT_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
+        return false;
         
          
     }
