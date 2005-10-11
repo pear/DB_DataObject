@@ -2496,7 +2496,9 @@ class DB_DataObject extends DB_DataObject_Overload
             $d = new DB_DataObject;
            
             $d->__table = $table;
-            $d->_connect();
+            if (PEAR::isError($ret = $d->_connect())) {
+                return $ret;
+            }
             
             $x = new DB_DataObject_Generator;
             return $x->$proxyMethod( $d->_database, $table);
