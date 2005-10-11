@@ -2928,8 +2928,8 @@ class DB_DataObject extends DB_DataObject_Overload
             $items = array();
         }
         
-        if (!is_object($obj)) {
-            $this->raiseError("joinAdd: called without an object", DB_DATAOBJECT_ERROR_NODATA,PEAR_ERROR_DIE);
+        if (!is_object($obj) || !is_a($obj,'DB_DataObject')) {
+            return $this->raiseError("joinAdd: called without an object", DB_DATAOBJECT_ERROR_NODATA,PEAR_ERROR_DIE);
         }
         /*  make sure $this->_database is set.  */
         $this->_connect();
