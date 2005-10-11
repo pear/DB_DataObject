@@ -2496,7 +2496,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $d = new DB_DataObject;
            
             $d->__table = $table;
-            if (PEAR::isError($ret = $d->_connect())) {
+            if (is_a($ret = $d->_connect(), 'PEAR_Error')) {
                 return $ret;
             }
             
