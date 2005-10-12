@@ -3704,9 +3704,9 @@ class DB_DataObject extends DB_DataObject_Overload
                 
                 if ($cols[$col] &  DB_DATAOBJECT_STR) {
                     // it's a 't'/'f' !
-                    return ($cols[$col] == 't');
+                    return (($this->$col == 't');
                 }
-                return (bool) $cols[$col];
+                return (bool) $this->$col;
             
                
             default:
