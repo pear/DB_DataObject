@@ -3681,7 +3681,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 return $x->format($format);
             
              
-            case ($cols[$col] &  DB_DATAOBJECT_BOOLEAN):
+            case ($cols[$col] &  DB_DATAOBJECT_BOOL):
                 
                 if ($cols[$col] &  DB_DATAOBJECT_STR) {
                     // it's a 't'/'f' !
