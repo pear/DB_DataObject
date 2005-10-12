@@ -347,6 +347,7 @@ class DB_DataObject_Generator extends DB_DataObject
                
                 case 'REAL':
                 case 'DOUBLE':
+                case 'DOUBLE PRECISION': // double precision (firebird)
                 case 'FLOAT':
                 case 'FLOAT8': // double precision (postgres)
                 case 'DECIMAL':
