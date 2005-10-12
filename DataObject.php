@@ -2078,7 +2078,8 @@ class DB_DataObject extends DB_DataObject_Overload
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             $this->_loadConfig();
         }
-
+        // Set database driver for reference 
+        $db_driver = empty($_DB_DATAOBJECT['CONFIG']['db_driver']) ? 'DB' : $_DB_DATAOBJECT['CONFIG']['db_driver'];
         // is it already connected ?
 
         if ($this->_database_dsn_md5 && !empty($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
@@ -2092,6 +2093,14 @@ class DB_DataObject extends DB_DataObject_Overload
 
             if (!$this->_database) {
                 $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['database'];
+                $hasGetDatabase = method_exists($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5], 'getDatabase');
+                
+                $this->_database = ($db_driver != 'DB' && $hasGetDatabase)  
+                        ? $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->getDatabase() 
+                        : $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['database'];
+
+                
+                
                 if (($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'] == 'sqlite') 
                     && is_file($this->_database)) 
                 {
@@ -2149,7 +2158,12 @@ class DB_DataObject extends DB_DataObject_Overload
                 $this->debug("USING CACHED CONNECTION", "CONNECT",3);
             }
             if (!$this->_database) {
-                $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["database"];
+
+                $hasGetDatabase = method_exists($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5], 'getDatabase');
+                $this->_database = ($db_driver != 'DB' && $hasGetDatabase)  
+                        ? $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->getDatabase() 
+                        : $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['database'];
+                
                 if (($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'] == 'sqlite') 
                     && is_file($this->_database)) 
                 {
@@ -2166,8 +2180,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         // Note this is verbose deliberatly! 
         
-        if (!isset($_DB_DATAOBJECT['CONFIG']['db_driver']) || 
-            ($_DB_DATAOBJECT['CONFIG']['db_driver'] == 'DB')) {
+        if ($db_driver == 'DB') {
             
             /* PEAR DB connect */
             
@@ -2206,7 +2219,13 @@ class DB_DataObject extends DB_DataObject_Overload
         }
 
         if (!$this->_database) {
-            $this->_database = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn["database"];
+            $hasGetDatabase = method_exists($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5], 'getDatabase');
+            
+            $this->_database = ($db_driver != 'DB' && $hasGetDatabase)  
+                    ? $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->getDatabase() 
+                    : $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['database'];
+
+
             if (($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'] == 'sqlite') 
                 && is_file($this->_database)) 
             {
