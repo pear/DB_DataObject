@@ -1515,7 +1515,7 @@ class DB_DataObject extends DB_DataObject_Overload
          
         $result  = &$_DB_DATAOBJECT['RESULTS'][$t->_DB_resultid];
         $l = $result->fetchRow(DB_DATAOBJECT_FETCHMODE_ORDERED);
-        return $l[0];
+        return (int) $l[0];
     }
 
     /**
