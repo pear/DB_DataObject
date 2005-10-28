@@ -210,8 +210,9 @@ class DB_DataObject_Generator extends DB_DataObject
             
             $defs =  $__DB->tableInfo($table);
             if (is_a($defs,'PEAR_Error')) {
-                echo $defs->toString();
-                exit;
+                // running in debug mode should pick this up as a big warning..
+                $this->raiseError('Error reading tableInfo, '. $defs->toString());
+                continue;
             }
             // cast all definitions to objects - as we deal with that better.
             
