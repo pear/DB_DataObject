@@ -3359,10 +3359,16 @@ class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            if (is_string($this->$key) && (strtolower($this->$key) == 'null') && ($val & DB_DATAOBJECT_NOTNULL)) {
-                $ret[$key] = false;
+            
+            if (is_string($this->$key) && (strtolower($this->$key) == 'null')) {
+                if ($val & DB_DATAOBJECT_NOTNULL) {
+                    $this->debug("'null' field used for '$key', but it is defined as NOT NULL", 'VALIDATION', 4);
+                    $ret[$key] = false;
+                    continue;
+                }
                 continue;
             }
+
             // ignore things that are not set. ?
            
             if (!isset($this->$key)) {
