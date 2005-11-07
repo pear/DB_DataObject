@@ -591,10 +591,10 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         $r = $this->_query['condition'];
         if ($this->_query['condition']) {
-            $this->_query['condition'] .= " {$logic} {$cond}";
+            $this->_query['condition'] .= " {$logic} ( {$cond} )";
             return $r;
         }
-        $this->_query['condition'] = " WHERE {$cond}";
+        $this->_query['condition'] = " WHERE ( {$cond} ) ";
         return $r;
     }
 
