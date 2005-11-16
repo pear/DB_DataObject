@@ -1166,7 +1166,7 @@ class DB_DataObject extends DB_DataObject_Overload
             // ignore stuff thats 
           
             // dont write things that havent changed..
-            if (($dataObject !== false) && isset($dataObject->$k) && ($dataObject->$k == $this->$k)) {
+            if (($dataObject !== false) && isset($dataObject->$k) && ($dataObject->$k === $this->$k)) {
                 continue;
             }
             
@@ -1944,7 +1944,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $keys = $this->keys();
         if (!$keys) {
             return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->__table] 
-                = array(false,false,false);;
+                = array(false,false,false);
         }
  
 
