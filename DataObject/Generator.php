@@ -470,10 +470,15 @@ class DB_DataObject_Generator extends DB_DataObject
             
             } else if (preg_match("/(primary|unique)/i",$t->flags)) {
                 // keys.. = 1
-                if ($write_ini) {
-                    $keys_out_secondary .= "{$t->name} = K\n";
+                $key_type = 'K';
+                if (!preg_match("/(primary)/i",$t->flags)) {
+                    $key_type = 'U';
                 }
-                $ret_keys_secondary[$t->name] = 'K';
+                
+                if ($write_ini) {
+                    $keys_out_secondary .= "{$t->name} = {$key_type}\n";
+                }
+                $ret_keys_secondary[$t->name] = $key_type;
             }
             
         
