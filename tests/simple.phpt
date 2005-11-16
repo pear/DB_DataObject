@@ -422,7 +422,7 @@ class test extends DB_DataObject {
                 PRIMARY KEY  (`page_id`,`module_id`)
             ) TYPE=MyISAM;");
         
-        
+        DB_DataObject::debugLevel(5);
         $page_module= DB_DataObject::Factory('page_module');
         
         // we should guess better.. but this is a kludgy fix.
@@ -431,6 +431,17 @@ class test extends DB_DataObject {
         $page_module->module_id=1;
         $page_module->position='top';
         $page_module->insert();
+        
+        
+        $page_module= DB_DataObject::Factory('page_module');
+        $page_module->page_id=1;
+        $page_module->module_id=1;
+        $page_module->find(true);
+        $page_module->position='bottom';
+        
+        $page_module->update();
+        
+        
         
     }
 	function test92() {
