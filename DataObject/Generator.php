@@ -439,7 +439,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 continue;
             }
             
-            if (preg_match('/not_null/i',$t->flags)) {
+            if (preg_match('/not[ _]null/i',$t->flags)) {
                 $type += DB_DATAOBJECT_NOTNULL;
             }
            
