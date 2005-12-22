@@ -361,6 +361,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         if (!$obj->get($k,$v)) {
             DB_DataObject::raiseError("No Data return from get $k $v", DB_DATAOBJECT_ERROR_NODATA);
+            
             $r = false;
             return $r;
         }
@@ -448,6 +449,11 @@ class DB_DataObject extends DB_DataObject_Overload
         // find(true)
         
         $ret = $this->N;
+        if (!$ret && !empty($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid])) {     
+            // clear up memory if nothing found!?
+            unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]);
+        }
+        
         if ($n && $this->N > 0 ) {
             if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                 $this->debug("ABOUT TO AUTOFETCH", "find", 1);
@@ -2035,7 +2041,7 @@ class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
         
-        $class = get_class($this);
+        $class = strtolower(get_class($this));
         
         if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("Clearing Cache for ".$class,1);
