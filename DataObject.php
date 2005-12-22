@@ -433,7 +433,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 $sql = $DB->modifyLimitQuery($sql,$this->_query['limit_start'], $this->_query['limit_count']);
             }
         } else {
-            /* theoretically MDB! */
+            /* theoretically MDB2! */
             if (isset($this->_query['limit_start']) && strlen($this->_query['limit_start'] . $this->_query['limit_count'])) {
 	            $DB->setLimit($this->_query['limit_count'],$this->_query['limit_start']);
 	        }
@@ -1358,7 +1358,7 @@ class DB_DataObject extends DB_DataObject_Overload
                     $sql = $DB->modifyLimitQuery($sql,$this->_query['limit_start'], $this->_query['limit_count']);
                     
                 } else {
-                    // MDB
+                    // MDB2
                     $DB->setLimit( $this->_query['limit_count'],$this->_query['limit_start']);
                 }
                     
@@ -1556,7 +1556,7 @@ class DB_DataObject extends DB_DataObject_Overload
         global $_DB_DATAOBJECT;
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
-        // mdb uses escape...
+        // mdb2 uses escape...
         $dd = empty($_DB_DATAOBJECT['CONFIG']['db_driver']) ? 'DB' : $_DB_DATAOBJECT['CONFIG']['db_driver'];
         return ($dd == 'DB') ? $DB->escapeSimple($string) : $DB->escape($string);
     }
@@ -2054,7 +2054,7 @@ class DB_DataObject extends DB_DataObject_Overload
 
     
     /**
-     * backend wrapper for quoting, as MDB and DB do it differently...
+     * backend wrapper for quoting, as MDB2 and DB do it differently...
      *
      * @access private
      * @return string quoted
@@ -2204,15 +2204,12 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
         } else {
-            /* assumption is MDB */
+            /* assumption is MDB2 */
             require_once 'MDB2.php';
             // this allows the setings of compatibility on MDB2 
             $db_options = PEAR::getStaticProperty('MDB2','options');
-            if ($db_options) {
-                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = MDB2::connect($dsn,$db_options);
-            } else {
-                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = MDB2::connect($dsn);
-            }
+            $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = MDB2::connect($dsn,$db_options);
+            
         }
         
         
@@ -2319,12 +2316,27 @@ class DB_DataObject extends DB_DataObject_Overload
         $t= explode(' ',microtime());
         $_DB_DATAOBJECT['QUERYENDTIME'] = $time = $t[0]+$t[1];
          
-        $result = $DB->query($string);
         
+        if ($_DB_driver == 'DB') {
+            $result = $DB->query($string);
+        } else {
+            switch (strtolower(substr(trim($string),0,6))) {
+            
+                case 'insert':
+                case 'update':
+                case 'delete':
+                    $result = $DB->exec($string);
+                    break;
+                    
+                default:
+                    $result = $DB->query($string);
+                    break;
+            }
+        }
         
        
 
-        if (is_a($result,'DB_Error')) {
+        if (is_a($result,'PEAR_Error')) {
             if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) { 
                 $this->debug($result->toString(), "Query Error",1 );
             }
@@ -2359,7 +2371,7 @@ class DB_DataObject extends DB_DataObject_Overload
         if (method_exists($result, 'numrows')) {
             $DB->expectError(DB_ERROR_UNSUPPORTED);
             $this->N = $result->numrows();
-            if (is_a($this->N,'DB_Error')) {
+            if (is_a($this->N,'PEAR_Error')) {
                 $this->N = true;
             }
             $DB->popExpect();
