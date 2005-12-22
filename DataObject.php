@@ -3218,10 +3218,11 @@ class DB_DataObject extends DB_DataObject_Overload
      *
      * @param    array | object  $from
      * @param    string  $format eg. map xxxx_name to $object->name using 'xxxx_%s' (defaults to %s - eg. name -> $object->name
+     * @param    boolean  $skipEmpty (dont assign empty values if a column is empty (eg. '' / 0 etc...)
      * @access   public
      * @return   true on success or array of key=>setValue error message
      */
-    function setFrom(&$from, $format = '%s', $checkEmpty=false)
+    function setFrom(&$from, $format = '%s', $skipEmpty=false)
     {
         global $_DB_DATAOBJECT;
         $keys  = $this->keys();
@@ -3250,6 +3251,10 @@ class DB_DataObject extends DB_DataObject_Overload
                     continue;
                 }
                 $this->$k = $from->{sprintf($format,$k)};
+                continue;
+            }
+            
+            if (empty($from[$k]) && $checkEmpty) {
                 continue;
             }
             
