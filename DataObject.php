@@ -525,7 +525,8 @@ class DB_DataObject extends DB_DataObject_Overload
         if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug(serialize($array),"FETCH");
         }
-
+        
+        // fetched after last row..
         if ($array === null) {
             if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                 $t= explode(' ',microtime());
@@ -537,7 +538,9 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             // reduce the memory usage a bit... (but leave the id in, so count() works ok on it)
             unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]);
-            
+            if (!empty($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid])) {
+                unset($_DB_DATAOBJECT['RESULTSFIELDS'][$this->_DB_resultid]);
+            }
             // this is probably end of data!!
             //DB_DataObject::raiseError("fetch: no data returned", DB_DATAOBJECT_ERROR_NODATA);
             return false;
