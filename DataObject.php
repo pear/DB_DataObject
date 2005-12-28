@@ -3254,7 +3254,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            if (empty($from[$k]) && $checkEmpty) {
+            if (empty($from[$k]) && $skipEmpty) {
                 continue;
             }
             
@@ -3913,9 +3913,6 @@ class DB_DataObject extends DB_DataObject_Overload
      /**
      * Free global arrays associated with this object.
      *
-     * Note: as we now store resultfields in a global, it is never freed, if you do alot of calls to find(), 
-     * memory will grow gradually.
-     * 
      *
      * @access   public
      * @return   none
