@@ -22,14 +22,82 @@
   </maintainers>
   
   <release>
-     <version>1.7.15</version>
-      <date>2004-07-07</date>
+     <version>1.8.0</version>
+      <date>2004-12-28</date>
       <notes><![CDATA[
-        Minor Bugfix release 
-
-        * fix bug #4760 - DB_DataObject_Cast blobs broke in last release
-	* fix bug #4715 - count('DISTINCT') broke in last release
-
+        
+        Major Bug Fix & Feature release.
+        
+        Bugs:
+        
+        #4871 - remove warning when value is not found in table
+        #4834 - case sensitive checks for db_dataobject_cast fail
+        #4894 - Validate methods can return PEAR Errors, or even
+                messages now.. - only true indicates success
+	#4900 - support array type dsns
+        #4938 - support MONEY type for MSSQL
+        #4968 - count() will not be affected by changing default
+                db fetchmode
+        #5036 - make sure DB is loaded before using it
+        #5264 - add optional dep on MDB
+        #5416 - use tablea AS tableb only for postgress/mysql -
+                oracle doesnt need the AS bit - and I guess a few others too..
+	#5435 - find(true) returns false if numRows is not
+                available and first fetch fails
+	#5491 - prevent autoloading of generator in some failure
+                conditions
+        #5614 - joinAdd check to see if object being joined is
+                really a dataobject
+	#5650 - Factory() Proxy Connect failing returns PEAR_Error
+	#5656 - Correctly return this->$col, rather than the type..
+	#5155 - MDB2 support in _connect broken
+	#5604 - Double Precision support for firebird database
+	#5656 - wrong constant used in toValue() for boolean
+        #5065 - count returns number cast to an integer (even
+                though database may return a string)
+        #5800 - generator will continue creating other tables if we find one
+                that fails...
+        #5881 - wrap conditions with extra brackets
+	#5818 - using null on a valid column should skip
+                remaining checks in validate
+	#5817 - validating on DB_DataObject_Cast objects - now skipped.
+        #5393 - flag up unique only keys as "U", rather than "K"
+                (or "N" for native) to allow anything calling keys() to find more
+                detailed information - should have no effect on the dataobject
+                class, as only sequence keys looks for "K"
+	#4919 - code for check/skip empty dissappeared from setFrom.
+	#6247 - free resultset after last fetch
+	#6313 - mdb2 compatibility
+	#6320 - leaking memory on fetching with no results. 
+        
+        Feature Requests:
+        
+        #5146 - option: generator_var_keyword,
+                to specify if you want to use var or public
+        
+        Other Changes
+        
+	* enhanced security on generation of classname.. - this is not the
+            default behaviour.. so it shouldnt really have affected anyone..
+	* whereAdd() correctly returns condition so it can be re-used, Im
+            amazed no one picked this up before..
+        * make WHERE stripping better  = well spotted Justin
+        * catch errors returned from nextID - like permission denied etc.,
+            add warnings in debug mode if we are using objects  or arrays for
+            some reason, fix error messages
+        * correct the dependancy on packages
+        * the dont die here causes a recursive error and segfaults
+            everything if it doesnt return..
+        * use is_a, rather than PEAR, as one day we may remove that dep...
+        * fix PHP4.4* issues with returning by reference..
+        * make debugging schema loading errors a bit easier
+        * test for bug #5931 added to test 91
+        * update($dataobject), change check for changes to strict checking,
+            so that 0001 -> 00001 works, along with many other situations..,
+            remove extra ; from code
+        * fix null detection on postgres, - patch by Alistair MacDonald
+        * free result columns as well as results after fetching all rows.
+        
         
       ]]></notes>
       <state>stable</state>
@@ -60,14 +128,26 @@
    <deps>
       <dep type="php" rel="ge" version="4.3"/>
       <dep type="pkg" rel="ge" version="1.7.0">DB</dep>
-      <dep type="pkg" rel="ge" version="2.0.0beta5" optional="yes">MDB2</dep>
+      <dep type="pkg" rel="ge" version="2.0.0RC1" optional="yes">MDB2</dep>
       <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
       <dep type="pkg" rel="ge" version="1.4.3">Date</dep>
     </deps>
 
   <changelog>
   
-  
+  <release>
+     <version>1.7.15</version>
+      <date>2004-07-07</date>
+      <notes><![CDATA[
+        Minor Bugfix release 
+
+        * fix bug #4760 - DB_DataObject_Cast blobs broke in last release
+	* fix bug #4715 - count('DISTINCT') broke in last release
+
+        
+      ]]></notes>
+      <state>stable</state>
+    </release> 
   <release>
      <version>1.7.14</version>
       <date>2004-06-25</date>
