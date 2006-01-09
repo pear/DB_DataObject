@@ -3419,7 +3419,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
             // dont try and validate cast objects - assume they are problably ok..
-            if (is_object($this->$key) && is_a($value,'DB_DataObject_Cast')) {
+            if (is_object($this->$key) && is_a($this->$key,'DB_DataObject_Cast')) {
                 continue;
             }
             // at this point if you have set something to an object, and it's not expected
