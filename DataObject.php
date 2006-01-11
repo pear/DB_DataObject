@@ -2485,7 +2485,9 @@ class DB_DataObject extends DB_DataObject_Overload
         $p = isset($_DB_DATAOBJECT['CONFIG']['class_prefix']) ?
             $_DB_DATAOBJECT['CONFIG']['class_prefix'] : '';
         $class = $p . preg_replace('/[^A-Z0-9]/i','_',ucfirst($table));
-        $class = (class_exists($class)) ? $class  : DB_DataObject::_autoloadClass($class);
+        
+        $ce = substr(phpversion(),0,1) > 4 ? class_exists($class,false) : class_exists($class);
+        $class = $ce ? $class  : DB_DataObject::_autoloadClass($class);
         return $class;
     }
     
@@ -2530,7 +2532,8 @@ class DB_DataObject extends DB_DataObject_Overload
             $_DB_DATAOBJECT['CONFIG']['class_prefix'] : '';
         $class = $p . preg_replace('/[^A-Z0-9]/i','_',ucfirst($table));
         
-        $class = (class_exists($class)) ? $class  : DB_DataObject::_autoloadClass($class);
+        $ce = substr(phpversion(),0,1) > 4 ? class_exists($class,false) : class_exists($class);
+        $class = $ce ? $class  : DB_DataObject::_autoloadClass($class);
         
         // proxy = full|light
         if (!$class && isset($_DB_DATAOBJECT['CONFIG']['proxy'])) { 
@@ -2602,9 +2605,9 @@ class DB_DataObject extends DB_DataObject_Overload
         include_once $file;
         
         
+        $ce = substr(phpversion(),0,1) > 4 ? class_exists($class,false) : class_exists($class);
         
-        
-        if (!class_exists($class)) {
+        if (!$ce) {
             DB_DataObject::raiseError(
                 "autoload:Could not autoload {$class}", 
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
