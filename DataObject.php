@@ -3257,11 +3257,11 @@ class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            if (empty($from[$k]) && $skipEmpty) {
+            if (is_object($from)) {
                 continue;
             }
             
-            if (is_object($from)) {
+            if (empty($from[$k]) && $skipEmpty) {
                 continue;
             }
             
