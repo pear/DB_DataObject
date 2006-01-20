@@ -22,6 +22,60 @@
   </maintainers>
   
   <release>
+     <version>1.8.1</version>
+      <date>2004-01-20</date>
+      <notes><![CDATA[
+        
+        Bugs
+        ----
+        #6153 - dont call autoload on PHP5 - kludgy wrapper around class_exists()
+        #6458 - clear staticGet cache when calling free()        
+        #6442 - validation not working correctly on DB_DataObject_Cast Objects
+
+        Changes/New Features
+        --------------------
+        * fix warning if setFrom called with object.. 
+        * make createTables honour debug level in ini file.
+        * Added support in generator, for MDB2 backend to generate the class files (bate)
+        
+        
+      ]]></notes>
+      <state>stable</state>
+    </release> 
+   
+  
+  
+    <filelist>
+        <dir name="/" baseinstalldir="DB" role="php">
+            <file name="DataObject.php" role="php">
+              <replace from="@version@" to="version" type="package-info"/>
+            </file>
+            <dir name="DataObject" role="php">
+                <file>Cast.php</file>            
+                <file>Generator.php</file>
+                <file>createTables.php</file>
+                <file>Error.php</file>
+            </dir>
+        </dir>
+        <dir name="docs" role="doc">
+            <file>example.ini</file>
+        </dir>
+        <dir name="scripts" role="script">
+            <file>DB_DataObject_createTables.bat</file>
+        </dir>
+    </filelist>
+
+   <deps>
+      <dep type="php" rel="ge" version="4.3"/>
+      <dep type="pkg" rel="ge" version="1.7.0">DB</dep>
+      <dep type="pkg" rel="ge" version="2.0.0RC1" optional="yes">MDB2</dep>
+      <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
+      <dep type="pkg" rel="ge" version="1.4.3">Date</dep>
+    </deps>
+
+  <changelog>
+  
+  <release>
      <version>1.8.0</version>
       <date>2004-12-28</date>
       <notes><![CDATA[
@@ -103,38 +157,6 @@
       <state>stable</state>
     </release> 
    
-  
-  
-    <filelist>
-        <dir name="/" baseinstalldir="DB" role="php">
-            <file name="DataObject.php" role="php">
-              <replace from="@version@" to="version" type="package-info"/>
-            </file>
-            <dir name="DataObject" role="php">
-                <file>Cast.php</file>            
-                <file>Generator.php</file>
-                <file>createTables.php</file>
-                <file>Error.php</file>
-            </dir>
-        </dir>
-        <dir name="docs" role="doc">
-            <file>example.ini</file>
-        </dir>
-        <dir name="scripts" role="script">
-            <file>DB_DataObject_createTables.bat</file>
-        </dir>
-    </filelist>
-
-   <deps>
-      <dep type="php" rel="ge" version="4.3"/>
-      <dep type="pkg" rel="ge" version="1.7.0">DB</dep>
-      <dep type="pkg" rel="ge" version="2.0.0RC1" optional="yes">MDB2</dep>
-      <dep type="pkg" rel="ge" version="0.1.1" optional="yes">Validate</dep>
-      <dep type="pkg" rel="ge" version="1.4.3">Date</dep>
-    </deps>
-
-  <changelog>
-  
   <release>
      <version>1.7.15</version>
       <date>2004-07-07</date>
