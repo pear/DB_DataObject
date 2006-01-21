@@ -175,7 +175,8 @@ class DB_DataObject_Generator extends DB_DataObject
 
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
 
-        $is_MDB2 = ($options['db_driver'] != 'DB') ? true : false;
+        $db_driver = empty($options['db_driver']) ? 'DB' : $options['db_driver'];
+        $is_MDB2 = ($db_driver != 'DB') ? true : false;
 
         if (!$is_MDB2) {
             // try getting a list of schema tables first. (postgres)
