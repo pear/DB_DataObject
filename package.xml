@@ -22,22 +22,16 @@
   </maintainers>
   
   <release>
-     <version>1.8.1</version>
-      <date>2004-01-20</date>
+     <version>1.8.2</version>
+      <date>2004-01-21</date>
       <notes><![CDATA[
+        
+        Minor Bugfix release
         
         Bugs
         ----
-        #6153 - dont call autoload on PHP5 - kludgy wrapper around class_exists()
-        #6458 - clear staticGet cache when calling free()        
-        #6442 - validation not working correctly on DB_DataObject_Cast Objects
+        #6543 - Generator broke due to MDB changes.
 
-        Changes/New Features
-        --------------------
-        * fix warning if setFrom called with object.. 
-        * make createTables honour debug level in ini file.
-        * Added support in generator, for MDB2 backend to generate the class files (bate)
-        
         
       ]]></notes>
       <state>stable</state>
@@ -74,7 +68,28 @@
     </deps>
 
   <changelog>
-  
+  <release>
+     <version>1.8.1</version>
+      <date>2004-01-20</date>
+      <notes><![CDATA[
+        
+        Bugs
+        ----
+        #6153 - dont call autoload on PHP5 - kludgy wrapper around class_exists()
+        #6458 - clear staticGet cache when calling free()        
+        #6442 - validation not working correctly on DB_DataObject_Cast Objects
+
+        Changes/New Features
+        --------------------
+        * fix warning if setFrom called with object.. 
+        * make createTables honour debug level in ini file.
+        * Added support in generator, for MDB2 backend to generate the class files (bate)
+        
+        
+      ]]></notes>
+      <state>stable</state>
+    </release> 
+    
   <release>
      <version>1.8.0</version>
       <date>2004-12-28</date>
