@@ -3192,6 +3192,23 @@ class DB_DataObject extends DB_DataObject_Overload
                 $this->whereAdd("{$joinAs}.{$kSql} = {$obj->$k}");
                 continue;
             }
+                        
+            if (is_a($obj->$k,'DB_DataObject_Cast')) {
+                $value = $obj->$k->toString($v,$DB);
+                if (PEAR::isError($value)) {
+                    $this->raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
+                    return false;
+                }
+                if (strtolower($value) === 'null') {
+                    $this->whereAdd("{$joinAs}.{$kSql} IS NULL");
+                    continue;
+                } else {
+                    $this->whereAdd("{$joinAs}.{$kSql} = $value");
+                    continue;
+                }
+            }
+            
+            
             /* this is probably an error condition! */
             $this->whereAdd("{$joinAs}.{$kSql} = 0");
         }
