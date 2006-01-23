@@ -2573,12 +2573,17 @@ class DB_DataObject extends DB_DataObject_Overload
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
-        $table   = substr($class,strlen($_DB_DATAOBJECT['CONFIG']['class_prefix']));
+        $class_prefix = empty($_DB_DATAOBJECT['CONFIG']['class_prefix']) ? 
+                '' : $_DB_DATAOBJECT['CONFIG']['class_prefix'];
+                
+        $table   = substr($class,strlen($class_prefix));
 
         // only include the file if it exists - and barf badly if it has parse errors :)
-        if (!empty($_DB_DATAOBJECT['CONFIG']['proxy']) && empty($_DB_DATAOBJECT['CONFIG']['class_location'])) {
+        if (!empty($_DB_DATAOBJECT['CONFIG']['proxy']) || empty($_DB_DATAOBJECT['CONFIG']['class_location'])) {
             return false;
         }
+        
+        
         if (strpos($_DB_DATAOBJECT['CONFIG']['class_location'],'%s') !== false) {
             $file = sprintf($_DB_DATAOBJECT['CONFIG']['class_location'], preg_replace('/[^A-Z0-9]/i','_',ucfirst($table)));
         } else {
