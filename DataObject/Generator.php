@@ -1087,7 +1087,7 @@ class DB_DataObject_Generator extends DB_DataObject
     
     
     }
-      /**
+    /**
     * Generate sequenceKey Function - used generator_no_ini is set.
     *
     * @param    array  table and key definition.
@@ -1137,20 +1137,7 @@ class DB_DataObject_Generator extends DB_DataObject
         
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+     
     
     
 }
