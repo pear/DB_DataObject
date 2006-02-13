@@ -13,7 +13,7 @@
  * @category   Database
  * @package    DB_DataObject
  * @author     Alan Knowles <alan@akbkhome.com>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/DB_DataObject
@@ -313,7 +313,10 @@ class DB_DataObject_Generator extends DB_DataObject
         $this->_connect();
         // dont generate a schema if location is not set
         // it's created on the fly!
-        if (!@$options['schema_location'] && @!$options["ini_{$this->_database}"] ) {
+        if (empty($options['schema_location']) && empty($options["ini_{$this->_database}"]) ) {
+            return;
+        }
+        if (!empty($options['generator_no_ini'])) { // built in ini files..
             return;
         }
         $base =  @$options['schema_location'];
@@ -638,7 +641,8 @@ class DB_DataObject_Generator extends DB_DataObject
         $body .= "    /* the code below is auto generated do not remove the above tag */\n\n";
         // table
         $padding = (30 - strlen($this->table));
-        if ($padding < 2) $padding =2;
+        $padding  = ($padding < 2) ? 2 : $padding;
+        
         $p =  str_repeat(' ',$padding) ;
         
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
@@ -719,6 +723,13 @@ class DB_DataObject_Generator extends DB_DataObject
         //    $kk = strtoupper($k);
         //    $body .="    function getSets{$k}() { return {$v}; }\n";
         //}
+        
+        if (!empty($options['generator_no_ini'])) {
+            $def = $this->_generateDefinitionsTable();  // simplify this!?
+            $body .= $this->_generateTableFunction($def['table']);
+            $body .= $this->_generateKeysFunction($def['keys']);
+        }
+        
         $body .= $this->derivedHookFunctions();
 
         $body .= "\n    /* the code above is auto generated do not remove the tag below */";
@@ -828,7 +839,8 @@ class DB_DataObject_Generator extends DB_DataObject
     * @return   object    Instance of class. or PEAR Error
     * @access   public
     */
-    function getProxyFull($database,$table) {
+    function getProxyFull($database,$table) 
+    {
         
         if ($err = $this->fillTableSchema($database,$table)) {
             return $err;
@@ -865,7 +877,8 @@ class DB_DataObject_Generator extends DB_DataObject
     * @return   none | PEAR::error()
     * @access   public
     */
-    function fillTableSchema($database,$table) {
+    function fillTableSchema($database,$table) 
+    {
         global $_DB_DATAOBJECT;
          // a little bit of sanity testing.
         if ((false !== strpos($database,"'")) || (false !== strpos($database,";"))) {   
@@ -916,7 +929,8 @@ class DB_DataObject_Generator extends DB_DataObject
     * @return   string
     * @access   public
     */
-    function _generateGetters($input) {
+    function _generateGetters($input) 
+    {
 
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         $getters = '';
@@ -968,7 +982,8 @@ class DB_DataObject_Generator extends DB_DataObject
     * @return   string
     * @access   public
     */
-    function _generateSetters($input) {
+    function _generateSetters($input) 
+    {
 
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         $setters = '';
@@ -1010,5 +1025,67 @@ class DB_DataObject_Generator extends DB_DataObject
 
         return $setters;
     }
-
+    /**
+    * Generate table Function - used when generator_no_ini is set.
+    *
+    * @param    string  Existing class contents
+    * @return   string
+    * @access   public
+    */
+    function _generateTableFunction($def) 
+    {
+        $defines = explode(',','INT,STR,DATE,TIME,BOOL,TXT,BLOB,NOTNULL,MYSQLTIMESTAMP');
+    
+        $ret = "\n" .
+               "    function table()\n" .
+               "    {\n" .
+               "         return array(\n";
+        
+        foreach($def as $k=>$v) {
+            $str = '0';
+            foreach($defines as $dn) {
+                if ($v & constant('DB_DATAOBJECT_' . $dn)) {
+                    $str .= ' + DB_DATAOBJECT_' . $dn;
+                }
+            }
+            if (strlen($str) > 1) {
+                $str = substr($str,3); // strip the 0 +
+            }
+            // hopefully addslashes is good enough here!!!
+            $ret .= '             \''.addslashes($k).'\' => ' . $str . ",\n";
+        }
+        return $ret . "         );\n" .
+                      "    }\n";
+            
+    
+    
+    }
+    /**
+    * Generate keys Function - used generator_no_ini is set.
+    *
+    * @param    string  Existing class contents
+    * @return   string
+    * @access   public
+    */
+    function _generateKeysFunction($def) 
+    {
+         
+        $ret = "\n" .
+               "    function keys()\n" .
+               "    {\n" .
+               "         return array(";
+            
+        foreach($def as $k=>$type) {
+            // hopefully addslashes is good enough here!!!
+            $ret .= '\''.addslashes($k).'\', ';
+        }
+        $ret = preg_replace('#, $#', '', $ret);
+        return $ret . ");\n" .
+                      "    }\n";
+            
+    
+    
+    }
+    
+    
 }
