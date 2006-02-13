@@ -728,6 +728,7 @@ class DB_DataObject_Generator extends DB_DataObject
             $def = $this->_generateDefinitionsTable();  // simplify this!?
             $body .= $this->_generateTableFunction($def['table']);
             $body .= $this->_generateKeysFunction($def['keys']);
+            $body .= $this->_generateSequenceKeyFunction($def);
         }
         
         $body .= $this->derivedHookFunctions();
@@ -1028,7 +1029,7 @@ class DB_DataObject_Generator extends DB_DataObject
     /**
     * Generate table Function - used when generator_no_ini is set.
     *
-    * @param    string  Existing class contents
+    * @param    array  table array.
     * @return   string
     * @access   public
     */
@@ -1063,7 +1064,7 @@ class DB_DataObject_Generator extends DB_DataObject
     /**
     * Generate keys Function - used generator_no_ini is set.
     *
-    * @param    string  Existing class contents
+    * @param    array  keys array.
     * @return   string
     * @access   public
     */
@@ -1086,6 +1087,70 @@ class DB_DataObject_Generator extends DB_DataObject
     
     
     }
+      /**
+    * Generate sequenceKey Function - used generator_no_ini is set.
+    *
+    * @param    array  table and key definition.
+    * @return   string
+    * @access   public
+    */
+    function _generateSequenceKeyFunction($def)
+    {
+    
+        //print_r($def);
+        //DB_DataObject::debugLevel(5);
+        global $_DB_DATAOBJECT;
+        // set the objects keys
+        $obj = new DB_DataObject;
+        $obj->_table = $this->table;
+        $obj->_database = $this->_database;
+        $obj->_database_dsn_md5 =  $this->_database_dsn_md5;
+        
+        // if the key is not an integer - then it's not a sequence or native
+        $_DB_DATAOBJECT['INI'][$obj->_database][$obj->__table] = $def['table'];
+        $_DB_DATAOBJECT['INI'][$obj->_database][$obj->__table."__keys"] = $def['keys'];
+        $ar = $obj->sequenceKey();
+        //print_r($obj);
+     
+        $ret = "\n" .
+               "    function sequenceKey() // keyname, use native, native name\n" .
+               "    {\n" .
+               "         return array(";
+        foreach($ar as $v) {
+            switch (gettype($v)) {
+                case 'boolean':
+                    $ret .= ($v ? 'true' : 'false') . ', ';
+                    break;
+                    
+                case 'string':
+                    $ret .= "'" . $v . "', ";
+                    break;
+                    
+                default:    // eak
+                    $ret .= "null, ";
+        
+            }
+        }
+        $ret = preg_replace('#, $#', '', $ret);
+        return $ret . ");\n" .
+                      "    }\n";
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
 }
