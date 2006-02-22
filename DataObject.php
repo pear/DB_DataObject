@@ -417,13 +417,13 @@ class DB_DataObject extends DB_DataObject_Overload
        
         /* We are checking for method modifyLimitQuery as it is PEAR DB specific */
         $sql = 'SELECT ' .
-            $this->_query['data_select'] .
-            ' FROM ' . ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table) . " " .
-            $this->_join .
-            $this->_query['condition'] . ' '.
-            $this->_query['group_by']  . ' '.
-            $this->_query['having']    . ' '.
-            $this->_query['order_by']  . ' ';
+            $this->_query['data_select'] . " \n" .
+            ' FROM ' . ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table) . " \n" .
+            $this->_join . " \n" .
+            $this->_query['condition'] . " \n" .
+            $this->_query['group_by']  . " \n" .
+            $this->_query['having']    . " \n" .
+            $this->_query['order_by']  . " \n";
         
         if ((!isset($_DB_DATAOBJECT['CONFIG']['db_driver'])) || 
             ($_DB_DATAOBJECT['CONFIG']['db_driver'] == 'DB')) {
@@ -1742,12 +1742,7 @@ class DB_DataObject extends DB_DataObject_Overload
          
         
         foreach ($schemas as $ini) {
-            $links =
-                isset($_DB_DATAOBJECT['CONFIG']["links_{$this->_database}"]) ?
-                    $_DB_DATAOBJECT['CONFIG']["links_{$this->_database}"] :
-                    str_replace('.ini','.links.ini',$ini);
-
-            if (file_exists($ini) && is_file($ini)) {
+             if (file_exists($ini) && is_file($ini)) {
                 $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);
                 if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                     $this->debug("Loaded ini file: $ini","databaseStructure",1);
@@ -1757,19 +1752,7 @@ class DB_DataObject extends DB_DataObject_Overload
                     $this->debug("Missing ini file: $ini","databaseStructure",1);
                 }
             }
-                
-                
-            if (empty($_DB_DATAOBJECT['LINKS'][$this->_database]) && file_exists($links) && is_file($links)) {
-                /* not sure why $links = ... here  - TODO check if that works */
-                $_DB_DATAOBJECT['LINKS'][$this->_database] = parse_ini_file($links, true);
-                if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
-                    $this->debug("Loaded links.ini file: $links","databaseStructure",1);
-                }
-            } else {
-                if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
-                    $this->debug("Missing links.ini file: $links","databaseStructure",1);
-                }
-            }
+             
         }
         // now have we loaded the structure.. 
         
@@ -2664,7 +2647,48 @@ class DB_DataObject extends DB_DataObject_Overload
         if (isset($_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table])) {
             return $_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table];
         }
-        $this->databaseStructure();
+        
+        
+        
+        
+        
+        // attempt to load links file here..
+        
+        if (!isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
+            $schemas = isset($_DB_DATAOBJECT['CONFIG']['schema_location']) ?
+                array("{$_DB_DATAOBJECT['CONFIG']['schema_location']}/{$this->_database}.ini") :
+                array() ;
+                     
+            if (isset($_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"])) {
+                $schemas = is_array($_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"]) ?
+                    $_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"] :
+                    explode(PATH_SEPARATOR,$_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"]);
+            }
+                        
+             
+            
+            foreach ($schemas as $ini) {
+                
+                $links =
+                    isset($_DB_DATAOBJECT['CONFIG']["links_{$this->_database}"]) ?
+                        $_DB_DATAOBJECT['CONFIG']["links_{$this->_database}"] :
+                        str_replace('.ini','.links.ini',$ini);
+        
+                if (empty($_DB_DATAOBJECT['LINKS'][$this->_database]) && file_exists($links) && is_file($links)) {
+                    /* not sure why $links = ... here  - TODO check if that works */
+                    $_DB_DATAOBJECT['LINKS'][$this->_database] = parse_ini_file($links, true);
+                    if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
+                        $this->debug("Loaded links.ini file: $links","links",1);
+                    }
+                } else {
+                    if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
+                        $this->debug("Missing links.ini file: $links","links",1);
+                    }
+                }
+            }
+        }
+        
+        
         // if there is no link data at all on the file!
         // we return null.
         if (!isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
@@ -3839,7 +3863,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $message = print_r($message,true);
         }
         $colorize = ($logtype == 'ERROR') ? '<font color="red">' : '<font>';
-        echo "<code>{$colorize}<B>$class: $logtype:</B> $message</font></code><BR>\n";
+        echo "<code>{$colorize}<B>$class: $logtype:</B> ". nl2br(htmlspecialchars($message)) . "</font></code><BR>\n";
         flush();
     }
 
