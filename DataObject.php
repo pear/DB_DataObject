@@ -13,7 +13,7 @@
  * @category   Database
  * @package    DB_DataObject
  * @author     Alan Knowles <alan@akbkhome.com>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/DB_DataObject
@@ -1641,7 +1641,7 @@ class DB_DataObject extends DB_DataObject_Overload
      * @access  public
      * @var     array
      */
-    var $_resultFields = false;; 
+    var $_resultFields = false; 
 
 
     /* ============================================================== */
@@ -3119,10 +3119,11 @@ class DB_DataObject extends DB_DataObject_Overload
                  $obj->__table ;
                 
          
-         // as far as we know only mysql supports database prefixes..
+        // as far as we know only mysql supports database prefixes..
+        // prefixing the database name is now the default behaviour,
+        // as it enables joining mutiple columns from multiple databases...
         if (    
                 in_array($DB->dsn['phptype'],array('mysql','mysqli')) &&
-                ($obj->_database != $this->_database) &&
                 strlen($obj->_database)
             ) 
         {
@@ -3382,7 +3383,7 @@ class DB_DataObject extends DB_DataObject_Overload
         global $_DB_DATAOBJECT;
         $ret = array();
         $rf = ($this->_resultFields !== false) ? $this->_resultFields : 
-                (isset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid]) ? $_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid] : false;
+                (isset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid]) ? $_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid] : false);
         $ar = ($rf !== false) ?
             array_merge($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid],$this->table()) :
             $this->table();
