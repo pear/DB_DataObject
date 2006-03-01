@@ -253,7 +253,6 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     var $N = 0;  // Number of rows returned from a query
 
-
     /* ============================================================= */
     /*                      Major Public Methods                     */
     /* (designed to be optionally then called with parent::method()) */
@@ -538,13 +537,20 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             // reduce the memory usage a bit... (but leave the id in, so count() works ok on it)
             unset($_DB_DATAOBJECT['RESULTS'][$this->_DB_resultid]);
+            
+            // we need to keep a copy of resultfields locally so toArray() still works
+            // however we dont want to keep it in the global cache..
+            
             if (!empty($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid])) {
+                $this->_resultFields = $_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid];
                 unset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid]);
             }
             // this is probably end of data!!
             //DB_DataObject::raiseError("fetch: no data returned", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
+        // make sure resultFields is always empty..
+        $this->_resultFields = false;
         
         if (!isset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid])) {
             // note: we dont declare this to keep the print_r size down.
@@ -1626,7 +1632,16 @@ class DB_DataObject extends DB_DataObject_Overload
      * @access  private
      * @var     integer
      */
-    var $_DB_resultid; // database result object
+    var $_DB_resultid;
+     
+     /**
+     * ResultFields - on the last call to fetch(), resultfields is sent here,
+     * so we can clean up the memory.
+     *
+     * @access  public
+     * @var     array
+     */
+    var $_resultFields = false;; 
 
 
     /* ============================================================== */
@@ -3366,7 +3381,9 @@ class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
         $ret = array();
-        $ar = isset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid]) ?
+        $rf = ($this->_resultFields !== false) ? $this->_resultFields : 
+                (isset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid]) ? $_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid] : false;
+        $ar = ($rf !== false) ?
             array_merge($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid],$this->table()) :
             $this->table();
 
