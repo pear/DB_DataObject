@@ -852,6 +852,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->_connect();
             $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
             $s      = $DB->quoteIdentifier($s);
+            $format = $DB->quoteIdentifier($format); 
         }
         foreach ($from as $k) {
             $this->selectAdd(sprintf("{$s}.{$s} as {$format}",$table,$k,$k));
