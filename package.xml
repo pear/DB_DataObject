@@ -22,15 +22,35 @@
   </maintainers>
   
   <release>
-     <version>1.8.2</version>
-      <date>2004-01-21</date>
+     <version>1.8.3</version>
+      <date>2006-03-03</date>
       <notes><![CDATA[
         
-        Minor Bugfix release
+        Minor Bugfix and Minor Feature addition release
         
         Bugs
         ----
-        #6543 - Generator broke due to MDB changes.
+              - Remove Warning if class_prefix is not set, and allow it not to be set.
+              - joinAdd() support for DB_DataObject::cast() objects (Daniel Braga)
+              - MDB2 fixes for undefined constants (bate)
+              - 
+        #6772 - Support for FLOAT4 type in postgres
+        #6953 - Changed memory allocation of stored column values for SQL return when
+                Fetching last item of an object. Fixing problem of missing columns on
+                Last fetch from Join being broken when used with toArray().
+        #6928 - Defaulting to prefixing database name in joins for Mysql and Mysqli
+                backends, so multiple joins across multiple databases work.
+              
+            
+        Features
+        --------
+              - Add support for option 'generator_no_ini => true', which generates class 
+                files with schema defined inside the table(), keys() and sequenceKeys()
+                (based on work and suggestions by Didler Galland and Justin Patrin)
+
+              - SQL output for debugging now has line breaks to make it easier to read.
+              
+              - SelectAs uses quote itendifiers for target format.
 
         
       ]]></notes>
@@ -68,9 +88,28 @@
     </deps>
 
   <changelog>
+  
+  <release>
+     <version>1.8.2</version>
+      <date>2004-01-21</date>
+      <notes><![CDATA[
+        
+        Minor Bugfix release
+        
+        Bugs
+        ----
+        #6543 - Generator broke due to MDB changes.
+
+        
+      ]]></notes>
+      <state>stable</state>
+    </release> 
+   
+  
+  
   <release>
      <version>1.8.1</version>
-      <date>2004-01-20</date>
+      <date>2006-01-20</date>
       <notes><![CDATA[
         
         Bugs
@@ -92,7 +131,7 @@
     
   <release>
      <version>1.8.0</version>
-      <date>2004-12-28</date>
+      <date>2005-12-28</date>
       <notes><![CDATA[
         
         Major Bug Fix & Feature release.
@@ -174,7 +213,7 @@
    
   <release>
      <version>1.7.15</version>
-      <date>2004-07-07</date>
+      <date>2005-07-07</date>
       <notes><![CDATA[
         Minor Bugfix release 
 
@@ -242,7 +281,7 @@
   
     <release>
      <version>1.7.13</version>
-      <date>2004-03-24</date>
+      <date>2005-03-24</date>
       <notes><![CDATA[
         Minor Bugfix release
       
@@ -273,7 +312,7 @@
   
   <release>
      <version>1.7.11</version>
-      <date>2004-03-22</date>
+      <date>2005-03-22</date>
       <notes><![CDATA[
         Minor Bugfix release. 
       
@@ -287,7 +326,7 @@
   
   <release>
      <version>1.7.10</version>
-      <date>2004-03-16</date>
+      <date>2005-03-16</date>
       <notes><![CDATA[
         Minor Bugfix release. 
       
@@ -303,7 +342,7 @@
   
     <release>
      <version>1.7.9</version>
-      <date>2004-03-12</date>
+      <date>2005-03-12</date>
       <notes><![CDATA[
         Minor Bugfix release. 
 
@@ -316,7 +355,7 @@
   
   <release>
      <version>1.7.8</version>
-      <date>2004-03-12</date>
+      <date>2005-03-12</date>
       <notes><![CDATA[
         Minor Bugfix release. 
       
@@ -338,7 +377,7 @@
   
   <release>
      <version>1.7.7</version>
-      <date>2004-03-07</date>
+      <date>2005-03-07</date>
       <notes><![CDATA[
       
     
@@ -359,7 +398,7 @@
     
   <release>
      <version>1.7.6</version>
-      <date>2004-03-05</date>
+      <date>2005-03-05</date>
       <notes><![CDATA[
       
       Nothing like a big release to create bugs..
@@ -386,7 +425,7 @@
     
   <release>
      <version>1.7.5</version>
-      <date>2004-03-02</date>
+      <date>2005-03-02</date>
       <notes><![CDATA[
       
       A few releases where skipped, this should be the amalgamated upgrade!
