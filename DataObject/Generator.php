@@ -163,7 +163,7 @@ class DB_DataObject_Generator extends DB_DataObject
 
     /**
      * Build a list of tables;
-     * Currently this is very Mysql Specific - ideas for more generic stiff welcome
+     * and store it in $this->tables and $this->_definitions[tablename];
      *
      * @access  private
      * @return  none
@@ -730,8 +730,14 @@ class DB_DataObject_Generator extends DB_DataObject
             $body .= $this->_generateTableFunction($def['table']);
             $body .= $this->_generateKeysFunction($def['keys']);
             $body .= $this->_generateSequenceKeyFunction($def);
+            $body .= $this->_generateDefaultsFunction($this->table, $def['table']);
+        }  else if (!empty($options['generator_add_defaults'])) {   
+            // I dont really like doing it this way (adding another option)
+            // but it helps on older projects.
+            $def = $this->_generateDefinitionsTable();  // simplify this!?
+            $body .= $this->_generateDefaultsFunction($this->table,$def['table']);
+             
         }
-        
         $body .= $this->derivedHookFunctions();
 
         $body .= "\n    /* the code above is auto generated do not remove the tag below */";
@@ -1137,6 +1143,71 @@ class DB_DataObject_Generator extends DB_DataObject
                       "    }\n";
         
     }
+    /**
+    * Generate defaults Function - used generator_add_defaults or generator_no_ini is set.
+    * Only supports mysql and mysqli ... welcome ideas for more..
+    * 
+    *
+    * @param    array  table and key definition.
+    * @return   string
+    * @access   public
+    */
+    function _generateDefaultsFunction($table,$defs)
+    {
+        $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
+        if (!in_array($__DB->phptype, array('mysql','mysqli'))) {
+            return; // cant handle non-mysql introspection for defaults.
+        }
+        
+        $res = $__DB->getAll('DESCRIBE ' . $table,DB_FETCHMODE_ASSOC);
+        $defaults = array();
+        foreach($res as $ar) {
+            // this is initially very dumb... -> and it may mess up..
+            $type = $defs[$ar['Field']];
+            switch (true) {
+                
+                case ($type &  DB_DATAOBJECT_DATE): // not supported yet..
+                case ($type & DB_DATAOBJECT_TIME): // not supported yet..
+                case ($type & DB_DATAOBJECT_MYSQLTIMESTAMP): // not supported yet..
+                    break;
+                    
+                case ($type & DB_DATAOBJECT_BOOL): // not supported yet..
+                    $defaults[$ar['Field']] = (int)(boolean) $ar['Default'];
+                    break;
+                    
+                
+                case ($type & DB_DATAOBJECT_STR): // not supported yet..
+                    $defaults[$ar['Field']] =  "'" . addslashes($ar['Default']) . "'";
+                    break;
+                    
+                default:    // hopefully eveything else...  - numbers etc.
+                    if (!strlen($ar['Default'])) {
+                        continue;
+                    }
+                    $defaults[$ar['Field']] =   $ar['Default'];
+                    break;
+            
+            }
+        }
+        if (empty($defaults)) {
+            return;
+        }
+        
+        $ret = "\n" .
+               "    function defaults() // column default values \n" .
+               "    {\n" .
+               "         return array(\n";
+        foreach($defaults as $k=>$v) {
+            $ret .= '             \''.addslashes($k).'\' => ' . $v . ",\n";
+        }
+        return $ret . "         );\n" .
+                      "    }\n";
+         
+     
+    
+    
+    }
+    
     
      
     
