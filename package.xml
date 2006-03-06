@@ -22,35 +22,30 @@
   </maintainers>
   
   <release>
-     <version>1.8.3</version>
-      <date>2006-03-03</date>
+     <version>1.8.4</version>
+      <date>2006-03-06</date>
       <notes><![CDATA[
         
         Minor Bugfix and Minor Feature addition release
         
         Bugs
         ----
-              - Remove Warning if class_prefix is not set, and allow it not to be set.
-              - joinAdd() support for DB_DataObject::cast() objects (Daniel Braga)
-              - MDB2 fixes for undefined constants (bate)
-              - 
-        #6772 - Support for FLOAT4 type in postgres
-        #6953 - Changed memory allocation of stored column values for SQL return when
-                Fetching last item of an object. Fixing problem of missing columns on
-                Last fetch from Join being broken when used with toArray().
-        #6928 - Defaulting to prefixing database name in joins for Mysql and Mysqli
-                backends, so multiple joins across multiple databases work.
-              
+        #7006 - fix links due to removal of databaseStructure call in 1.8.3, added call
+                to connect();
+        #7012 - joinAdd fixed due to checking of wrong variable when buidling query on 
+                mysql.
+
+
+                     
             
         Features
         --------
-              - Add support for option 'generator_no_ini => true', which generates class 
-                files with schema defined inside the table(), keys() and sequenceKeys()
-                (based on work and suggestions by Didler Galland and Justin Patrin)
-
-              - SQL output for debugging now has line breaks to make it easier to read.
-              
-              - SelectAs uses quote itendifiers for target format.
+              - Add support for defaults() generation in createTables/Generator,
+                when using the flag generator_add_defaults = yes or generator_no_ini = yes
+                a method defaults() is created in the table class, which contains
+                the default values for the table generated from the database.
+                Note: EXPERIMENTAL and only works with Mysql[i] at present.
+                
 
         
       ]]></notes>
@@ -88,6 +83,45 @@
     </deps>
 
   <changelog>
+  
+  
+   <release>
+     <version>1.8.3</version>
+      <date>2006-03-03</date>
+      <notes><![CDATA[
+        
+        Minor Bugfix and Minor Feature addition release
+        
+        Bugs
+        ----
+              - Remove Warning if class_prefix is not set, and allow it not to be set.
+              - joinAdd() support for DB_DataObject::cast() objects (Daniel Braga)
+              - MDB2 fixes for undefined constants (bate)
+              - 
+        #6772 - Support for FLOAT4 type in postgres
+        #6953 - Changed memory allocation of stored column values for SQL return when
+                Fetching last item of an object. Fixing problem of missing columns on
+                Last fetch from Join being broken when used with toArray().
+        #6928 - Defaulting to prefixing database name in joins for Mysql and Mysqli
+                backends, so multiple joins across multiple databases work.
+              
+            
+        Features
+        --------
+              - Add support for option 'generator_no_ini => true', which generates class 
+                files with schema defined inside the table(), keys() and sequenceKeys()
+                (based on work and suggestions by Didler Galland and Justin Patrin)
+
+              - SQL output for debugging now has line breaks to make it easier to read.
+              
+              - SelectAs uses quote itendifiers for target format.
+
+        
+      ]]></notes>
+      <state>stable</state>
+    </release> 
+   
+  
   
   <release>
      <version>1.8.2</version>
