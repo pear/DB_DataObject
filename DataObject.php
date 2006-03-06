@@ -3174,8 +3174,7 @@ class DB_DataObject extends DB_DataObject_Overload
             // if 
             if (
                     in_array($DB->dsn['phptype'],array('mysql','mysqli')) &&
-                    ($obj->_database != $this->_database) &&
-                    strlen($this->_database)
+                    strlen($obj->_database)
                 ) 
             {
                 $joinAs = ($quoteIdentifiers ? $DB->quoteIdentifier($obj->_database) : $obj->_database) . '.' . $joinAs;
