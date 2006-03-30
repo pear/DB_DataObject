@@ -549,6 +549,68 @@ class DB_DataObject_Generator extends DB_DataObject
         
     }
 
+    /**
+    * Convert a table name into a class name -> override this if you want a different mapping
+    *
+    * @access  public
+    * @return  string class name;
+    */
+    
+    
+    function getClassNameFromTableName($table)
+    {
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        $class_prefix  = $options['class_prefix'];
+        return  $class_prefix.preg_replace('/[^A-Z0-9]/i','_',ucfirst(trim($this->table)));
+    }
+    
+    
+    /**
+    * Convert a table name into a file name -> override this if you want a different mapping
+    *
+    * @access  public
+    * @return  string file name;
+    */
+    
+    
+    function getFileNameFromTableName($table)
+    {
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        $base = $options['class_location'];
+        if (strpos($base,'%s') !== false) {
+            $base = dirname($base);
+        } 
+        if (!file_exists($base)) {
+            require_once 'System.php';
+            System::mkdir(array('-p',$base));
+        }
+        if (strpos($options['class_location'],'%s') !== false) {
+            $outfilename   = sprintf($options['class_location'], 
+                    preg_replace('/[^A-Z0-9]/i','_',ucfirst($this->table)));
+        } else { 
+            $outfilename = "{$base}/".preg_replace('/[^A-Z0-9]/i','_',ucfirst($this->table)).".php";
+        }
+        return $outfilename;
+        
+    }
+    
+    
+     /**
+    * Convert a column name into a method name (usually prefixed by get/set/validateXXXXX)
+    *
+    * @access  public
+    * @return  string method name;
+    */
+    
+    
+    function getMethodNameFromColumnName($col)
+    {
+        return ucfirst($col);
+    }
+    
+    
+    
+    
     /*
      * building the class files
      * for each of the tables output a file!
@@ -557,37 +619,25 @@ class DB_DataObject_Generator extends DB_DataObject
     {
         //echo "Generating Class files:        \n";
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
-        $base = $options['class_location'];
-        if (strpos($base,'%s') !== false) {
-            $base = dirname($base);
-        } 
+       
         
-        
-        if (!file_exists($base)) {
-            require_once 'System.php';
-            System::mkdir(array('-p',$base));
-        }
-        $class_prefix  = $options['class_prefix'];
         if ($extends = @$options['extends']) {
             $this->_extends = $extends;
             $this->_extendsFile = $options['extends_location'];
         }
 
         foreach($this->tables as $this->table) {
-            $this->table = trim($this->table);
-            $this->classname = $class_prefix.preg_replace('/[^A-Z0-9]/i','_',ucfirst($this->table));
+            $this->table        = trim($this->table);
+            $this->classname    = $this->getClassNameFromTableName($this->table);
             $i = '';
+            $outfilename        = $this->getFileNameFromTableName($this->table);
             
-            if (strpos($options['class_location'],'%s') !== false) {
-                $outfilename   = sprintf($options['class_location'], preg_replace('/[^A-Z0-9]/i','_',ucfirst($this->table)));
-            } else { 
-                $outfilename = "{$base}/".preg_replace('/[^A-Z0-9]/i','_',ucfirst($this->table)).".php";
-            }
             $oldcontents = '';
             if (file_exists($outfilename)) {
                 // file_get_contents???
                 $oldcontents = implode('',file($outfilename));
             }
+            
             $out = $this->_generateClassTable($oldcontents);
             $this->debug( "writing $this->classname\n");
             $fh = fopen($outfilename, "w");
@@ -751,7 +801,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 if (!strlen(trim($t->name))) {
                     continue;
                 }
-                $validate_fname = 'validate' . ucfirst(strtolower($t->name));
+                $validate_fname = 'validate' . $this->getMethodNameFromColumnName($t->name);
                 // dont re-add it..
                 if (preg_match('/\s+function\s+' . $validate_fname . '\s*\(/i', $input)) {
                     continue;
@@ -862,11 +912,8 @@ class DB_DataObject_Generator extends DB_DataObject
             $this->_extends = $extends;
             $this->_extendsFile = $options['extends_location'];
         }
+        $classname = $this->classname = $this->getClassNameFromTableName($this->table);
         
-        
-        
-        $classname = $this->classname = $class_prefix.preg_replace('/[^A-Z0-9]/i','_',ucfirst(trim($this->table)));
-
         $out = $this->_generateClassTable();
         //echo $out;
         eval('?>'.$out);
@@ -958,7 +1005,7 @@ class DB_DataObject_Generator extends DB_DataObject
         foreach ($defs = $defs as $t) {
 
             // build mehtod name
-            $methodName = 'get' . ucfirst($t->name);
+            $methodName = 'get' . $this->getMethodNameFromColumnName($t->name);
 
             if (!strlen(trim($t->name)) || preg_match("/function[\s]+[&]?$methodName\(/i", $input)) {
                 continue;
@@ -1011,7 +1058,7 @@ class DB_DataObject_Generator extends DB_DataObject
         foreach ($defs = $defs as $t) {
 
             // build mehtod name
-            $methodName = 'set' . ucfirst($t->name);
+            $methodName = 'set' . $this->getMethodNameFromColumnName($t->name);
 
             if (!strlen(trim($t->name)) || preg_match("/function[\s]+[&]?$methodName\(/i", $input)) {
                 continue;
