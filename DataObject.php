@@ -995,7 +995,7 @@ class DB_DataObject extends DB_DataObject_Overload
                         ($v & DB_DATAOBJECT_BOOL) ? 
                             // this is thanks to the braindead idea of postgres to 
                             // use t/f for boolean.
-                            (($this->$k == 'f') ? 0 : (int)(bool) $this->$k) :  
+                            (($this->$k === 'f') ? 0 : (int)(bool) $this->$k) :  
                             $this->$k
                     )) . " ";
                 continue;
@@ -1235,7 +1235,7 @@ class DB_DataObject extends DB_DataObject_Overload
                         ($v & DB_DATAOBJECT_BOOL) ? 
                             // this is thanks to the braindead idea of postgres to 
                             // use t/f for boolean.
-                            (($this->$k == 'f') ? 0 : (int)(bool) $this->$k) :  
+                            (($this->$k === 'f') ? 0 : (int)(bool) $this->$k) :  
                             $this->$k
                     )) . ' ';
                 continue;
@@ -2457,7 +2457,7 @@ class DB_DataObject extends DB_DataObject_Overload
                         ($v & DB_DATAOBJECT_BOOL) ? 
                             // this is thanks to the braindead idea of postgres to 
                             // use t/f for boolean.
-                            (($this->$k == 'f') ? 0 : (int)(bool) $this->$k) :  
+                            (($this->$k === 'f') ? 0 : (int)(bool) $this->$k) :  
                             $this->$k
                     )) );
                 continue;
@@ -3233,7 +3233,7 @@ class DB_DataObject extends DB_DataObject_Overload
                         ($v & DB_DATAOBJECT_BOOL) ? 
                             // this is thanks to the braindead idea of postgres to 
                             // use t/f for boolean.
-                            (($obj->$k == 'f') ? 0 : (int)(bool) $obj->$k) :  
+                            (($obj->$k === 'f') ? 0 : (int)(bool) $obj->$k) :  
                             $obj->$k
                     )));
                 continue;
@@ -3828,7 +3828,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 
                 if ($cols[$col] &  DB_DATAOBJECT_STR) {
                     // it's a 't'/'f' !
-                    return ($this->$col == 't');
+                    return ($this->$col === 't');
                 }
                 return (bool) $this->$col;
             
