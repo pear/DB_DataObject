@@ -788,7 +788,7 @@ class DB_DataObject_Generator extends DB_DataObject
             $body .= $this->_generateDefaultsFunction($this->table,$def['table']);
              
         }
-        $body .= $this->derivedHookFunctions();
+        $body .= $this->derivedHookFunctions($input);
 
         $body .= "\n    /* the code above is auto generated do not remove the tag below */";
         $body .= "\n    ###END_AUTOCODE\n";
@@ -859,7 +859,7 @@ class DB_DataObject_Generator extends DB_DataObject
      * @access   public
      * @return  string added to class eg. functions.
      */
-    function derivedHookFunctions()
+    function derivedHookFunctions($input = "")
     {
         // This is so derived generator classes can generate functions
         // It MUST NOT be changed here!!!
