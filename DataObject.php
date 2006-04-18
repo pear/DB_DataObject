@@ -3294,7 +3294,7 @@ class DB_DataObject extends DB_DataObject_Overload
      * @access   public
      * @return   true on success or array of key=>setValue error message
      */
-    function setFrom(&$from, $format = '%s', $skipEmpty=false)
+    function setFrom($from, $format = '%s', $skipEmpty=false)
     {
         global $_DB_DATAOBJECT;
         $keys  = $this->keys();
