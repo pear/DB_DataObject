@@ -1693,7 +1693,9 @@ class DB_DataObject extends DB_DataObject_Overload
                 $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
                 $tables = $DB->getListOf('tables');
-                require_once 'DB/DataObject/Generator.php';
+                class_exists('DB_DataObject_Generator') ? '' : 
+                    require_once 'DB/DataObject/Generator.php';
+                    
                 foreach($tables as $table) {
                     $y = new DB_DataObject_Generator;
                     $y->fillTableSchema($x->_database,$table);
@@ -1730,7 +1732,10 @@ class DB_DataObject extends DB_DataObject_Overload
                 if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                     $this->debug("Loading Generator to fetch Schema",1);
                 }
-                require_once 'DB/DataObject/Generator.php';
+                class_exists('DB_DataObject_Generator') ? '' : 
+                    require_once 'DB/DataObject/Generator.php';
+                    
+                
                 $x = new DB_DataObject_Generator;
                 $x->fillTableSchema($this->_database,$this->__table);
             }
@@ -1777,7 +1782,9 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         // - if not try building it..
         if (!empty($_DB_DATAOBJECT['CONFIG']['proxy'])) {
-            require_once 'DB/DataObject/Generator.php';
+            class_exists('DB_DataObject_Generator') ? '' : 
+                require_once 'DB/DataObject/Generator.php';
+                
             $x = new DB_DataObject_Generator;
             $x->fillTableSchema($this->_database,$this->__table);
             // should this fail!!!???
@@ -2543,8 +2550,9 @@ class DB_DataObject extends DB_DataObject_Overload
         // proxy = full|light
         if (!$class && isset($_DB_DATAOBJECT['CONFIG']['proxy'])) { 
             $proxyMethod = 'getProxy'.$_DB_DATAOBJECT['CONFIG']['proxy'];
+            class_exists('DB_DataObject_Generator') ? '' : 
+                    require_once 'DB/DataObject/Generator.php';
             
-            require_once 'DB/DataObject/Generator.php';
             $d = new DB_DataObject;
            
             $d->__table = $table;

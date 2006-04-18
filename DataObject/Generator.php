@@ -46,7 +46,7 @@
 /**
  * Needed classes
  */
-require_once 'DB/DataObject.php';
+class_exists('DB_DataObject') ? '' : require_once 'DB/DataObject.php';
 //require_once('Config.php');
 
 /**
