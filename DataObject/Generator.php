@@ -1152,19 +1152,48 @@ class DB_DataObject_Generator extends DB_DataObject
     {
     
         //print_r($def);
-        //DB_DataObject::debugLevel(5);
+        // DB_DataObject::debugLevel(5);
         global $_DB_DATAOBJECT;
-        // set the objects keys
-        $obj = new DB_DataObject;
-        $obj->_table = $this->table;
-        $obj->_database = $this->_database;
-        $obj->_database_dsn_md5 =  $this->_database_dsn_md5;
+        // print_r($def);
         
-        // if the key is not an integer - then it's not a sequence or native
-        $_DB_DATAOBJECT['INI'][$obj->_database][$obj->__table] = $def['table'];
-        $_DB_DATAOBJECT['INI'][$obj->_database][$obj->__table."__keys"] = $def['keys'];
-        $ar = $obj->sequenceKey();
-        //print_r($obj);
+        
+        $dbtype     = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'];
+        $realkeys   = $def['keys'];
+        $keys       = array_keys($realkeys);
+        $usekey     = isset($keys[0]) ? $keys[0] : false;
+        $table      = $def['table'];
+        
+         
+        $seqname = false;
+        
+        
+        
+        
+        $ar = array(false,false,false);
+        if ($usekey !== false) {
+            if (!empty($_DB_DATAOBJECT['CONFIG']['sequence_'.$this->__table])) {
+                $usekey = $_DB_DATAOBJECT['CONFIG']['sequence_'.$this->__table];
+                if (strpos($usekey,':') !== false) {
+                    list($usekey,$seqname) = explode(':',$usekey);
+                }
+            }  
+        
+            if (in_array($dbtype , array( 'mysql', 'mysqli', 'mssql', 'ifx')) && 
+                ($table[$usekey] & DB_DATAOBJECT_INT) && 
+                isset($realkeys[$usekey]) && ($realkeys[$usekey] == 'N')
+                ) {
+                // use native sequence keys.
+                $ar =  array($usekey,true,$seqname);
+            } else {
+                // use generated sequence keys..
+                if ($table[$usekey] & DB_DATAOBJECT_INT) {
+                    $ar = array($usekey,false,$seqname);
+                }
+            }
+        }
+    
+    
+      
      
         $ret = "\n" .
                "    function sequenceKey() // keyname, use native, native name\n" .
@@ -1211,30 +1240,39 @@ class DB_DataObject_Generator extends DB_DataObject
         foreach($res as $ar) {
             // this is initially very dumb... -> and it may mess up..
             $type = $defs[$ar['Field']];
+            
             switch (true) {
                 
-                case ($type &  DB_DATAOBJECT_DATE): // not supported yet..
-                case ($type & DB_DATAOBJECT_TIME): // not supported yet..
+                case (is_null( $ar['Default'])):
+                    $defaults[$ar['Field']]  = 'null';
+                    break;
+                
+                case ($type & DB_DATAOBJECT_DATE): 
+                case ($type & DB_DATAOBJECT_TIME): 
                 case ($type & DB_DATAOBJECT_MYSQLTIMESTAMP): // not supported yet..
                     break;
                     
-                case ($type & DB_DATAOBJECT_BOOL): // not supported yet..
+                case ($type & DB_DATAOBJECT_BOOL): 
                     $defaults[$ar['Field']] = (int)(boolean) $ar['Default'];
                     break;
                     
                 
-                case ($type & DB_DATAOBJECT_STR): // not supported yet..
+                case ($type & DB_DATAOBJECT_STR): 
                     $defaults[$ar['Field']] =  "'" . addslashes($ar['Default']) . "'";
                     break;
-                    
+                
+                 
                 default:    // hopefully eveything else...  - numbers etc.
                     if (!strlen($ar['Default'])) {
                         continue;
                     }
-                    $defaults[$ar['Field']] =   $ar['Default'];
+                    if (is_numeric($ar['Default'])) {
+                        $defaults[$ar['Field']] =   $ar['Default'];
+                    }
                     break;
             
             }
+            //var_dump(array($ar['Field'], $ar['Default'], $defaults[$ar['Field']]));
         }
         if (empty($defaults)) {
             return;
