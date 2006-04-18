@@ -2114,9 +2114,11 @@ class DB_DataObject extends DB_DataObject_Overload
                 
                 
                 if (($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'] == 'sqlite') 
-                    && is_file($this->_database)) 
-                {
+                    && is_file($this->_database))  {
                     $this->_database = basename($this->_database);
+                }
+                if ($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'] == 'ibase')  {
+                    $this->_database = substr(basename($this->_database), 0, -4);
                 }
                 
             }
