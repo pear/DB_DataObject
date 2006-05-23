@@ -2770,6 +2770,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 }
                 
                 $this->$k = $this->getLink($key, $table, $link);
+                
                 if (is_object($this->$k)) {
                     $loaded[] = $k; 
                 }
@@ -2825,7 +2826,7 @@ class DB_DataObject extends DB_DataObject_Overload
      * @access public
      * @return mixed object on success
      */
-    function &getLink($row, $table = null, $link = false)
+    function getLink($row, $table = null, $link = false)
     {
         
         
@@ -2841,8 +2842,8 @@ class DB_DataObject extends DB_DataObject_Overload
                     if ($p = strpos($row,".")) {
                         $row = substr($row,0,$p);
                     }
-                    $r = &$this->getLink($row,$table,$link);
-                    return $r;
+                    return $this->getLink($row,$table,$link);
+                    
                 } 
                 
                 $this->raiseError(
@@ -2859,8 +2860,8 @@ class DB_DataObject extends DB_DataObject_Overload
                 return $r; 
             }
             $table = substr($row, 0, $p);
-            $r = &$this->getLink($row, $table);
-            return $r;
+            return $this->getLink($row, $table);
+            
 
         }
         
@@ -2868,8 +2869,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         if (!isset($this->$row)) {
             $this->raiseError("getLink: row not set $row", DB_DATAOBJECT_ERROR_NODATA);
-            $r = false;
-            return $r;
+            return false;
         }
         
         // check to see if we know anything about this table..
@@ -2880,22 +2880,22 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->raiseError(
                 "getLink:Could not find class for row $row, table $table", 
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            $r = false;
-            return $r;
+            return false;
         }
         if ($link) {
             if ($obj->get($link, $this->$row)) {
+                $obj->free();
                 return $obj;
             } 
-            $r = false;
-            return $r;
+            return  false;
         }
         
         if ($obj->get($this->$row)) {
+            $obj->free();
             return $obj;
         }
-        $r = false;
-        return $r;
+        return false;
+        
     }
 
     /**
