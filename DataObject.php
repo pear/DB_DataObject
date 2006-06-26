@@ -591,7 +591,8 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function whereAdd($cond = false, $logic = 'AND')
     {
-        if (!isset($this->_query)) {
+        
+	if (!isset($this->_query)) {
             return $this->raiseError(
                 "You cannot do two queries on the same object (clone it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
@@ -1765,8 +1766,12 @@ class DB_DataObject extends DB_DataObject_Overload
         foreach ($schemas as $ini) {
              if (file_exists($ini) && is_file($ini)) {
                 $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);
-                if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
-                    $this->debug("Loaded ini file: $ini","databaseStructure",1);
+                if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) { 
+                if (!is_readable ($ini)) {
+                        $this->debug("ini file is not readable: $ini","databaseStructure",1);
+                    } else {
+                        $this->debug("Loaded ini file: $ini","databaseStructure",1);
+                    }
                 }
             } else {
                 if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
