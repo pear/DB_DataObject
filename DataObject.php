@@ -1767,7 +1767,7 @@ class DB_DataObject extends DB_DataObject_Overload
              if (file_exists($ini) && is_file($ini)) {
                 $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);
                 if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) { 
-                if (!is_readable ($ini)) {
+                    if (!is_readable ($ini)) {
                         $this->debug("ini file is not readable: $ini","databaseStructure",1);
                     } else {
                         $this->debug("Loaded ini file: $ini","databaseStructure",1);
