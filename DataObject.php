@@ -3135,21 +3135,24 @@ class DB_DataObject extends DB_DataObject_Overload
                 $DB->quoteIdentifier($obj->__table) : 
                  $obj->__table ;
                 
-         
+        $dbPrefix  = '';
+        if (strlen($obj->_database) && in_array($DB->dsn['phptype'],array('mysql','mysqli'))) {
+            $dbPrefix = ($quoteIdentifiers
+                         ? $DB->quoteIdentifier($obj->_database)
+                         : $obj->_database) . '.';    
+        }
+        
+        // if they are the same, then dont add a prefix...                
+        if ($obj->_database == $this->_database) {
+           $dbPrefix = '';
+        }
         // as far as we know only mysql supports database prefixes..
         // prefixing the database name is now the default behaviour,
         // as it enables joining mutiple columns from multiple databases...
-        if (    
-                in_array($DB->dsn['phptype'],array('mysql','mysqli')) &&
-                strlen($obj->_database)
-            ) 
-        {
+         
             // prefix database (quoted if neccessary..)
-            $objTable = ($quoteIdentifiers
-                         ? $DB->quoteIdentifier($obj->_database)
-                         : $obj->_database)
-                    . '.' . $objTable;
-        }
+        $objTable = $dbPrefix . $objTable;
+       
          
         
         
@@ -3188,13 +3191,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $fullJoinAs = in_array($DB->dsn["phptype"],array('mysql','mysqli','pgsql')) ? "AS {$joinAs}" :  $joinAs;
         } else {
             // if 
-            if (
-                    in_array($DB->dsn['phptype'],array('mysql','mysqli')) &&
-                    strlen($obj->_database)
-                ) 
-            {
-                $joinAs = ($quoteIdentifiers ? $DB->quoteIdentifier($obj->_database) : $obj->_database) . '.' . $joinAs;
-            }
+            $joinAs = $dbPrefix . $joinAs;
         }
         
         
