@@ -378,7 +378,9 @@ class DB_DataObject_Generator extends DB_DataObject
         foreach($defs as $t) {
              
             $n=0;
-
+            $write_ini = true;
+            
+            
             switch (strtoupper($t->type)) {
 
                 case 'INT':
@@ -483,8 +485,15 @@ class DB_DataObject_Generator extends DB_DataObject
                 case 'BYTEA':   // postgres blob support..
                     $type = DB_DATAOBJECT_STR + DB_DATAOBJECT_BLOB;
                     break;
-                    
-                    
+                default:     
+                    echo "*****************************************************************\n".
+                         "**               WARNING UNKNOWN TYPE                          **\n".
+                         "** Found column '{$t->name}', of type  '{$t->type}'            **\n".
+                         "** Please submit a bug, describe what type you expect this     **\n".
+                         "** column  to be                                               **\n".
+                         "*****************************************************************\n";
+                    $write_ini = false;
+                    break;
             }
             
             
@@ -496,7 +505,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 $type += DB_DATAOBJECT_NOTNULL;
             }
            
-            $write_ini = true;
+           
             if (in_array($t->name,array('null','yes','no','true','false'))) {
                 echo "*****************************************************************\n".
                      "**                             WARNING                         **\n".
