@@ -45,6 +45,8 @@
 
 /**
  * Needed classes
+ * We lazy load here, due to problems with the tests not setting up include path correctly.
+ * FIXME!
  */
 class_exists('DB_DataObject') ? '' : require_once 'DB/DataObject.php';
 //require_once('Config.php');
@@ -343,6 +345,87 @@ class DB_DataObject_Generator extends DB_DataObject
         // }
     }
 
+    /**
+     * generate Foreign Keys (for links.ini) 
+     * Currenly only works with mysql / mysqli
+     * to use, you must set option: generate_links=true
+     * 
+     * @author Pascal Schöni 
+     */
+    function generateForeignKeys() 
+    {
+        $options = PEAR::getStaticProperty('DB_DataObject','options');
+        if (empty($options['generate_links'])) {
+            return false;
+        }
+        $__DB = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
+        if (!in_array($__DB->phptype, array('mysql','mysqli'))) {
+            echo "WARNING: cant handle non-mysql introspection for defaults.";
+            return; // cant handle non-mysql introspection for defaults.
+        }
+
+        $DB = $this->getDatabaseConnection();
+
+        $fk = array();
+
+        foreach($this->tables as $this->table) {
+            $res =& $DB->query('SHOW CREATE TABLE ' . $this->table);
+            if (PEAR::isError($res)) {
+                die($res->getMessage());
+            }
+
+            $text = $res->fetchRow(DB_DEFAULT_MODE, 0);
+            $treffer = array();
+            // Extract FOREIGN KEYS
+            preg_match_all(
+                "/FOREIGN KEY \(`(\w*)`\) REFERENCES `(\w*)` \(`(\w*)`\)/i", 
+                $text[1], 
+                $treffer, 
+                PREG_SET_ORDER);
+
+            if (count($treffer) < 1) {
+                continue;
+            }
+            for ($i = 0; $i < count($treffer); $i++) {
+                $fk[$this->table][$treffer[$i][1]] = $treffer[$i][2] . ":" . $treffer[$i][3];
+            }
+            
+        }
+
+        $links_ini = "";
+
+        foreach($fk as $table => $details) {
+            $links_ini .= "[$table]\n";
+            foreach ($details as $col => $ref) {
+                $links_ini .= "$col = $ref\n";
+            }
+            $links_ini .= "\n";
+        }
+
+        // dont generate a schema if location is not set
+        // it's created on the fly!
+        $options = PEAR::getStaticProperty('DB_DataObject','options');
+
+        if (empty($options['schema_location'])) {
+            return;
+        }
+
+        
+        $file = "{$options['schema_location']}/{$this->_database}.links.ini";
+
+        if (!file_exists(dirname($file))) {
+            require_once 'System.php';
+            System::mkdir(array('-p','-m',0755,dirname($file)));
+        }
+
+        $this->debug("Writing ini as {$file}\n");
+        touch($file); // not sure why this is needed?
+        $fh = fopen($file,'w');
+        fwrite($fh,$links_ini);
+        fclose($fh);
+    }
+
+      
     /**
      * The table geneation part
      *
