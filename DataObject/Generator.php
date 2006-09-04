@@ -527,6 +527,8 @@ class DB_DataObject_Generator extends DB_DataObject
                 case 'INET':        // postgres IP
                 case 'MACADDR':     // postgress network Mac address.
                 
+                case 'INTEGER[]':   // postgres type
+                case 'BOOLEAN[]':   // postgres type
                 
                     $type = DB_DATAOBJECT_STR;
                     break;
