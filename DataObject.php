@@ -3895,7 +3895,6 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         $colorize = ($logtype == 'ERROR') ? '<font color="red">' : '<font>';
         echo "<code>{$colorize}<B>$class: $logtype:</B> ". nl2br(htmlspecialchars($message)) . "</font></code><BR>\n";
-        flush();
     }
 
     /**
