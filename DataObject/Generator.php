@@ -252,11 +252,13 @@ class DB_DataObject_Generator extends DB_DataObject
                     $table = $bits[1];
                 }
             }
-
-            $defs =  $__DB->tableInfo($table);
-            if ($is_MDB2) {
+            if (!$is_MDB2) {
+                $defs =  $__DB->tableInfo($table);
+            } else {
+                $defs =  $__DB->reverse->tableInfo($table);
+                // rename the length value, so it matches db's return.
                 foreach ($defs as $k => $v) {
-                    $defs[$k]['len'] = &$defs[$k]['length'];
+                    $defs[$k]['len'] = $defs[$k]['length'];
                 }
             }
 
@@ -1045,7 +1047,37 @@ class DB_DataObject_Generator extends DB_DataObject
         }
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
         
-        $defs =  $__DB->tableInfo($table);
+        
+        $options   = PEAR::getStaticProperty('DB_DataObject','options');
+        $db_driver = empty($options['db_driver']) ? 'DB' : $options['db_driver'];
+        $is_MDB2   = ($db_driver != 'DB') ? true : false;
+        
+        if (!$is_MDB2) {
+            // try getting a list of schema tables first. (postgres)
+            $__DB->expectError(DB_ERROR_UNSUPPORTED);
+            $this->tables = $__DB->getListOf('schema.tables');
+            $__DB->popExpect();
+        } else {
+            /**
+             * set portability and some modules to fetch the informations
+             */
+            $__DB->setOption('portability', MDB2_PORTABILITY_ALL ^ MDB2_PORTABILITY_FIX_CASE);
+            $__DB->loadModule('Manager');
+            $__DB->loadModule('Reverse');
+        }
+ 
+        if (!$is_MDB2) {
+            $defs =  $__DB->tableInfo($table);
+        } else {
+            $defs =  $__DB->reverse->tableInfo($table);
+            foreach ($defs as $k => $v) {
+                $defs[$k]['len'] = &$defs[$k]['length'];
+            }
+        }
+        
+         
+        
+        
         if (PEAR::isError($defs)) {
             return $defs;
         }
