@@ -1067,7 +1067,8 @@ class DB_DataObject extends DB_DataObject_Overload
                         if (!$seq) {
                             $seq = $DB->getSequenceName($this->__table );
                         }
-                        $pgsql_key = $DB->getOne("SELECT last_value FROM ".$seq);
+                        $pgsql_key = $DB->getOne("SELECT currval('".$seq . "')"); 
+
                         if (PEAR::isError($pgsql_key)) {
                             $this->raiseError($r);
                             return false;
