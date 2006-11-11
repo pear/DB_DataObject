@@ -3069,6 +3069,19 @@ class DB_DataObject extends DB_DataObject_Overload
             foreach ($olinks as $k => $v) {
                 /* link contains {this column} = {linked table}:{linked column} */
                 $ar = explode(':', $v);
+                
+                // Feature Request #4266 - Allow joins with multiple keys
+                
+                $links_key_array = strpos($k,',');
+                if ($links_key_array !== false) {
+                    $k = explode(',', $k);
+                }
+                
+                $ar_array = strpos($ar[1],',');
+                if ($ar_array !== false) {
+                    $ar[1] = explode(',', $ar[1]);
+                }
+             
                 if ($ar[0] == $this->__table) {
                     
                     // you have explictly specified the column
@@ -3203,9 +3216,25 @@ class DB_DataObject extends DB_DataObject_Overload
             case 'INNER':
             case 'LEFT': 
             case 'RIGHT': // others??? .. cross, left outer, right outer, natural..?
-                $this->_join .= "\n {$joinType} JOIN {$objTable}  {$fullJoinAs}".
-                                " ON {$joinAs}.{$ofield}={$table}.{$tfield} {$appendJoin} ";
+                
+                // Feature Request #4266 - Allow joins with multiple keys
+                $this->_join .= "\n {$joinType} JOIN {$objTable} {$fullJoinAs}";
+                if (is_array($ofield)) {
+                	$key_count = count($ofield);
+                    for($i = 0; $i < $key_count; $i++) {
+                    	if ($i == 0) {
+                    		$this->_join .= " ON {$joinAs}.{$ofield[$i]}={$table}.{$tfield[$i]} {$appendJoin} ";
+                    	}
+                    	else {
+                    		$this->_join .= " AND {$joinAs}.{$ofield[$i]}={$table}.{$tfield[$i]} {$appendJoin} ";
+                    	}
+                     }
+                } else {
+	                $this->_join .= " ON {$joinAs}.{$ofield}={$table}.{$tfield} {$appendJoin} ";
+                }
+
                 break;
+                
             case '': // this is just a standard multitable select..
                 $this->_join .= "\n , {$objTable} {$fullJoinAs} {$appendJoin}";
                 $this->whereAdd("{$joinAs}.{$ofield}={$table}.{$tfield}");
