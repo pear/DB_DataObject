@@ -3128,7 +3128,13 @@ class DB_DataObject extends DB_DataObject_Overload
                 }
             }
         }
-        
+        // finally if these two table have column names that match do a join by default on them
+
+        if (($ofield === false) && $joinCol) {
+            $ofield = $joinCol;
+            $tfield = $joinCol;
+
+        }
         /* did I find a conneciton between them? */
 
         if ($ofield === false) {
