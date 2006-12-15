@@ -1,4 +1,140 @@
 
+2006-12-05 Tuesday  alan_k
+
+	* fix bug #3152 -  joinAdd requires join column to be in links.ini
+	file
+
+2006-11-11 Saturday  alan_k
+
+	* Feature Request #4266 - Allow joins with multiple keys
+
+2006-10-16 Monday  alan_k
+
+	* fix bug #8736 - auto_increment check for MDB2 backend
+	* fix bug #8876 - call free after count - hopefully this will not
+	break anything!
+	* fix bug #3773 - change last_value to currval - need to confirm
+	this is the correct fix.
+	* fix bug #8628 - tableInfo fix for MDB2
+	* fix bug #7792 - add integer[] and boolean[] support
+	* dont flush on html output
+
+2006-07-26 Wednesday  alan_k
+
+	* links.ini code generation based on schema (mysql[i] only) -
+	option:generate_links=true - thanks to Pacal Schoni
+	* add warning about unknown types.
+
+2006-07-18 Tuesday  alan_k
+
+	* only prefix database name, when the two objects are of different
+	databases
+
+2006-06-26 Monday  alan_k
+
+	* oops whitespace fixes
+	* nicer error message for !isreadable - thx to Euan Maxwell
+
+2006-05-23 Tuesday  alan_k
+
+	* fix bug #7702 - memory leaks on getLinks() , free() is called
+	within	getLinks(), - you still need to call free() after doing a
+	getLink() - as I suspect automagically doing that would cause
+	problems..
+	* test for  bug #7114 = generator of sequence keys and defaults
+	using generator_no_ini
+	* fix bug #7114 = generator of sequence keys and defaults using
+	generator_no_ini
+	* use class exists loader, so that relative test relative paths in
+	tests work, (also means that autoload may work...)
+	* adding tests for bug6953 which appears to work.
+	* remove pass by reference - why on earth that was there in the
+	first place is totally beyond me...
+	* fix bug #7409 - ibase support for filename based database names -
+	not sure if this works, but will ask reporter to test it..
+
+2006-04-12 Wednesday  alan_k
+
+	* give derivedHookFunctions the ability to use the original input
+	data
+
+2006-04-10 Monday  alan_k
+
+	* Fix bug #7353 - postgres incorrect testing of t/f for booleans
+
+2006-03-30 Thursday  alan_k
+
+	* add methods getClassNameFromTableName(),
+	getFileNameFromTableName(), getMethodNameFromColumnName(), which
+	allow you to set up your own mapping system by overriding them in
+	your extended generator.. it however needs some support in
+	dataobjects so currently flagged as EXPERIMENTAL
+
+2006-03-06 Monday  alan_k
+
+	* add not about new config option
+	* prep for another release
+	* fix bug #7006 - removing databaseStructure from links, broke it
+	as no database connection is created
+	* fix bug #7012 - eak checking wrong variable to before prefixing
+	database name
+
+2006-03-03 Friday  alan_k
+
+	* add limited support for generating defaults() to return an array
+	of default values, for use with $obj->setFrom($defaults);
+	* prep for release
+
+2006-03-02 Thursday  alan_k
+
+	* quote identifiers for format in selectAs() - patch by Marco
+	Kaiser
+
+2006-03-01 Wednesday  alan_k
+
+	* fix bug #6928 - default to prefixing database name for mysql and
+	mysqli when doing joins, (also typo fixes from last commit, and
+	bump copyright year)
+	* fix bug #6953 - Overzealous memory cleaning broke toArray() on
+	joins, when fetching last row
+	* pretty printing of sql, moving links loading code into links() -
+	so that databaseSchema should not be called if we have defined
+	tables(), sequenceKeys() and keys()
+
+2006-02-14 Tuesday  alan_k
+
+	* fix bug #6772 - FLOAT4 support for postgres (thanks to Dmitry
+	Poltaryonok)
+
+2006-02-13 Monday  alan_k
+
+	* WS
+	* add sequencekey generation to generator.
+	* add documentation for the generator_no_ini option
+	* add support for generator_no_ini, for embedding table definitions
+	into class methods. based on suggestion by Didler Galland and
+	Justin Patrin
+
+2006-01-24 Tuesday  bate
+
+	* tab to space fix
+	* fixed undefined constant notice with mdb2 driver
+
+2006-01-23 Monday  alan_k
+
+	* remove warning if class_prefix is not set. - this appears to work
+	as well...
+	* join add support for DB_DataObject::cast() objects (Daniel Braga)
+
+2006-01-21 Saturday  alan_k
+
+	* prep for release
+	* fix bug #6543 - Generator broke due to MDB changes.
+
+2006-01-20 Friday  alan_k
+
+	* prep for release
+
 2006-01-18 Wednesday  alan_k
 
 	* fix bug if setFrom called with object.. - skipempty checkin the
