@@ -3199,8 +3199,8 @@ class DB_DataObject extends DB_DataObject_Overload
         if ($quoteIdentifiers) {
             $joinAs   = $DB->quoteIdentifier($joinAs);
             $table    = $DB->quoteIdentifier($table);     
-            $ofield   = $DB->quoteIdentifier($ofield);    
-            $tfield   = $DB->quoteIdentifier($tfield);    
+            $ofield   = (is_array($ofield)) ? array_map(array($DB, 'quoteIdentifier'), $ofield) : $DB->quoteIdentifier($ofield);
+            $tfield   = (is_array($tfield)) ? array_map(array($DB, 'quoteIdentifier'), $tfield) : $DB->quoteIdentifier($tfield); 
         }
         // add database prefix if they are different databases
        
