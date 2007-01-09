@@ -180,6 +180,10 @@ class DB_DataObject_Generator extends DB_DataObject
         $db_driver = empty($options['db_driver']) ? 'DB' : $options['db_driver'];
         $is_MDB2 = ($db_driver != 'DB') ? true : false;
 
+        if (is_a($__DB , 'PEAR_Error')) {
+            return PEAR::raiseError($__DB->toString(), null, PEAR_ERROR_DIE);
+        }
+        
         if (!$is_MDB2) {
             // try getting a list of schema tables first. (postgres)
             $__DB->expectError(DB_ERROR_UNSUPPORTED);
