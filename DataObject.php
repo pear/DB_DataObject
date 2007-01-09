@@ -3229,12 +3229,13 @@ class DB_DataObject extends DB_DataObject_Overload
                 	$key_count = count($ofield);
                     for($i = 0; $i < $key_count; $i++) {
                     	if ($i == 0) {
-                    		$this->_join .= " ON {$joinAs}.{$ofield[$i]}={$table}.{$tfield[$i]} {$appendJoin} ";
+                    		$this->_join .= " ON {$joinAs}.{$ofield[$i]}={$table}.{$tfield[$i]} ";
                     	}
                     	else {
-                    		$this->_join .= " AND {$joinAs}.{$ofield[$i]}={$table}.{$tfield[$i]} {$appendJoin} ";
+                    		$this->_join .= " AND {$joinAs}.{$ofield[$i]}={$table}.{$tfield[$i]} ";
                     	}
-                     }
+                    }
+                    $this->_join .= ' ' . $appendJoin . ' ';
                 } else {
 	                $this->_join .= " ON {$joinAs}.{$ofield}={$table}.{$tfield} {$appendJoin} ";
                 }
