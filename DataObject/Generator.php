@@ -783,11 +783,17 @@ class DB_DataObject_Generator extends DB_DataObject
     {
         // title = expand me!
         $foot = "";
-        $head = "<?php\n/**\n * Table Definition for {$this->table}\n */\n";
+        $head = "<?php\n/**\n * Table Definition for {$this->table}\n";
+        $head .= $this->derivedHookPageLevelDocBlock();
+        $head .= " */\n";
+        $head .= $this->derivedHookExtendsDocBlock();
+
+        
         // requires
         $head .= "require_once '{$this->_extendsFile}';\n\n";
         // add dummy class header in...
-        // class
+        // class 
+        $head .= $this->derivedHookClassDocBlock();
         $head .= "class {$this->classname} extends {$this->_extends} \n{";
 
         $body =  "\n    ###START_AUTOCODE\n";
@@ -985,6 +991,42 @@ class DB_DataObject_Generator extends DB_DataObject
         return "";
     }
 
+    /**
+     * hook to add extra page-level (in terms of phpDocumentor) DocBlock
+     *
+     * called once for each class, use it add extra page-level docs
+     * @access public
+     * @return string added to class eg. functions.
+     */
+    function derivedHookPageLevelDocBlock() {
+        return '';
+    }
+
+    /**
+     * hook to add extra doc block (in terms of phpDocumentor) to extend string
+     *
+     * called once for each class, use it add extra comments to extends
+     * string (require_once...)
+     * @access public
+     * @return string added to class eg. functions.
+     */
+    function derivedHookExtendsDocBlock() {
+        return '';
+    }
+
+    /**
+     * hook to add extra class level DocBlock (in terms of phpDocumentor)
+     *
+     * called once for each class, use it add extra comments to class
+     * string (require_once...)
+     * @access public
+     * @return string added to class eg. functions.
+     */
+    function derivedHookClassDocBlock() {
+        return '';
+    }
+
+    /**
 
     /**
     * getProxyFull - create a class definition on the fly and instantate it..
