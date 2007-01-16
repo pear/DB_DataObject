@@ -1430,8 +1430,10 @@ class DB_DataObject_Generator extends DB_DataObject
         if (!in_array($__DB->phptype, array('mysql','mysqli'))) {
             return; // cant handle non-mysql introspection for defaults.
         }
-        
-        $res = $__DB->getAll('DESCRIBE ' . $table,DB_FETCHMODE_ASSOC);
+        $options = PEAR::getStaticProperty('DB_DataObject','options'); 
+        $db_driver = empty($options['db_driver']) ? 'DB' : $options['db_driver'];
+        $method = $db_driver == 'DB' ? 'queryAll' : 'getAll'; 
+        $res = $__DB->$method('DESCRIBE ' . $table,DB_FETCHMODE_ASSOC);
         $defaults = array();
         foreach($res as $ar) {
             // this is initially very dumb... -> and it may mess up..
