@@ -849,6 +849,18 @@ class DB_DataObject_Generator extends DB_DataObject
             if (!strlen(trim($t->name))) {
                 continue;
             }
+            if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $t->name)) {
+                echo "*****************************************************************\n".
+                     "**               WARNING COLUMN NAME UNUSABLE                  **\n".
+                     "** Found column '{$t->name}', of type  '{$t->type}'            **\n".
+                     "** Since this column name can't be converted to a php variable **\n".
+                     "** name, and the whole idea of mapping would result in a mess  **\n".
+                     "** This column has been ignored...                             **\n".
+                     "*****************************************************************\n";
+                continue;
+            }
+            
+            
             $padding = (30 - strlen($t->name));
             if ($padding < 2) $padding =2;
             $p =  str_repeat(' ',$padding) ;
