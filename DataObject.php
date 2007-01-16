@@ -976,7 +976,7 @@ class DB_DataObject extends DB_DataObject_Overload
             
             
 
-            if (is_string($this->$k) && (strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
+            if (!isset($options['disable_null_strings']) && is_string($this->$k) && (strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
                 $rightq .= " NULL ";
                 continue;
             }
@@ -1177,6 +1177,8 @@ class DB_DataObject extends DB_DataObject_Overload
         $DB            = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
         $dbtype        = $DB->dsn["phptype"];
         $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
+        $options = $_DB_DATAOBJECT['CONFIG'];
+        
         
         foreach($items as $k => $v) {
             if (!isset($this->$k)) {
@@ -1218,7 +1220,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
             // special values ... at least null is handled...
-            if ((strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
+            if (!isset($options['disable_null_strings']) && (strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
                 $settings .= "$kSql = NULL ";
                 continue;
             }
@@ -2419,6 +2421,8 @@ class DB_DataObject extends DB_DataObject_Overload
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
         $quoteIdentifiers  = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
+        $options = $_DB_DATAOBJECT['CONFIG'];
+        
         // if we dont have query vars.. - reset them.
         if (!isset($this->_query)) {
             $x = new DB_DataObject;
@@ -2465,7 +2469,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            if ((strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
+            if (!isset($options['disable_null_strings']) &&  (strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
                 $this->whereAdd(" $kSql  IS NULL");
                 continue;
             }
@@ -3153,6 +3157,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         
         $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
+        $options = $_DB_DATAOBJECT['CONFIG'];
         
         // not sure  how portable adding database prefixes is..
         $objTable = $quoteIdentifiers ? 
@@ -3302,7 +3307,7 @@ class DB_DataObject extends DB_DataObject_Overload
                     $this->raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
                     return false;
                 }
-                if (strtolower($value) === 'null') {
+                if (!isset($options['disable_null_strings']) && strtolower($value) === 'null') {
                     $this->whereAdd("{$joinAs}.{$kSql} IS NULL");
                     continue;
                 } else {
@@ -3496,11 +3501,12 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function validate()
     {
+        global $_DB_DATAOBJECT;
         require_once 'Validate.php';
         $table = $this->table();
         $ret   = array();
         $seq   = $this->sequenceKey();
-        
+        $options = $_DB_DATAOBJECT['CONFIG'];
         foreach($table as $key => $val) {
             
             
@@ -3523,7 +3529,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
             
-            if (is_string($this->$key) && (strtolower($this->$key) == 'null')) {
+            if (!isset($options['disable_null_strings']) && is_string($this->$key) && (strtolower($this->$key) == 'null')) {
                 if ($val & DB_DATAOBJECT_NOTNULL) {
                     $this->debug("'null' field used for '$key', but it is defined as NOT NULL", 'VALIDATION', 4);
                     $ret[$key] = false;
@@ -3727,6 +3733,8 @@ class DB_DataObject extends DB_DataObject_Overload
     
     function fromValue($col,$value) 
     {
+        global $_DB_DATAOBJECT;
+        $options = $_DB_DATAOBJECT['CONFIG'];
         $cols = $this->table();
         // dont know anything about this col..
         if (!isset($cols[$col])) {
@@ -3736,13 +3744,13 @@ class DB_DataObject extends DB_DataObject_Overload
         //echo "FROM VALUE $col, {$cols[$col]}, $value\n";
         switch (true) {
             // set to null and column is can be null...
-            case ((strtolower($value) == 'null') && (!($cols[$col] & DB_DATAOBJECT_NOTNULL))):
+            case (!isset($options['disable_null_strings']) && (strtolower($value) == 'null') && (!($cols[$col] & DB_DATAOBJECT_NOTNULL))):
             case (is_object($value) && is_a($value,'DB_DataObject_Cast')): 
                 $this->$col = $value;
                 return true;
                 
             // fail on setting null on a not null field..
-            case ((strtolower($value) == 'null') && ($cols[$col] & DB_DATAOBJECT_NOTNULL)):
+            case (!isset($options['disable_null_strings']) && (strtolower($value) == 'null') && ($cols[$col] & DB_DATAOBJECT_NOTNULL)):
                 return false;
         
             case (($cols[$col] & DB_DATAOBJECT_DATE) &&  ($cols[$col] & DB_DATAOBJECT_TIME)):
