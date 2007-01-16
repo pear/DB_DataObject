@@ -380,7 +380,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 die($res->getMessage());
             }
 
-            $text = $res->fetchRow(DB_DEFAULT_MODE, 0);
+            $text = $res->fetchRow(DB_FETCHMODE_DEFAULT, 0);
             $treffer = array();
             // Extract FOREIGN KEYS
             preg_match_all(
