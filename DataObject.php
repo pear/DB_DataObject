@@ -3116,6 +3116,14 @@ class DB_DataObject extends DB_DataObject_Overload
             foreach ($links as $k => $v) {
                 /* link contains {this column} = {linked table}:{linked column} */
                 $ar = explode(':', $v);
+                // Feature Request #4266 - Allow joins with multiple keys
+                if (strpos($k, ',') !== false) {
+                    $k = explode(',', $k);
+                }
+                if (strpos($ar[1], ',') !== false) {
+                    $ar[1] = explode(',', $ar[1]);
+                }
+
                 if ($ar[0] == $obj->__table) {
                     if ($joinCol !== false) {
                         if ($k == $joinCol) {
