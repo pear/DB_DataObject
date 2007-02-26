@@ -266,6 +266,9 @@ class DB_DataObject_Generator extends DB_DataObject
                 $defs =  $__DB->reverse->tableInfo($quotedTable);
                 // rename the length value, so it matches db's return.
                 foreach ($defs as $k => $v) {
+                    if (!isset($defs[$k]['length'])) {
+                        continue;
+                    }
                     $defs[$k]['len'] = $defs[$k]['length'];
                 }
             }
@@ -1139,13 +1142,18 @@ class DB_DataObject_Generator extends DB_DataObject
             $__DB->loadModule('Manager');
             $__DB->loadModule('Reverse');
         }
- 
+        $quotedTable = !empty($options['quote_identifiers']) ? 
+                $__DB->quoteIdentifier($table) : $table;
+          
         if (!$is_MDB2) {
-            $defs =  $__DB->tableInfo($table);
+            $defs =  $__DB->tableInfo($quotedTable);
         } else {
-            $defs =  $__DB->reverse->tableInfo($table);
+            $defs =  $__DB->reverse->tableInfo($quotedTable);
             foreach ($defs as $k => $v) {
-                $defs[$k]['len'] = &$defs[$k]['length'];
+                if (!isset($defs[$k]['length'])) {
+                    continue;
+                }
+                $defs[$k]['len'] = $defs[$k]['length'];
             }
         }
         
