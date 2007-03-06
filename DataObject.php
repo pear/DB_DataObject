@@ -3009,9 +3009,17 @@ class DB_DataObject extends DB_DataObject_Overload
      *                                          use @ to hide the include error message..
      *                                      
      *
-     * @param    optional $joinType  string     'LEFT'|'INNER'|'RIGHT'|'' Inner is default, '' indicates 
+     * @param    optional $joinType  string | array
+     *                                          'LEFT'|'INNER'|'RIGHT'|'' Inner is default, '' indicates 
      *                                          just select ... from a,b,c with no join and 
      *                                          links are added as where items.
+     *                                          
+     *                                          If second Argument is array, it is assumed to be an associative
+     *                                          array with arguments matching below = eg.
+     *                                          'joinType' => 'INNER',
+     *                                          'joinAs' => '...'
+     *                                          'joinCol' => ....
+     *                                          'useWhereAsOn' => false,
      *
      * @param    optional $joinAs    string     if you want to select the table as anther name
      *                                          useful when you want to select multiple columsn
@@ -3023,6 +3031,11 @@ class DB_DataObject extends DB_DataObject_Overload
      *                                          user->friend (is a link to another user)
      *                                          user->mother (is a link to another user..)
      *
+     *           optional 'useWhereAsOn' bool   default false;
+     *                                          convert the where argments from the object being added
+     *                                          into ON arguments.
+     * 
+     * 
      * @return   none
      * @access   public
      * @author   Stijn de Reede      <sjr@gmx.co.uk>
@@ -3034,7 +3047,17 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->_join = '';
             return;
         }
-        
+         
+
+        $useWhereAsOn = false;
+        // support for 2nd argument as an array of options
+        if (is_array($joinType)) {
+            // new options can now go in here... (dont forget to document them)
+            $useWhereAsOn = !empty($joinType['useWhereAsOn']);
+            $joinCol      = isset($joinType['joinCol'])  ? $joinType['joinCol']  : $joinCol;
+            $joinAs       = isset($joinType['joinAs'])   ? $joinType['joinAs']   : $joinAs;
+            $joinType     = isset($joinType['joinType']) ? $joinType['joinType'] : 'INNER';
+        }
         // support for array as first argument 
         // this assumes that you dont have a links.ini for the specified table.
         // and it doesnt exist as am extended dataobject!! - experimental.
@@ -3190,7 +3213,90 @@ class DB_DataObject extends DB_DataObject_Overload
             // prefix database (quoted if neccessary..)
         $objTable = $dbPrefix . $objTable;
        
-         
+        $cond = '';
+
+        // if obj only a dataobject - eg. no extended class has been defined..
+        // it obvioulsy cant work out what child elements might exist...
+        // until we get on the fly querying of tables..
+        // note: we have already checked that it is_a(db_dataobject earlier)
+        if ( strtolower(get_class($obj)) != 'db_dataobject') {
+                 
+            // now add where conditions for anything that is set in the object 
+        
+        
+        
+            $items = $obj->table();
+            // will return an array if no items..
+            
+            // only fail if we where expecting it to work (eg. not joined on a array)
+             
+            if (!$items) {
+                $this->raiseError(
+                    "joinAdd: No table definition for {$obj->__table}", 
+                    DB_DATAOBJECT_ERROR_INVALIDCONFIG);
+                return false;
+            }
+
+            foreach($items as $k => $v) {
+                if (!isset($obj->$k)) {
+                    continue;
+                }
+                
+                $kSql = ($quoteIdentifiers ? $DB->quoteIdentifier($k) : $k);
+                
+                
+                if ($v & DB_DATAOBJECT_STR) {
+                    $obj->whereAdd("{$joinAs}.{$kSql} = " . $this->_quote((string) (
+                            ($v & DB_DATAOBJECT_BOOL) ? 
+                                // this is thanks to the braindead idea of postgres to 
+                                // use t/f for boolean.
+                                (($obj->$k === 'f') ? 0 : (int)(bool) $obj->$k) :  
+                                $obj->$k
+                        )));
+                    continue;
+                }
+                if (is_numeric($obj->$k)) {
+                    $obj->whereAdd("{$joinAs}.{$kSql} = {$obj->$k}");
+                    continue;
+                }
+                            
+                if (is_a($obj->$k,'DB_DataObject_Cast')) {
+                    $value = $obj->$k->toString($v,$DB);
+                    if (PEAR::isError($value)) {
+                        $this->raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
+                        return false;
+                    }
+                    if (!isset($options['disable_null_strings']) && strtolower($value) === 'null') {
+                        $obj->whereAdd("{$joinAs}.{$kSql} IS NULL");
+                        continue;
+                    } else {
+                        $obj->whereAdd("{$joinAs}.{$kSql} = $value");
+                        continue;
+                    }
+                }
+                
+                
+                /* this is probably an error condition! */
+                $obj->whereAdd("{$joinAs}.{$kSql} = 0");
+            }
+            if (!isset($this->_query)) {
+                $this->raiseError(
+                    "joinAdd can not be run from a object that has had a query run on it,
+                    clone the object or create a new one and use setFrom()", 
+                    DB_DATAOBJECT_ERROR_INVALIDARGS);
+                return false;
+            }
+        }
+
+        // and finally merge the whereAdd from the child..
+        if ($obj->_query['condition']) {
+            $cond = preg_replace('/^\sWHERE/i','',$obj->_query['condition']);
+
+            if (!$useWhereAsOn) {
+                $this->whereAdd($cond);
+            }
+        }
+    
         
         
         
@@ -3206,6 +3312,14 @@ class DB_DataObject extends DB_DataObject_Overload
                 $appendJoin = $obj->_join;
             }
         }
+        
+  
+        // fix for #2216
+        // add the joinee object's conditions to the ON clause instead of the WHERE clause
+        if ($useWhereAsOn && strlen($cond)) {
+            $appendJoin = ' AND ' . $cond . ' ' . $appendJoin;
+        }
+               
         
         
         $table = $this->__table;
@@ -3261,87 +3375,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 $this->whereAdd("{$joinAs}.{$ofield}={$table}.{$tfield}");
         }
          
-        // if obj only a dataobject - eg. no extended class has been defined..
-        // it obvioulsy cant work out what child elements might exist...
-        // untill we get on the fly querying of tables..
-        if ( strtolower(get_class($obj)) == 'db_dataobject') {
-            return true;
-        }
          
-        /* now add where conditions for anything that is set in the object */
-    
-    
-    
-        $items = $obj->table();
-        // will return an array if no items..
-        
-        // only fail if we where expecting it to work (eg. not joined on a array)
-        
-        
-        
-        if (!$items) {
-            $this->raiseError(
-                "joinAdd: No table definition for {$obj->__table}", 
-                DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            return false;
-        }
-
-        foreach($items as $k => $v) {
-            if (!isset($obj->$k)) {
-                continue;
-            }
-            
-            $kSql = ($quoteIdentifiers ? $DB->quoteIdentifier($k) : $k);
-            
-            
-            if ($v & DB_DATAOBJECT_STR) {
-                $this->whereAdd("{$joinAs}.{$kSql} = " . $this->_quote((string) (
-                        ($v & DB_DATAOBJECT_BOOL) ? 
-                            // this is thanks to the braindead idea of postgres to 
-                            // use t/f for boolean.
-                            (($obj->$k === 'f') ? 0 : (int)(bool) $obj->$k) :  
-                            $obj->$k
-                    )));
-                continue;
-            }
-            if (is_numeric($obj->$k)) {
-                $this->whereAdd("{$joinAs}.{$kSql} = {$obj->$k}");
-                continue;
-            }
-                        
-            if (is_a($obj->$k,'DB_DataObject_Cast')) {
-                $value = $obj->$k->toString($v,$DB);
-                if (PEAR::isError($value)) {
-                    $this->raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
-                    return false;
-                }
-                if (!isset($options['disable_null_strings']) && strtolower($value) === 'null') {
-                    $this->whereAdd("{$joinAs}.{$kSql} IS NULL");
-                    continue;
-                } else {
-                    $this->whereAdd("{$joinAs}.{$kSql} = $value");
-                    continue;
-                }
-            }
-            
-            
-            /* this is probably an error condition! */
-            $this->whereAdd("{$joinAs}.{$kSql} = 0");
-        }
-        if (!isset($this->_query)) {
-            $this->raiseError(
-                "joinAdd can not be run from a object that has had a query run on it,
-                clone the object or create a new one and use setFrom()", 
-                DB_DATAOBJECT_ERROR_INVALIDARGS);
-            return false;
-        }
-        // and finally merge the whereAdd from the child..
-        if (!$obj->_query['condition']) {
-            return true;
-        }
-        $cond = preg_replace('/^\sWHERE/i','',$obj->_query['condition']);
-        
-        $this->whereAdd("($cond)");
         return true;
 
     }
