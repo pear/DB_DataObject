@@ -1054,7 +1054,7 @@ class DB_DataObject extends DB_DataObject_Overload
                         // $db->query('BEGIN');
                         // $db->insert();
                         // $db->query('COMMIT');
-                        $db_driver = empty($options['db_driver']) ? 'DB' : $options['CONFIG']['db_driver'];
+                        $db_driver = empty($options['db_driver']) ? 'DB' : $options['db_driver'];
                         $method = ($db_driver  == 'DB') ? 'getOne' : 'queryOne';
                         $mssql_key = $DB->$method("SELECT @@IDENTITY");
                         if (PEAR::isError($mssql_key)) {
