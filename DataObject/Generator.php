@@ -1444,7 +1444,7 @@ class DB_DataObject_Generator extends DB_DataObject
         }
         $options = PEAR::getStaticProperty('DB_DataObject','options'); 
         $db_driver = empty($options['db_driver']) ? 'DB' : $options['db_driver'];
-        $method = $db_driver == 'DB' ? 'queryAll' : 'getAll'; 
+        $method = $db_driver == 'DB' ? 'getAll' : 'queryAll'; 
         $res = $__DB->$method('DESCRIBE ' . $table,DB_FETCHMODE_ASSOC);
         $defaults = array();
         foreach($res as $ar) {
