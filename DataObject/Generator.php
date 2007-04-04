@@ -346,11 +346,13 @@ class DB_DataObject_Generator extends DB_DataObject
             System::mkdir(array('-p','-m',0755,dirname($file)));
         }
         $this->debug("Writing ini as {$file}\n");
-        touch($file);
+        //touch($file);
+        $tmpname = tempnam(session_save_path(),'DataObject_');
         //print_r($this->_newConfig);
-        $fh = fopen($file,'w');
+        $fh = fopen($tmpname,'w');
         fwrite($fh,$this->_newConfig);
         fclose($fh);
+        rename($tmpname, $file);
         //$ret = $this->_newConfig->writeInput($file,false);
 
         //if (PEAR::isError($ret) ) {
@@ -432,10 +434,14 @@ class DB_DataObject_Generator extends DB_DataObject
         }
 
         $this->debug("Writing ini as {$file}\n");
-        touch($file); // not sure why this is needed?
-        $fh = fopen($file,'w');
+        
+        //touch($file); // not sure why this is needed?
+        $tmpname = tempnam(session_save_path(),'DataObject_');
+       
+        $fh = fopen($tmpname,'w');
         fwrite($fh,$links_ini);
         fclose($fh);
+        rename($tmpname, $file);
     }
 
       
@@ -759,9 +765,12 @@ class DB_DataObject_Generator extends DB_DataObject
             
             $out = $this->_generateClassTable($oldcontents);
             $this->debug( "writing $this->classname\n");
-            $fh = fopen($outfilename, "w");
+            $tmpname = tempnam(session_save_path(),'DataObject_');
+       
+            $fh = fopen($tmpname, "w");
             fputs($fh,$out);
             fclose($fh);
+            rename($tmpname, $outfilename);
         }
         //echo $out;
     }
