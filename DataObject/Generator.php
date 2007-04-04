@@ -352,7 +352,9 @@ class DB_DataObject_Generator extends DB_DataObject
         $fh = fopen($tmpname,'w');
         fwrite($fh,$this->_newConfig);
         fclose($fh);
+        $perms = file_exists($file) ? fileperms($file) : 0755;
         rename($tmpname, $file);
+        chmod($file,$prems);
         //$ret = $this->_newConfig->writeInput($file,false);
 
         //if (PEAR::isError($ret) ) {
@@ -441,7 +443,9 @@ class DB_DataObject_Generator extends DB_DataObject
         $fh = fopen($tmpname,'w');
         fwrite($fh,$links_ini);
         fclose($fh);
+        $perms = file_exists($file) ? fileperms($file) : 0755;
         rename($tmpname, $file);
+        chmod($file, $perms);
     }
 
       
@@ -770,7 +774,9 @@ class DB_DataObject_Generator extends DB_DataObject
             $fh = fopen($tmpname, "w");
             fputs($fh,$out);
             fclose($fh);
+            $perms = file_exists($outfilename) ? fileperms($outfilename) : 0755;
             rename($tmpname, $outfilename);
+            chmod($outfilename, $perms);
         }
         //echo $out;
     }
