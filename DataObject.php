@@ -1566,17 +1566,23 @@ class DB_DataObject extends DB_DataObject_Overload
      * $object->query("select * from xyz where abc like '". $object->escape($_GET['name']) . "'");
      *
      * @param  string  $string  value to be escaped 
+     * @param  bool $likeEscape  escapes % and _ as well. - so like queries can be protected.
      * @access public
      * @return string
      */
-    function escape($string)
+    function escape($string, $likeEscape=false)
     {
         global $_DB_DATAOBJECT;
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
         // mdb2 uses escape...
         $dd = empty($_DB_DATAOBJECT['CONFIG']['db_driver']) ? 'DB' : $_DB_DATAOBJECT['CONFIG']['db_driver'];
-        return ($dd == 'DB') ? $DB->escapeSimple($string) : $DB->escape($string);
+        $ret = ($dd == 'DB') ? $DB->escapeSimple($string) : $DB->escape($string);
+        if ($likeEscape) {
+            $ret = str_replace(array('_','%'), array('\_','\%'), $ret);
+        }
+        return $ret;
+        
     }
 
     /* ==================================================== */
