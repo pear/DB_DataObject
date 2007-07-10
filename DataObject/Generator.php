@@ -996,9 +996,19 @@ class DB_DataObject_Generator extends DB_DataObject
             "\nclass {$this->classname} extends {$this->_extends} \n{\n",
             $input);
 
-        return preg_replace(
+        $ret =  preg_replace(
             '/(\n|\r\n)\s*###START_AUTOCODE(\n|\r\n).*(\n|\r\n)\s*###END_AUTOCODE(\n|\r\n)/s',
             $body,$input);
+        
+        if (!strlen($ret)) {
+            return PEAR::raiseError(
+                "PREG_REPLACE failed to replace body, - you probably need to set these in your php.ini\n".
+                "pcre.backtrack_limit=1000000\n".
+                "pcre.recursion_limit=1000000\n"
+                ,null, PEAR_ERROR_DIE);
+       }
+        
+        return $ret;
     }
 
     /**
