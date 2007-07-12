@@ -354,7 +354,7 @@ class DB_DataObject_Generator extends DB_DataObject
         fclose($fh);
         $perms = file_exists($file) ? fileperms($file) : 0755;
         rename($tmpname, $file);
-        chmod($file,$prems);
+        chmod($file,$perms);
         //$ret = $this->_newConfig->writeInput($file,false);
 
         //if (PEAR::isError($ret) ) {
