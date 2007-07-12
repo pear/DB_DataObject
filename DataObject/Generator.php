@@ -689,7 +689,7 @@ class DB_DataObject_Generator extends DB_DataObject
     function getClassNameFromTableName($table)
     {
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
-        $class_prefix  = $options['class_prefix'];
+        $class_prefix  = empty($options['class_prefix']) ? '' : $options['class_prefix'];
         return  $class_prefix.preg_replace('/[^A-Z0-9]/i','_',ucfirst(trim($this->table)));
     }
     
@@ -1104,7 +1104,7 @@ class DB_DataObject_Generator extends DB_DataObject
         
         
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
-        $class_prefix  = $options['class_prefix'];
+        $class_prefix  = empty($options['class_prefix']) ? '' : $options['class_prefix'];
         
         if ($extends = @$options['extends']) {
             $this->_extends = $extends;
