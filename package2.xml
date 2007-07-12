@@ -23,11 +23,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active>
  </lead>
  
- <date>2007-07-10</date>
- <!-- <time>11:44:02</time> -->
- 
+ <date>2007-07-12</date>
+  
  <version>
-  <release>1.8.6</release>
+  <release>1.8.7</release>
   <api>1.8.6</api>
  </version>
  
@@ -38,34 +37,19 @@ http://pear.php.net/dtd/package-2.0.xsd">
  
  <license uri="http://www.php.net/license">PHP License</license>
  <notes><![CDATA[
-    Minor Bugfix and Minor Feature addition release
+    Minor Bugfix Release 
  
     Bug Fixes:
-        #11483 - show an error if pcre limits are not correctly set and generator tries to generate empty files
-        #11528 - sending like queries to escape does not escape % and _ - added additional parameter to
-                escape : [bool $likeEscape] is optional and can be used to force escaping of these characters
-        #10573 - fix permissions on generated files
-        #10573 - write Generated files to temp directory, then rename into place. - fixing locking issues
-        #10531 - correct fix for bug #9628 (support MDB2 for defaults())
-        #10454 - mssql uses wrong variable name for options.
-        #10175 - MDB2 does not return length value 
-        #9573 - enable disable_null_strings to turn of "null"-> NULL replacements
-        #9625 - MDB2 support for MSSQL sequencies
-        #9644 - incorrect constant in foriegn key generation.
-        #9628 - support MDB2 for defaults()
-        #9839 - Invalid column names can not be supported, so warning is generated
-        #9834 - SQL2003 standards on Joins - adds brackets around ON()
-        #4266 - minor fix to appendJoin code
-        #9755 - generator showed php error if connection failed
-        #9730 - quote identifiers on composite joins
-
-* feature request 
-        #4266 - joins with multiple keys
-        #2216 - JOIN ON conversion of Where condition into ON arguments - patch by David Sanders
-        #----   add in docbook hooks to generator - as requested/coded by Vyacheslav Iutin
-
- 
+        #11586 - missing default value in Generator for class_prefix caused warning
+        #11584 - typo in Generator caused permissions to be incorrectly set on ini file.
+    
+    
+         
  ]]></notes>
+ 
+ 
+ 
+ 
  <contents>
   <dir name="/">
    <dir name="DataObject">
@@ -120,6 +104,53 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <phprelease />
  <changelog>
  
+ <release>
+ 
+ <date>2007-07-10</date>
+  
+ <version>
+  <release>1.8.6</release>
+  <api>1.8.6</api>
+ </version>
+ 
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ 
+ <license uri="http://www.php.net/license">PHP License</license>
+ <notes><![CDATA[
+    Minor Bugfix and Minor Feature addition release
+ 
+    Bug Fixes:
+        #11483 - show an error if pcre limits are not correctly set and generator tries to generate empty files
+        #11528 - sending like queries to escape does not escape % and _ - added additional parameter to
+                escape : [bool $likeEscape] is optional and can be used to force escaping of these characters
+        #10573 - fix permissions on generated files
+        #10573 - write Generated files to temp directory, then rename into place. - fixing locking issues
+        #10531 - correct fix for bug #9628 (support MDB2 for defaults())
+        #10454 - mssql uses wrong variable name for options.
+        #10175 - MDB2 does not return length value 
+        #9573 - enable disable_null_strings to turn of "null"-> NULL replacements
+        #9625 - MDB2 support for MSSQL sequencies
+        #9644 - incorrect constant in foriegn key generation.
+        #9628 - support MDB2 for defaults()
+        #9839 - Invalid column names can not be supported, so warning is generated
+        #9834 - SQL2003 standards on Joins - adds brackets around ON()
+        #4266 - minor fix to appendJoin code
+        #9755 - generator showed php error if connection failed
+        #9730 - quote identifiers on composite joins
+
+* feature request 
+        #4266 - joins with multiple keys
+        #2216 - JOIN ON conversion of Where condition into ON arguments - patch by David Sanders
+        #----   add in docbook hooks to generator - as requested/coded by Vyacheslav Iutin
+
+ 
+ ]]></notes>
+ 
+ 
+ </release>
  
  <release>
      
