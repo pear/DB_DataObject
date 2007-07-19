@@ -353,10 +353,12 @@ class DB_DataObject_Generator extends DB_DataObject
         fwrite($fh,$this->_newConfig);
         fclose($fh);
         $perms = file_exists($file) ? fileperms($file) : 0755;
-        if (file_exists($file)) { // Windows can not rename if target exists
+        // windows can fail doing this. - not a perfect solution but otherwise it's getting really kludgy..
+        
+        if (!@rename($tmpname, $file)) { 
             unlink($file); 
+            rename($tmpname, $file);
         }
-        rename($tmpname, $file);
         chmod($file,$perms);
         //$ret = $this->_newConfig->writeInput($file,false);
 
@@ -447,10 +449,11 @@ class DB_DataObject_Generator extends DB_DataObject
         fwrite($fh,$links_ini);
         fclose($fh);
         $perms = file_exists($file) ? fileperms($file) : 0755;
-        if (file_exists($file)) { // Windows can not rename if target exists
+        // windows can fail doing this. - not a perfect solution but otherwise it's getting really kludgy..
+        if (!@rename($tmpname, $file)) { 
             unlink($file); 
+            rename($tmpname, $file);
         }
-        rename($tmpname, $file);
         chmod($file, $perms);
     }
 
@@ -781,10 +784,13 @@ class DB_DataObject_Generator extends DB_DataObject
             fputs($fh,$out);
             fclose($fh);
             $perms = file_exists($outfilename) ? fileperms($outfilename) : 0755;
-            if (file_exists($outfilename)) { // Windows can not rename if target exists
+            
+            // windows can fail doing this. - not a perfect solution but otherwise it's getting really kludgy..
+            if (!@rename($tmpname, $outfilename)) {
                 unlink($outfilename); 
+                rename($tmpname, $outfilename);
             }
-            rename($tmpname, $outfilename);
+            
             chmod($outfilename, $perms);
         }
         //echo $out;
