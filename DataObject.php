@@ -388,7 +388,7 @@ class DB_DataObject extends DB_DataObject_Overload
     function find($n = false)
     {
         global $_DB_DATAOBJECT;
-        if (!isset($this->_query)) {
+        if ($this->_query === false) {
             $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
@@ -571,8 +571,8 @@ class DB_DataObject extends DB_DataObject_Overload
         if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug("{$this->__table} DONE", "fetchrow",2);
         }
-        if (isset($this->_query) &&  empty($_DB_DATAOBJECT['CONFIG']['keep_query_after_fetch'])) {
-            unset($this->_query);
+        if (($this->_query !== false) &&  empty($_DB_DATAOBJECT['CONFIG']['keep_query_after_fetch'])) {
+            $this->_query = false;
         }
         return true;
     }
@@ -592,7 +592,7 @@ class DB_DataObject extends DB_DataObject_Overload
     function whereAdd($cond = false, $logic = 'AND')
     {
         
-	if (!isset($this->_query)) {
+        if ($this->_query === false) {
             return $this->raiseError(
                 "You cannot do two queries on the same object (clone it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
@@ -629,7 +629,7 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function orderBy($order = false)
     {
-        if (!isset($this->_query)) {
+        if ($this->_query === false) {
             $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
@@ -664,7 +664,7 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function groupBy($group = false)
     {
-        if (!isset($this->_query)) {
+        if ($this->_query === false) {
             $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
@@ -699,7 +699,7 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function having($having = false)
     {
-        if (!isset($this->_query)) {
+        if ($this->_query === false) {
             $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
@@ -740,7 +740,7 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function limit($a = null, $b = null)
     {
-        if (!isset($this->_query)) {
+        if ($this->_query === false) {
             $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
@@ -783,7 +783,7 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function selectAdd($k = null)
     {
-        if (!isset($this->_query)) {
+        if ($this->_query === false) {
             $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
@@ -825,7 +825,7 @@ class DB_DataObject extends DB_DataObject_Overload
     {
         global $_DB_DATAOBJECT;
         
-        if (!isset($this->_query)) {
+        if ($this->_query === false) {
             $this->raiseError(
                 "You cannot do two queries on the same object (copy it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
@@ -1144,7 +1144,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $this->_connect();
         
         
-        $original_query = isset($this->_query) ? $this->_query : null;
+        $original_query =  $this->_query;
         
         $items =  isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table]) ?   
             $_DB_DATAOBJECT['INI'][$this->_database][$this->__table] : $this->table();
@@ -1358,7 +1358,7 @@ class DB_DataObject extends DB_DataObject_Overload
             
 
         // don't delete without a condition
-        if (isset($this->_query) && $this->_query['condition']) {
+        if (($this->_query !== false) && $this->_query['condition']) {
         
             $table = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
             $sql = "DELETE FROM {$table} {$this->_query['condition']}{$extra_cond}";
@@ -2430,7 +2430,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $options = $_DB_DATAOBJECT['CONFIG'];
         
         // if we dont have query vars.. - reset them.
-        if (!isset($this->_query)) {
+        if ($this->_query === false) {
             $x = new DB_DataObject;
             $this->_query= $x->_query;
         }
@@ -3285,7 +3285,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 /* this is probably an error condition! */
                 $obj->whereAdd("{$joinAs}.{$kSql} = 0");
             }
-            if (!isset($this->_query)) {
+            if ($this->_query === false) {
                 $this->raiseError(
                     "joinAdd can not be run from a object that has had a query run on it,
                     clone the object or create a new one and use setFrom()", 
