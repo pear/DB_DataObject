@@ -1066,9 +1066,11 @@ class DB_DataObject extends DB_DataObject_Overload
                         
                     case 'pgsql':
                         if (!$seq) {
-                            $seq = $DB->getSequenceName($this->__table );
+                            $seq = $DB->getSequenceName(strtolower($this->__table));
                         }
-                        $pgsql_key = $DB->getOne("SELECT currval('".$seq . "')"); 
+                        $method = ($db_driver  == 'DB') ? 'getOne' : 'queryOne';
+                        $pgsql_key = $DB->$method("SELECT currval('".$seq . "')"); 
+
 
                         if (PEAR::isError($pgsql_key)) {
                             $this->raiseError($r);
@@ -2035,7 +2037,7 @@ class DB_DataObject extends DB_DataObject_Overload
         // technically postgres native here...
         // we need to get the new improved tabledata sorted out first.
         
-        if (    in_array($dbtype , array( 'mysql', 'mysqli', 'mssql', 'ifx')) && 
+        if (    in_array($dbtype , array('psql', 'mysql', 'mysqli', 'mssql', 'ifx')) && 
                 ($table[$usekey] & DB_DATAOBJECT_INT) && 
                 isset($realkeys[$usekey]) && ($realkeys[$usekey] == 'N')
                 ) {
