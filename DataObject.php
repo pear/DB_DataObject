@@ -1495,10 +1495,11 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         
         $t = clone($this);
+        $items   = $t->table();
         
         $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
         
-        $items   = $t->table();
+        
         if (!isset($t->_query)) {
             $this->raiseError(
                 "You cannot do run count after you have run fetch()", 
