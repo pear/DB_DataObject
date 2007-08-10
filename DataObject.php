@@ -2230,9 +2230,9 @@ class DB_DataObject extends DB_DataObject_Overload
             $db_options = PEAR::getStaticProperty('DB','options');
             require_once 'DB.php';
             if ($db_options) {
-                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn,$db_options);
+                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = &DB::connect($dsn,$db_options);
             } else {
-                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = DB::connect($dsn);
+                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = &DB::connect($dsn);
             }
             
         } else {
@@ -2240,7 +2240,10 @@ class DB_DataObject extends DB_DataObject_Overload
             require_once 'MDB2.php';
             // this allows the setings of compatibility on MDB2 
             $db_options = PEAR::getStaticProperty('MDB2','options');
-            $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = MDB2::connect($dsn,$db_options);
+            $db_options = is_array($db_options) ? $db_options : array();
+            $db_options['portability'] = isset($db_options['portability'] )
+                ? $db_options['portability']  : MDB2_PORTABILITY_ALL ^ MDB2_PORTABILITY_FIX_CASE;
+            $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5] = &MDB2::connect($dsn,$db_options);
             
         }
         
