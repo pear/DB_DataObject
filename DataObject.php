@@ -1058,7 +1058,7 @@ class DB_DataObject extends DB_DataObject_Overload
                         $method = ($db_driver  == 'DB') ? 'getOne' : 'queryOne';
                         $mssql_key = $DB->$method("SELECT @@IDENTITY");
                         if (PEAR::isError($mssql_key)) {
-                            $this->raiseError($r);
+                            $this->raiseError($mssql_key);
                             return false;
                         }
                         $this->$key = $mssql_key;
@@ -1073,7 +1073,7 @@ class DB_DataObject extends DB_DataObject_Overload
 
 
                         if (PEAR::isError($pgsql_key)) {
-                            $this->raiseError($r);
+                            $this->raiseError($pgsql_key);
                             return false;
                         }
                         $this->$key = $pgsql_key;
