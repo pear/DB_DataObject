@@ -1068,6 +1068,7 @@ class DB_DataObject extends DB_DataObject_Overload
                         if (!$seq) {
                             $seq = $DB->getSequenceName(strtolower($this->__table));
                         }
+                        $db_driver = empty($options['db_driver']) ? 'DB' : $options['db_driver'];
                         $method = ($db_driver  == 'DB') ? 'getOne' : 'queryOne';
                         $pgsql_key = $DB->$method("SELECT currval('".$seq . "')"); 
 
