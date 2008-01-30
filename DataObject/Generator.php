@@ -467,7 +467,7 @@ class DB_DataObject_Generator extends DB_DataObject
     function _generateDefinitionsTable()
     {
         global $_DB_DATAOBJECT;
-        
+        $options = PEAR::getStaticProperty('DB_DataObject','options');
         $defs = $this->_definitions[$this->table];
         $this->_newConfig .= "\n[{$this->table}]\n";
         $keys_out =  "\n[{$this->table}__keys]\n";
@@ -653,7 +653,9 @@ class DB_DataObject_Generator extends DB_DataObject
             // only use primary key or nextval(), cause the setFrom blocks you setting all key items...
             // if no keys exist fall back to using unique
             //echo "\n{$t->name} => {$t->flags}\n";
-            if (preg_match("/(auto_increment|nextval\()/i",rawurldecode($t->flags)) 
+            $secondary_key_match = isset($options['generator_secondary_key_match']) ? $options['generator_secondary_key_match'] : 'primary|unique';
+            
+            if (preg_match('/(auto_increment|nextval\()/i',rawurldecode($t->flags)) 
                 || (isset($t->autoincrement) && ($t->autoincrement === true))) {
                     
                 // native sequences = 2
@@ -662,7 +664,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 }
                 $ret_keys_primary[$t->name] = 'N';
             
-            } else if (preg_match("/(primary|unique)/i",$t->flags)) {
+            } else if ($secondary_key_match && preg_match('/('.$secondary_key_match.')/i',$t->flags)) {
                 // keys.. = 1
                 $key_type = 'K';
                 if (!preg_match("/(primary)/i",$t->flags)) {
