@@ -591,8 +591,10 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function whereAdd($cond = false, $logic = 'AND')
     {
-        
-        if ($this->_query === false) {
+        // for PHP5.2.3 - there is a bug with setting array properties of an object.
+        $_query = $this->_query;
+         
+        if (!isset($this->_query) || ($_query === false)) {
             return $this->raiseError(
                 "You cannot do two queries on the same object (clone it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
@@ -600,19 +602,22 @@ class DB_DataObject extends DB_DataObject_Overload
         
         if ($cond === false) {
             $r = $this->_query['condition'];
-            $this->_query['condition'] = '';
+            $_query['condition'] = '';
+            $this->_query = $_query;
             return preg_replace('/^\s+WHERE\s+/','',$r);
         }
         // check input...= 0 or '   ' == error!
         if (!trim($cond)) {
             return $this->raiseError("WhereAdd: No Valid Arguments", DB_DATAOBJECT_ERROR_INVALIDARGS);
         }
-        $r = $this->_query['condition'];
-        if ($this->_query['condition']) {
-            $this->_query['condition'] .= " {$logic} ( {$cond} )";
+        $r = $_query['condition'];
+        if ($_query['condition']) {
+            $_query['condition'] .= " {$logic} ( {$cond} )";
+            $this->_query = $_query;
             return $r;
         }
-        $this->_query['condition'] = " WHERE ( {$cond} ) ";
+        $_query['condition'] = " WHERE ( {$cond} ) ";
+        $this->_query = $_query;
         return $r;
     }
 
