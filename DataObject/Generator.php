@@ -1002,7 +1002,7 @@ class DB_DataObject_Generator extends DB_DataObject
 
         $class_rewrite = 'DB_DataObject';
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
-        if (!($class_rewrite = @$options['generator_class_rewrite'])) {
+        if (empty($options['generator_class_rewrite']) || !($class_rewrite = $options['generator_class_rewrite'])) {
             $class_rewrite = 'DB_DataObject';
         }
         if ($class_rewrite == 'ANY') {
@@ -1010,7 +1010,7 @@ class DB_DataObject_Generator extends DB_DataObject
         }
 
         $input = preg_replace(
-            '/(\n|\r\n)class\s*[a-z0-9_]+\s*extends\s*' .$class_rewrite . '\s*\{(\n|\r\n)/si',
+            '/(\n|\r\n)class\s*[a-z0-9_]+\s*extends\s*' .$class_rewrite . '\s*(\n|\r\n)\{(\n|\r\n)/si',
             "\nclass {$this->classname} extends {$this->_extends} \n{\n",
             $input);
 
