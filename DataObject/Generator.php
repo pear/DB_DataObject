@@ -594,14 +594,18 @@ class DB_DataObject_Generator extends DB_DataObject
                         DB_DATAOBJECT_STR + DB_DATAOBJECT_DATE + DB_DATAOBJECT_TIME;
                     break;    
                     
-                    
-                case 'TINYBLOB':
+                
                 case 'BLOB':       /// these should really be ignored!!!???
+                case 'TINYBLOB':
                 case 'MEDIUMBLOB':
                 case 'LONGBLOB':
+                
+                case 'CLOB': // oracle character lob support
+                
                 case 'BYTEA':   // postgres blob support..
                     $type = DB_DATAOBJECT_STR + DB_DATAOBJECT_BLOB;
                     break;
+                    
                 default:     
                     echo "*****************************************************************\n".
                          "**               WARNING UNKNOWN TYPE                          **\n".
