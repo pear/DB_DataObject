@@ -193,7 +193,11 @@ class DB_DataObject_Generator extends DB_DataObject
             /**
              * set portability and some modules to fetch the informations
              */
-            $__DB->setOption('portability', MDB2_PORTABILITY_ALL ^ MDB2_PORTABILITY_FIX_CASE);
+            $db_options = PEAR::getStaticProperty('MDB2','options');
+            if (empty($db_options)) {
+                $__DB->setOption('portability', MDB2_PORTABILITY_ALL ^ MDB2_PORTABILITY_FIX_CASE);
+            }
+            
             $__DB->loadModule('Manager');
             $__DB->loadModule('Reverse');
         }
