@@ -1369,7 +1369,13 @@ class DB_DataObject extends DB_DataObject_Overload
         if (($this->_query !== false) && $this->_query['condition']) {
         
             $table = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
-            $sql = "DELETE FROM {$table} {$this->_query['condition']}{$extra_cond}";
+            $sql = "DELETE ";
+            // using a joined delete. - with useWhere..
+            $sql .= (!empty($this->_join) && $useWhere) ? 
+                "{$table} FROM {$table} {$this->_join} " : 
+                "FROM {$table} ";
+                
+            $sql .= $this->_query['condition']. $extra_cond;
             
             // add limit..
             
