@@ -269,12 +269,7 @@ class DB_DataObject_Generator extends DB_DataObject
             } else {
                 $defs =  $__DB->reverse->tableInfo($quotedTable);
                 // rename the length value, so it matches db's return.
-                foreach ($defs as $k => $v) {
-                    if (!isset($defs[$k]['length'])) {
-                        continue;
-                    }
-                    $defs[$k]['len'] = $defs[$k]['length'];
-                }
+                
             }
 
             if (is_a($defs,'PEAR_Error')) {
@@ -290,7 +285,10 @@ class DB_DataObject_Generator extends DB_DataObject
                 if (!is_array($def)) {
                     continue;
                 }
-
+                // rename the length value, so it matches db's return.
+                if (isset($def['length']) && !isset($def['len'])) {
+                    $def['len'] = $dev['length'];
+                }
                 $this->_definitions[$table][] = (object) $def;
 
             }
