@@ -1527,15 +1527,15 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         $keys = $this->keys();
 
-        if (!$keys[0] && !is_string($countWhat)) {
+        if (empty($keys[0]) && (!is_string($countWhat) || (strtoupper($countWhat) == 'DISTINCT'))) {
             $this->raiseError(
-                "You cannot do run count without keys - use \$do->keys('id');", 
+                "You cannot do run count without keys - use \$do->count('id'), or use \$do->count('distinct id')';", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS,PEAR_ERROR_DIE);
             return false;
             
         }
         $table   = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table);
-        $key_col = ($quoteIdentifiers ? $DB->quoteIdentifier($keys[0]) : $keys[0]);
+        $key_col = empty($keys[0]) ? '' : (($quoteIdentifiers ? $DB->quoteIdentifier($keys[0]) : $keys[0]));
         $as      = ($quoteIdentifiers ? $DB->quoteIdentifier('DATAOBJECT_NUM') : 'DATAOBJECT_NUM');
         
         // support distinct on default keys.
@@ -2216,18 +2216,6 @@ class DB_DataObject extends DB_DataObject_Overload
                 $this->debug("USING CACHED CONNECTION", "CONNECT",3);
             }
             
-            // if database do not match..
-            if (!empty($this->_database) && 
-                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['database'] != $this->_database) {
-                    
-                   
-                return $this->raiseError(
-                    "Database name of did  not match requested Database
-                    (probably missing setting   database_{$this->_database}) " . 
-                     $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['database'] .
-                     "!= " . $this->_database
-                    , 0, PEAR_ERROR_DIE );   
-           }
             
             
             if (!$this->_database) {
@@ -2290,17 +2278,7 @@ class DB_DataObject extends DB_DataObject_Overload
             );
 
         }
-        if (!empty($this->_database) && 
-                $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['database'] != $this->_database) {
-                    
-                   
-                return $this->raiseError(
-                    "Database name of did  not match requested Database
-                    (probably missing setting   database_{$this->_database}) " . 
-                     $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['database'] .
-                     "!= " . $this->_database
-                    , 0, PEAR_ERROR_DIE );   
-        }
+         
         if (empty($this->_database)) {
             $hasGetDatabase = method_exists($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5], 'getDatabase');
             
@@ -2604,12 +2582,18 @@ class DB_DataObject extends DB_DataObject_Overload
             list($database,$table) = explode('.',$table, 2);
           
         }
-        
-        
-        
+         
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
+        // no configuration available for database
+        if (!empty($database) && empty($_DB_DATAOBJECT['CONFIG']['database_'.$database])) {
+                return $this->raiseError(
+                    "unable to find database_{$database} in Configuration, It is required for factory with database"  
+                    , 0, PEAR_ERROR_DIE );   
+       }
+        
+       
         
         if ($table === '') {
             if (is_a($this,'DB_DataObject') && strlen($this->__table)) {
