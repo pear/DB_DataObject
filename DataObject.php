@@ -3489,7 +3489,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            if (empty($from[$k]) && $skipEmpty) {
+            if (empty($from[sprintf($format,$k)]) && $skipEmpty) {
                 continue;
             }
             
