@@ -15,7 +15,7 @@
  * @category   Database
  * @package    DB_DataObject
  * @author     Alan Knowles <alan@akbkhome.com>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2008 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/DB_DataObject
@@ -391,7 +391,10 @@ class DB_DataObject_Cast {
                 // this is funny - the parameter order is reversed ;)
                 return "'".mysqli_real_escape_string($db->connection, $this->value)."'";
              
-            
+            case 'sqlite':
+                // this is funny - the parameter order is reversed ;)
+                return "'".sqlite_escape_string($this->value)."'";
+           
                  
             default:
                 return PEAR::raiseError("DB_DataObject_Cast cant handle blobs for Database:{$db->dsn['phptype']} Yet");
