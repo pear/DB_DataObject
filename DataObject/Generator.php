@@ -1193,7 +1193,7 @@ class DB_DataObject_Generator extends DB_DataObject
             $__DB->loadModule('Manager');
             $__DB->loadModule('Reverse');
         }
-        $quotedTable = !empty($options['quote_identifiers']) ? 
+        $quotedTable = !empty($options['quote_identifiers_tableinfo']) ? 
                 $__DB->quoteIdentifier($table) : $table;
           
         if (!$is_MDB2) {
