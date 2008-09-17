@@ -1339,7 +1339,7 @@ class DB_DataObject extends DB_DataObject_Overload
      *             build the condition only using the object parameters.
      *
      * @access public
-     * @return mixed True on success, false on failure, 0 on no data affected
+     * @return mixed Int (No. of rows affected) on success, false on failure, 0 on no data affected
      */
     function delete($useWhere = false)
     {
