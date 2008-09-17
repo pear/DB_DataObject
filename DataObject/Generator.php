@@ -393,7 +393,10 @@ class DB_DataObject_Generator extends DB_DataObject
         $fk = array();
 
         foreach($this->tables as $this->table) {
-            $res =& $DB->query('SHOW CREATE TABLE ' . $this->table);
+            $quotedTable = !empty($options['quote_identifiers_tableinfo']) ?  $DB->quoteIdentifier($table)  : $this->table;
+            
+            $res =& $DB->query('SHOW CREATE TABLE ' . $quotedTable );
+
             if (PEAR::isError($res)) {
                 die($res->getMessage());
             }
