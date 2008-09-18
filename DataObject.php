@@ -2050,7 +2050,7 @@ class DB_DataObject extends DB_DataObject_Overload
         // technically postgres native here...
         // we need to get the new improved tabledata sorted out first.
         
-        if (    in_array($dbtype , array('psql', 'mysql', 'mysqli', 'mssql', 'ifx')) && 
+        if (    in_array($dbtype , array('pgsql', 'mysql', 'mysqli', 'mssql', 'ifx')) && 
                 ($table[$usekey] & DB_DATAOBJECT_INT) && 
                 isset($realkeys[$usekey]) && ($realkeys[$usekey] == 'N')
                 ) {
