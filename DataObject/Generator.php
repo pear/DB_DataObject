@@ -287,7 +287,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 }
                 // rename the length value, so it matches db's return.
                 if (isset($def['length']) && !isset($def['len'])) {
-                    $def['len'] = $dev['length'];
+                    $def['len'] = $def['length'];
                 }
                 $this->_definitions[$table][] = (object) $def;
 
@@ -879,10 +879,13 @@ class DB_DataObject_Generator extends DB_DataObject
         // then we should add var $_database = here
         // as database names may not always match.. 
         
+        if (empty($GLOBALS['_DB_DATAOBJECT']['CONFIG'])) {
+            DB_DataObject::_loadConfig();
+        }
+
+         // Only include the $_database property if the omit_database_var is unset or false
         
-            
-        
-        if (isset($options["database_{$this->_database}"])) {
+        if (isset($options["database_{$this->_database}"]) && empty($GLOBALS['_DB_DATAOBJECT']['CONFIG']['generator_omit_database_var'])) {
             $body .= "    {$var} \$_database = '{$this->_database}';  {$p}// database name (used with database_{*} config)\n";
         }
         
@@ -915,9 +918,10 @@ class DB_DataObject_Generator extends DB_DataObject
             $padding = (30 - strlen($t->name));
             if ($padding < 2) $padding =2;
             $p =  str_repeat(' ',$padding) ;
-           
-            $body .="    {$var} \${$t->name};  {$p}// {$t->type}({$t->len})  {$t->flags}\n";
-             
+            
+            $length = empty($t->len) ? '' : '('.$t->len.')';
+            $body .="    {$var} \${$t->name};  {$p}// {$t->type}$length  {$t->flags}\n";
+            
             // can not do set as PEAR::DB table info doesnt support it.
             //if (substr($t->Type,0,3) == "set")
             //    $sets[$t->Field] = "array".substr($t->Type,3);
