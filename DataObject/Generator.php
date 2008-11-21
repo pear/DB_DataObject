@@ -556,6 +556,9 @@ class DB_DataObject_Generator extends DB_DataObject
                 
                 case 'ENUM':
                 case 'SET':         // not really but oh well
+                
+                case 'POINT':       // mysql geometry stuff - not really string - but will do..
+                
                 case 'TIMESTAMPTZ': // postgres
                 case 'BPCHAR':      // postgres
                 case 'INTERVAL':    // postgres (eg. '12 days')
