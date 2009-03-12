@@ -1,1775 +1,3372 @@
+2008-11-21 19:01  alan_k
 
-2007-07-09 Monday  alan_k
+	* DataObject/Generator.php: fix bug #15066 - limited support for
+	  POINT (at least generator creates something)
 
-	* fix bug #11528 - sending like queries to escape does not escape %
-	and _ - additional parameter likeEscape is optional and can be used
-	to force escaping of these characters
+2008-11-10 11:24  alan_k
 
-2007-04-04 Wednesday  alan_k
+	* DataObject/Generator.php, docs/example.ini: fix bug #14976 - add
+	  option generator_omit_database_var to prevent creation of
+	  $database lines (Troy Anderson)
 
-	* fix bug #10573 - fix permissions on generated files
-	* fix bug #10573 - write Generated files to temp directory, then
-	rename into place. - fixing locking issues
-	* fix bug #10531 - correct fix for bug #9628
+2008-09-18 08:44  alan_k
 
-2007-03-24 Saturday  alan_k
+	* DataObject.php: fix bug #13995 - incorrect test in sequence key
+	  for postgres
 
-	* fix bug #10454 - mssql uses wrong variable name for options.
+2008-09-18 07:49  alan_k
 
-2007-03-06 Tuesday  alan_k
+	* DataObject.php: fix bug #14252 - doc comments on delete()
+	  corrected to say return value is no. of rows affected on success
 
-	* feature request #2216 - JOIN ON conversion of Where condition
-	into ON arguments - patch by David Sanders
+2008-09-18 07:42  alan_k
 
-2007-02-26 Monday  alan_k
+	* DataObject/Generator.php: fix bug #13394 - foreign key generator
+	  missing quote identifiers tableinfo
 
-	* fix bug #10175 - MDB2 does not return length value AFAIK
-	* fix bug #10112 - quote_identifiers honoured by getTableInfo in
-	generator
+2008-08-14 11:46  alan_k
 
-2007-02-21 Wednesday  alan_k
+	* DataObject/Generator.php: ensure that tableinfo uses
+	  quote_identifiers_tableinfo
 
-	* more fixes for bug #4266 - joins with multiple keys
+2008-08-04 11:44  alan_k
 
-2007-01-16 Tuesday  alan_k
+	* DataObject/Cast.php: add sqlite support to Cast blobs
 
-	* fix bug #9573 - enable disable_null_strings to turn of "null"->
-	NULL replacements
-	* fix bug #9625 - MDB2 support for MSSQL sequencies
-	* partial fix bug #9644 - incorrect constant in foriegn key
-	generation. - code still needs debugging though
-	* fix bug #9628 - support MDB2 for defaults()
-	* Fix Bug #9839 - Invalid column names can not be supported, so
-	warning is generated
-	* fix bug #9834 - SQL2003 standards on Joins - adds brackets around
-	ON() - hopefully this doesnt break anything!
+2008-07-09 16:57  alan_k
 
-2007-01-15 Monday  alan_k
+	* DataObject.php: old skipEmpty check broke formating on setFrom
 
-	* add in docbook hooks to generator - as requested/coded by
-	Vyacheslav Iutin
+2008-07-05 12:07  alan_k
 
-2007-01-09 Tuesday  alan_k
+	* DataObject.php:  remove previous checks on database dsn lookup -
+	  move it to factory. \n Fix count check for no keys. - By Jeffrey
+	  Pfau
 
-	* minor fix to appendJoin code (ref: bug #4266)
-	* fix bug #9755 - generator showed php error if connection failed
+2008-06-25 14:00  alan_k
 
-2007-01-04 Thursday  alan_k
+	* DataObject.php: Add multidatabase factory() support - eg.
+	  DB_DataObject::factory("mydatabase.mytable");  \n- Added checks
+	  to ensure that database names match requested ones.
 
-	* fix bug #9730 - quote identifiers on composite joins
+2008-04-29 10:44  alan_k
 
-2006-12-15 Friday  alan_k
+	* DataObject.php: fix bug #13773 - delete(true) honours join
+	  conditions
 
-	* update package.xml and Changelog
+2008-04-29 10:27  alan_k
 
-2006-12-05 Tuesday  alan_k
+	* DataObject/Generator.php: fix bug #13788 - test for error before
+	  re-writing definition table for MDB2	in Generator
 
-	* fix bug #3152 -  joinAdd requires join column to be in links.ini
-	file
+2008-04-29 10:22  alan_k
 
-2006-11-11 Saturday  alan_k
+	* DataObject/Generator.php: fix bug #13789 - honour user specified
+	  MDB2 options in Generator
 
-	* Feature Request #4266 - Allow joins with multiple keys
+2008-04-29 10:18  alan_k
 
-2006-10-16 Monday  alan_k
+	* DataObject/Generator.php: fix bug #13790 - support CLOB oracle
+	  type in Generator
 
-	* fix bug #8736 - auto_increment check for MDB2 backend
-	* fix bug #8876 - call free after count - hopefully this will not
-	break anything!
-	* fix bug #3773 - change last_value to currval - need to confirm
-	this is the correct fix.
-	* fix bug #8628 - tableInfo fix for MDB2
-	* fix bug #7792 - add integer[] and boolean[] support
-	* dont flush on html output
+2008-01-30 21:11  alan_k
 
-2006-07-26 Wednesday  alan_k
+	* DataObject/Generator.php, docs/example.ini: fix bug #12993 - add
+	  new option generator_secondary_key_match - set to false, to
+	  disable key matching for secondary key types
 
-	* links.ini code generation based on schema (mysql[i] only) -
-	option:generate_links=true - thanks to Pacal Schoni
-	* add warning about unknown types.
+2008-01-30 10:29  alan_k
 
-2006-07-18 Tuesday  alan_k
+	* DataObject/Generator.php: fix bug #12556 - pregmatch appears
+	  broken for replacing class name on updating files
 
-	* only prefix database name, when the two objects are of different
-	databases
+2008-01-30 10:20  alan_k
 
-2006-06-26 Monday  alan_k
+	* DataObject/Generator.php, docs/example.ini: fix bug #10112 -
+	  additional config option quote_identifiers_tableinfo for use with
+	  tableinfo on generator
 
-	* oops whitespace fixes
-	* nicer error message for !isreadable - thx to Euan Maxwell
+2008-01-30 10:14  alan_k
 
-2006-05-23 Tuesday  alan_k
+	* DataObject.php: fix bug #11773 - problems with
+	  object->array[prop] setting on PHP5.2.3
 
-	* fix bug #7702 - memory leaks on getLinks() , free() is called
-	within	getLinks(), - you still need to call free() after doing a
-	getLink() - as I suspect automagically doing that would cause
-	problems..
-	* test for  bug #7114 = generator of sequence keys and defaults
-	using generator_no_ini
-	* fix bug #7114 = generator of sequence keys and defaults using
-	generator_no_ini
-	* use class exists loader, so that relative test relative paths in
-	tests work, (also means that autoload may work...)
-	* adding tests for bug6953 which appears to work.
-	* remove pass by reference - why on earth that was there in the
-	first place is totally beyond me...
-	* fix bug #7409 - ibase support for filename based database names -
-	not sure if this works, but will ask reporter to test it..
+2008-01-09 15:18  alan_k
 
-2006-04-12 Wednesday  alan_k
+	* DataObject.php: fix bug #12858 - MDB2 and postgres missing
+	  db_driver variable
 
-	* give derivedHookFunctions the ability to use the original input
-	data
+2007-08-10 12:48  alan_k
 
-2006-04-10 Monday  alan_k
+	* DataObject.php: fig bug #9902 - default portability options for
+	  MDB2 to not fix case.
 
-	* Fix bug #7353 - postgres incorrect testing of t/f for booleans
+2007-08-10 11:59  alan_k
 
-2006-03-30 Thursday  alan_k
+	* DataObject/Generator.php: fix bug #9658 - postgres DECIMAL using
+	  DB backend incorrectly flagged as unknown - changed warning to
+	  suggest using MDB2
 
-	* add methods getClassNameFromTableName(),
-	getFileNameFromTableName(), getMethodNameFromColumnName(), which
-	allow you to set up your own mapping system by overriding them in
-	your extended generator.. it however needs some support in
-	dataobjects so currently flagged as EXPERIMENTAL
+2007-08-10 11:48  alan_k
 
-2006-03-06 Monday  alan_k
+	* DataObject.php: fix bug #11091 - count attempted to read quote
+	  identifiers before config was loaded
 
-	* add not about new config option
-	* prep for another release
-	* fix bug #7006 - removing databaseStructure from links, broke it
-	as no database connection is created
-	* fix bug #7012 - eak checking wrong variable to before prefixing
-	database name
+2007-08-10 11:45  alan_k
 
-2006-03-03 Friday  alan_k
+	* DataObject.php: fix bug #11804 - insert with postgres/msql return
+	  wrong error message
 
-	* add limited support for generating defaults() to return an array
-	of default values, for use with $obj->setFrom($defaults);
-	* prep for release
+2007-08-10 11:42  alan_k
 
-2006-03-02 Thursday  alan_k
+	* DataObject.php: fix bug #9364 - postgres native sequences with
+	  MDB
 
-	* quote identifiers for format in selectAs() - patch by Marco
-	Kaiser
+2007-08-08 11:40  alan_k
 
-2006-03-01 Wednesday  alan_k
+	* DataObject.php: fix bug #11775 - unsetting of $this->_query
+	  causes overload setters/getters to handle later uses of _query
+	  and break due to lack of array accessor support
 
-	* fix bug #6928 - default to prefixing database name for mysql and
-	mysqli when doing joins, (also typo fixes from last commit, and
-	bump copyright year)
-	* fix bug #6953 - Overzealous memory cleaning broke toArray() on
-	joins, when fetching last row
-	* pretty printing of sql, moving links loading code into links() -
-	so that databaseSchema should not be called if we have defined
-	tables(), sequenceKeys() and keys()
+2007-07-19 12:00  alan_k
 
-2006-02-14 Tuesday  alan_k
+	* DataObject/Generator.php: fix bug #11634 - Windows fails to
+	  rename files if they exist - affecting Generator  (try and fix it
+	  so unix is still atomic)
 
-	* fix bug #6772 - FLOAT4 support for postgres (thanks to Dmitry
-	Poltaryonok)
+2007-07-19 11:20  alan_k
 
-2006-02-13 Monday  alan_k
+	* DataObject/Generator.php: fix bug #11634 - Windows fails to
+	  rename files if they exist - affecting Generator
 
-	* WS
-	* add sequencekey generation to generator.
-	* add documentation for the generator_no_ini option
-	* add support for generator_no_ini, for embedding table definitions
-	into class methods. based on suggestion by Didler Galland and
-	Justin Patrin
+2007-07-12 11:04  alan_k
 
-2006-01-24 Tuesday  bate
+	* package2.xml: update package2 - for release
 
-	* tab to space fix
-	* fixed undefined constant notice with mdb2 driver
+2007-07-12 10:57  alan_k
 
-2006-01-23 Monday  alan_k
+	* DataObject/Generator.php: fix bug #11586 - missing default value
+	  for class_prefix caused warning
 
-	* remove warning if class_prefix is not set. - this appears to work
-	as well...
-	* join add support for DB_DataObject::cast() objects (Daniel Braga)
+2007-07-12 10:53  alan_k
 
-2006-01-21 Saturday  alan_k
+	* DataObject/Generator.php: fix bug #11584 - typo in
+	  generateDefinitions
 
-	* prep for release
-	* fix bug #6543 - Generator broke due to MDB changes.
+2007-07-10 12:45  alan_k
 
-2006-01-20 Friday  alan_k
+	* ChangeLog, package2.xml: update package.xml and changelog
 
-	* prep for release
+2007-07-10 12:35  alan_k
 
-2006-01-18 Wednesday  alan_k
+	* DataObject/Generator.php: fix bug #11483 - show an error if pcre
+	  limits are not correctly set and generator tries to generate
+	  empty files
 
-	* fix bug if setFrom called with object.. - skipempty checkin the
-	wrong place...
+2007-07-09 16:55  alan_k
 
-2006-01-13 Friday  alan_k
+	* DataObject.php: fix bug #11528 - sending like queries to escape
+	  does not escape % and _ - additional parameter likeEscape is
+	  optional and can be used to force escaping of these characters
 
-	* make createTables honour debug level in ini file.
+2007-04-04 14:05  alan_k
 
-2006-01-11 Wednesday  alan_k
+	* DataObject/Generator.php: fix bug #10573 - fix permissions on
+	  generated files
 
-	* fix bug #6153 - dont call autoload on PHP5 - kludgy wrapper
-	around class_exists()
-	* fix bug #6458 - clear staticGet cache when calling free()
-	* fixing wrong tab style
+2007-04-04 14:00  alan_k
 
-2006-01-10 Tuesday  bate
+	* DataObject/Generator.php: fix bug #10573 - write Generated files
+	  to temp directory, then rename into place. - fixing locking
+	  issues
 
-	* - fixed generator bug if you use mdb2 as driver
-	
-	its now possible to use MDB2 to generate the class files
+2007-03-28 12:38  alan_k
 
-2006-01-09 Monday  alan_k
+	* DataObject/Generator.php: fix bug #10531 - correct fix for bug
+	  #9628
 
-	* fix bug #6442 - validation not working correctly on
-	DB_DataObject_Cast Objects
+2007-03-24 08:57  alan_k
 
-2005-12-28 Wednesday  alan_k
+	* DataObject.php: fix bug #10454 - mssql uses wrong variable name
+	  for options.
 
-	* prep for a big release
-	* use correct variable name?
+2007-03-06 10:33  alan_k
 
-2005-12-22 Thursday  alan_k
+	* DataObject.php: feature request #2216 - JOIN ON conversion of
+	  Where condition into ON arguments - patch by David Sanders
 
-	* oops bug in previous commit
-	* fix #4919 - code for check/skip empty dissappeared from setFrom.
-	* possible fix for bug #6247 - free resultset after last fetch
-	* fix bug #6313 - mdb2 compatibility
-	* fix bug #6320 - leaking memory on fetching with no results. - not
-	sure if this will create more bugs.., but looks like it should be
-	ok
+2007-02-26 10:17  alan_k
 
-2005-11-28 Monday  alan_k
+	* DataObject/Generator.php: fix bug #10175 - MDB2 does not return
+	  length value AFAIK
 
-	* fix null detection on postgres, - patch by Alistair MacDonald
+2007-02-26 10:14  alan_k
 
-2005-11-16 Wednesday  alan_k
+	* DataObject/Generator.php: fix bug #10112 - quote_identifiers
+	  honoured by getTableInfo in generator
 
-	* fix bug #5393 - flag up unique only keys as "U", rather than "K"
-	(or "N" for native) to allow anything calling keys() to find more
-	detailed information - should have no effect on the dataobject
-	class, as only sequence keys looks for "K"
-	* test for bug #5931 added to test 91
-	* update($dataobject), change check for changes to strict checking,
-	so that 0001 -> 00001 works, along with many other situations..,
-	remove extra ; from code
+2007-02-21 09:40  alan_k
 
-2005-11-10 Thursday  alan_k
+	* DataObject.php: more fixes for bug #4266 - joins with multiple
+	  keys
 
-	* make debugging schema loading errors a bit easier
+2007-01-16 11:23  alan_k
 
-2005-11-09 Wednesday  alan_k
+	* DataObject.php, docs/example.ini: fix bug #9573 - enable
+	  disable_null_strings to turn of "null"-> NULL replacements
 
-	* fix PHP4.4* issues with returning by reference..
+2007-01-16 11:12  alan_k
 
-2005-11-07 Monday  alan_k
+	* DataObject.php: fix bug #9625 - MDB2 support for MSSQL sequencies
 
-	* fix bug #5881 - wrap conditions with brackets - This may break
-	things.. but is worth trying to see if it works
-	* fix bug #5818 - using null on a valid column should skip
-	remaining checks in validate
-	* fix bug #5817 - validating on DB_DataObject_Cast objects - now
-	skipped.
+2007-01-16 11:08  alan_k
 
-2005-10-28 Friday  alan_k
+	* DataObject/Generator.php: partial fix bug #9644 - incorrect
+	  constant in foriegn key generation. - code still needs debugging
+	  though
 
-	* fix bug #5800 - continue creating other tables if we find one
-	that fails...
+2007-01-16 11:05  alan_k
 
-2005-10-25 Tuesday  alan_k
+	* DataObject/Generator.php: fix bug #9628 - support MDB2 for
+	  defaults()
 
-	* fix bug #5065 - count returns number cast to an integer (even
-	though database may return a string)
+2007-01-16 10:56  alan_k
 
-2005-10-12 Wednesday  alan_k
+	* DataObject/: Generator.php: Fix Bug #9839 - Invalid column names
+	  can not be supported, so warning is generated
 
-	* fix typo in last commit
-	* fix bug #5656 - Correctly return this->$col, rather than the
-	type..
-	* fix bug #5155 - MDB2 support in _connect broken
-	* fix bug #5604 - Double Precision support for firebird database
-	* fix bug #5656 - wrong constant used in toValue() for boolean
+2007-01-16 10:49  alan_k
 
-2005-10-11 Tuesday  alan_k
+	* DataObject.php: fix bug #9834 - SQL2003 standards on Joins - adds
+	  brackets around ON() - hopefully this doesnt break anything!
 
-	* fix bug #5614 - joinAdd check to see if object being joined is
-	really a dataobject
-	* use is_a, rather than PEAR, as one day we may remove that dep...
-	* fix bug #5650 - Factory() Proxy Connect failing returns
-	PEAR_Error
+2007-01-15 15:39  alan_k
 
-2005-10-08 Saturday  alan_k
+	* DataObject/Generator.php: add in docbook hooks to generator - as
+	  requested/coded by Vyacheslav Iutin
 
-	* the dont die here causes a recursive error and segfaults
-	everything if it doesnt return..
+2007-01-09 12:46  alan_k
 
-2005-10-04 Tuesday  alan_k
+	* DataObject.php: minor fix to appendJoin code (ref: bug #4266)
 
-	* fix bug #5491 - prevent autoloading of generator in some failure
-	conditions
+2007-01-09 12:41  alan_k
 
-2005-09-18 Sunday  alan_k
+	* DataObject/Generator.php: fix bug #9755 - generator showed php
+	  error if connection failed
 
-	* small typo in list of databases that use AS
+2007-01-04 19:32  alan_k
 
-2005-09-17 Saturday  alan_k
+	* DataObject.php: fix bug #9730 - quote identifiers on composite
+	  joins
 
-	* fix bug #5416 - use tablea AS tableb only for postgress/mysql -
-	oracle doesnt need the AS bit - and I guess a few others too..
-	* fix bug #5435 - find(true) returns false if numRows is not
-	available and first fetch fails
-	* correct the dependancy
+2006-12-15 12:14  alan_k
 
-2005-09-16 Friday  alan_k
+	* ChangeLog, package.xml: update package.xml and Changelog
 
-	* fix bug #5264 - add optional dep on MDB
+2006-12-05 16:35  alan_k
 
-2005-09-07 Wednesday  alan_k
+	* DataObject.php: fix bug #3152 -  joinAdd requires join column to
+	  be in links.ini file
 
-	* catch errors returned from nextID - like permission denied etc.,
-	add warnings in debug mode if we are using objects  or arrays for
-	some reason, fix error messages
+2006-11-11 12:05  alan_k
 
-2005-09-03 Saturday  alan_k
+	* DataObject.php: Feature Request #4266 - Allow joins with multiple
+	  keys
 
-	* more debugging, make errors appear as red when debugging is
-	turned on. - make sure errors are logged before they are thrown.
+2006-10-16 10:20  alan_k
 
-2005-08-29 Monday  alan_k
+	* DataObject/Generator.php: fix bug #8736 - auto_increment check
+	  for MDB2 backend
 
-	* make WHERE stripping better  = well spotted Justin.
+2006-10-16 10:17  alan_k
 
-2005-08-26 Friday  alan_k
+	* DataObject.php: fix bug #8876 - call free after count - hopefully
+	  this will not break anything!
 
-	* whereAdd() correctly returns condition so it can be re-used, Im
-	amazed no one picked this up before..
+2006-10-16 10:10  alan_k
 
-2005-08-22 Monday  alan_k
+	* DataObject.php: fix bug #3773 - change last_value to currval -
+	  need to confirm this is the correct fix.
 
-	* fix bug #5036 - make sure DB is loaded before using it
+2006-09-25 16:14  alan_k
 
-2005-08-19 Friday  alan_k
+	* DataObject/Generator.php: fix bug #8628 - tableInfo fix for MDB2
 
-	* fix bug #5146 - feature request, option: generator_var_keyword,
-	to specify if you want to use var or public
+2006-09-04 10:56  alan_k
 
-2005-08-16 Tuesday  alan_k
+	* DataObject/Generator.php: fix bug #7792 - add integer[] and
+	  boolean[] support
 
-	* correct strpos testing..
-	* enhanced security on generation of classname.. - this is not the
-	default behaviour.. so it shouldnt really have affected anyone..
-	* fix bug #4968 - count() will not be affected by changing default
-	db fetchmode
+2006-09-04 10:53  alan_k
 
-2005-07-29 Friday  alan_k
+	* DataObject.php: dont flush on html output
 
-	* fix bug #4938 - support MONEY type for MSSQL
+2006-07-26 11:49  alan_k
 
-2005-07-25 Monday  alan_k
+	* DataObject/Generator.php, docs/example.ini: links.ini code
+	  generation based on schema (mysql[i] only) -
+	  option:generate_links=true - thanks to Pacal Schoni
 
-	* fix bug #4900 - support array type dsns
+2006-07-19 10:25  alan_k
 
-2005-07-23 Saturday  alan_k
+	* DataObject/Generator.php: add warning about unknown types.
 
-	* fix bug #4894 - Validate methods can return PEAR Errors, or even
-	messages now.. - only true indicates success
+2006-07-18 16:30  alan_k
 
-2005-07-21 Thursday  alan_k
+	* DataObject.php: only prefix database name, when the two objects
+	  are of different databases
 
-	* fix bug #4871 - remove warning when value is not found in table
-	* fix bug #4834 - case sensitive checks for db_dataobject_cast fail
+2006-06-26 09:01  alan_k
 
-2005-07-11 Monday  alan_k
+	* DataObject.php: oops whitespace fixes
 
-	* use correct function for fatal programming error
+2006-06-26 08:58  alan_k
 
-2005-07-07 Thursday  alan_k
+	* DataObject.php: nicer error message for !isreadable - thx to Euan
+	  Maxwell
 
-	* prep for release
-	* fix bug #4760 - blobs broke in last release
+2006-05-23 10:22  alan_k
 
-2005-07-06 Wednesday  alan_k
+	* DataObject.php: fix bug #7702 - memory leaks on getLinks() ,
+	  free() is called within  getLinks(), - you still need to call
+	  free() after doing a getLink() - as I suspect automagically doing
+	  that would cause problems..
 
-	* fix bug #4715 - countWhat broken - remove condition around
-	key_col setting
+2006-04-18 12:57  alan_k
 
-2005-06-25 Saturday  alan_k
+	* tests/bug7114.php: test for  bug #7114 = generator of sequence
+	  keys and defaults using generator_no_ini
 
-	* prep for release
-	* fix by #4672, query(COMMIT) relays return value from DB->commit()
-	* fix bug #4535, somedays you wonder what those ****s at postgres
-	where smoking when they came up with t/f for booleans
+2006-04-18 12:55  alan_k
 
-2005-06-16 Thursday  alan_k
+	* DataObject/Generator.php: fix bug #7114 = generator of sequence
+	  keys and defaults using generator_no_ini
 
-	* fix bug #4601 - wrong method used to test if file..
+2006-04-18 12:09  alan_k
 
-2005-06-04 Saturday  alan_k
+	* DataObject.php, DataObject/Generator.php: use class exists
+	  loader, so that relative test relative paths in tests work, (also
+	  means that autoload may work...)
 
-	* fix bug #4193 - sqlite names causing invalid .ini files
-	* fix bug #4518 - escape and transactions fixed for MDB backend
-	* oops php -l before commiting
-	* fix bug #4431 - add hideEmpty to toArray() - not sure if I really
-	like this.. - adding args to methods, the root of all evil ;)
-	* fix bug #4383 -  getListOf() call now expects pear errors
+2006-04-18 12:06  alan_k
 
-2005-05-19 Thursday  alan_k
+	* tests/: bug6953.php, testdb.php: adding tests for bug6953 which
+	  appears to work.
 
-	* fix the Cast Object properly.. - send the connection object to
-	the toString methods.
+2006-04-18 11:47  alan_k
 
-2005-05-04 Wednesday  alan_k
+	* DataObject.php: remove pass by reference - why on earth that was
+	  there in the first place is totally beyond me...
 
-	* revert debugging level to 1
-	* possibly nail bugs #4235 and #4203 - schema mess with postgres.
-	* experimental fix for postgres mess.. generator_strip_schema=1
-	will strip the schema part from the name of the table.
-	* fix bug #4168 - if connection test is sucessfull, dont try and
-	connect.. (performance improvement)
-	* fix bug #4040 - prevent toArray from calling getLink and getLinks
-	- bad choice of names...
-	* fix bug #4019 - createTables uses sets up options for DB
-	compatibility mode
-	* fix bug #4000 - better checking for php 4.3.10
-	* fix bug #3944 - support for informix autoincrements
-	* fix bug #4182 better string and blob support on mysql in cast
-	* fix bug #4135 - boolean values borked in condition building..
+2006-04-18 11:25  alan_k
 
-2005-04-08 Friday  alan_k
+	* DataObject.php: fix bug #7409 - ibase support for filename based
+	  database names - not sure if this works, but will ask reporter to
+	  test it..
 
-	* remove the usefull error message, and only make it availabe via
-	debugging
+2006-04-12 12:12  alan_k
 
-2005-04-07 Thursday  alan_k
+	* DataObject/Generator.php: give derivedHookFunctions the ability
+	  to use the original input data
 
-	* simplify configuration access
-	* that will teach me to copy and paste
-	* first effort at supporting MDB.. (thanks to Dan Rossi)
-	* update dependancies - try and reduce likelyhood of old versions
-	of DB being used..
-	* change fetch / ->N to be "true", rather than 1 when numRows is
-	not supported, (also document it on find())
-	* this fix is dirtier, but a little more dependable..
-	* some days you feel like strangling the idiot at postgress who
-	decided to make a wierd format for booleans
+2006-04-10 11:07  alan_k
 
-2005-03-23 Wednesday  alan_k
+	* DataObject.php: Fix bug #7353 - postgres incorrect testing of t/f
+	  for booleans
 
-	* oops - admit to owning this mess..
-	* change headers to new standard.
-	* prep for release
-	* allow mysql to support blob writing (theoretically)..
-	* fix byg #3924 - remove quote() usage and replace with cast'ed
-	quoteSmart()
+2006-03-30 11:12  alan_k
 
-2005-03-22 Tuesday  alan_k
+	* DataObject/Generator.php: add methods
+	  getClassNameFromTableName(), getFileNameFromTableName(),
+	  getMethodNameFromColumnName(), which allow you to set up your own
+	  mapping system by overriding them in your extended generator.. it
+	  however needs some support in dataobjects so currently flagged as
+	  EXPERIMENTAL
 
-	* prep for release
-	* fix null and not null cast usage, fix distinct test
+2006-03-06 09:47  alan_k
 
-2005-03-16 Wednesday  alan_k
+	* docs/example.ini: add not about new config option
 
-	* attempt to fix bug #3767 - postgres with schema tables
-	* prep for anothe release
-	* fix bug #3829 yet again...
-	* fix bug #3829 this damn cross database query stuff is proving to
-	be a nightmare..
+2006-03-06 09:46  alan_k
 
-2005-03-12 Saturday  alan_k
+	* package.xml: prep for another release
 
-	* prep for second release in 1 day..
-	* boolean test code borked
-	* prep for release - with correct release no.
-	* prep for release
-	* fix bug #3764  PostgreSQL Boolean Doesnt Work (lets see how much
-	code that breaks!)
-	* keep everyone happy with disabling overload for the default
-	generator script bug #3763
-	* fix (or try again to) bug #3768  quoteIdentifier not used
-	correctly with database_prefix
-	* fix bug #3761 - messed up datetime setting code in cast.
-	* fix bug/feature #3783 allow distinct as the argument to count to
-	prefix table key.
+2006-03-06 09:31  alan_k
 
-2005-03-07 Monday  alan_k
+	* DataObject.php: fix bug #7006 - removing databaseStructure from
+	  links, broke it as no database connection is created
 
-	* fix joins again.. (Thanks to Mark Mitchenall for fix) - oops
-	pulled last release..
-	* fix joins again.. (Thanks to Mark Mitchenall for fix)
+2006-03-06 09:29  alan_k
 
-2005-03-05 Saturday  alan_k
+	* DataObject.php: fix bug #7012 - eak checking wrong variable to
+	  before prefixing database name
 
-	* prep for release
-	* fix bug #3708 - new tables accidentally include previous files
-	code
-	* fix bug #3706 - Database prefixes are not supported in postgres
-	(and probably alot of other dbs)
+2006-03-03 15:03  alan_k
 
-2005-03-03 Thursday  alan_k
+	* DataObject/Generator.php: add limited support for generating
+	  defaults() to return an array of default values, for use with
+	  $obj->setFrom($defaults);
 
-	* fix bug#228 / bug#3674 - cast boolean values before quoting. -
-	necessary for postgresql.
+2006-03-03 13:05  alan_k
 
-2005-03-02 Wednesday  alan_k
+	* package.xml: prep for release
 
-	* fix bugs with 4.3.10, and implement consistant clone()
+2006-03-02 10:41  alan_k
 
-2005-02-28 Monday  alan_k
+	* DataObject.php: quote identifiers for format in selectAs() -
+	  patch by Marco Kaiser
 
-	* add datetime and time support to cast (therion_5 at hotmail),
-	fixes bug #3584
+2006-03-01 09:57  alan_k
 
-2005-02-24 Thursday  alan_k
+	* DataObject.php: fix bug #6928 - default to prefixing database
+	  name for mysql and mysqli when doing joins, (also typo fixes from
+	  last commit, and bump copyright year)
 
-	* fix bug#2740 - allow class_location to use %s formating, eg.
-	/path/to/myfiles/someprefix_%s.php
-	* fix bug #3568 - joins with tables that do not have classes
-	* fix bug #3540 - not checking the database was connected before
-	emptying
+2006-03-01 09:46  alan_k
 
-2005-02-22 Tuesday  alan_k
+	* DataObject.php: fix bug #6953 - Overzealous memory cleaning broke
+	  toArray() on joins, when fetching last row
 
-	* cosmetic fixes + support for multidatabase joins. (Dmitry
-	Nosovitsky)
-	* fix bug#3359, missing break in Cast::date()
-	* test for bug#2116, this test file needs sorting out..!
-	* fix bug #3294 - write DB_DATAOBJECT_TXT as a type.. - not really
-	sure if it is useful.., but its a pretty harmless change.
+2006-02-22 11:36  alan_k
 
-2005-01-27 Thursday  alan_k
+	* DataObject.php: pretty printing of sql, moving links loading code
+	  into links() - so that databaseSchema should not be called if we
+	  have defined tables(), sequenceKeys() and keys()
 
-	* bug #3302 call connect when using joinadd with an array
-	* fix validate again - should read the bug report closer..
-	* fix validate = N typo, fix setFrom(), with objects and arrays
-	will be sent to setters
+2006-02-14 10:11  alan_k
 
-2005-01-25 Tuesday  alan_k
+	* DataObject/Generator.php: fix bug #6772 - FLOAT4 support for
+	  postgres (thanks to Dmitry Poltaryonok)
 
-	* slight typo
+2006-02-13 14:39  alan_k
 
-2005-01-24 Monday  alan_k
+	* DataObject/Generator.php: WS
 
-	* more checking, and debugging support for link/ini loading
-	* add debugging to show where links are loaded from
+2006-02-13 14:35  alan_k
 
-2005-01-22 Saturday  alan_k
+	* DataObject/Generator.php: add sequencekey generation to
+	  generator.
 
-	* fix example for update
-	* possible fix to #1795 - update accepts WHEREADD_ONLY, and does
-	checks to stop you wiping out your database...
-	* fix bug #3010 incorrectly carrying on after finding an empty
-	date.
-	* skip validation on empty sequence key columns bug #3187
-	* add generate_setters/getters patch by Torsten Roehr (bug#3001)
-	* fix bug #3058 - getLinkArray() correctly checks return value
-	(probably broken completely before)
-	* fix bug #3098 -
-	&PEAR::getStaticProperty("DB_DataObject",lastError"); works as per
-	documentation
-	* fix bug #3201 - get_class_vars() with privates. ** although this
-	now segfaults :) - see PHP bug #31651
-	* fix bug #3264 - warning running joinAdd on an object with
-	results.
+2006-02-13 14:05  alan_k
 
-2005-01-21 Friday  alan_k
+	* docs/example.ini: add documentation for the generator_no_ini
+	  option
 
-	* fix bug #3225 double writing of ini entries
+2006-02-13 14:01  alan_k
 
-2005-01-18 Tuesday  alan_k
+	* DataObject/Generator.php: add support for generator_no_ini, for
+	  embedding table definitions into class methods. based on
+	  suggestion by Didler Galland and Justin Patrin
 
-	* make mysqli native for insert
-	* fix bug #3079 missing escape in generate_add_validate_stubs
-	option code
+2006-01-24 18:26  bate
 
-2004-12-25 Saturday  alan_k
+	* DataObject.php: tab to space fix
 
-	* fix package.xml - needs fix to pear installer ( #3027 to build
-	this now)
-	* fix package.xml - needs fix to pear installer ( #3027 to build
-	this now)
+2006-01-24 18:20  bate
 
-2004-12-24 Friday  alan_k
+	* DataObject.php: fixed undefined constant notice with mdb2 driver
 
-	*  use correct negative test
-	* prep for christmas release
+2006-01-23 12:47  alan_k
 
-2004-12-11 Saturday  alan_k
+	* DataObject.php: remove warning if class_prefix is not set. - this
+	  appears to work as well...
 
-	* fix bug #2928 - store last error when query bugs out.
+2006-01-23 10:17  alan_k
 
-2004-11-30 Tuesday  alan_k
+	* DataObject.php: join add support for DB_DataObject::cast()
+	  objects (Daniel Braga)
 
-	* wow, people actually read this rubish :)
+2006-01-21 08:39  alan_k
 
-2004-11-20 Saturday  alan_k
+	* package.xml: prep for release
 
-	* fix bug #2674 - wierd column names messing up .ini files.
-	* fix bug #2778 - show more informative warning when postgres bug
-	found..
+2006-01-21 08:38  alan_k
 
-2004-11-16 Tuesday  alan_k
+	* DataObject/Generator.php: fix bug #6543 - Generator broke due to
+	  MDB changes.
 
-	* add test for bug #2759 - which appears to work anyway.
+2006-01-20 16:09  alan_k
 
-2004-11-13 Saturday  alan_k
+	* ChangeLog, package.xml: prep for release
 
-	* add experimental multidatabase join support
-	* fix bug #2739 - sleep serializing of objects is PHP5 - not sure
-	if this is really a PHP5 bug though..
+2006-01-18 11:33  alan_k
 
-2004-10-20 Wednesday  alan_k
+	* DataObject.php: fix bug if setFrom called with object.. -
+	  skipempty checkin the wrong place...
 
-	* #2565 - oci8 NUMBER recogized by generator
+2006-01-13 09:27  alan_k
 
-2004-10-18 Monday  alan_k
+	* DataObject/createTables.php: make createTables honour debug level
+	  in ini file.
 
-	* lets not abuse sprintf :)
-	* generator can now create stubs for validators : option
-	generator_add_validate_stubs=1
-	* add createTables test with regex usage
+2006-01-11 13:22  alan_k
 
-2004-10-16 Saturday  alan_k
+	* DataObject.php: fix bug #6153 - dont call autoload on PHP5 -
+	  kludgy wrapper around class_exists()
 
-	* updated results
-	* reduce error defines.
-	* add more comprehesive limit support - (Lutz Thomas)
-	* allow access to columns starting with _ using set*()/get*()..  -
-	as suggested by Sandro
+2006-01-11 13:14  alan_k
 
-2004-10-14 Thursday  alan_k
+	* DataObject.php: fix bug #6458 - clear staticGet cache when
+	  calling free()
 
-	* use numeric - as parse_ini_file might be setting that as a
-	string. - spotted by pokey
-	* #2519 - fixed - intval() numerics that arent numbers = eg.
-	booleans., on build_condition - to match behaviour on insert and
-	update.
-	* added check for #2519
+2006-01-11 06:46  bate
 
-2004-10-12 Tuesday  alan_k
+	* DataObject/Generator.php: fixing wrong tab style
 
-	* fix logic for commenting out of var definitions
-	* private __table__ will likely break too much..
+2006-01-10 23:58  bate
 
-2004-10-08 Friday  alan_k
+	* DataObject/Generator.php: - fixed generator bug if you use mdb2
+	  as driver
 
-	* * disabling var writing just comments out, so code is still
-	readable..
-	* * make generator write PHP5 compatible code, * add option to
-	disable writing of vars * tidy up example.ini
+	  its now possible to use MDB2 to generate the class files
 
-2004-10-05 Tuesday  alan_k
+2006-01-09 10:41  alan_k
 
-	* fix bug #2441 - remove debugging code
+	* DataObject.php: fix bug #6442 - validation not working correctly
+	  on DB_DataObject_Cast Objects
 
-2004-09-27 Monday  alan_k
+2005-12-28 17:33  alan_k
 
-	* fix having with mulitple calls (supprised no-one spotted that)
+	* package.xml: prep for a big release
 
-2004-09-26 Sunday  alan_k
+2005-12-28 10:55  alan_k
 
-	* remove references to an old template generator.
+	* DataObject.php: use correct variable name?
 
-2004-09-15 Wednesday  alan_k
+2005-12-22 11:20  alan_k
 
-	* remove warning hider - bug #3468
+	* DataObject.php: oops bug in previous commit
 
-2004-09-14 Tuesday  alan_k
+2005-12-22 11:19  alan_k
 
-	* results for previous commit
-	* update to test for unknown bug #2267
-	* fix bug #2318 - making update($do), when no changes are detected
-	not an failure (eg. returns true now)
-	* fix bug #2319 - joinAdd should not add AS when using same name.
+	* DataObject.php: fix #4919 - code for check/skip empty
+	  dissappeared from setFrom.
 
-2004-09-09 Thursday  alan_k
+2005-12-22 11:12  alan_k
 
-	* adding dia tools by J llarens
+	* DataObject.php: possible fix for bug #6247 - free resultset after
+	  last fetch
 
-2004-09-03 Friday  alan_k
+2005-12-22 11:05  alan_k
 
-	* tests for bug #2267, more verbose connect reporting
+	* DataObject.php: fix bug #6313 - mdb2 compatibility
 
-2004-08-28 Saturday  alan_k
+2005-12-22 11:00  alan_k
 
-	* update package xml
-	* quick class instantation $newdo = $do->factory();
+	* DataObject.php: fix bug #6320 - leaking memory on fetching with
+	  no results. - not sure if this will create more bugs.., but looks
+	  like it should be ok
 
-2004-08-25 Wednesday  alan_k
+2005-11-28 13:11  alan_k
 
-	* typo in last commit
-	* fix bug #2205 - case sensitivity of call in PHP5
+	* DataObject/Generator.php: fix null detection on postgres, - patch
+	  by Alistair MacDonald
 
-2004-08-24 Tuesday  alan_k
+2005-11-16 13:35  alan_k
 
-	* fix bug - unset order_by/limit causing undefined indexes.
+	* DataObject/Generator.php: fix bug #5393 - flag up unique only
+	  keys as "U", rather than "K" (or "N" for native) to allow
+	  anything calling keys() to find more detailed information -
+	  should have no effect on the dataobject class, as only sequence
+	  keys looks for "K"
 
-2004-08-20 Friday  alan_k
+2005-11-16 13:21  alan_k
 
-	* kludging PHP5 support again.
-	* update results for checking
-	* add test for bug #2116
+	* tests/simple.phpt: test for bug #5931 added to test 91
 
-2004-08-12 Thursday  alan_k
+2005-11-16 13:15  alan_k
 
-	* add warning note about build_views
+	* DataObject.php: update($dataobject), change check for changes to
+	  strict checking, so that 0001 -> 00001 works, along with many
+	  other situations.., remove extra ; from code
 
-2004-08-11 Wednesday  alan_k
+2005-11-10 11:06  alan_k
 
-	* oops typo
-	* try and get #1835 fixed correctly so it doesnt break the whole
-	joinAdd code..
-	* bug #2106 - update() with old object having no changes does not
-	raise an error
-	* bug #2086 - support building of dataobjects for views with
-	build_view=1 option
-	* hopefully finaly close #1835
-	* fix incorrect test for keep_query_after_fetch
+	* DataObject.php: make debugging schema loading errors a bit easier
 
-2004-08-09 Monday  alan_k
+2005-11-09 09:34  alan_k
 
-	* prep for bugfix release
-	* fix typo on generator
-	* fix generator not having DB available
+	* DataObject.php: fix PHP4.4* issues with returning by reference..
 
-2004-08-08 Sunday  alan_k
+2005-11-07 13:47  alan_k
 
-	* fix bug #2088 - allow class_prefix to be defaulted to ""
+	* DataObject.php: fix bug #5881 - wrap conditions with brackets -
+	  This may break things.. but is worth trying to see if it works
 
-2004-08-07 Saturday  alan_k
+2005-10-31 09:37  alan_k
 
-	* Release notes lied about 4.2 compatibility
-	* prep for release
-	* fix bug #1980 = logic error in JoinAs+quoteIdentifier code
-	* fix bug #1835  - auto_linking
-	* really nasty kludgy fix to bug #2068
+	* DataObject.php: fix bug #5818 - using null on a valid column
+	  should skip remaining checks in validate
 
-2004-08-04 Wednesday  alan_k
+2005-10-31 09:32  alan_k
 
-	* add free method to enable flat memory consumtion, add test to
-	illustrate fix.  NOTE: num_rows in DB object is stacked.. and
-	stored in the connection - WHY?
+	* DataObject.php: fix bug #5817 - validating on DB_DataObject_Cast
+	  objects - now skipped.
 
-2004-07-26 Monday  alan_k
+2005-10-28 09:13  alan_k
 
-	* update test results
-	* fix bug with last @ hidding fix
+	* DataObject/Generator.php: fix bug #5800 - continue creating other
+	  tables if we find one that fails...
 
-2004-07-24 Saturday  alan_k
+2005-10-25 11:12  alan_k
 
-	* fix bug #1935 - double quoting of selectAs(), make DB lazy loaded
-	* fix bug #1935 double quoting of identifiers in selectAs
-	* fix bug #1923 - most @ silencers removed, adding test results so
-	I can monitor BC breaks PART 3
-	* fix bug #1923 - most @ silencers removed, adding test results so
-	I can monitor BC breaks PART 2
-	* fix bug #1923 - most @ silencers removed, adding test results so
-	I can monitor BC breaks
-	* attempt to fix #1835 - so links() can be used to store local
-	links arrays...
-	* fix bug #1833 - ok - may as well return an empty array ..
-	* fix bug #1833 - return null rather than false, so casting to
-	array works
-	* apply fatal error to table lookup failure bug #1828
+	* DataObject.php: fix bug #5065 - count returns number cast to an
+	  integer (even though database may return a string)
 
-2004-07-09 Friday  alan_k
+2005-10-12 12:00  alan_k
 
-	* fix separator
+	* DataObject.php: fix typo in last commit
 
-2004-07-03 Saturday  alan_k
+2005-10-12 11:58  alan_k
 
-	* use include path to do file hunting if file not found.
-	* fix bug #1778 - allow table to be used to return extra virtual
-	columns
+	* DataObject.php: fix bug #5656 - Correctly return this->$col,
+	  rather than the type..
 
-2004-06-29 Tuesday  alan_k
+2005-10-12 10:20  alan_k
 
-	* fix bug #1704 - not null check when using "null" values
-	* probably fix bug #1697 extra line created after definition.
-	* fix bug #1726 - enable orderby and limit to be used.
+	* DataObject.php: fix bug #5155 - MDB2 support in _connect broken
 
-2004-06-18 Friday  alan_k
+2005-10-12 10:12  alan_k
 
-	* fix bug #1664 = add configuration option links_{databasename}
-	* make debugging display query errors
-	* typo on last commit
-	* more storage of result fields away from result object, as it gets
-	destroyed after last query.
+	* DataObject/Generator.php: fix bug #5604 - Double Precision
+	  support for firebird database
 
-2004-06-10 Thursday  alan_k
+2005-10-12 10:08  alan_k
 
-	* Fix bug #1595 - regex include/exclude working correctly (Thanks
-	to Stephane Gully)
+	* DataObject.php: fix bug #5656 - wrong constant used in toValue()
+	  for boolean
 
-2004-06-05 Saturday  alan_k
+2005-10-11 15:15  alan_k
 
-	* fix bug #1559 - __FUNCTION__ not needed.. - so deps of 4.2 should
-	be valid again..
+	* DataObject.php: fix bug #5614 - joinAdd check to see if object
+	  being joined is really a dataobject
 
-2004-06-03 Thursday  alan_k
+2005-10-11 13:17  alan_k
 
-	* fix bug #1548
+	* DataObject.php: use is_a, rather than PEAR, as one day we may
+	  remove that dep...
 
-2004-06-02 Wednesday  alan_k
+2005-10-11 13:00  alan_k
 
-	* update package.xml - for release
-	* emit error if table info is not supported - bug #1354
-	* fix bug #1000 - cidr, inet, macaddr for postgres.
-	* add generator_(in|ex)clude_regex  - note they cannot be used
-	together at present..
-	* store returned keys inside result object.. - fix bug #1315
-	* fix bug #992
+	* DataObject.php: fix bug #5650 - Factory() Proxy Connect failing
+	  returns PEAR_Error
 
-2004-05-07 Friday  alan_k
+2005-10-08 21:46  alan_k
 
-	* update php dependancy version
+	* DataObject.php: the dont die here causes a recursive error and
+	  segfaults everything if it doesnt return..
 
-2004-04-28 Wednesday  alan_k
+2005-10-04 13:05  alan_k
 
-	* thanks norbert - unsetting and using count dont work nicely
-	together..
+	* DataObject.php: fix bug #5491 - prevent autoloading of generator
+	  in some failure conditions
 
-2004-04-23 Friday  alan_k
+2005-09-18 11:40  alan_k
 
-	* adding custom error handler support - so you can see what type of
-	error you get..
+	* DataObject.php: small typo in list of databases that use AS
 
-2004-04-14 Wednesday  alan_k
+2005-09-17 12:51  alan_k
 
-	* fix bug#1205 (jereonl)
-	* raise error if no dsn found after all the efforts..
-	* update TODO list..
-	* connecting in database structure seems like a better idea..
-	* oops typo on last commit..
-	* set _database when getting links...
-	* links call before a database call will fail...- fixed
+	* DataObject.php: fix bug #5416 - use tablea AS tableb only for
+	  postgress/mysql - oracle doesnt need the AS bit - and I guess a
+	  few others too..
 
-2004-04-06 Tuesday  alan_k
+2005-09-17 12:00  alan_k
 
-	* no data affected is not really an error condition -
-	update/insert/delete will return 0 instead..
+	* DataObject.php: fix bug #5435 - find(true) returns false if
+	  numRows is not available and first fetch fails
 
-2004-04-05 Monday  alan_k
+2005-09-17 11:46  alan_k
 
-	* fix error message on unsupported databases...
+	* package.xml: correct the dependancy
 
-2004-04-01 Thursday  alan_k
+2005-09-16 09:54  alan_k
 
-	* using new escapeSimple, and updating DB deps to 1.6 (Rob
-	Lineweaver)
+	* package.xml: fix bug #5264 - add optional dep on MDB
 
-2004-03-31 Wednesday  alan_k
+2005-09-07 13:56  alan_k
 
-	* for date/time columns that are not-notnull if you set them to ""
-	(an empty string) - they will be inserted and updated as NULL -
-	this has been causing no end of problems ...
+	* DataObject.php: catch errors returned from nextID - like
+	  permission denied etc., add warnings in debug mode if we are
+	  using objects  or arrays for some reason, fix error messages
 
-2004-03-26 Friday  alan_k
+2005-09-03 22:00  alan_k
 
-	* fix CRLF that mysteriously got in there... (Daniel Convissor)
+	* DataObject.php: more debugging, make errors appear as red when
+	  debugging is turned on. - make sure errors are logged before they
+	  are thrown.
 
-2004-03-11 Thursday  alan_k
+2005-08-29 09:27  alan_k
 
-	* add note that the test comes from bug#970
-	* make calls to assign sequenceKey set the global cache rather than
-	object var
+	* DataObject.php: make WHERE stripping better  = well spotted
+	  Justin.
 
-2004-03-10 Wednesday  alan_k
+2005-08-26 23:00  alan_k
 
-	* more fixes relating to change to debuging - accepting callbacks.
-	*  fix bug #973 - hide error on debug not existing
+	* DataObject.php: whereAdd() correctly returns condition so it can
+	  be re-used, Im amazed no one picked this up before..
 
-2004-03-08 Monday  alan_k
+2005-08-22 12:35  alan_k
 
-	* fix bug#456 - silence bug when resultset is cleared
-	* make class sending tidier..
-	* try fixing bug #971 - add class to the callback
-	* fix bug #958 (debugLevel returns previous value), fix bug #940
-	whereAdd returns previous value.  support user callbacks for
-	debuglevel (eg. debugLevel(array(mylogger,debug)); )
+	* DataObject/Generator.php: fix bug #5036 - make sure DB is loaded
+	  before using it
 
-2004-02-26 Thursday  alan_k
+2005-08-19 09:56  alan_k
 
-	* fix bug #864 - strtolower class names for equivlant tests
-	* fix bug #854 - missing variable (thx to maka3d)
-	* fix example around count()
-	* make count arguments morphable.. - allow selecting of exactly
-	what you want to count
+	* DataObject/Generator.php, docs/example.ini: fix bug #5146 -
+	  feature request, option: generator_var_keyword, to specify if you
+	  want to use var or public
 
-2004-02-23 Monday  alan_k
+2005-08-16 12:49  alan_k
 
-	* fix bug #820 - need to connect before reading quote_identifiers
+	* DataObject/Generator.php: correct strpos testing..
 
-2004-02-21 Saturday  alan_k
+2005-08-16 12:46  alan_k
 
-	* fix bug #805 - selectAdd() returns existing value, so you can
-	prepend distict or something else
-	* fix bug #803 - change quote entities to quote identifiers
-	*  try and fix bug #805 - changing the check for last record.. -
-	which clears the connection store.
-	* oops dont commit debugging code
-	* argh!!! Date doenst accept yyyy-dd-mm
-	* check for empty values in toValue
+	* DataObject/Generator.php: enhanced security on generation of
+	  classname.. - this is not the default behaviour.. so it shouldnt
+	  really have affected anyone..
 
-2004-02-16 Monday  alan_k
+2005-08-02 21:27  alan_k
 
-	* check result situation before running result set
+	* DataObject.php: fix bug #4968 - count() will not be affected by
+	  changing default db fetchmode
 
-2004-02-14 Saturday  alan_k
+2005-07-29 09:48  alan_k
 
-	* fix tabs/spaces in test/simple.phpt
-	* memory leaks reduced alot for insert()
-	* remove unneccesary stuff - last commit doesnt fix memory problems
-	- Its ... guess what... overload leaks memory.... again..
-	* make sure that insert/update/delete dont add to the result stack
-	* fix bug #713 - flip the fields array.
+	* DataObject/Generator.php: fix bug #4938 - support MONEY type for
+	  MSSQL
 
-2004-02-11 Wednesday  alan_k
+2005-07-25 13:22  alan_k
 
-	* fix numrows not supported error from some databases
-	* fix bug #713 - after joinAdd, toArray doesnt return everything.. 
-	Fixed by caching the collected cols in fetch if array is set..
-	* fix bug #730 - support double precision in postgres
+	* DataObject.php: fix bug #4900 - support array type dsns
 
-2004-02-10 Tuesday  alan_k
+2005-07-23 10:42  alan_k
 
-	* make correct folders for ini_{databasename} , change echos to
-	debug in generator
-	* write ini file if ini_{databasename} is set - make echo a
-	debugging call
+	* DataObject.php: fix bug #4894 - Validate methods can return PEAR
+	  Errors, or even messages now.. - only true indicates success
 
-2004-02-05 Thursday  alan_k
+2005-07-21 14:36  alan_k
 
-	* check for null on validation
-	* always call element validators if they exist, add notnull test on
-	validator
-	* revert lowercasing and optimization settings for oracle - this
-	should be done with PEAR::getStaticProperty("DB","options")
-	* restore query to original after find - so updates following it
-	dont duplicate the condition
-	* oops typos
-	* change clone implementation to match PHP5s new way of doing it -
-	add notes about it being removed
-	* strtolowers.. so Oracle has a better chance of working..
-	* strtolower table names, and allow 0-9, change the warning on
-	count() with no keys
+	* DataObject.php: fix bug #4871 - remove warning when value is not
+	  found in table
 
-2004-02-04 Wednesday  alan_k
+2005-07-21 14:33  alan_k
 
-	* debugging code added to generator, fixed typo on path seperator
-	* remove closing tag from generator.
-	* add ability to write database name if you are using database_*
-	format
-	* support unnamed or alternamed databases... hopefully - mulitple
-	path support for schema
+	* DataObject.php: fix bug #4834 - case sensitive checks for
+	  db_dataobject_cast fail
 
-2004-02-03 Tuesday  alan_k
+2005-07-11 09:43  alan_k
 
-	* allow numbers in tablenames - may cause problems with tables
-	starting with a number...
+	* DataObject.php: use correct function for fatal programming error
 
-2004-02-02 Monday  alan_k
+2005-07-07 13:39  alan_k
 
-	* fix bug #642 count doesnt use build_condition
+	* ChangeLog, package.xml: prep for release
 
-2004-02-01 Sunday  alan_k
+2005-07-07 13:30  alan_k
 
-	* fix bug #647 debug and raiseError call dynamic rather than static
-	where possible (so you can overload the methods)
+	* DataObject/Cast.php: fix bug #4760 - blobs broke in last release
 
-2004-01-30 Friday  alan_k
+2005-07-06 14:13  alan_k
 
-	* fix bug #644 - phpdoc comments used setStatic, rather than
-	getStaticProperty
+	* DataObject.php: fix bug #4715 - countWhat broken - remove
+	  condition around key_col setting
 
-2004-01-29 Thursday  alan_k
+2005-06-25 12:07  alan_k
 
-	* update package.xml for release
-	* recognize mysql TIMESTAMP type, and ingore it for updates and
-	inserts. (use query() if you really want to play with it..
-	* fix bugs in toValue
+	* ChangeLog, package.xml, docs/example.ini: prep for release
 
-2004-01-26 Monday  alan_k
+2005-06-25 11:30  alan_k
 
-	* fix bug #620 - accept floats & doubles that are ints..
+	* DataObject.php: fix by #4672, query(COMMIT) relays return value
+	  from DB->commit()
 
-2004-01-24 Saturday  alan_k
+2005-06-25 11:27  alan_k
 
-	* fix bug #359 (toArray of links), prep for bugfix release
-	* small update to test script
-	* update test to reflect change to date time setters
-	* remove strtotime autoconversion - it causes far to many problems
-	in most cases... eg. 0000-00-00 == 1999-11-30 :)
-	* fix bug #611 = change note about NO_OVERLOAD
-	* fix bug #612 - databaseStructure can be called statically, and
-	with a single argument (databasename) will return the database
-	struture as read from the database.. (with __keys)
-	* make DB_DataObject::getDatabaseConnection() return a pear error
-	if dont_die is set to true.. - so you can test connections..
+	* DataObject.php: fix bug #4535, somedays you wonder what those
+	  ****s at postgres where smoking when they came up with t/f for
+	  booleans
 
-2004-01-22 Thursday  alan_k
+2005-06-16 10:03  alan_k
 
-	* add keep_query_after_fetch option, document the sequence option
-	in the ini file.
-	* fix bug #605, prep for release
-	* allow option sequence_{tablename}={column}:{sequence_name} to
-	work...
-	* fix null, and cast objects used with setters and setFrom()
+	* DataObject/Generator.php: fix bug #4601 - wrong method used to
+	  test if file..
 
-2004-01-20 Tuesday  alan_k
+2005-06-04 10:59  alan_k
 
-	* oops Date is now an optional dependancy...
-	* prepping for realease
-	* prepping for realease
+	* DataObject.php, DataObject/Generator.php: fix bug #4193 - sqlite
+	  names causing invalid .ini files
 
-2004-01-19 Monday  alan_k
+2005-06-04 10:34  alan_k
 
-	* typo in setFrom
-	* typo in setter
-	* force setFrom to utilize fromValue and return errors
-	* standardize auto getters for date elements on strftime format -
-	so it works with Date::Date()
+	* DataObject.php: fix bug #4518 - escape and transactions fixed for
+	  MDB backend
 
-2004-01-18 Sunday  alan_k
+2005-06-04 10:05  alan_k
 
-	* provisional rich setters/getters
-	* for some reason table name needs trimming..
-	* fix bug #595 - replace non letters with underscore..
-	* make native key recognision a little better - changes ini file
-	format (key=N|K) - native or key. - BC protected... - ignores it
-	when it finds a number..
-	* rationalize the table schema autoload code.
+	* DataObject.php: oops php -l before commiting
 
-2004-01-16 Friday  alan_k
+2005-06-04 10:00  alan_k
 
-	* allow multiple updates on the same object - without adding lots
-	of id=.... on the end..
-	*  databaseStructure retuns false.. - so it doesnt issue errors
-	when autofilling the schema
+	* DataObject.php: fix bug #4431 - add hideEmpty to toArray() - not
+	  sure if I really like this.. - adding args to methods, the root
+	  of all evil ;)
 
-2004-01-10 Saturday  alan_k
+2005-06-04 09:54  alan_k
 
-	* add support for postgres native sequences.
-	* fix auto date typecasting in setters
-	* consider additional types...
-	* really fix #532
-	* transactions support complete...
-	* working version - do not use (trying to get transactions to work
-	nicely...)
-	* fix proxy code a bit more & test transactions properly
-	* add example for bug #532
+	* DataObject/Generator.php: fix bug #4383 -  getListOf() call now
+	  expects pear errors
 
-2004-01-09 Friday  alan_k
+2005-05-19 12:41  alan_k
 
-	* Im sure I fixed this before.. typo - bug #528
+	* DataObject.php, DataObject/Cast.php: fix the Cast Object
+	  properly.. - send the connection object to the toString methods.
 
-2004-01-07 Wednesday  alan_k
+2005-05-04 22:13  alan_k
 
-	* if schema_location is not set, schemas will be read on the fly
-	* fixing php5 support, adding type support in setters
-	* fix bugs in on-the-fly proxies, and provide tests
-	* First phase of on-the-fly proxy creation code
+	* DataObject/createTables.php: revert debugging level to 1
 
-2004-01-01 Thursday  alan_k
+2005-05-04 22:12  alan_k
 
-	* fix bug #473 - query can return a DB_Error
-	* fix bug #501 - autoload using full path
-	* fix bug #507
+	* DataObject/: Generator.php, createTables.php: possibly nail bugs
+	  #4235 and #4203 - schema mess with postgres.
 
-2003-12-23 Tuesday  alan_k
+2005-05-04 21:30  alan_k
 
-	* fix typo  - bug #476
+	* DataObject/Generator.php, docs/example.ini: experimental fix for
+	  postgres mess.. generator_strip_schema=1 will strip the schema
+	  part from the name of the table.
 
-2003-12-22 Monday  alan_k
+2005-04-20 15:50  alan_k
 
-	* re-add sequence_{tablename} and ignore_sequence_keys - in for BC,
-	although not recommended anymore
+	* DataObject.php: fix bug #4168 - if connection test is sucessfull,
+	  dont try and connect.. (performance improvement)
 
-2003-12-19 Friday  alan_k
+2005-04-20 15:46  alan_k
 
-	* attempt to get inherited/nested joins partly working for other
-	databases
-	* fix typo in last commit.
-	* revert last patch - $do->query("BEGIN"); will turn off
-	autocommits
-	* relay autocommit - as overloading borks return by reference
+	* DataObject.php: fix bug #4040 - prevent toArray from calling
+	  getLink and getLinks - bad choice of names...
 
-2003-12-16 Tuesday  alan_k
+2005-04-20 15:44  alan_k
 
-	* CS fixes, add BIT, BOOL, BOOLEAN, make the STR quoting of BOOL
-	postgres specific.
-	* typo spotted by Norbert Mocsnik
+	* DataObject/createTables.php: fix bug #4019 - createTables uses
+	  sets up options for DB compatibility mode
 
-2003-12-14 Sunday  alan_k
+2005-04-20 15:41  alan_k
 
-	* oops typo in last commit
+	* DataObject.php: fix bug #4000 - better checking for php 4.3.10
 
-2003-12-13 Saturday  alan_k
+2005-04-20 15:39  alan_k
 
-	* major patch to add support for entity quoting (Justin Patrin)
-	* experimental - toArray includes links
-	* fix bug #413
+	* DataObject.php: fix bug #3944 - support for informix
+	  autoincrements
 
-2003-12-10 Wednesday  alan_k
+2005-04-20 15:35  alan_k
 
-	* set oracle optimization for portibility
+	* DataObject/Cast.php: fix bug #4182 better string and blob support
+	  on mysql in cast
 
-2003-12-06 Saturday  alan_k
+2005-04-13 16:37  alan_k
 
-	* catch empty arrays
-	* dont return arrays = reduce overhead a bit, document the params
-	* oops - statically called method will not have $this
-	* make definition loading/setting available externally... and fix
-	count
+	* DataObject.php: fix bug #4135 - boolean values borked in
+	  condition building..
 
-2003-12-05 Friday  alan_k
+2005-04-08 09:08  alan_k
 
-	* revert to previous behavoir of reseting query after fetch, make
-	count occur on cloned element
+	* DataObject.php: remove the usefull error message, and only make
+	  it availabe via debugging
 
-2003-12-04 Thursday  alan_k
+2005-04-07 21:10  alan_k
 
-	* make debugging explain where its comming from
-	* add new method sequenceKey(), remove ignore_sequence_keys option.
-	- try and rationalize the sequence logic
+	* DataObject.php: simplify configuration access
 
-2003-11-17 Monday  alan_k
+2005-04-07 20:54  alan_k
 
-	* extra debugging on generator, remove closing tags (not really
-	needed)
+	* DataObject.php: that will teach me to copy and paste
 
-2003-11-15 Saturday  alan_k
+2005-04-07 17:34  alan_k
 
-	* slight updates for 1.3 release - and package.xml updated
-	* slight updates for 1.3 release - and package.xml updated
+	* DataObject.php: first effort at supporting MDB.. (thanks to Dan
+	  Rossi)
 
-2003-11-13 Thursday  alan_k
+2005-03-31 10:54  alan_k
 
-	* attempt to fix bug #228
+	* package.xml: update dependancies - try and reduce likelyhood of
+	  old versions of DB being used..
 
-2003-11-09 Sunday  alan_k
+2005-03-31 10:28  alan_k
 
-	* typo
-	* subtle warning
-	* add DB_DATAOBJECT_NO_OVERLOAD define, and FC/BC support for PHP5
-	(including return by ref fixes)
+	* DataObject.php: change fetch / ->N to be "true", rather than 1
+	  when numRows is not supported, (also document it on find())
 
-2003-10-28 Tuesday  alan_k
+2005-03-24 22:52  alan_k
 
-	* remove raiseError on fetch with no data.. - just produces debug
-	warning now..
+	* DataObject.php: this fix is dirtier, but a little more
+	  dependable..
 
-2003-10-25 Saturday  alan_k
+2005-03-24 22:46  alan_k
 
-	* Major change to internal storage of query building store -
-	significantly reduces the size of objects when they are
-	fetched/print_r.ed - needs more testing!
-	* restore some checks for class include - file exists.. - its
-	relayed into from getLink
+	* DataObject.php, package.xml: some days you feel like strangling
+	  the idiot at postgress who decided to make a wierd format for
+	  booleans
 
-2003-10-22 Wednesday  alan_k
+2005-03-23 10:35  alan_k
 
-	* fix bug #133 and tidy up debuging a little
+	* DataObject/: Cast.php, Error.php, Generator.php: oops - admit to
+	  owning this mess..
 
-2003-10-18 Saturday  alan_k
+2005-03-23 10:31  alan_k
 
-	* fix toString() for date usage.
-	* raise Errors..
-	* correct examples
-	* db_dataobject_cast support.
-	* prevent writing of key values for insert (autoincrement only) and
-	on update all the time.. - required for MSSQL support (Markus
-	Wolff)
+	* DataObject/: Cast.php, Error.php, Generator.php: change headers
+	  to new standard.
 
-2003-10-08 Wednesday  alan_k
+2005-03-23 10:23  alan_k
 
-	* tidy up debugging a little
+	* package.xml: prep for release
 
-2003-09-25 Thursday  alan_k
+2005-03-23 10:04  alan_k
 
-	* spotted typo in database()
+	* DataObject/Cast.php: allow mysql to support blob writing
+	  (theoretically)..
 
-2003-09-23 Tuesday  alan_k
+2005-03-23 10:03  alan_k
 
-	* small fixes on last update
-	* oops - thanks to commit emails for this one
-	* try and make some sense of the sequence - autoincrement logic
+	* DataObject.php: fix byg #3924 - remove quote() usage and replace
+	  with cast'ed quoteSmart()
 
-2003-09-18 Thursday  alan_k
+2005-03-22 11:58  alan_k
 
-	* fix bug #20 - generator on win32 thanks to sergey at nikiforov
-	dot net
+	* package.xml: prep for release
 
-2003-09-16 Tuesday  alan_k
+2005-03-22 11:51  alan_k
 
-	* add mssql to early check for sequences - oops missed that one -
-	thx Markus again..
+	* DataObject.php: fix null and not null cast usage, fix distinct
+	  test
 
-2003-09-13 Saturday  alan_k
+2005-03-16 11:35  alan_k
 
-	* make the link syntax as an array, the alternative first argument
-	for joinAdd.. - enables joins without links.ini..
+	* DataObject/Generator.php: attempt to fix bug #3767 - postgres
+	  with schema tables
 
-2003-09-11 Thursday  alan_k
+2005-03-16 09:46  alan_k
 
-	* experimental - on the fly setting of database fields and keys
+	* package.xml: prep for anothe release
 
-2003-09-10 Wednesday  alan_k
+2005-03-16 09:45  alan_k
 
-	* let php warnings show on failed include - they are far more
-	informative that anything worth displaying.
+	* DataObject.php: fix bug #3829 yet again...
 
-2003-09-09 Tuesday  arnaud
+2005-03-16 09:42  alan_k
 
-	* * typo
-	* * add a simple batch script to execute createTables.php * update
-	package.xml filelist # this is done in agreement with alan ;)
-	* * ws
+	* DataObject.php: fix bug #3829 this damn cross database query
+	  stuff is proving to be a nightmare..
 
-2003-09-04 Thursday  alan_k
+2005-03-12 19:33  alan_k
 
-	* native autoincrement for MsSQL (Markus Wolff)
-	* using case sensitive naming doesnt work - oracle likes upper -
-	postgres.. etc. lowercase the result name... - use default
+	* package.xml: prep for second release in 1 day..
 
-2003-08-27 Wednesday  alan_k
+2005-03-12 19:32  alan_k
 
-	* apparently that breaks as well.. - fetchrow without the extra
-	param
-	* oracle only likes uppercase names - not the smartest of expensive
-	databases that one..
-	* fix problem with oracle - hopefully dataobject_num is reasonably
-	rare. (Patrick Roos)
-	* show fetch timings in debug mode
-	* changing level 1 debugging to display queries and result times..
-	- 2 now shows each fetch
-	* try auto updating package number (thanks to Tomas Cox)
+	* DataObject.php: boolean test code borked
 
-2003-08-26 Tuesday  alan_k
+2005-03-12 12:13  alan_k
 
-	* make validate an optional dependancy... - does this work!
-	* sync this up for the next release for a change.. - ( Arnaud
-	Limbourg)
+	* package.xml: prep for release - with correct release no.
 
-2003-08-17 Sunday  alan_k
+2005-03-12 12:10  alan_k
 
-	* adding links() to retreive the links array (Markus Wolff)
+	* ChangeLog, package.xml: prep for release
 
-2003-08-14 Thursday  alan_k
+2005-03-12 11:45  alan_k
 
-	* future support for explain on debug
-	* sync up package.xml with generator changes
-	* CS fixes and make generator more tolerant of broken editors
-	(Andreas Ljunggren)
+	* DataObject.php: fix bug #3764  PostgreSQL Boolean Doesnt Work
+	  (lets see how much code that breaks!)
 
-2003-08-13 Wednesday  alan_k
+2005-03-12 11:36  alan_k
 
-	* revert the null checking change - there is a big knock on effect
-	from this change. - staticGet relays rely on the null var
-	* using null is not always a great way to evaluted variable
-	arguments.
+	* DataObject/createTables.php: keep everyone happy with disabling
+	  overload for the default generator script bug #3763
 
-2003-08-11 Monday  alan_k
+2005-03-12 11:28  alan_k
 
-	* get name right :)
-	* making table(), keys() public, adding access to database() and
-	tableName() (Marcus Wolff)
+	* DataObject.php: fix (or try again to) bug #3768  quoteIdentifier
+	  not used correctly with database_prefix
 
-2003-08-09 Saturday  alan_k
+2005-03-12 11:19  alan_k
 
-	* reducing the dependancy
+	* DataObject/Cast.php: fix bug #3761 - messed up datetime setting
+	  code in cast.
 
-2003-08-07 Thursday  alan_k
+2005-03-12 11:12  alan_k
 
-	* Properly fix the limit testing
-	* Improve argument testing on limit (Demian Turner)
-	* extra argument ot joinAdd() to allow multiple targets of same
-	type. (Andy Crain)
-	* fix the static get cache properly
+	* DataObject.php: fix bug/feature #3783 allow distinct as the
+	  argument to count to prefix table key.
 
-2003-07-18 Friday  alan_k
+2005-03-07 12:58  alan_k
 
-	* prepping for a bugfix release
-	* fix NULL values when updating
+	* DataObject.php, package.xml: fix joins again.. (Thanks to Mark
+	  Mitchenall for fix) - oops pulled last release..
 
-2003-07-16 Wednesday  alan_k
+2005-03-07 12:50  alan_k
 
-	* prepping for 1.0 release
-	* full generated Changelog - it would be nice if we had standard
-	tools to do this in pear = pear changelog :)..
-	* fix bug with cache clearing not working with staticGet and update
+	* DataObject.php, package.xml: fix joins again.. (Thanks to Mark
+	  Mitchenall for fix)
 
-2003-07-12 Saturday  mj
+2005-03-05 11:15  alan_k
 
-	* * Updating DTD paths
-	
-	# find . -name package.xml | xargs perl -pi -e
-	's/..\/package.dtd/http:\/\/pear.php.net\/dtd\/package-1.0/'
-	* remove direct dependance on overload for setFrom and toArray -
-	seems to be intermitant problems with current PHP_4_3.. needs
-	further investigation
+	* package.xml: prep for release
 
-2003-07-07 Monday  alan_k
+2005-03-05 10:44  alan_k
 
-	* null comparison doesnt work - use quoted null
-	* remove pass by reference - its not needed as we dont alter keys..
-	(Marcus Wolff)
+	* DataObject/Generator.php: fix bug #3708 - new tables accidentally
+	  include previous files code
 
-2003-07-05 Saturday  alan_k
+2005-03-05 09:51  alan_k
 
-	* fix finding, and updating null values, CS improvements NULL to
-	null
-	* getLinks returns true on success, add parameter to getLinks to
-	enable user defined formating of object variables it uses.
+	* DataObject.php: fix bug #3706 - Database prefixes are not
+	  supported in postgres (and probably alot of other dbs)
 
-2003-06-25 Wednesday  alan_k
+2005-03-03 11:23  alan_k
 
-	* simplify private pruning, DO is not ready for this - needs to be
-	part of the grouping of private query vars in a query array
-	* Private var pruning on fetch, to reduce the data visable when
-	print_r ing the results
-	* order of having is important..
+	* DataObject.php: fix bug#228 / bug#3674 - cast boolean values
+	  before quoting. - necessary for postgresql.
 
-2003-06-24 Tuesday  alan_k
+2005-03-02 11:49  alan_k
 
-	* make unique a second class detector for primary key comparison.
+	* DataObject.php, package.xml: fix bugs with 4.3.10, and implement
+	  consistant clone()
 
-2003-06-19 Thursday  alan_k
+2005-02-28 17:54  alan_k
 
-	* debugging code left in
-	* oops broke static get when changing it to factory.
-	* add HAVING support
-	* adding classic factory method - just got too tiered typeing all
-	those includes...
+	* DataObject/Cast.php: add datetime and time support to cast
+	  (therion_5 at hotmail), fixes bug #3584
 
-2003-06-16 Monday  alan_k
+2005-02-24 17:59  alan_k
 
-	* pre 4.3 support added to autoloader
+	* DataObject.php, DataObject/Generator.php, docs/example.ini: fix
+	  bug#2740 - allow class_location to use %s formating, eg.
+	  /path/to/myfiles/someprefix_%s.php
 
-2003-06-12 Thursday  alan_k
+2005-02-24 17:45  alan_k
 
-	* add mega join support - (a joins b) joins c
-	* fix to bug 23983 - preping for 1.0
-	* allowing the specifying of tablename to override current (when
-	using arrays..) (Victor Socolov)
-	* * add docs dir and moved example.ini * update package.xml to
-	reflect this
-	* change date for release
+	* DataObject.php: fix bug #3568 - joins with tables that do not
+	  have classes
 
-2003-05-21 Wednesday  alan_k
+2005-02-24 17:43  alan_k
 
-	* I think this ones almost ready to go
+	* DataObject.php: fix bug #3540 - not checking the database was
+	  connected before emptying
 
-2003-05-20 Tuesday  alan_k
+2005-02-22 13:23  alan_k
 
-	* attempt to fix bug #23712 - dont store results unless they are
-	select.
+	* DataObject.php: cosmetic fixes + support for multidatabase joins.
+	  (Dmitry Nosovitsky)
 
-2003-05-15 Thursday  alan_k
+2005-02-15 09:51  alan_k
 
-	* updating cache to use private globals
-	* yet another CaseSensitivity Gotcha
+	* DataObject/Cast.php: fix bug#3359, missing break in Cast::date()
 
-2003-05-14 Wednesday  alan_k
+2005-02-01 20:21  alan_k
 
-	* provide a work around for columns named from having a setter
-	defined by overload
-	* forgot to document the join changes..
-	* document the changes
-	* enable user handling of fatal errors with the dont_die option
-	* support sprintf formating on setFrom
+	* tests/simple.phpt: test for bug#2116, this test file needs
+	  sorting out..!
 
-2003-05-13 Tuesday  alan_k
+2005-02-01 07:24  alan_k
 
-	* spaces tend to be important in sql...
-	* fix typo
-	* add the posibility to do reaaaaaaaly complex joins :) - consider
-	this feature beta, although it works here..
+	* DataObject/Generator.php: fix bug #3294 - write DB_DATAOBJECT_TXT
+	  as a type.. - not really sure if it is useful.., but its a pretty
+	  harmless change.
 
-2003-05-10 Saturday  alan_k
+2005-01-27 21:41  alan_k
 
-	* returning false from __call initiates the built in method does
-	not exist error..
+	* DataObject.php: bug #3302 call connect when using joinadd with an
+	  array
 
-2003-05-08 Thursday  alan_k
+2005-01-27 21:26  alan_k
 
-	* add notes in package.xml for new features
-	* more features for dataobjects that need documenting! - selectAs,
-	for building select XXXX as XXXX strings quickly - especially for
-	joins
-	* fix setFrom relaying into setXXXXs - missing global
+	* DataObject.php: fix validate again - should read the bug report
+	  closer..
 
-2003-05-06 Tuesday  alan_k
+2005-01-27 21:23  alan_k
 
-	* ok var checking can go back in as I found the cause for the
-	segfaults.. - see bugs.php.net :)
-	* add overload setters and getters, hooked into toArray and
-	setFrom, at present just writes all setXX straight to object->XX,
-	as the checking appeared to segfault php.. - could not reproduce in
-	a simple script though.
+	* DataObject.php: fix validate = N typo, fix setFrom(), with
+	  objects and arrays will be sent to setters
 
-2003-05-05 Monday  alan_k
+2005-01-25 11:06  alan_k
 
-	* first draft runthrough of notes for MDB DataObjects..
+	* DataObject.php, DataObject/Generator.php: slight typo
 
-2003-04-22 Tuesday  alan_k
+2005-01-24 17:57  alan_k
 
-	* change behaviour of validate to accept empty strings for numeric
-	values
+	* DataObject.php: more checking, and debugging support for link/ini
+	  loading
 
-2003-04-17 Thursday  alan_k
+2005-01-24 17:37  alan_k
 
-	* fix generator on files that have been edited on windows
-	* stop auto class loading from slamming the filesystem
-	* preping for a release
-	* better read the docs before committing :)
-	* update validation to match latest validate package API
-	* fix validate issues, and change toArray to return empty items -
-	so it can blank out forms..
-	* update package file - add notes and dependancies at last..
-	* make error handling for autoload includes alot nicer - depends on
-	php4.3 now
+	* DataObject.php: add debugging to show where links are loaded from
 
-2003-04-02 Wednesday  alan_k
+2005-01-22 12:30  alan_k
 
-	* oops fix the correct logic on the last commit - update
-	package.xml
-	* fix output on empty tables (Robert Janeczek)
-	* change to correct test and remove debug code
+	* DataObject.php: fix example for update
 
-2003-03-27 Thursday  alan_k
+2005-01-22 12:24  alan_k
 
-	* add nextval as a identifier flag for keys generation.
+	* DataObject.php: possible fix to #1795 - update accepts
+	  WHEREADD_ONLY, and does checks to stop you wiping out your
+	  database...
 
-2003-03-25 Tuesday  alan_k
+2005-01-22 12:04  alan_k
 
-	* fix non key based tables producing php warning
-	* fix sequences for non-mysql databases
-	* make unique flag a key - for postgres mdb combo
-	* * phpdoc fixes * cosmetics * small change in generator.php to add
-	a new line in generated classes # i hope it's ok with you alan :)
+	* DataObject.php: fix bug #3010 incorrectly carrying on after
+	  finding an empty date.
 
-2003-03-24 Monday  alan_k
+2005-01-22 11:52  alan_k
 
-	* more wishfull thinking in TODO :)
+	* DataObject.php: skip validation on empty sequence key columns bug
+	  #3187
 
-2003-03-12 Wednesday  alan_k
+2005-01-22 11:36  alan_k
 
-	* update changelog to reflect change to update/delete behaviour
-	* really return rows affected as promissed in an old release
-	-oops..
-	* remove production option from example - not required any longer
-	* adding daniels fix for ambiguos joins - needs testing, but looks
-	ok
-	* oops put the old release in the changelog seciton..
-	* update package for bugfix release
-	* fix link loading for joinAdd etc. - adjust unit tests for
-	createTable test on local machine
+	* DataObject/Generator.php, docs/example.ini: add
+	  generate_setters/getters patch by Torsten Roehr (bug#3001)
 
-2003-03-11 Tuesday  alan_k
+2005-01-22 11:29  alan_k
 
-	* fix limit for postgres - add warning for unsupported databases,
-	more unit tests - fix to toArray() warnings
-	* fix join condition in count queries (Daniel Von Fange)
+	* DataObject.php: fix bug #3058 - getLinkArray() correctly checks
+	  return value (probably broken completely before)
 
-2003-03-08 Saturday  alan_k
+2005-01-22 11:28  alan_k
 
-	* more features.. toArray(), update with filter on unchanged, more
-	unit tests.
+	* DataObject.php: fix bug #3098 -
+	  &PEAR::getStaticProperty("DB_DataObject",lastError"); works as
+	  per documentation
 
-2003-03-06 Thursday  alan_k
+2005-01-22 11:22  alan_k
 
-	* performance fixes, removal of production option, bugfix - warning
-	on ignore_sequence_keys
+	* DataObject.php: fix bug #3201 - get_class_vars() with privates.
+	  ** although this now segfaults :) - see PHP bug #31651
 
-2003-02-25 Tuesday  alan_k
+2005-01-22 10:37  alan_k
 
-	* fix delete bug - thx to Ian Eure, add more unit tests
+	* DataObject.php: fix bug #3264 - warning running joinAdd on an
+	  object with results.
 
-2003-02-14 Friday  alan_k
+2005-01-21 10:11  alan_k
 
-	* decided that escape was more usefull than quote - for doing
-	things like building like queries..
-	* adding quote method as a quick wrapper
+	* DataObject/Generator.php: fix bug #3225 double writing of ini
+	  entries
 
-2003-02-13 Thursday  alan_k
+2005-01-18 09:31  alan_k
 
-	* making sure overriding fetch(), is called by get et al.
-	* updated to check affectedRows on insert, update and delete
+	* DataObject.php: make mysqli native for insert
 
-2003-01-29 Wednesday  jrust
+2005-01-04 13:00  alan_k
 
-	* * Add option to count() and delete() to only use the conditon set
-	with addWhere.	Default is still to build the condition from the
-	object.  * A few code cleanups in those methods
+	* DataObject/Generator.php: fix bug #3079 missing escape in
+	  generate_add_validate_stubs option code
 
-2003-01-25 Saturday  alan_k
+2004-12-25 14:08  alan_k
 
-	* fix E_ALL warning on staticGet, change remove another
-	getStaticProperty
+	* package.xml: fix package.xml - needs fix to pear installer (
+	  #3027 to build this now)
 
-2003-01-23 Thursday  alan_k
+2004-12-25 14:02  alan_k
 
-	* provisional support for null values
-	* yet another bug fix release
-	* oops debug update check wrong way round
+	* package.xml: fix package.xml - needs fix to pear installer (
+	  #3027 to build this now)
 
-2003-01-22 Wednesday  alan_k
+2004-12-24 20:55  alan_k
 
-	* added pear object fetching support and fixed links.ini bug
+	* package.xml:	use correct negative test
 
-2003-01-21 Tuesday  alan_k
+2004-12-24 20:54  alan_k
 
-	* pre-release update to changelog
-	* limited BOOL support - thx to Mitchell Perilstein
+	* ChangeLog, package.xml: prep for christmas release
 
-2003-01-08 Wednesday  alan_k
+2004-12-11 16:49  alan_k
 
-	* changed private static _getStaticDefinitions to private
-	_loadDefinitions - as there is no longer a need for a static call
-	to do this (it doesnt use static vars any more)
-	* added support for fixed data definition ini file location,
-	changed storage of ini file and links to GLOBAL array = seems to
-	improve speed..
+	* DataObject.php, tests/simple.phpt: fix bug #2928 - store last
+	  error when query bugs out.
 
-2003-01-04 Saturday  mj
+2004-11-30 14:21  alan_k
 
-	* * Update copyright year to 2003.
+	* DataObject.php: wow, people actually read this rubish :)
 
-2003-01-02 Thursday  alan_k
+2004-11-20 11:12  alan_k
 
-	* oops typo
-	* changes to support globals rather than static calls, removed
-	relative path stuff - it doesnt work that well..
+	* DataObject/Generator.php: fix bug #2674 - wierd column names
+	  messing up .ini files.
 
-2002-12-31 Tuesday  alan_k
+2004-11-20 10:49  alan_k
 
-	* initialize that array properly
-	* mega update on TODO list - thx to Brian Micheal for these.. now
-	lets see how many get done...
-	* updated package file, changed result and connection caching to
-	globals (and unset if insert, update or delete) - this is a serious
-	 speed improvement for inserting
-	* fix to make multiple createTables work again .. - thanks to Mike
-	Carter for spotting this one
-	* more test files for unit testing multiple databases
-	* added check for strings in key return = thx to Anthony Julou for
-	spotting that one
+	* DataObject/Generator.php: fix bug #2778 - show more informative
+	  warning when postgres bug found..
 
-2002-12-16 Monday  alan_k
+2004-11-16 09:50  alan_k
 
-	* Fixed typo on no data warning
+	* tests/simple.phpt: add test for bug #2759 - which appears to work
+	  anyway.
 
-2002-12-12 Thursday  alan_k
+2004-11-13 14:17  alan_k
 
-	* updating phpdoc comments
-	* adding fix to delete and some new unit tests
+	* DataObject.php: add experimental multidatabase join support
 
-2002-12-10 Tuesday  alan_k
+2004-11-13 12:58  alan_k
 
-	* options added for insert sequence usage - if this works first
-	time I will be amazed
+	* DataObject.php, tests/simple.phpt: fix bug #2739 - sleep
+	  serializing of objects is PHP5 - not sure if this is really a
+	  PHP5 bug though..
 
-2002-12-09 Monday  alan_k
+2004-10-20 12:06  alan_k
 
-	* updated package.xml with change log - yet another release :)
-	* oops again - compare not assign
-	* oops didnt want to add that extra var definition
-	* changes to make quoting rely on PEARs database abstraction layer,
-	rather than just addslashes
-	* fixes to stop generator rewriting extends field when not wanted
-	* fix generator setting _database instead of  _database_dsn
+	* DataObject/Generator.php: #2565 - oci8 NUMBER recogized by
+	  generator
 
-2002-12-06 Friday  alan_k
+2004-10-18 17:26  alan_k
 
-	* ready for bugfix release
-	* fix logic on setting dsn
-	* fixes by stijn de reede - allow sessioned usage, working example
-	for joinAdd, and bugfix for joinAdd
+	* DataObject/Generator.php: lets not abuse sprintf :)
 
-2002-12-05 Thursday  alan_k
+2004-10-18 17:24  alan_k
 
-	* changing release to 0.8 as I already taged 0.7 but didnt release
-	* ah - stable is case sensitive
-	* add note about dynamic option array setting
-	* remove warning from optional extends field
-	* adding patch for _database usage by Sergey Lipnevich - needs
-	testing
-	* updated changelog changing status to stable
-	* experimental joinAdd method for building joined queries added
+	* DataObject/Generator.php, docs/example.ini: generator can now
+	  create stubs for validators : option
+	  generator_add_validate_stubs=1
 
-2002-12-04 Wednesday  alan_k
+2004-10-18 17:08  alan_k
 
-	* added notes on join concepts
+	* tests/createTest.php: add createTables test with regex usage
 
-2002-11-25 Monday  alan_k
+2004-10-16 10:36  alan_k
 
-	* sequenced defaults to table name - as per stigs recommendation
+	* tests/test_results.txt: updated results
 
-2002-11-22 Friday  alan_k
+2004-10-16 10:34  alan_k
 
-	* Attempt to fix sequence creation for non-mysql databases using
-	tablename_seq
+	* DataObject.php: reduce error defines.
 
-2002-11-21 Thursday  alan_k
+2004-10-16 10:33  alan_k
 
-	* last of the cosmetics.. - thx to Arnaud
+	* DataObject.php: add more comprehesive limit support - (Lutz
+	  Thomas)
 
-2002-11-20 Wednesday  alan_k
+2004-10-16 09:20  alan_k
 
-	* More Cosmetics from Arnaud
+	* DataObject.php: allow access to columns starting with _ using
+	  set*()/get*()..  - as suggested by Sandro
 
-2002-11-19 Tuesday  alan_k
+2004-10-14 16:41  alan_k
 
-	* Arnauds CS fixes and tidy up
-	* changed invalid checking for empty values for get() - thx to
-	Jeremy Gunter
+	* DataObject.php: use numeric - as parse_ini_file might be setting
+	  that as a string. - spotted by pokey
 
-2002-10-05 Saturday  alan_k
+2004-10-14 10:42  alan_k
 
-	* more postgres support (Xavier)
-	* update release notes to mention short tags
-	* fixed short open tags - mmh, dejavu here - Im sure I did this
-	before
+	* DataObject.php, tests/test_results.txt: #2519 - fixed - intval()
+	  numerics that arent numbers = eg. booleans., on build_condition -
+	  to match behaviour on insert and update.
 
-2002-09-26 Thursday  alan_k
+2004-10-14 10:35  alan_k
 
-	* update changes
-	* postgresql fixes thanks to Xavier
-	* if table is defined in links.ini, dont attempt to use autolinks
+	* tests/: simple.phpt, test_results.txt: added check for #2519
 
-2002-09-25 Wednesday  alan_k
+2004-10-12 14:14  alan_k
 
-	* CS fixes - change my beloved TRUE and FALSE with pears true and
-	false :)
-	* more of those pesky { moved
-	* CS fixes (remove tabs, move { after functions), add return
-	pear/db error to query, so that return FALSE works for
-	update/delete/insert etc.
+	* DataObject/Generator.php: fix logic for commenting out of var
+	  definitions
 
-2002-09-17 Tuesday  alan_k
+2004-10-12 13:27  alan_k
 
-	* yet more TODO items
-	* white space and CS changes
-	* added generator hooks by Micael Lund Rasmussen
-	* added delete based on primary keys only if they are set. update
-	to TODO, added revision notes to package
-	* adding return FALSE on insert and update failure, eg. check ===
-	FALSE for failure, then use $object->_lastError
+	* DataObject/Generator.php: private __table__ will likely break too
+	  much..
 
-2002-09-14 Saturday  alan_k
+2004-10-08 15:00  alan_k
 
-	* update getLinksArray() to support links.ini files
-	* fixes to getLinks code - allows mixing _ and .links.ini files,
-	removes typo/warning
+	* DataObject/Generator.php: * disabling var writing just comments
+	  out, so code is still readable..
 
-2002-09-10 Tuesday  alan_k
+2004-10-08 14:58  alan_k
 
-	* fix bug spotted by Peter Gebauer
+	* DataObject/Generator.php, docs/example.ini: * make generator
+	  write PHP5 compatible code, * add option to disable writing of
+	  vars * tidy up example.ini
 
-2002-09-07 Saturday  alan_k
+2004-10-05 09:35  alan_k
 
-	* correct release date
+	* DataObject.php: fix bug #2441 - remove debugging code
 
-2002-09-04 Wednesday  alan_k
+2004-09-27 19:21  alan_k
 
-	* oops typo in last commit
-	* better error checking on createTables.php
-	* updating todo list
-	* updated to deal with oracle tableinfo return and varchar2 in type
+	* DataObject.php, tests/memoryTest.php: fix having with mulitple
+	  calls (supprised no-one spotted that)
 
-2002-09-03 Tuesday  alan_k
+2004-09-26 11:32  alan_k
 
-	* fixing postgres and all compatibility on updates and inserts
+	* DataObject/Generator.php: remove references to an old template
+	  generator.
 
-2002-08-28 Wednesday  alan_k
+2004-09-15 00:54  alan_k
 
-	* fix package file ready for next release
-	* oops typo
-	* adding multiple link support, and ZE2 FC/BC support
+	* DataObject.php: remove warning hider - bug #3468
 
-2002-08-27 Tuesday  alan_k
+2004-09-14 10:43  alan_k
 
-	* bug fixes by Jens Fischer
+	* tests/test_results.txt: results for previous commit
 
-2002-08-21 Wednesday  alan_k
+2004-09-14 10:41  alan_k
 
-	* update for bug fix release
-	* must have missed updating this
-	* fix bug - thx TABATA Tomoyuki
+	* tests/simple.phpt: update to test for unknown bug #2267
 
-2002-08-16 Friday  alan_k
+2004-09-14 10:33  alan_k
 
-	* bug fixes by Tim White
+	* DataObject.php: fix bug #2318 - making update($do), when no
+	  changes are detected not an failure (eg. returns true now)
 
-2002-08-15 Thursday  alan_k
+2004-09-14 09:49  alan_k
 
-	*  updated TODO stuff, finished all old TODOs
-	* disable debugger if used by extended classes when in production
-	mode
-	* not a good idea working on old versions - thank god for CVS
-	* i doubt the defines would have worked - since the define would
-	have been done after compile time - changed to using globals..
-	* revert accidental change to createTables
-	* Added production line and description to ini file
-	* Added link based ini files code by Tim White, added production
-	define to disable debugging - performance enhancement, made
-	staticAutoLoadTable() a public method
+	* DataObject.php: fix bug #2319 - joinAdd should not add AS when
+	  using same name.
 
-2002-08-10 Saturday  alan_k
+2004-09-09 16:48  alan_k
 
-	* fix warning from E_ALL on generator
+	* docs/dia/: README, dia-dbo.xsl, dia-html-edit.xsl, dia-sql.xsl,
+	  stylesheets.xml: adding dia tools by J llarens
 
-2002-08-04 Sunday  alan_k
+2004-09-03 16:47  alan_k
 
-	* fixed bug spotted by William at adtio dotcom
+	* DataObject.php, tests/simple.phpt, tests/test_results.txt: tests
+	  for bug #2267, more verbose connect reporting
 
-2002-07-16 Tuesday  alan_k
+2004-08-28 12:40  alan_k
 
-	* validate checked wrong data
+	* ChangeLog, package.xml: update package xml
 
-2002-07-15 Monday  alan_k
+2004-08-28 11:01  alan_k
 
-	* added validation to dataobject - see todo for notes about it
+	* DataObject.php: quick class instantation $newdo = $do->factory();
 
-2002-07-14 Sunday  alan_k
+2004-08-25 16:42  alan_k
 
-	* added register_argv test
-	* changed to _SERVER[argv] to remove register globals relience -
-	thanks to Zachery Hostens
+	* DataObject.php: typo in last commit
 
-2002-07-12 Friday  alan_k
+2004-08-25 15:51  alan_k
 
-	* missed the explode bit
-	* adding todo
+	* DataObject.php: fix bug #2205 - case sensitivity of call in PHP5
 
-2002-07-02 Tuesday  alan_k
+2004-08-24 22:06  alan_k
 
-	* list is a reserved keyword - oops
-	* changed debuging to allow updates to database when debuglevel =1,
-	getLinkArray now can optionally list using object id, added string
-	type to character type for generator
-	* prep'ed for release
-	*  removed debugging from generator
-	* updated documentation, removed dependancy on config, fixed
-	generator nnnnn error
-	* Sorted out phpdoc define and class header, added the lastError
-	property, fixed typo on connnnnnnections
+	* DataObject.php: fix bug - unset order_by/limit causing undefined
+	  indexes.
 
-2002-06-24 Monday  alan_k
+2004-08-20 11:14  alan_k
 
-	* missed a legacy method
-	* remove blank line and adding <?php
-	* removing legacy methods
-	* allow call to autoload as a static method
-	* typos, and warnings
-	* added pear error handling
-	* typo
-	* correct name for getstaticproperty, added class autoloader, and
-	changed generator to use database neutral calls. - getLinks to
-	match documentation
+	* DataObject.php: kludging PHP5 support again.
 
-2002-06-21 Friday  alan_k
+2004-08-13 12:39  alan_k
 
-	* First commit of DB_DataObject, includings source, and docbook and
-	html generated docbook
+	* tests/test_results.txt: update results for checking
+
+2004-08-13 12:35  alan_k
+
+	* tests/simple.phpt: add test for bug #2116
+
+2004-08-12 12:52  alan_k
+
+	* docs/example.ini: add warning note about build_views
+
+2004-08-11 15:50  alan_k
+
+	* DataObject.php: oops typo
+
+2004-08-11 15:20  alan_k
+
+	* DataObject.php: try and get #1835 fixed correctly so it doesnt
+	  break the whole joinAdd code..
+
+2004-08-11 15:01  alan_k
+
+	* DataObject.php: bug #2106 - update() with old object having no
+	  changes does not raise an error
+
+2004-08-11 14:52  alan_k
+
+	* DataObject/Generator.php, docs/example.ini: bug #2086 - support
+	  building of dataobjects for views with build_view=1 option
+
+2004-08-11 14:49  alan_k
+
+	* DataObject.php: hopefully finaly close #1835
+
+2004-08-11 14:43  alan_k
+
+	* DataObject.php: fix incorrect test for keep_query_after_fetch
+
+2004-08-09 08:39  alan_k
+
+	* ChangeLog, package.xml: prep for bugfix release
+
+2004-08-09 08:34  alan_k
+
+	* DataObject/Generator.php: fix typo on generator
+
+2004-08-09 08:33  alan_k
+
+	* DataObject/Generator.php: fix generator not having DB available
+
+2004-08-08 12:49  alan_k
+
+	* ChangeLog, DataObject.php: fix bug #2088 - allow class_prefix to
+	  be defaulted to ""
+
+2004-08-07 11:18  alan_k
+
+	* DataObject.php: Release notes lied about 4.2 compatibility
+
+2004-08-07 11:10  alan_k
+
+	* package.xml: prep for release
+
+2004-08-07 10:28  alan_k
+
+	* DataObject.php: fix bug #1980 = logic error in
+	  JoinAs+quoteIdentifier code
+
+2004-08-07 10:23  alan_k
+
+	* DataObject.php: fix bug #1835  - auto_linking
+
+2004-08-07 09:51  alan_k
+
+	* DataObject/Generator.php: really nasty kludgy fix to bug #2068
+
+2004-08-04 11:17  alan_k
+
+	* DataObject.php, tests/memoryTest.php: add free method to enable
+	  flat memory consumtion, add test to illustrate fix.  NOTE:
+	  num_rows in DB object is stacked.. and stored in the connection -
+	  WHY?
+
+2004-07-26 14:29  alan_k
+
+	* tests/test_results.txt: update test results
+
+2004-07-26 14:28  alan_k
+
+	* DataObject.php: fix bug with last @ hidding fix
+
+2004-07-24 11:57  alan_k
+
+	* DataObject.php: fix bug #1935 - double quoting of selectAs(),
+	  make DB lazy loaded
+
+2004-07-24 11:51  alan_k
+
+	* DataObject.php: fix bug #1935 double quoting of identifiers in
+	  selectAs
+
+2004-07-24 11:45  alan_k
+
+	* DataObject.php, tests/test_results.txt: fix bug #1923 - most @
+	  silencers removed, adding test results so I can monitor BC breaks
+	  PART 3
+
+2004-07-24 11:40  alan_k
+
+	* DataObject.php, tests/test_results.txt: fix bug #1923 - most @
+	  silencers removed, adding test results so I can monitor BC breaks
+	  PART 2
+
+2004-07-24 11:26  alan_k
+
+	* DataObject.php, tests/test_results.txt: fix bug #1923 - most @
+	  silencers removed, adding test results so I can monitor BC breaks
+
+2004-07-24 11:07  alan_k
+
+	* DataObject.php: attempt to fix #1835 - so links() can be used to
+	  store local links arrays...
+
+2004-07-24 10:40  alan_k
+
+	* DataObject.php: fix bug #1833 - ok - may as well return an empty
+	  array ..
+
+2004-07-24 10:37  alan_k
+
+	* DataObject.php: fix bug #1833 - return null rather than false, so
+	  casting to array works
+
+2004-07-24 10:29  alan_k
+
+	* DataObject/Generator.php: apply fatal error to table lookup
+	  failure bug #1828
+
+2004-07-09 11:17  alan_k
+
+	* DataObject.php: fix separator
+
+2004-07-03 11:14  alan_k
+
+	* DataObject.php: use include path to do file hunting if file not
+	  found.
+
+2004-07-03 10:40  alan_k
+
+	* DataObject.php: fix bug #1778 - allow table to be used to return
+	  extra virtual columns
+
+2004-06-29 17:55  alan_k
+
+	* DataObject.php: fix bug #1704 - not null check when using "null"
+	  values
+
+2004-06-29 17:51  alan_k
+
+	* DataObject/Generator.php: probably fix bug #1697 extra line
+	  created after definition.
+
+2004-06-29 17:42  alan_k
+
+	* DataObject.php: fix bug #1726 - enable orderby and limit to be
+	  used.
+
+2004-06-18 17:11  alan_k
+
+	* DataObject.php, docs/example.ini: fix bug #1664 = add
+	  configuration option links_{databasename}
+
+2004-06-11 14:22  alan_k
+
+	* DataObject.php: make debugging display query errors
+
+2004-06-11 11:42  alan_k
+
+	* DataObject.php: typo on last commit
+
+2004-06-11 11:39  alan_k
+
+	* DataObject.php: more storage of result fields away from result
+	  object, as it gets destroyed after last query.
+
+2004-06-10 11:51  alan_k
+
+	* DataObject/Generator.php: Fix bug #1595 - regex include/exclude
+	  working correctly (Thanks to Stephane Gully)
+
+2004-06-05 10:32  alan_k
+
+	* DataObject/Cast.php: fix bug #1559 - __FUNCTION__ not needed.. -
+	  so deps of 4.2 should be valid again..
+
+2004-06-03 13:41  alan_k
+
+	* DataObject.php, package.xml: fix bug #1548
+
+2004-06-02 23:35  alan_k
+
+	* ChangeLog, package.xml: update package.xml - for release
+
+2004-06-02 23:10  alan_k
+
+	* DataObject/Generator.php: emit error if table info is not
+	  supported - bug #1354
+
+2004-06-02 23:06  alan_k
+
+	* DataObject/Generator.php: fix bug #1000 - cidr, inet, macaddr for
+	  postgres.
+
+2004-06-02 23:04  alan_k
+
+	* DataObject/Generator.php, docs/example.ini: add
+	  generator_(in|ex)clude_regex	- note they cannot be used together
+	  at present..
+
+2004-06-02 22:58  alan_k
+
+	* DataObject.php, tests/simple.phpt: store returned keys inside
+	  result object.. - fix bug #1315
+
+2004-06-02 22:36  alan_k
+
+	* DataObject.php, package.xml, docs/example.ini, tests/simple.phpt:
+	  fix bug #992
+
+2004-05-07 11:24  alan_k
+
+	* package.xml: update php dependancy version
+
+2004-04-28 08:52  alan_k
+
+	* DataObject.php, package.xml: thanks norbert - unsetting and using
+	  count dont work nicely together..
+
+2004-04-23 19:10  alan_k
+
+	* DataObject.php, DataObject/Error.php: adding custom error handler
+	  support - so you can see what type of error you get..
+
+2004-04-14 18:11  alan_k
+
+	* DataObject.php: fix bug#1205 (jereonl)
+
+2004-04-14 12:51  alan_k
+
+	* DataObject.php: raise error if no dsn found after all the
+	  efforts..
+
+2004-04-07 12:46  alan_k
+
+	* TODO: update TODO list..
+
+2004-04-07 12:28  alan_k
+
+	* DataObject.php: connecting in database structure seems like a
+	  better idea..
+
+2004-04-07 12:26  alan_k
+
+	* DataObject.php: oops typo on last commit..
+
+2004-04-07 12:25  alan_k
+
+	* DataObject.php: set _database when getting links...
+
+2004-04-07 12:20  alan_k
+
+	* DataObject.php: links call before a database call will fail...-
+	  fixed
+
+2004-04-06 19:00  alan_k
+
+	* DataObject.php: no data affected is not really an error condition
+	  - update/insert/delete will return 0 instead..
+
+2004-04-05 15:14  alan_k
+
+	* DataObject.php: fix error message on unsupported databases...
+
+2004-04-01 22:27  alan_k
+
+	* DataObject.php, package.xml: using new escapeSimple, and updating
+	  DB deps to 1.6 (Rob Lineweaver)
+
+2004-03-31 10:17  alan_k
+
+	* DataObject.php: for date/time columns that are not-notnull if you
+	  set them to "" (an empty string) - they will be inserted and
+	  updated as NULL - this has been causing no end of problems ...
+
+2004-03-26 13:44  alan_k
+
+	* DataObject.php: fix CRLF that mysteriously got in there...
+	  (Daniel Convissor)
+
+2004-03-11 14:27  alan_k
+
+	* tests/simple.phpt: add note that the test comes from bug#970
+
+2004-03-11 14:24  alan_k
+
+	* DataObject.php, DataObject/Generator.php, tests/simple.phpt: make
+	  calls to assign sequenceKey set the global cache rather than
+	  object var
+
+2004-03-10 13:04  alan_k
+
+	* DataObject.php: more fixes relating to change to debuging -
+	  accepting callbacks.
+
+2004-03-10 12:52  alan_k
+
+	* DataObject.php:  fix bug #973 - hide error on debug not existing
+
+2004-03-08 22:35  alan_k
+
+	* DataObject.php: fix bug#456 - silence bug when resultset is
+	  cleared
+
+2004-03-08 21:45  alan_k
+
+	* DataObject.php: make class sending tidier..
+
+2004-03-08 21:41  alan_k
+
+	* DataObject.php: try fixing bug #971 - add class to the callback
+
+2004-03-08 21:29  alan_k
+
+	* DataObject.php: fix bug #958 (debugLevel returns previous value),
+	  fix bug #940 whereAdd returns previous value.  support user
+	  callbacks for debuglevel (eg. debugLevel(array(mylogger,debug));
+	  )
+
+2004-02-26 22:12  alan_k
+
+	* DataObject.php: fix bug #864 - strtolower class names for
+	  equivlant tests
+
+2004-02-26 10:48  alan_k
+
+	* DataObject.php: fix bug #854 - missing variable (thx to maka3d)
+
+2004-02-26 10:43  alan_k
+
+	* DataObject.php: fix example around count()
+
+2004-02-26 10:38  alan_k
+
+	* DataObject.php: make count arguments morphable.. - allow
+	  selecting of exactly what you want to count
+
+2004-02-23 14:51  alan_k
+
+	* DataObject.php: fix bug #820 - need to connect before reading
+	  quote_identifiers
+
+2004-02-21 17:35  alan_k
+
+	* DataObject.php: fix bug #805 - selectAdd() returns existing
+	  value, so you can prepend distict or something else
+
+2004-02-21 17:32  alan_k
+
+	* DataObject.php, docs/example.ini: fix bug #803 - change quote
+	  entities to quote identifiers
+
+2004-02-21 17:25  alan_k
+
+	* DataObject.php:  try and fix bug #805 - changing the check for
+	  last record.. - which clears the connection store.
+
+2004-02-21 17:18  alan_k
+
+	* DataObject.php: oops dont commit debugging code
+
+2004-02-21 17:17  alan_k
+
+	* DataObject.php: argh!!! Date doenst accept yyyy-dd-mm
+
+2004-02-21 10:58  alan_k
+
+	* DataObject.php: check for empty values in toValue
+
+2004-02-16 09:12  alan_k
+
+	* DataObject.php: check result situation before running result set
+
+2004-02-14 15:42  alan_k
+
+	* tests/simple.phpt: fix tabs/spaces in test/simple.phpt
+
+2004-02-14 15:29  alan_k
+
+	* DataObject.php, tests/simple.phpt: memory leaks reduced alot for
+	  insert()
+
+2004-02-14 14:29  alan_k
+
+	* DataObject.php, tests/simple.phpt: remove unneccesary stuff -
+	  last commit doesnt fix memory problems - Its ... guess what...
+	  overload leaks memory.... again..
+
+2004-02-14 14:11  alan_k
+
+	* DataObject.php, tests/simple.phpt: make sure that
+	  insert/update/delete dont add to the result stack
+
+2004-02-14 13:44  alan_k
+
+	* DataObject.php: fix bug #713 - flip the fields array.
+
+2004-02-11 13:34  alan_k
+
+	* DataObject.php: fix numrows not supported error from some
+	  databases
+
+2004-02-11 13:28  alan_k
+
+	* DataObject.php: fix bug #713 - after joinAdd, toArray doesnt
+	  return everything..  Fixed by caching the collected cols in fetch
+	  if array is set..
+
+2004-02-11 13:19  alan_k
+
+	* DataObject/Generator.php, tests/simple.phpt: fix bug #730 -
+	  support double precision in postgres
+
+2004-02-10 15:34  alan_k
+
+	* DataObject/: Generator.php, createTables.php: make correct
+	  folders for ini_{databasename} , change echos to debug in
+	  generator
+
+2004-02-10 15:30  alan_k
+
+	* DataObject/Generator.php: write ini file if ini_{databasename} is
+	  set - make echo a debugging call
+
+2004-02-05 23:20  alan_k
+
+	* DataObject.php: check for null on validation
+
+2004-02-05 23:17  alan_k
+
+	* DataObject.php: always call element validators if they exist, add
+	  notnull test on validator
+
+2004-02-05 23:06  alan_k
+
+	* DataObject.php, DataObject/Generator.php, docs/example.ini:
+	  revert lowercasing and optimization settings for oracle - this
+	  should be done with PEAR::getStaticProperty("DB","options")
+
+2004-02-05 17:11  alan_k
+
+	* DataObject.php: restore query to original after find - so updates
+	  following it dont duplicate the condition
+
+2004-02-05 12:49  alan_k
+
+	* DataObject.php, DataObject/Generator.php: oops typos
+
+2004-02-05 10:55  alan_k
+
+	* DataObject.php, DataObject/Generator.php: change clone
+	  implementation to match PHP5s new way of doing it - add notes
+	  about it being removed
+
+2004-02-05 10:37  alan_k
+
+	* DataObject/Generator.php: strtolowers.. so Oracle has a better
+	  chance of working..
+
+2004-02-05 10:33  alan_k
+
+	* DataObject.php: strtolower table names, and allow 0-9, change the
+	  warning on count() with no keys
+
+2004-02-04 13:27  alan_k
+
+	* DataObject.php, DataObject/Generator.php: debugging code added to
+	  generator, fixed typo on path seperator
+
+2004-02-04 12:23  alan_k
+
+	* DataObject/Generator.php: remove closing tag from generator.
+
+2004-02-04 12:16  alan_k
+
+	* DataObject/Generator.php: add ability to write database name if
+	  you are using database_* format
+
+2004-02-04 12:11  alan_k
+
+	* DataObject.php, DataObject/Generator.php, docs/example.ini:
+	  support unnamed or alternamed databases... hopefully - mulitple
+	  path support for schema
+
+2004-02-03 14:15  alan_k
+
+	* DataObject/Generator.php: allow numbers in tablenames - may cause
+	  problems with tables starting with a number...
+
+2004-02-02 15:41  alan_k
+
+	* DataObject.php: fix bug #642 count doesnt use build_condition
+
+2004-02-01 09:15  alan_k
+
+	* DataObject.php: fix bug #647 debug and raiseError call dynamic
+	  rather than static where possible (so you can overload the
+	  methods)
+
+2004-01-30 08:39  alan_k
+
+	* DataObject.php: fix bug #644 - phpdoc comments used setStatic,
+	  rather than getStaticProperty
+
+2004-01-29 18:02  alan_k
+
+	* package.xml: update package.xml for release
+
+2004-01-29 17:53  alan_k
+
+	* DataObject.php, DataObject/Generator.php, tests/simple.phpt:
+	  recognize mysql TIMESTAMP type, and ingore it for updates and
+	  inserts. (use query() if you really want to play with it..
+
+2004-01-29 11:04  alan_k
+
+	* DataObject.php: fix bugs in toValue
+
+2004-01-26 21:12  alan_k
+
+	* DataObject.php: fix bug #620 - accept floats & doubles that are
+	  ints..
+
+2004-01-24 16:41  alan_k
+
+	* ChangeLog, DataObject.php, package.xml: fix bug #359 (toArray of
+	  links), prep for bugfix release
+
+2004-01-24 16:24  alan_k
+
+	* DataObject.php, tests/simple.phpt: small update to test script
+
+2004-01-24 15:50  alan_k
+
+	* tests/simple.phpt: update test to reflect change to date time
+	  setters
+
+2004-01-24 15:48  alan_k
+
+	* DataObject.php: remove strtotime autoconversion - it causes far
+	  to many problems in most cases... eg. 0000-00-00 == 1999-11-30 :)
+
+2004-01-24 15:29  alan_k
+
+	* DataObject.php: fix bug #611 = change note about NO_OVERLOAD
+
+2004-01-24 15:25  alan_k
+
+	* DataObject.php, tests/simple.phpt: fix bug #612 -
+	  databaseStructure can be called statically, and with a single
+	  argument (databasename) will return the database struture as read
+	  from the database.. (with __keys)
+
+2004-01-24 15:09  alan_k
+
+	* DataObject.php: make DB_DataObject::getDatabaseConnection()
+	  return a pear error if dont_die is set to true.. - so you can
+	  test connections..
+
+2004-01-22 11:03  alan_k
+
+	* DataObject.php, docs/example.ini: add keep_query_after_fetch
+	  option, document the sequence option in the ini file.
+
+2004-01-22 10:55  alan_k
+
+	* package.xml: fix bug #605, prep for release
+
+2004-01-22 10:45  alan_k
+
+	* DataObject.php, package.xml, tests/simple.phpt: allow option
+	  sequence_{tablename}={column}:{sequence_name} to work...
+
+2004-01-22 09:55  alan_k
+
+	* DataObject.php, tests/simple.phpt: fix null, and cast objects
+	  used with setters and setFrom()
+
+2004-01-20 16:27  alan_k
+
+	* package.xml: oops Date is now an optional dependancy...
+
+2004-01-20 16:09  alan_k
+
+	* package.xml: prepping for realease
+
+2004-01-20 16:04  alan_k
+
+	* ChangeLog, package.xml: prepping for realease
+
+2004-01-19 15:50  alan_k
+
+	* DataObject.php: typo in setFrom
+
+2004-01-19 15:49  alan_k
+
+	* DataObject.php: typo in setter
+
+2004-01-19 14:30  alan_k
+
+	* DataObject.php: force setFrom to utilize fromValue and return
+	  errors
+
+2004-01-19 14:09  alan_k
+
+	* DataObject.php: standardize auto getters for date elements on
+	  strftime format - so it works with Date::Date()
+
+2004-01-18 11:57  alan_k
+
+	* DataObject.php: provisional rich setters/getters
+
+2004-01-18 10:54  alan_k
+
+	* DataObject/Generator.php: for some reason table name needs
+	  trimming..
+
+2004-01-18 10:48  alan_k
+
+	* DataObject.php, DataObject/Generator.php: fix bug #595 - replace
+	  non letters with underscore..
+
+2004-01-18 10:27  alan_k
+
+	* DataObject.php, DataObject/Generator.php, tests/simple.phpt: make
+	  native key recognision a little better - changes ini file format
+	  (key=N|K) - native or key. - BC protected... - ignores it when it
+	  finds a number..
+
+2004-01-18 10:00  alan_k
+
+	* DataObject.php: rationalize the table schema autoload code.
+
+2004-01-16 17:17  alan_k
+
+	* DataObject.php: allow multiple updates on the same object -
+	  without adding lots of id=.... on the end..
+
+2004-01-16 17:04  alan_k
+
+	* DataObject.php:  databaseStructure retuns false.. - so it doesnt
+	  issue errors when autofilling the schema
+
+2004-01-10 17:48  alan_k
+
+	* DataObject.php: add support for postgres native sequences.
+
+2004-01-10 13:28  alan_k
+
+	* DataObject.php, tests/simple.phpt: fix auto date typecasting in
+	  setters
+
+2004-01-10 13:12  alan_k
+
+	* DataObject.php, tests/simple.phpt: consider additional types...
+
+2004-01-10 12:56  alan_k
+
+	* DataObject.php, tests/simple.phpt: really fix #532
+
+2004-01-10 12:23  alan_k
+
+	* DataObject.php, tests/simple.phpt: transactions support
+	  complete...
+
+2004-01-10 11:46  alan_k
+
+	* DataObject.php, tests/simple.phpt: working version - do not use
+	  (trying to get transactions to work nicely...)
+
+2004-01-10 11:13  alan_k
+
+	* DataObject.php, DataObject/Generator.php, tests/simple.phpt: fix
+	  proxy code a bit more & test transactions properly
+
+2004-01-10 09:57  alan_k
+
+	* tests/simple.phpt: add example for bug #532
+
+2004-01-09 14:50  alan_k
+
+	* DataObject.php: Im sure I fixed this before.. typo - bug #528
+
+2004-01-07 23:03  alan_k
+
+	* DataObject.php, DataObject/Generator.php, tests/simple.phpt: if
+	  schema_location is not set, schemas will be read on the fly
+
+2004-01-07 20:37  alan_k
+
+	* DataObject.php, tests/simple.phpt: fixing php5 support, adding
+	  type support in setters
+
+2004-01-07 18:58  alan_k
+
+	* DataObject.php, DataObject/Generator.php, tests/simple.phpt: fix
+	  bugs in on-the-fly proxies, and provide tests
+
+2004-01-07 18:48  alan_k
+
+	* DataObject.php, DataObject/Generator.php: First phase of
+	  on-the-fly proxy creation code
+
+2004-01-01 10:53  alan_k
+
+	* DataObject.php: fix bug #473 - query can return a DB_Error
+
+2004-01-01 10:49  alan_k
+
+	* DataObject.php: fix bug #501 - autoload using full path
+
+2004-01-01 10:46  alan_k
+
+	* DataObject.php, DataObject/Generator.php,
+	  DataObject/createTables.php, tests/simple.phpt, tests/test.ini:
+	  fix bug #507
+
+2003-12-23 19:39  alan_k
+
+	* DataObject.php: fix typo  - bug #476
+
+2003-12-22 14:27  alan_k
+
+	* ChangeLog, DataObject.php, package.xml: re-add
+	  sequence_{tablename} and ignore_sequence_keys - in for BC,
+	  although not recommended anymore
+
+2003-12-19 15:20  alan_k
+
+	* DataObject.php: attempt to get inherited/nested joins partly
+	  working for other databases
+
+2003-12-19 14:51  alan_k
+
+	* DataObject.php: fix typo in last commit.
+
+2003-12-19 14:50  alan_k
+
+	* DataObject.php: revert last patch - $do->query("BEGIN"); will
+	  turn off autocommits
+
+2003-12-19 14:43  alan_k
+
+	* DataObject.php: relay autocommit - as overloading borks return by
+	  reference
+
+2003-12-16 17:28  alan_k
+
+	* DataObject/Generator.php: CS fixes, add BIT, BOOL, BOOLEAN, make
+	  the STR quoting of BOOL postgres specific.
+
+2003-12-16 14:38  alan_k
+
+	* DataObject.php: typo spotted by Norbert Mocsnik
+
+2003-12-14 12:27  alan_k
+
+	* DataObject.php: oops typo in last commit
+
+2003-12-13 14:18  alan_k
+
+	* DataObject.php, docs/example.ini: major patch to add support for
+	  entity quoting (Justin Patrin)
+
+2003-12-13 13:28  alan_k
+
+	* DataObject.php, tests/simple.phpt: experimental - toArray
+	  includes links
+
+2003-12-13 12:13  alan_k
+
+	* DataObject/Generator.php: fix bug #413
+
+2003-12-10 11:06  alan_k
+
+	* DataObject.php: set oracle optimization for portibility
+
+2003-12-06 11:02  alan_k
+
+	* DataObject.php: catch empty arrays
+
+2003-12-06 10:59  alan_k
+
+	* DataObject.php: dont return arrays = reduce overhead a bit,
+	  document the params
+
+2003-12-06 10:54  alan_k
+
+	* DataObject.php: oops - statically called method will not have
+	  $this
+
+2003-12-06 10:48  alan_k
+
+	* DataObject.php: make definition loading/setting available
+	  externally... and fix count
+
+2003-12-05 15:28  alan_k
+
+	* DataObject.php: revert to previous behavoir of reseting query
+	  after fetch, make count occur on cloned element
+
+2003-12-04 17:39  alan_k
+
+	* DataObject.php: make debugging explain where its comming from
+
+2003-11-20 15:34  alan_k
+
+	* DataObject.php, docs/example.ini: add new method sequenceKey(),
+	  remove ignore_sequence_keys option. - try and rationalize the
+	  sequence logic
+
+2003-11-17 14:11  alan_k
+
+	* DataObject.php, DataObject/Generator.php,
+	  DataObject/createTables.php: extra debugging on generator, remove
+	  closing tags (not really needed)
+
+2003-11-15 10:49  alan_k
+
+	* package.xml: slight updates for 1.3 release - and package.xml
+	  updated
+
+2003-11-15 10:46  alan_k
+
+	* ChangeLog, DataObject.php, package.xml: slight updates for 1.3
+	  release - and package.xml updated
+
+2003-11-13 09:00  alan_k
+
+	* DataObject/Generator.php: attempt to fix bug #228
+
+2003-11-09 11:20  alan_k
+
+	* DataObject.php: typo
+
+2003-11-09 11:17  alan_k
+
+	* DataObject.php: subtle warning
+
+2003-11-09 11:15  alan_k
+
+	* DataObject.php: add DB_DATAOBJECT_NO_OVERLOAD define, and FC/BC
+	  support for PHP5 (including return by ref fixes)
+
+2003-10-28 14:31  alan_k
+
+	* DataObject.php: remove raiseError on fetch with no data.. - just
+	  produces debug warning now..
+
+2003-10-25 12:23  alan_k
+
+	* DataObject.php: Major change to internal storage of query
+	  building store - significantly reduces the size of objects when
+	  they are fetched/print_r.ed - needs more testing!
+
+2003-10-25 10:54  alan_k
+
+	* DataObject.php: restore some checks for class include - file
+	  exists.. - its relayed into from getLink
+
+2003-10-22 08:53  alan_k
+
+	* DataObject.php, DataObject/Cast.php: fix bug #133 and tidy up
+	  debuging a little
+
+2003-10-18 16:04  alan_k
+
+	* DataObject/Cast.php: fix toString() for date usage.
+
+2003-10-18 16:01  alan_k
+
+	* DataObject/Cast.php: raise Errors..
+
+2003-10-18 15:37  alan_k
+
+	* package.xml, DataObject/Cast.php: correct examples
+
+2003-10-18 11:51  alan_k
+
+	* DataObject.php, package.xml, DataObject/Cast.php,
+	  DataObject/Generator.php: db_dataobject_cast support.
+
+2003-10-18 09:54  alan_k
+
+	* DataObject.php: prevent writing of key values for insert
+	  (autoincrement only) and on update all the time.. - required for
+	  MSSQL support (Markus Wolff)
+
+2003-10-08 16:14  alan_k
+
+	* DataObject.php: tidy up debugging a little
+
+2003-09-25 17:19  alan_k
+
+	* DataObject.php: spotted typo in database()
+
+2003-09-23 17:27  alan_k
+
+	* DataObject.php: small fixes on last update
+
+2003-09-23 16:34  alan_k
+
+	* DataObject.php: oops - thanks to commit emails for this one
+
+2003-09-23 16:32  alan_k
+
+	* DataObject.php: try and make some sense of the sequence -
+	  autoincrement logic
+
+2003-09-18 20:42  alan_k
+
+	* DataObject/Generator.php: fix bug #20 - generator on win32 thanks
+	  to sergey at nikiforov dot net
+
+2003-09-16 08:58  alan_k
+
+	* DataObject.php: add mssql to early check for sequences - oops
+	  missed that one - thx Markus again..
+
+2003-09-13 17:45  alan_k
+
+	* DataObject.php: make the link syntax as an array, the alternative
+	  first argument for joinAdd.. - enables joins without links.ini..
+
+2003-09-11 15:35  alan_k
+
+	* DataObject.php: experimental - on the fly setting of database
+	  fields and keys
+
+2003-09-10 12:26  alan_k
+
+	* DataObject.php: let php warnings show on failed include - they
+	  are far more informative that anything worth displaying.
+
+2003-09-09 04:45  arnaud
+
+	* package.xml: * typo
+
+2003-09-09 04:43  arnaud
+
+	* package.xml, scripts/DB_DataObject_createTables.bat: * add a
+	  simple batch script to execute createTables.php * update
+	  package.xml filelist # this is done in agreement with alan ;)
+
+2003-09-09 04:41  arnaud
+
+	* package.xml: * ws
+
+2003-09-04 09:03  alan_k
+
+	* DataObject.php, package.xml: native autoincrement for MsSQL
+	  (Markus Wolff)
+
+2003-08-28 11:02  alan_k
+
+	* DataObject.php: using case sensitive naming doesnt work - oracle
+	  likes upper - postgres.. etc. lowercase the result name... - use
+	  default
+
+2003-08-27 23:02  alan_k
+
+	* DataObject.php: apparently that breaks as well.. - fetchrow
+	  without the extra param
+
+2003-08-27 23:01  alan_k
+
+	* DataObject.php: oracle only likes uppercase names - not the
+	  smartest of expensive databases that one..
+
+2003-08-27 21:24  alan_k
+
+	* DataObject.php: fix problem with oracle - hopefully
+	  dataobject_num is reasonably rare. (Patrick Roos)
+
+2003-08-27 15:53  alan_k
+
+	* DataObject.php: show fetch timings in debug mode
+
+2003-08-27 15:41  alan_k
+
+	* DataObject.php: changing level 1 debugging to display queries and
+	  result times.. - 2 now shows each fetch
+
+2003-08-27 12:13  alan_k
+
+	* DataObject.php, package.xml: try auto updating package number
+	  (thanks to Tomas Cox)
+
+2003-08-26 17:28  alan_k
+
+	* package.xml: make validate an optional dependancy... - does this
+	  work!
+
+2003-08-19 16:12  alan_k
+
+	* DataObject.php: sync this up for the next release for a change..
+	  - ( Arnaud Limbourg)
+
+2003-08-17 22:02  alan_k
+
+	* DataObject.php: adding links() to retreive the links array
+	  (Markus Wolff)
+
+2003-08-14 13:42  alan_k
+
+	* DataObject.php: future support for explain on debug
+
+2003-08-14 10:01  alan_k
+
+	* package.xml: sync up package.xml with generator changes
+
+2003-08-14 09:59  alan_k
+
+	* DataObject/Generator.php: CS fixes and make generator more
+	  tolerant of broken editors (Andreas Ljunggren)
+
+2003-08-13 11:43  alan_k
+
+	* DataObject.php: revert the null checking change - there is a big
+	  knock on effect from this change. - staticGet relays rely on the
+	  null var
+
+2003-08-13 10:53  alan_k
+
+	* DataObject.php: using null is not always a great way to evaluted
+	  variable arguments.
+
+2003-08-11 15:10  alan_k
+
+	* package.xml: get name right :)
+
+2003-08-11 15:02  alan_k
+
+	* DataObject.php, package.xml: making table(), keys() public,
+	  adding access to database() and tableName() (Marcus Wolff)
+
+2003-08-09 10:23  alan_k
+
+	* package.xml: reducing the dependancy
+
+2003-08-07 14:09  alan_k
+
+	* DataObject.php: Properly fix the limit testing
+
+2003-08-07 10:38  alan_k
+
+	* DataObject.php, package.xml: Improve argument testing on limit
+	  (Demian Turner)
+
+2003-08-07 10:22  alan_k
+
+	* DataObject.php, package.xml: extra argument ot joinAdd() to allow
+	  multiple targets of same type. (Andy Crain)
+
+2003-07-31 12:58  alan_k
+
+	* DataObject.php, package.xml: fix the static get cache properly
+
+2003-07-18 16:32  alan_k
+
+	* DataObject.php, package.xml: prepping for a bugfix release
+
+2003-07-18 16:28  alan_k
+
+	* DataObject.php: fix NULL values when updating
+
+2003-07-16 11:26  alan_k
+
+	* package.xml: prepping for 1.0 release
+
+2003-07-16 11:17  alan_k
+
+	* ChangeLog: full generated Changelog - it would be nice if we had
+	  standard tools to do this in pear = pear changelog :)..
+
+2003-07-16 11:13  alan_k
+
+	* DataObject.php: fix bug with cache clearing not working with
+	  staticGet and update
+
+2003-07-12 16:01  mj
+
+	* package.xml: * Updating DTD paths
+
+	  # find . -name package.xml | xargs perl -pi -e
+	  's/..\/package.dtd/http:\/\/pear.php.net\/dtd\/package-1.0/'
+
+2003-07-12 09:40  alan_k
+
+	* DataObject.php: remove direct dependance on overload for setFrom
+	  and toArray - seems to be intermitant problems with current
+	  PHP_4_3.. needs further investigation
+
+2003-07-07 14:29  alan_k
+
+	* DataObject.php: null comparison doesnt work - use quoted null
+
+2003-07-07 13:49  alan_k
+
+	* DataObject.php: remove pass by reference - its not needed as we
+	  dont alter keys.. (Marcus Wolff)
+
+2003-07-05 15:20  alan_k
+
+	* DataObject.php: fix finding, and updating null values, CS
+	  improvements NULL to null
+
+2003-07-05 10:38  alan_k
+
+	* DataObject.php: getLinks returns true on success, add parameter
+	  to getLinks to enable user defined formating of object variables
+	  it uses.
+
+2003-06-25 17:31  alan_k
+
+	* DataObject.php: simplify private pruning, DO is not ready for
+	  this - needs to be part of the grouping of private query vars in
+	  a query array
+
+2003-06-25 16:17  alan_k
+
+	* DataObject.php: Private var pruning on fetch, to reduce the data
+	  visable when print_r ing the results
+
+2003-06-25 14:30  alan_k
+
+	* DataObject.php: order of having is important..
+
+2003-06-24 23:27  alan_k
+
+	* DataObject/Generator.php: make unique a second class detector for
+	  primary key comparison.
+
+2003-06-19 18:33  alan_k
+
+	* DataObject.php: debugging code left in
+
+2003-06-19 18:12  alan_k
+
+	* DataObject.php: oops broke static get when changing it to
+	  factory.
+
+2003-06-19 17:05  alan_k
+
+	* DataObject.php: add HAVING support
+
+2003-06-19 16:31  alan_k
+
+	* DataObject.php: adding classic factory method - just got too
+	  tiered typeing all those includes...
+
+2003-06-16 20:40  alan_k
+
+	* DataObject.php: pre 4.3 support added to autoloader
+
+2003-06-12 17:01  alan_k
+
+	* DataObject.php: add mega join support - (a joins b) joins c
+
+2003-06-05 09:40  alan_k
+
+	* DataObject.php, package.xml: fix to bug 23983 - preping for 1.0
+
+2003-05-29 17:05  alan_k
+
+	* DataObject.php: allowing the specifying of tablename to override
+	  current (when using arrays..) (Victor Socolov)
+
+2003-05-22 14:58  arnaud
+
+	* package.xml, DataObject/example.ini, docs/example.ini: * add docs
+	  dir and moved example.ini * update package.xml to reflect this
+
+2003-05-22 09:08  alan_k
+
+	* package.xml: change date for release
+
+2003-05-21 09:10  alan_k
+
+	* package.xml: I think this ones almost ready to go
+
+2003-05-20 20:56  alan_k
+
+	* DataObject.php: attempt to fix bug #23712 - dont store results
+	  unless they are select.
+
+2003-05-15 13:08  alan_k
+
+	* DataObject.php: updating cache to use private globals
+
+2003-05-15 12:53  alan_k
+
+	* DataObject.php: yet another CaseSensitivity Gotcha
+
+2003-05-14 22:58  alan_k
+
+	* DataObject.php: provide a work around for columns named from
+	  having a setter defined by overload
+
+2003-05-14 19:36  alan_k
+
+	* package.xml: forgot to document the join changes..
+
+2003-05-14 19:28  alan_k
+
+	* package.xml: document the changes
+
+2003-05-14 19:22  alan_k
+
+	* DataObject.php, DataObject/example.ini: enable user handling of
+	  fatal errors with the dont_die option
+
+2003-05-14 19:01  alan_k
+
+	* DataObject.php: support sprintf formating on setFrom
+
+2003-05-13 13:37  alan_k
+
+	* DataObject.php: spaces tend to be important in sql...
+
+2003-05-13 13:07  alan_k
+
+	* DataObject.php: fix typo
+
+2003-05-13 11:41  alan_k
+
+	* DataObject.php: add the posibility to do reaaaaaaaly complex
+	  joins :) - consider this feature beta, although it works here..
+
+2003-05-10 13:45  alan_k
+
+	* DataObject.php: returning false from __call initiates the built
+	  in method does not exist error..
+
+2003-05-08 16:07  alan_k
+
+	* package.xml: add notes in package.xml for new features
+
+2003-05-08 16:04  alan_k
+
+	* DataObject.php: more features for dataobjects that need
+	  documenting! - selectAs, for building select XXXX as XXXX strings
+	  quickly - especially for joins
+
+2003-05-08 12:08  alan_k
+
+	* DataObject.php: fix setFrom relaying into setXXXXs - missing
+	  global
+
+2003-05-06 17:02  alan_k
+
+	* DataObject.php: ok var checking can go back in as I found the
+	  cause for the segfaults.. - see bugs.php.net :)
+
+2003-05-06 15:47  alan_k
+
+	* DataObject.php: add overload setters and getters, hooked into
+	  toArray and setFrom, at present just writes all setXX straight to
+	  object->XX, as the checking appeared to segfault php.. - could
+	  not reproduce in a simple script though.
+
+2003-05-05 23:50  alan_k
+
+	* MDB_DataObjects_notes.txt: first draft runthrough of notes for
+	  MDB DataObjects..
+
+2003-04-22 11:11  alan_k
+
+	* DataObject.php, package.xml: change behaviour of validate to
+	  accept empty strings for numeric values
+
+2003-04-17 20:05  alan_k
+
+	* package.xml, DataObject/Generator.php: fix generator on files
+	  that have been edited on windows
+
+2003-04-17 17:51  alan_k
+
+	* DataObject.php: stop auto class loading from slamming the
+	  filesystem
+
+2003-04-17 12:19  alan_k
+
+	* DataObject.php, package.xml: preping for a release
+
+2003-04-10 16:50  alan_k
+
+	* DataObject.php: better read the docs before committing :)
+
+2003-04-10 16:43  alan_k
+
+	* DataObject.php: update validation to match latest validate
+	  package API
+
+2003-04-10 15:48  alan_k
+
+	* DataObject.php: fix validate issues, and change toArray to return
+	  empty items - so it can blank out forms..
+
+2003-04-03 11:36  alan_k
+
+	* package.xml: update package file - add notes and dependancies at
+	  last..
+
+2003-04-03 11:33  alan_k
+
+	* DataObject.php: make error handling for autoload includes alot
+	  nicer - depends on php4.3 now
+
+2003-04-02 15:07  alan_k
+
+	* package.xml, DataObject/Generator.php: oops fix the correct logic
+	  on the last commit - update package.xml
+
+2003-04-02 15:03  alan_k
+
+	* DataObject/Generator.php: fix output on empty tables (Robert
+	  Janeczek)
+
+2003-04-02 14:55  alan_k
+
+	* DataObject.php, DataObject/Generator.php: change to correct test
+	  and remove debug code
+
+2003-03-27 12:57  alan_k
+
+	* package.xml, DataObject/Generator.php: add nextval as a
+	  identifier flag for keys generation.
+
+2003-03-25 18:30  alan_k
+
+	* DataObject.php: fix non key based tables producing php warning
+
+2003-03-25 18:14  alan_k
+
+	* DataObject.php: fix sequences for non-mysql databases
+
+2003-03-25 14:30  alan_k
+
+	* package.xml, DataObject/Generator.php: make unique flag a key -
+	  for postgres mdb combo
+
+2003-03-25 05:10  arnaud
+
+	* DataObject.php, DataObject/Generator.php: * phpdoc fixes *
+	  cosmetics * small change in generator.php to add a new line in
+	  generated classes # i hope it's ok with you alan :)
+
+2003-03-24 21:57  alan_k
+
+	* TODO: more wishfull thinking in TODO :)
+
+2003-03-12 16:12  alan_k
+
+	* package.xml: update changelog to reflect change to update/delete
+	  behaviour
+
+2003-03-12 16:10  alan_k
+
+	* DataObject.php: really return rows affected as promissed in an
+	  old release -oops..
+
+2003-03-12 16:02  alan_k
+
+	* DataObject/example.ini: remove production option from example -
+	  not required any longer
+
+2003-03-12 15:46  alan_k
+
+	* DataObject.php, package.xml: adding daniels fix for ambiguos
+	  joins - needs testing, but looks ok
+
+2003-03-12 15:36  alan_k
+
+	* package.xml: oops put the old release in the changelog seciton..
+
+2003-03-12 15:35  alan_k
+
+	* package.xml: update package for bugfix release
+
+2003-03-12 15:33  alan_k
+
+	* DataObject.php, tests/test_config.ini: fix link loading for
+	  joinAdd etc. - adjust unit tests for createTable test on local
+	  machine
+
+2003-03-11 12:44  alan_k
+
+	* DataObject.php, package.xml, tests/simple.phpt: fix limit for
+	  postgres - add warning for unsupported databases, more unit tests
+	  - fix to toArray() warnings
+
+2003-03-11 12:05  alan_k
+
+	* DataObject.php, package.xml: fix join condition in count queries
+	  (Daniel Von Fange)
+
+2003-03-08 19:12  alan_k
+
+	* DataObject.php, package.xml, tests/simple.phpt: more features..
+	  toArray(), update with filter on unchanged, more unit tests.
+
+2003-03-06 19:04  alan_k
+
+	* DataObject.php, package.xml: performance fixes, removal of
+	  production option, bugfix - warning on ignore_sequence_keys
+
+2003-02-25 12:11  alan_k
+
+	* DataObject.php, package.xml, tests/simple.phpt: fix delete bug -
+	  thx to Ian Eure, add more unit tests
+
+2003-02-14 23:34  alan_k
+
+	* DataObject.php, package.xml: decided that escape was more usefull
+	  than quote - for doing things like building like queries..
+
+2003-02-14 16:40  alan_k
+
+	* DataObject.php, package.xml: adding quote method as a quick
+	  wrapper
+
+2003-02-13 21:07  alan_k
+
+	* DataObject.php, package.xml: making sure overriding fetch(), is
+	  called by get et al.
+
+2003-02-06 20:20  alan_k
+
+	* DataObject.php, package.xml: updated to check affectedRows on
+	  insert, update and delete
+
+2003-01-29 09:28  jrust
+
+	* DataObject.php: * Add option to count() and delete() to only use
+	  the conditon set with addWhere.  Default is still to build the
+	  condition from the object.  * A few code cleanups in those
+	  methods
+
+2003-01-25 11:42  alan_k
+
+	* DataObject.php: fix E_ALL warning on staticGet, change remove
+	  another getStaticProperty
+
+2003-01-23 18:52  alan_k
+
+	* DataObject.php: provisional support for null values
+
+2003-01-23 18:44  alan_k
+
+	* package.xml: yet another bug fix release
+
+2003-01-23 18:42  alan_k
+
+	* DataObject.php: oops debug update check wrong way round
+
+2003-01-22 19:52  alan_k
+
+	* DataObject.php, package.xml: added pear object fetching support
+	  and fixed links.ini bug
+
+2003-01-21 11:11  alan_k
+
+	* package.xml: pre-release update to changelog
+
+2003-01-21 10:07  alan_k
+
+	* DataObject/Generator.php: limited BOOL support - thx to Mitchell
+	  Perilstein
+
+2003-01-08 21:02  alan_k
+
+	* DataObject.php: changed private static _getStaticDefinitions to
+	  private _loadDefinitions - as there is no longer a need for a
+	  static call to do this (it doesnt use static vars any more)
+
+2003-01-08 20:57  alan_k
+
+	* DataObject.php, DataObject/example.ini: added support for fixed
+	  data definition ini file location, changed storage of ini file
+	  and links to GLOBAL array = seems to improve speed..
+
+2003-01-04 19:54  mj
+
+	* DataObject.php, DataObject/Generator.php,
+	  DataObject/createTables.php: * Update copyright year to 2003.
+
+2003-01-02 14:00  alan_k
+
+	* DataObject/Generator.php: oops typo
+
+2003-01-02 13:58  alan_k
+
+	* DataObject/: Generator.php, createTables.php: changes to support
+	  globals rather than static calls, removed relative path stuff -
+	  it doesnt work that well..
+
+2002-12-31 14:08  alan_k
+
+	* DataObject.php: initialize that array properly
+
+2002-12-31 13:42  alan_k
+
+	* TODO: mega update on TODO list - thx to Brian Micheal for these..
+	  now lets see how many get done...
+
+2002-12-31 12:52  alan_k
+
+	* DataObject.php, package.xml: updated package file, changed result
+	  and connection caching to globals (and unset if insert, update or
+	  delete) - this is a serious  speed improvement for inserting
+
+2002-12-24 12:01  alan_k
+
+	* DataObject/: Generator.php, createTables.php: fix to make
+	  multiple createTables work again .. - thanks to Mike Carter for
+	  spotting this one
+
+2002-12-24 11:59  alan_k
+
+	* tests/: test.sql, test_config.ini: more test files for unit
+	  testing multiple databases
+
+2002-12-24 11:26  alan_k
+
+	* DataObject.php: added check for strings in key return = thx to
+	  Anthony Julou for spotting that one
+
+2002-12-16 11:29  alan_k
+
+	* DataObject.php: Fixed typo on no data warning
+
+2002-12-12 11:57  alan_k
+
+	* DataObject.php: updating phpdoc comments
+
+2002-12-12 11:49  alan_k
+
+	* DataObject.php, tests/simple.phpt, tests/test.ini: adding fix to
+	  delete and some new unit tests
+
+2002-12-10 15:05  alan_k
+
+	* DataObject.php, DataObject/example.ini: options added for insert
+	  sequence usage - if this works first time I will be amazed
+
+2002-12-09 11:52  alan_k
+
+	* package.xml: updated package.xml with change log - yet another
+	  release :)
+
+2002-12-09 11:50  alan_k
+
+	* DataObject/Generator.php: oops again - compare not assign
+
+2002-12-09 11:49  alan_k
+
+	* DataObject/Generator.php: oops didnt want to add that extra var
+	  definition
+
+2002-12-09 11:48  alan_k
+
+	* DataObject.php: changes to make quoting rely on PEARs database
+	  abstraction layer, rather than just addslashes
+
+2002-12-09 11:47  alan_k
+
+	* DataObject/: Generator.php, example.ini: fixes to stop generator
+	  rewriting extends field when not wanted
+
+2002-12-09 11:15  alan_k
+
+	* DataObject/Generator.php: fix generator setting _database instead
+	  of  _database_dsn
+
+2002-12-06 13:45  alan_k
+
+	* package.xml: ready for bugfix release
+
+2002-12-06 13:43  alan_k
+
+	* DataObject.php: fix logic on setting dsn
+
+2002-12-06 11:32  alan_k
+
+	* DataObject.php: fixes by stijn de reede - allow sessioned usage,
+	  working example for joinAdd, and bugfix for joinAdd
+
+2002-12-05 12:01  alan_k
+
+	* package.xml: changing release to 0.8 as I already taged 0.7 but
+	  didnt release
+
+2002-12-05 11:58  alan_k
+
+	* package.xml: ah - stable is case sensitive
+
+2002-12-05 11:58  alan_k
+
+	* package.xml: add note about dynamic option array setting
+
+2002-12-05 11:56  alan_k
+
+	* DataObject/Generator.php: remove warning from optional extends
+	  field
+
+2002-12-05 11:55  alan_k
+
+	* DataObject.php: adding patch for _database usage by Sergey
+	  Lipnevich - needs testing
+
+2002-12-05 11:43  alan_k
+
+	* package.xml: updated changelog changing status to stable
+
+2002-12-05 11:40  alan_k
+
+	* DataObject.php: experimental joinAdd method for building joined
+	  queries added
+
+2002-12-04 13:11  alan_k
+
+	* TODO: added notes on join concepts
+
+2002-11-25 15:44  alan_k
+
+	* DataObject.php: sequenced defaults to table name - as per stigs
+	  recommendation
+
+2002-11-22 17:30  alan_k
+
+	* DataObject.php: Attempt to fix sequence creation for non-mysql
+	  databases using tablename_seq
+
+2002-11-21 13:05  alan_k
+
+	* DataObject/createTables.php: last of the cosmetics.. - thx to
+	  Arnaud
+
+2002-11-20 08:03  alan_k
+
+	* DataObject.php: More Cosmetics from Arnaud
+
+2002-11-19 09:43  alan_k
+
+	* DataObject/Generator.php: Arnauds CS fixes and tidy up
+
+2002-11-05 20:35  alan_k
+
+	* DataObject.php: changed invalid checking for empty values for
+	  get() - thx to Jeremy Gunter
+
+2002-10-05 09:08  alan_k
+
+	* DataObject/Generator.php: more postgres support (Xavier)
+
+2002-10-05 08:37  alan_k
+
+	* package.xml: update release notes to mention short tags
+
+2002-10-05 08:33  alan_k
+
+	* DataObject/: Generator.php, createTables.php: fixed short open
+	  tags - mmh, dejavu here - Im sure I did this before
+
+2002-09-26 16:42  alan_k
+
+	* package.xml: update changes
+
+2002-09-26 16:38  alan_k
+
+	* DataObject/Generator.php: postgresql fixes thanks to Xavier
+
+2002-09-26 11:37  alan_k
+
+	* DataObject.php: if table is defined in links.ini, dont attempt to
+	  use autolinks
+
+2002-09-25 11:06  alan_k
+
+	* DataObject.php, DataObject/createTables.php: CS fixes - change my
+	  beloved TRUE and FALSE with pears true and false :)
+
+2002-09-25 10:12  alan_k
+
+	* DataObject.php: more of those pesky { moved
+
+2002-09-25 10:08  alan_k
+
+	* DataObject.php: CS fixes (remove tabs, move { after functions),
+	  add return pear/db error to query, so that return FALSE works for
+	  update/delete/insert etc.
+
+2002-09-17 11:49  alan_k
+
+	* TODO: yet more TODO items
+
+2002-09-17 11:46  alan_k
+
+	* DataObject/Generator.php: white space and CS changes
+
+2002-09-17 11:44  alan_k
+
+	* package.xml, DataObject/Generator.php: added generator hooks by
+	  Micael Lund Rasmussen
+
+2002-09-17 11:23  alan_k
+
+	* DataObject.php, TODO: added delete based on primary keys only if
+	  they are set. update to TODO, added revision notes to package
+
+2002-09-17 11:14  alan_k
+
+	* DataObject.php, package.xml: adding return FALSE on insert and
+	  update failure, eg. check === FALSE for failure, then use
+	  $object->_lastError
+
+2002-09-14 16:37  alan_k
+
+	* DataObject.php: update getLinksArray() to support links.ini files
+
+2002-09-14 13:54  alan_k
+
+	* DataObject.php: fixes to getLinks code - allows mixing _ and
+	  .links.ini files, removes typo/warning
+
+2002-09-10 12:34  alan_k
+
+	* DataObject.php: fix bug spotted by Peter Gebauer
+
+2002-09-07 13:36  alan_k
+
+	* package.xml: correct release date
+
+2002-09-04 13:39  alan_k
+
+	* DataObject/createTables.php: oops typo in last commit
+
+2002-09-04 13:38  alan_k
+
+	* DataObject/createTables.php: better error checking on
+	  createTables.php
+
+2002-09-04 12:49  alan_k
+
+	* TODO: updating todo list
+
+2002-09-04 09:33  alan_k
+
+	* DataObject/Generator.php: updated to deal with oracle tableinfo
+	  return and varchar2 in type
+
+2002-09-03 14:52  alan_k
+
+	* DataObject.php: fixing postgres and all compatibility on updates
+	  and inserts
+
+2002-08-28 12:22  alan_k
+
+	* package.xml: fix package file ready for next release
+
+2002-08-28 12:12  alan_k
+
+	* DataObject.php: oops typo
+
+2002-08-28 12:11  alan_k
+
+	* DataObject.php, package.xml, DataObject/Generator.php: adding
+	  multiple link support, and ZE2 FC/BC support
+
+2002-08-28 12:10  alan_k
+
+	* doc/: db_dataobject.xml,
+	  packages.db.dataobject.autobuilding.html,
+	  packages.db.dataobject.configuration.html,
+	  packages.db.dataobject.filters.html,
+	  packages.db.dataobject.find.html,
+	  packages.db.dataobject.find_fetch.html,
+	  packages.db.dataobject.get.html, packages.db.dataobject.html,
+	  packages.db.dataobject.introduction.html,
+	  packages.db.dataobject.links.html,
+	  packages.db.dataobject.updating.html,
+	  packages.db.dataobject.utils.html: removing documentaiton - its
+	  in the manual now
+
+2002-08-27 08:34  alan_k
+
+	* DataObject.php, DataObject/Generator.php: bug fixes by Jens
+	  Fischer
+
+2002-08-21 22:03  alan_k
+
+	* package.xml: update for bug fix release
+
+2002-08-21 22:01  alan_k
+
+	* package.xml: must have missed updating this
+
+2002-08-21 21:59  alan_k
+
+	* DataObject/createTables.php: fix bug - thx TABATA Tomoyuki
+
+2002-08-16 13:15  alan_k
+
+	* DataObject.php: bug fixes by Tim White
+
+2002-08-15 13:43  alan_k
+
+	* TODO:  updated TODO stuff, finished all old TODOs
+
+2002-08-15 13:13  alan_k
+
+	* DataObject.php: disable debugger if used by extended classes when
+	  in production mode
+
+2002-08-15 12:48  alan_k
+
+	* DataObject.php: not a good idea working on old versions - thank
+	  god for CVS
+
+2002-08-15 12:12  alan_k
+
+	* DataObject.php: i doubt the defines would have worked - since the
+	  define would have been done after compile time - changed to using
+	  globals..
+
+2002-08-15 11:44  alan_k
+
+	* DataObject/createTables.php: revert accidental change to
+	  createTables
+
+2002-08-15 11:42  alan_k
+
+	* DataObject/: createTables.php, example.ini: Added production line
+	  and description to ini file
+
+2002-08-15 11:42  alan_k
+
+	* DataObject.php: Added link based ini files code by Tim White,
+	  added production define to disable debugging - performance
+	  enhancement, made staticAutoLoadTable() a public method
+
+2002-08-10 13:50  alan_k
+
+	* DataObject/Generator.php: fix warning from E_ALL on generator
+
+2002-08-04 00:08  alan_k
+
+	* DataObject.php: fixed bug spotted by William at adtio dotcom
+
+2002-07-16 13:03  alan_k
+
+	* DataObject.php: validate checked wrong data
+
+2002-07-15 18:49  alan_k
+
+	* DataObject.php, TODO: added validation to dataobject - see todo
+	  for notes about it
+
+2002-07-14 21:55  alan_k
+
+	* DataObject/createTables.php: added register_argv test
+
+2002-07-14 21:52  alan_k
+
+	* DataObject/createTables.php: changed to _SERVER[argv] to remove
+	  register globals relience - thanks to Zachery Hostens
+
+2002-07-12 18:43  alan_k
+
+	* TODO: missed the explode bit
+
+2002-07-12 18:37  alan_k
+
+	* TODO: adding todo
+
+2002-07-11 14:26  alan_k
+
+	* doc/: packages.db.dataobject.autobuilding.html,
+	  packages.db.dataobject.configuration.html,
+	  packages.db.dataobject.filters.html,
+	  packages.db.dataobject.find_fetch.html,
+	  packages.db.dataobject.introduction.html,
+	  packages.db.dataobject.links.html,
+	  packages.db.dataobject.updating.html: updated html with typos
+	  fixed
+
+2002-07-11 14:17  alan_k
+
+	* doc/db_dataobject.xml: fixed typos
+
+2002-07-11 14:05  alan_k
+
+	* doc/: packages.db.dataobject.autobuilding.html,
+	  packages.db.dataobject.configuration.html,
+	  packages.db.dataobject.filters.html,
+	  packages.db.dataobject.find_fetch.html,
+	  packages.db.dataobject.introduction.html,
+	  packages.db.dataobject.links.html,
+	  packages.db.dataobject.updating.html,
+	  packages.db.dataobject.utils.html: updated html documentation
+
+2002-07-02 15:03  alan_k
+
+	* DataObject.php: list is a reserved keyword - oops
+
+2002-07-02 14:58  alan_k
+
+	* DataObject.php, DataObject/Generator.php: changed debuging to
+	  allow updates to database when debuglevel =1, getLinkArray now
+	  can optionally list using object id, added string type to
+	  character type for generator
+
+2002-06-25 15:58  alan_k
+
+	* package.xml: prep'ed for release
+
+2002-06-25 15:56  alan_k
+
+	* DataObject/: createTables.php, example.ini:  removed debugging
+	  from generator
+
+2002-06-25 15:54  alan_k
+
+	* DataObject.php, DataObject/Generator.php,
+	  DataObject/createTables.php, doc/db_dataobject.xml: updated
+	  documentation, removed dependancy on config, fixed generator
+	  nnnnn error
+
+2002-06-25 14:17  alan_k
+
+	* DataObject.php: Sorted out phpdoc define and class header, added
+	  the lastError property, fixed typo on connnnnnnections
+
+2002-06-24 19:37  alan_k
+
+	* DataObject.php: missed a legacy method
+
+2002-06-24 19:24  alan_k
+
+	* DataObject.php: remove blank line and adding <?php
+
+2002-06-24 19:22  alan_k
+
+	* DataObject.php: removing legacy methods
+
+2002-06-24 19:06  alan_k
+
+	* DataObject.php: allow call to autoload as a static method
+
+2002-06-24 18:00  alan_k
+
+	* DataObject.php: typos, and warnings
+
+2002-06-24 17:29  alan_k
+
+	* DataObject.php: added pear error handling
+
+2002-06-24 15:37  alan_k
+
+	* DataObject.php: typo
+
+2002-06-24 15:33  alan_k
+
+	* DataObject.php, package.xml, DataObject/Generator.php,
+	  DataObject/example.ini: correct name for getstaticproperty, added
+	  class autoloader, and changed generator to use database neutral
+	  calls. - getLinks to match documentation
+
+2002-06-21 17:51  alan_k
+
+	* DataObject.php, package.xml, DataObject/Generator.php,
+	  DataObject/createTables.php, DataObject/example.ini,
+	  doc/db_dataobject.xml,
+	  doc/packages.db.dataobject.autobuilding.html,
+	  doc/packages.db.dataobject.configuration.html,
+	  doc/packages.db.dataobject.filters.html,
+	  doc/packages.db.dataobject.find.html,
+	  doc/packages.db.dataobject.find_fetch.html,
+	  doc/packages.db.dataobject.get.html,
+	  doc/packages.db.dataobject.html,
+	  doc/packages.db.dataobject.introduction.html,
+	  doc/packages.db.dataobject.links.html,
+	  doc/packages.db.dataobject.updating.html,
+	  doc/packages.db.dataobject.utils.html: First commit of
+	  DB_DataObject, includings source, and docbook and html generated
+	  docbook
+

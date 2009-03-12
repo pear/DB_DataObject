@@ -23,10 +23,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active>
  </lead>
  
- <date>2007-07-12</date>
+ <date>2008-03-12</date>
   
  <version>
-  <release>1.8.7</release>
+  <release>1.8.9</release>
   <api>1.8.6</api>
  </version>
  
@@ -37,13 +37,32 @@ http://pear.php.net/dtd/package-2.0.xsd">
  
  <license uri="http://www.php.net/license">PHP License</license>
  <notes><![CDATA[
-    Minor Bugfix Release 
+    Annual Release - Minor Bugfixs / Extra Features
  
-    Bug Fixes:
-        #11586 - missing default value in Generator for class_prefix caused warning
-        #11584 - typo in Generator caused permissions to be incorrectly set on ini file.
-    
-    
+	#15066 - limited support for POINT (at least generator creates something)
+	#14976 - add option generator_omit_database_var to prevent creation of
+		  $database lines (Troy Anderson)
+	#13995 - incorrect test in sequence key for postgres
+	#14252 - doc comments on delete() corrected to say return value is no. of 
+		 rows affected on success
+
+	###### - ensure that tableinfo uses quote_identifiers_tableinfo
+	###### - add sqlite support to Cast blobs
+	###### - old skipEmpty check broke formating on setFrom
+	###### - remove previous checks on database dsn lookup - move it to factory. 
+	###### - Fix count check for no keys. - By Jeffrey  Pfau
+	###### - Add multidatabase factory() support - eg.
+		  DB_DataObject::factory("mydatabase.mytable");  
+	###### - Added checks to ensure that database names match requested ones.
+	#13773 - delete(true) honours join conditions
+	#13788 - test for error before re-writing definition table for MDB2 in Generator
+ 	#13789 - honour user specified MDB2 options in Generator
+	#13790 - support CLOB oracle
+	#12993 - add new option generator_secondary_key_match - set to false, to
+		  disable key matching for secondary key types
+
+ 
+
          
  ]]></notes>
  
@@ -104,12 +123,15 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <phprelease />
  <changelog>
  
- <release>
  
- <date>2007-07-10</date>
+
+ <release>
+
+
+ <date>2008-01-30</date>
   
  <version>
-  <release>1.8.6</release>
+  <release>1.8.8</release>
   <api>1.8.6</api>
  </version>
  
@@ -120,35 +142,111 @@ http://pear.php.net/dtd/package-2.0.xsd">
  
  <license uri="http://www.php.net/license">PHP License</license>
  <notes><![CDATA[
-    Minor Bugfix and Minor Feature addition release
+    Minor Bugfix / Feature Release 
  
-    Bug Fixes:
-        #11483 - show an error if pcre limits are not correctly set and generator tries to generate empty files
-        #11528 - sending like queries to escape does not escape % and _ - added additional parameter to
-                escape : [bool $likeEscape] is optional and can be used to force escaping of these characters
-        #10573 - fix permissions on generated files
-        #10573 - write Generated files to temp directory, then rename into place. - fixing locking issues
-        #10531 - correct fix for bug #9628 (support MDB2 for defaults())
-        #10454 - mssql uses wrong variable name for options.
-        #10175 - MDB2 does not return length value 
-        #9573 - enable disable_null_strings to turn of "null"-> NULL replacements
-        #9625 - MDB2 support for MSSQL sequencies
-        #9644 - incorrect constant in foriegn key generation.
-        #9628 - support MDB2 for defaults()
-        #9839 - Invalid column names can not be supported, so warning is generated
-        #9834 - SQL2003 standards on Joins - adds brackets around ON()
-        #4266 - minor fix to appendJoin code
-        #9755 - generator showed php error if connection failed
-        #9730 - quote identifiers on composite joins
+    Pre-chinese new year release (with lots of 8's...)
+    
+    Bug Fixes
+        #12556 - Generator - pregmatch appears broken for replacing class name on updating files
+        #10112 - additional config option quote_identifiers_tableinfo for use with tableinfo on generator
+                 Fixes issues with Oracle and quoting identifiers.
+        #11773 - problems with object->array[prop] setting on PHP5.2.3
+                ** this may also have been fixed twice by fix for #11775
+        #12858 - MDB2 and postgres missing db_driver variable
+        #9902 - default portability options for MDB2 to not fix case.
+        #9658 - postgres DECIMAL using DB backend incorrectly
+                flagged as unknown - changed warning to suggest using MDB2
+        #11091 - count attempted to read quote identifiers before config was loaded
+        #11804 - insert with postgres/msql return wrong error message
+        #9364  - fix postgres native sequences with MDB
+        #11775 - unsetting of $this->_query causes overload setters/getters to  
+                 handle later uses of _query and break due to lack of array accessor support
+        #11634 - Windows fails to rename files if they exist - affecting Generator  
+                (try and fix it so unix is still atomic)
+	
 
-* feature request 
-        #4266 - joins with multiple keys
-        #2216 - JOIN ON conversion of Where condition into ON arguments - patch by David Sanders
-        #----   add in docbook hooks to generator - as requested/coded by Vyacheslav Iutin
-
- 
+         
  ]]></notes>
  
+
+
+</release>
+ 
+ 
+ <release>
+     <date>2007-07-12</date>
+      
+     <version>
+      <release>1.8.7</release>
+      <api>1.8.6</api>
+     </version>
+     
+     <stability>
+      <release>stable</release>
+      <api>stable</api>
+     </stability>
+     
+     <license uri="http://www.php.net/license">PHP License</license>
+     <notes><![CDATA[
+        Minor Bugfix Release 
+     
+        Bug Fixes:
+            #11586 - missing default value in Generator for class_prefix caused warning
+            #11584 - typo in Generator caused permissions to be incorrectly set on ini file.
+        
+        
+             
+     ]]></notes>
+     
+ 
+ </release>
+ 
+ 
+ <release>
+ 
+     <date>2007-07-10</date>
+      
+     <version>
+      <release>1.8.6</release>
+      <api>1.8.6</api>
+     </version>
+     
+     <stability>
+      <release>stable</release>
+      <api>stable</api>
+     </stability>
+     
+     <license uri="http://www.php.net/license">PHP License</license>
+     <notes><![CDATA[
+        Minor Bugfix and Minor Feature addition release
+     
+        Bug Fixes:
+            #11483 - show an error if pcre limits are not correctly set and generator tries to generate empty files
+            #11528 - sending like queries to escape does not escape % and _ - added additional parameter to
+                    escape : [bool $likeEscape] is optional and can be used to force escaping of these characters
+            #10573 - fix permissions on generated files
+            #10573 - write Generated files to temp directory, then rename into place. - fixing locking issues
+            #10531 - correct fix for bug #9628 (support MDB2 for defaults())
+            #10454 - mssql uses wrong variable name for options.
+            #10175 - MDB2 does not return length value 
+            #9573 - enable disable_null_strings to turn of "null"-> NULL replacements
+            #9625 - MDB2 support for MSSQL sequencies
+            #9644 - incorrect constant in foriegn key generation.
+            #9628 - support MDB2 for defaults()
+            #9839 - Invalid column names can not be supported, so warning is generated
+            #9834 - SQL2003 standards on Joins - adds brackets around ON()
+            #4266 - minor fix to appendJoin code
+            #9755 - generator showed php error if connection failed
+            #9730 - quote identifiers on composite joins
+
+    * feature request 
+            #4266 - joins with multiple keys
+            #2216 - JOIN ON conversion of Where condition into ON arguments - patch by David Sanders
+            #----   add in docbook hooks to generator - as requested/coded by Vyacheslav Iutin
+
+     
+     ]]></notes>
+     
  
  </release>
  
