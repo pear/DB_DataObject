@@ -24,6 +24,7 @@
 
 define('DB_DATAOBJECT_NO_OVERLOAD',1);
 
+//require_once 'DB/DataObject/Generator.php';
 require_once 'DB/DataObject/Generator.php';
 
 if (!ini_get('register_argc_argv')) {
