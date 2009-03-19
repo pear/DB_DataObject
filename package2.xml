@@ -23,10 +23,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active>
  </lead>
  
- <date>2009-03-12</date>
+ <date>2009-03-19</date>
   
  <version>
-  <release>1.8.9</release>
+  <release>1.8.10</release>
   <api>1.8.6</api>
  </version>
  
@@ -39,28 +39,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <notes><![CDATA[
     Annual Release - Minor Bugfixs / Extra Features
  
-	#15066 - limited support for POINT (at least generator creates something)
-	#14976 - add option generator_omit_database_var to prevent creation of
-		  $database lines (Troy Anderson)
-	#13995 - incorrect test in sequence key for postgres
-	#14252 - doc comments on delete() corrected to say return value is no. of 
-		 rows affected on success
-
-	###### - ensure that tableinfo uses quote_identifiers_tableinfo
-	###### - add sqlite support to Cast blobs
-	###### - old skipEmpty check broke formating on setFrom
-	###### - remove previous checks on database dsn lookup - move it to factory. 
-	###### - Fix count check for no keys. - By Jeffrey  Pfau
-	###### - Add multidatabase factory() support - eg.
-		  DB_DataObject::factory("mydatabase.mytable");  
-	###### - Added checks to ensure that database names match requested ones.
-	#13773 - delete(true) honours join conditions
-	#13788 - test for error before re-writing definition table for MDB2 in Generator
- 	#13789 - honour user specified MDB2 options in Generator
-	#13790 - support CLOB oracle
-	#12993 - add new option generator_secondary_key_match - set to false, to
-		  disable key matching for secondary key types
-
+	#----- - Fix factory error with database name not found
+    #----- - Change factory multi-database call to use '/' rather than '.' so 
+             that it can work with postgres (also syncs with what the original notes said)
+              
  
 
          
@@ -124,7 +106,55 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <changelog>
  
  
+<release>
 
+ <date>2009-03-12</date>
+  
+ <version>
+  <release>1.8.9</release>
+  <api>1.8.6</api>
+ </version>
+ 
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ 
+ <license uri="http://www.php.net/license">PHP License</license>
+ <notes><![CDATA[
+    Annual Release - Minor Bugfixs / Extra Features
+ 
+	#15066 - limited support for POINT (at least generator creates something)
+	#14976 - add option generator_omit_database_var to prevent creation of
+		  $database lines (Troy Anderson)
+	#13995 - incorrect test in sequence key for postgres
+	#14252 - doc comments on delete() corrected to say return value is no. of 
+		 rows affected on success
+
+	###### - ensure that tableinfo uses quote_identifiers_tableinfo
+	###### - add sqlite support to Cast blobs
+	###### - old skipEmpty check broke formating on setFrom
+	###### - remove previous checks on database dsn lookup - move it to factory. 
+	###### - Fix count check for no keys. - By Jeffrey  Pfau
+	###### - Add multidatabase factory() support - eg.
+		  DB_DataObject::factory("mydatabase.mytable");  
+	###### - Added checks to ensure that database names match requested ones.
+	#13773 - delete(true) honours join conditions
+	#13788 - test for error before re-writing definition table for MDB2 in Generator
+ 	#13789 - honour user specified MDB2 options in Generator
+	#13790 - support CLOB oracle
+	#12993 - add new option generator_secondary_key_match - set to false, to
+		  disable key matching for secondary key types
+
+ 
+
+         
+ ]]></notes>
+ </release>
+ 
+ 
+ 
+ 
  <release>
 
 
