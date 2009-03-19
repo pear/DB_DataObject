@@ -2556,7 +2556,7 @@ class DB_DataObject extends DB_DataObject_Overload
      * use @ to silence it (if you are sure it is acceptable)
      * eg. $do = @DB_DataObject::factory('person')
      *
-     * table name will eventually be databasename/table
+     * table name can bedatabasename/table
      * - and allow modular dataobjects to be written..
      * (this also helps proxy creation)
      *
@@ -2577,8 +2577,7 @@ class DB_DataObject extends DB_DataObject_Overload
         // multi-database support.. - experimental.
         $database = '';
        
-        if (strpos( $table,'.') !== false ) {
-            
+        if (strpos( $table,'/') !== false ) {
             list($database,$table) = explode('.',$table, 2);
           
         }
@@ -2588,8 +2587,8 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         // no configuration available for database
         if (!empty($database) && empty($_DB_DATAOBJECT['CONFIG']['database_'.$database])) {
-                return $this->raiseError(
-                    "unable to find database_{$database} in Configuration, It is required for factory with database"  
+                return DB_DataObject::raiseError(
+                    "unable to find database_{$database} in Configuration, It is required for factory with database"
                     , 0, PEAR_ERROR_DIE );   
        }
         
