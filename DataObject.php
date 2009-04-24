@@ -2370,8 +2370,8 @@ class DB_DataObject extends DB_DataObject_Overload
         $t= explode(' ',microtime());
         $_DB_DATAOBJECT['QUERYENDTIME'] = $time = $t[0]+$t[1];
          
-        $tries = 0;
-        while ($tries < 3) {
+        
+        for ($tries = 0;$tries < 3;$tries++) {
             
             if ($_DB_driver == 'DB') {
                 
@@ -2399,6 +2399,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 break; // not a connection error..
             }
             sleep(1); // wait before retyring..
+            $DB->connect($DB->dsn);
         }
        
 
