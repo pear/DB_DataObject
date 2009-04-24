@@ -2370,24 +2370,36 @@ class DB_DataObject extends DB_DataObject_Overload
         $t= explode(' ',microtime());
         $_DB_DATAOBJECT['QUERYENDTIME'] = $time = $t[0]+$t[1];
          
-        
-        if ($_DB_driver == 'DB') {
-            $result = $DB->query($string);
-        } else {
-            switch (strtolower(substr(trim($string),0,6))) {
+        $tries = 0;
+        while ($tries < 3) {
             
-                case 'insert':
-                case 'update':
-                case 'delete':
-                    $result = $DB->exec($string);
-                    break;
-                    
-                default:
-                    $result = $DB->query($string);
-                    break;
+            if ($_DB_driver == 'DB') {
+                
+                $result = $DB->query($string);
+            } else {
+                switch (strtolower(substr(trim($string),0,6))) {
+                
+                    case 'insert':
+                    case 'update':
+                    case 'delete':
+                        $result = $DB->exec($string);
+                        break;
+                        
+                    default:
+                        $result = $DB->query($string);
+                        break;
+                }
             }
+            
+            // see if we got a failure.. - try again a few times..
+            if (!is_a($result,'PEAR_Error')) {
+                break;
+            }
+            if ($result->getCode() != -14) {  // *DB_ERROR_NODBSELECTED
+                break; // not a connection error..
+            }
+            sleep(1); // wait before retyring..
         }
-        
        
 
         if (is_a($result,'PEAR_Error')) {
