@@ -1027,7 +1027,13 @@ class DB_DataObject extends DB_DataObject_Overload
         if ($leftq || $useNative) {
             $table = ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table)    : $this->__table);
             
-            $r = $this->_query("INSERT INTO {$table} ($leftq) VALUES ($rightq) ");
+            
+            if (($dbtype == 'pgsql') && empty($leftq)) {
+                $r = $this->_query("INSERT INTO {$table} DEFAULT VALUES");
+            } else {
+               $r = $this->_query("INSERT INTO {$table} ($leftq) VALUES ($rightq) ");
+            }
+            
  
             
             
