@@ -3127,7 +3127,7 @@ class DB_DataObject extends DB_DataObject_Overload
             return;
         }
          
-
+        //echo '<PRE>'; print_r(func_get_args());
         $useWhereAsOn = false;
         // support for 2nd argument as an array of options
         if (is_array($joinType)) {
@@ -3167,8 +3167,39 @@ class DB_DataObject extends DB_DataObject_Overload
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
 
+        /// CHANGED 26 JUN 2009 - we prefer links from our local table over the remote one.
         
-        
+        /* otherwise see if there are any links from this table to the obj. */
+        //print_r($this->links());
+        if (($ofield === false) && ($links = $this->links())) {
+            foreach ($links as $k => $v) {
+                /* link contains {this column} = {linked table}:{linked column} */
+                $ar = explode(':', $v);
+                // Feature Request #4266 - Allow joins with multiple keys
+                if (strpos($k, ',') !== false) {
+                    $k = explode(',', $k);
+                }
+                if (strpos($ar[1], ',') !== false) {
+                    $ar[1] = explode(',', $ar[1]);
+                }
+
+                if ($ar[0] == $obj->__table) {
+                    if ($joinCol !== false) {
+                        if ($k == $joinCol) {
+                            $tfield = $k;
+                            $ofield = $ar[1];
+                            break;
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        $tfield = $k;
+                        $ofield = $ar[1];
+                        break;
+                    }
+                }
+            }
+        }
          /* look up the links for obj table */
         //print_r($obj->links());
         if (!$ofield && ($olinks = $obj->links())) {
@@ -3212,37 +3243,6 @@ class DB_DataObject extends DB_DataObject_Overload
             }
         }
 
-        /* otherwise see if there are any links from this table to the obj. */
-        //print_r($this->links());
-        if (($ofield === false) && ($links = $this->links())) {
-            foreach ($links as $k => $v) {
-                /* link contains {this column} = {linked table}:{linked column} */
-                $ar = explode(':', $v);
-                // Feature Request #4266 - Allow joins with multiple keys
-                if (strpos($k, ',') !== false) {
-                    $k = explode(',', $k);
-                }
-                if (strpos($ar[1], ',') !== false) {
-                    $ar[1] = explode(',', $ar[1]);
-                }
-
-                if ($ar[0] == $obj->__table) {
-                    if ($joinCol !== false) {
-                        if ($k == $joinCol) {
-                            $tfield = $k;
-                            $ofield = $ar[1];
-                            break;
-                        } else {
-                            continue;
-                        }
-                    } else {
-                        $tfield = $k;
-                        $ofield = $ar[1];
-                        break;
-                    }
-                }
-            }
-        }
         // finally if these two table have column names that match do a join by default on them
 
         if (($ofield === false) && $joinCol) {
@@ -3431,22 +3431,25 @@ class DB_DataObject extends DB_DataObject_Overload
             case 'RIGHT': // others??? .. cross, left outer, right outer, natural..?
                 
                 // Feature Request #4266 - Allow joins with multiple keys
-                $this->_join .= "\n {$joinType} JOIN {$objTable} {$fullJoinAs}";
+                $jadd = "\n {$joinType} JOIN {$objTable} {$fullJoinAs}";
+                //$this->_join .= "\n {$joinType} JOIN {$objTable} {$fullJoinAs}";
                 if (is_array($ofield)) {
                 	$key_count = count($ofield);
                     for($i = 0; $i < $key_count; $i++) {
                     	if ($i == 0) {
-                    		$this->_join .= " ON ({$joinAs}.{$ofield[$i]}={$table}.{$tfield[$i]}) ";
+                    		$jadd .= " ON ({$joinAs}.{$ofield[$i]}={$table}.{$tfield[$i]}) ";
                     	}
                     	else {
-                    		$this->_join .= " AND {$joinAs}.{$ofield[$i]}={$table}.{$tfield[$i]} ";
+                    		$jadd .= " AND {$joinAs}.{$ofield[$i]}={$table}.{$tfield[$i]} ";
                     	}
                     }
-                    $this->_join .= ' ' . $appendJoin . ' ';
+                    $jadd .= ' ' . $appendJoin . ' ';
                 } else {
-	                $this->_join .= " ON ({$joinAs}.{$ofield}={$table}.{$tfield}) {$appendJoin} ";
+	                $jadd .= " ON ({$joinAs}.{$ofield}={$table}.{$tfield}) {$appendJoin} ";
                 }
-
+                // jadd avaliable for debugging join build.
+                //echo $jadd ."\n";
+                $this->_join .= $jadd;
                 break;
                 
             case '': // this is just a standard multitable select..
