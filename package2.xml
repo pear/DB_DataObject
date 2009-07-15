@@ -35,7 +35,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <api>stable</api>
  </stability>
  
- <license uri="http://www.php.net/license">PHP License</license>
+ <license uri="http://www.php.net/license/3_01.txt">PHP License 3.01</license>
  <notes><![CDATA[
     Annual Release - Minor Bugfixs / Extra Features
  
