@@ -23,10 +23,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active>
  </lead>
  
- <date>2009-07-16</date>
+ <date>2009-08-12</date>
   
  <version>
-  <release>1.8.11</release>
+  <release>1.8.12</release>
   <api>1.8.6</api>
  </version>
  
@@ -38,12 +38,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <license uri="http://www.php.net/license/3_01.txt">PHP License 3.01</license>
  <notes><![CDATA[
     Licence upgrade Release
-    #----- - Licence changed to 3.01 to keep Debian/Ubuntu happy.
-    #----- - Change order of preference for links in JoinAdd - prefer called table links over jointo table.
-    #----- - Retry support for connection failure on queries
-    #----- - Factory now uses '/' for database/table seperator (experimental)
-    #----- - Fix INSERT on Postresql with empty data.          
- 
+    #----- - Changed Error and Cast Licence to 3.01 to keep Debian/Ubuntu happy.
 
          
  ]]></notes>
@@ -105,6 +100,34 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <phprelease />
  <changelog>
  
+
+<release>
+
+ <date>2009-07-16</date>
+  
+ <version>
+  <release>1.8.11</release>
+  <api>1.8.6</api>
+ </version>
+ 
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ 
+ <license uri="http://www.php.net/license/3_01.txt">PHP License 3.01</license>
+ <notes><![CDATA[
+    Licence upgrade Release
+    #----- - Licence changed to 3.01 to keep Debian/Ubuntu happy.
+    #----- - Change order of preference for links in JoinAdd - prefer called table links over jointo table.
+    #----- - Retry support for connection failure on queries
+    #----- - Factory now uses '/' for database/table seperator (experimental)
+    #----- - Fix INSERT on Postresql with empty data.          
+ 
+
+         
+ ]]></notes>
+</release>
 
 <release>
 
