@@ -33,7 +33,7 @@
  /**
  * 
  * Config _$ptions
- * [DB_DataObject_Generator]
+ * [DB_DataObject]
  * ; optional default = DB/DataObject.php
  * extends_location =
  * ; optional default = DB_DataObject
@@ -812,7 +812,7 @@ class DB_DataObject_Generator extends DB_DataObject
     }
 
     /**
-     * class being extended (can be overridden by [DB_DataObject_Generator] extends=xxxx
+     * class being extended (can be overridden by [DB_DataObject] extends=xxxx
      *
      * @var    string
      * @access private
