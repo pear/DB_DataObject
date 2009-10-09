@@ -2977,14 +2977,12 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         if ($link) {
             if ($obj->get($link, $this->$row)) {
-                $obj->free();
                 return $obj;
             } 
             return  false;
         }
         
         if ($obj->get($this->$row)) {
-            $obj->free();
             return $obj;
         }
         return false;
@@ -4189,6 +4187,13 @@ class DB_DataObject extends DB_DataObject_Overload
         if (isset($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
             $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->num_rows = array();
         }
+
+        if (is_array($this->_link_loaded)) {
+            foreach ($this->_link_loaded as $do) {
+                $do->free();
+            }
+        }
+
         
     }
     
