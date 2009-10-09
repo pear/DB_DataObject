@@ -775,11 +775,9 @@ class DB_DataObject_Generator extends DB_DataObject
         //echo "Generating Class files:        \n";
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
        
-        
-        if ($extends = @$options['extends']) {
-            $this->_extends = $extends;
-            $this->_extendsFile = $options['extends_location'];
-        }
+	$this->_extends = empty($options['extends']) ? $this->_extends : $options['extends'];
+	$this->_extendsFile = empty($options['extends_location']) ? $this->_extendsFile : $options['extends_location'];
+ 
 
         foreach($this->tables as $this->table) {
             $this->table        = trim($this->table);
@@ -1142,10 +1140,9 @@ class DB_DataObject_Generator extends DB_DataObject
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         $class_prefix  = empty($options['class_prefix']) ? '' : $options['class_prefix'];
         
-        if ($extends = @$options['extends']) {
-            $this->_extends = $extends;
-            $this->_extendsFile = $options['extends_location'];
-        }
+        $this->_extends = empty($options['extends']) ? $this->_extends : $options['extends'];
+	$this->_extendsFile = empty($options['extends_location']) ? $this->_extendsFile : $options['extends_location'];
+ 
         $classname = $this->classname = $this->getClassNameFromTableName($this->table);
         
         $out = $this->_generateClassTable();
