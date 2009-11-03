@@ -4219,15 +4219,16 @@ class DB_DataObject extends DB_DataObject_Overload
     * If the value is a string set to "null" and the "disable_null_strings" option is not set to 
     * true, then the value is considered to be null.
     * If the value is actually a PHP NULL value, and "disable_null_strings" has been set to 
-    * the value "full", then it will also be considered null.
+    * the value "full", then it will also be considered null. - this can not differenticate between not set
     * 
-    * @param  int $message    message
-    * @param  int $type       type
-    * @param  int $behaviour  behaviour (die or continue!);
-    * @access public
-    * @return error object
+    * 
+    * @param  object|array $obj_or_ar 
+    * @param  string|false $prop prperty
+    
+    * @access private
+    * @return bool  object
     */
-  function _is_null($obj_or_ar , $prop) 
+    function _is_null($obj_or_ar , $prop) 
     {
     	global $_DB_DATAOBJECT;
     	
@@ -4247,14 +4248,18 @@ class DB_DataObject extends DB_DataObject_Overload
         $null_strings = !isset($options['disable_null_strings'])
                     || $options['disable_null_strings'] === false;
                     
-        $ignore_full = isset($options['disable_null_strings'])
+        $crazy_null = isset($options['disable_null_strings'])
                 && is_string($options['disable_null_strings'])
                 && strtolower($options['disable_null_strings'] === 'full');
         
-        if ( ( $null_strings && $isset  && is_string($value)  && (strtolower($value) === 'null') ) || 
-            ($ignore_full && !$isset ) ) {
+        if ( $null_strings && $isset  && is_string($value)  && (strtolower($value) === 'null') ) {
+            return true;
+        }
+        
+        if ( $crazy_null && !$isset )  {
         	return true;
         }
+        
         return false;
         
     	
