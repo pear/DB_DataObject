@@ -942,9 +942,13 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             $this->$key = $keyvalue;
         }
-
-
-
+        
+        // if we haven't set disable_null_strings to "full"
+        $ignore_null = !isset($options['disable_null_strings'])
+                    || !is_string($options['disable_null_strings'])
+                    || strtolower($options['disable_null_strings']) !== 'full' ;
+                    
+             
         foreach($items as $k => $v) {
             
             // if we are using autoincrement - skip the column...
@@ -953,7 +957,10 @@ class DB_DataObject extends DB_DataObject_Overload
             }
         
             
-            if (!isset($this->$k)) {
+           
+           
+            // Ignore variables which aren't set to a value
+        	if ( !isset($this->$k) && $ignore_null) {
                 continue;
             }
             // dont insert data into mysql timestamps 
@@ -980,8 +987,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
             
-
-            if (!isset($options['disable_null_strings']) && is_string($this->$k) && (strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
+            if (!($v & DB_DATAOBJECT_NOTNULL) && DB_DataObject::_is_null($this,$k)) {
                 $rightq .= " NULL ";
                 continue;
             }
@@ -1194,8 +1200,14 @@ class DB_DataObject extends DB_DataObject_Overload
         $options = $_DB_DATAOBJECT['CONFIG'];
         
         
+        $ignore_null = !isset($options['disable_null_strings'])
+                    || !is_string($options['disable_null_strings'])
+                    || strtolower($options['disable_null_strings']) !== 'full' ;
+                    
+        
         foreach($items as $k => $v) {
-            if (!isset($this->$k)) {
+            
+            if (!isset($this->$k) && $ignore_null) {
                 continue;
             }
             // ignore stuff thats 
@@ -1234,7 +1246,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
             // special values ... at least null is handled...
-            if (!isset($options['disable_null_strings']) && (strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
+            if (!($v & DB_DATAOBJECT_NOTNULL) && DB_DataObject::_is_null($this,$k)) {
                 $settings .= "$kSql = NULL ";
                 continue;
             }
@@ -2478,7 +2490,8 @@ class DB_DataObject extends DB_DataObject_Overload
             $x = new DB_DataObject;
             $this->_query= $x->_query;
         }
-
+       
+                    
         foreach($keys as $k => $v) {
             // index keys is an indexed array
             /* these filter checks are a bit suspicious..
@@ -2519,7 +2532,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            if (!isset($options['disable_null_strings']) &&  (strtolower($this->$k) === 'null') && !($v & DB_DATAOBJECT_NOTNULL)) {
+            if (!($v & DB_DATAOBJECT_NOTNULL) && DB_DataObject::_is_null($this,$k)) {
                 $this->whereAdd(" $kSql  IS NULL");
                 continue;
             }
@@ -3313,14 +3326,23 @@ class DB_DataObject extends DB_DataObject_Overload
                     DB_DATAOBJECT_ERROR_INVALIDCONFIG);
                 return false;
             }
+            
+            $ignore_null = !isset($options['disable_null_strings'])
+                    || !is_string($options['disable_null_strings'])
+                    || strtolower($options['disable_null_strings']) !== 'full' ;
+            
 
             foreach($items as $k => $v) {
-                if (!isset($obj->$k)) {
+                if (!isset($obj->$k) && $ignore_null) {
                     continue;
                 }
                 
                 $kSql = ($quoteIdentifiers ? $DB->quoteIdentifier($k) : $k);
                 
+                if (DB_DataObject::_is_null($obj,$k)) {
+                	$obj->whereAdd("{$joinAs}.{$kSql} IS NULL");
+                	continue;
+                }
                 
                 if ($v & DB_DATAOBJECT_STR) {
                     $obj->whereAdd("{$joinAs}.{$kSql} = " . $this->_quote((string) (
@@ -3342,14 +3364,9 @@ class DB_DataObject extends DB_DataObject_Overload
                     if (PEAR::isError($value)) {
                         $this->raiseError($value->getMessage() ,DB_DATAOBJECT_ERROR_INVALIDARG);
                         return false;
-                    }
-                    if (!isset($options['disable_null_strings']) && strtolower($value) === 'null') {
-                        $obj->whereAdd("{$joinAs}.{$kSql} IS NULL");
-                        continue;
-                    } else {
-                        $obj->whereAdd("{$joinAs}.{$kSql} = $value");
-                        continue;
-                    }
+                    } 
+                    $obj->whereAdd("{$joinAs}.{$kSql} = $value");
+                    continue;
                 }
                 
                 
@@ -3512,7 +3529,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 continue;
             }
             
-            if (!isset($from[sprintf($format,$k)])) {
+            if (!isset($from[sprintf($format,$k)]) && !DB_DataObject::_is_null($from, sprintf($format,$k))) {
                 continue;
             }
            
@@ -3641,7 +3658,7 @@ class DB_DataObject extends DB_DataObject_Overload
             
             // if not null - and it's not set.......
             
-            if (!isset($this->$key) && ($val & DB_DATAOBJECT_NOTNULL)) {
+            if ($val & DB_DATAOBJECT_NOTNULL && DB_DataObject::_is_null($this, $key)) {
                 // dont check empty sequence key values..
                 if (($key == $seq[0]) && ($seq[1] == true)) {
                     continue;
@@ -3651,7 +3668,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             
             
-            if (!isset($options['disable_null_strings']) && is_string($this->$key) && (strtolower($this->$key) == 'null')) {
+             if (DB_DataObject::_is_null($this, $key)) {
                 if ($val & DB_DATAOBJECT_NOTNULL) {
                     $this->debug("'null' field used for '$key', but it is defined as NOT NULL", 'VALIDATION', 4);
                     $ret[$key] = false;
@@ -3866,13 +3883,14 @@ class DB_DataObject extends DB_DataObject_Overload
         //echo "FROM VALUE $col, {$cols[$col]}, $value\n";
         switch (true) {
             // set to null and column is can be null...
-            case (!isset($options['disable_null_strings']) && (strtolower($value) == 'null') && (!($cols[$col] & DB_DATAOBJECT_NOTNULL))):
+            case ((!($cols[$col] & DB_DATAOBJECT_NOTNULL)) && DB_DataObject::_is_null($value, false)):
             case (is_object($value) && is_a($value,'DB_DataObject_Cast')): 
                 $this->$col = $value;
                 return true;
                 
             // fail on setting null on a not null field..
-            case (!isset($options['disable_null_strings']) && (strtolower($value) == 'null') && ($cols[$col] & DB_DATAOBJECT_NOTNULL)):
+            case (($cols[$col] & DB_DATAOBJECT_NOTNULL) && DB_DataObject::_is_null($value,false)):
+
                 return false;
         
             case (($cols[$col] & DB_DATAOBJECT_DATE) &&  ($cols[$col] & DB_DATAOBJECT_TIME)):
@@ -4196,7 +4214,51 @@ class DB_DataObject extends DB_DataObject_Overload
 
         
     }
-    
+    /**
+    * Evaluate whether or not a value is set to null, taking the 'disable_null_strings' option into account.
+    * If the value is a string set to "null" and the "disable_null_strings" option is not set to 
+    * true, then the value is considered to be null.
+    * If the value is actually a PHP NULL value, and "disable_null_strings" has been set to 
+    * the value "full", then it will also be considered null.
+    * 
+    * @param  int $message    message
+    * @param  int $type       type
+    * @param  int $behaviour  behaviour (die or continue!);
+    * @access public
+    * @return error object
+    */
+  function _is_null($obj_or_ar , $prop) 
+    {
+    	global $_DB_DATAOBJECT;
+    	
+        
+        $isset = $prop === false ? isset($obj_or_ar) : 
+            (is_array($obj_or_ar) ? isset($obj_or_ar[$prop]) : isset($obj_or_ar->$prop));
+        
+        $value = $isset ? 
+            ($prop === false ? $obj_or_ar : 
+                (is_array($obj_or_ar) ? $obj_or_ar[$prop] : $obj_or_ar->$prop))
+            : null;
+        
+        
+        
+    	$options = $_DB_DATAOBJECT['CONFIG'];
+    	
+        $null_strings = !isset($options['disable_null_strings'])
+                    || $options['disable_null_strings'] === false;
+                    
+        $ignore_full = isset($options['disable_null_strings'])
+                && is_string($options['disable_null_strings'])
+                && strtolower($options['disable_null_strings'] === 'full');
+        
+        if ( ( $null_strings && $isset  && is_string($value)  && (strtolower($value) === 'null') ) || 
+            ($ignore_full && !$isset ) ) {
+        	return true;
+        }
+        return false;
+        
+    	
+    }
     
     /* ---- LEGACY BC METHODS - NOT DOCUMENTED - See Documentation on New Methods. ---*/
     
