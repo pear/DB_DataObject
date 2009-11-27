@@ -2754,7 +2754,9 @@ class DB_DataObject extends DB_DataObject_Overload
         
         if (is_array($file) || !file_exists($file)) {
             $found = false;
+            
             $file = is_array($file) ? $file : array($file);
+            $search = implode(PATH_SEPARATOR, $file);
             foreach($file as $f) {
                 foreach(explode(PATH_SEPARATOR, ini_get('include_path')) as $p) {
                     if (file_exists("$p/$f")) {
@@ -2769,7 +2771,9 @@ class DB_DataObject extends DB_DataObject_Overload
             }
             if (!$found) {
                 DB_DataObject::raiseError(
-                    "autoload:Could not find class " . implode(',', $cls) . " using class_location value", 
+                    "autoload:Could not find class " . implode(',', $cls) .
+                    " using class_location value :" . $search .
+                    " using include_path value :" . ini_get('include_path'), 
                     DB_DATAOBJECT_ERROR_INVALIDCONFIG);
                 return false;
             }
