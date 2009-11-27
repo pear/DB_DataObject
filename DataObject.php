@@ -2758,9 +2758,11 @@ class DB_DataObject extends DB_DataObject_Overload
             $file = is_array($file) ? $file : array($file);
             $search = implode(PATH_SEPARATOR, $file);
             foreach($file as $f) {
-                foreach(explode(PATH_SEPARATOR, ini_get('include_path')) as $p) {
-                    if (file_exists("$p/$f")) {
-                        $file = "$p/$f";
+                foreach(explode(PATH_SEPARATOR, '' . PATH_SEPARATOR . ini_get('include_path')) as $p) {
+                    $ff = empty($p) ? $f : "$p/$f";
+
+                    if (file_exists($ff)) {
+                        $file = $ff;
                         $found = true;
                         break;
                     }
