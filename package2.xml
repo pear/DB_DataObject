@@ -23,11 +23,11 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active>
  </lead>
  
- <date>2009-08-12</date>
+ <date>2009-11-27</date>
   
  <version>
-  <release>1.8.12</release>
-  <api>1.8.6</api>
+  <release>1.9.0</release>
+  <api>1.9.0</api>
  </version>
  
  <stability>
@@ -37,9 +37,24 @@ http://pear.php.net/dtd/package-2.0.xsd">
  
  <license uri="http://www.php.net/license/3_01.txt">PHP License 3.01</license>
  <notes><![CDATA[
-    Licence upgrade Release
-    #----- - Changed Error and Cast Licence to 3.01 to keep Debian/Ubuntu happy.
-
+    
+    Modular Release version.
+    
+    This version was designed to support multiple locations of DataObjects for use with
+    modular applications. - NOTE the change to ini_DATABASENAME may fixes the previous behaviour to 
+    match the documented behaviour - however this may break existing installations.
+    
+    New Features:
+    #-------  class_location accepts multiple locations with PATH_SEPARATOR 
+    #-------  class_prefix accepts multiple prefixes with PATH_SEPARATOR 
+    #-------  ini_DATABASENAME merges all found ini files in paths (seperated by PATH_SEPARATOR)
+                previous behaviour was just to read the first. - this applies to matching links.ini files.
+    
+    Notes:
+    #-------  staticGet now marked depreciated.
+    #-------  links_DATABASENAME does not support multiple paths
+    #-------  staticAutoloadTable (depreciated) and staticGet (depreciated) do not support this feature
+    
          
  ]]></notes>
  
@@ -100,7 +115,39 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <phprelease />
  <changelog>
  
+<release>
+ 
+ 
+ <date>2009-08-12</date>
+  
+ <version>
+  <release>1.8.12</release>
+  <api>1.8.6</api>
+ </version>
+ 
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ 
+ <license uri="http://www.php.net/license/3_01.txt">PHP License 3.01</license>
+ <notes><![CDATA[
+    Licence upgrade Release
+    #----- - Changed Error and Cast Licence to 3.01 to keep Debian/Ubuntu happy.
 
+         
+ ]]></notes>
+ 
+ 
+ 
+ </release>
+
+ 
+ 
+ 
+ 
+ 
+ 
 <release>
 
  <date>2009-07-16</date>

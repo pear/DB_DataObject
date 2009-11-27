@@ -309,7 +309,8 @@ class DB_DataObject extends DB_DataObject_Overload
 
     /**
      * An autoloading, caching static get method  using key, value (based on get)
-     *
+     * (depreciated - use ::get / and your own caching method)
+     * 
      * Usage:
      * $object = DB_DataObject::staticGet("DbTable_mytable",12);
      * or
@@ -1808,10 +1809,15 @@ class DB_DataObject extends DB_DataObject_Overload
         }
                     
          
-        
+        $_DB_DATAOBJECT['INI'][$this->_database] = array();
         foreach ($schemas as $ini) {
              if (file_exists($ini) && is_file($ini)) {
-                $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);
+                
+                $_DB_DATAOBJECT['INI'][$this->_database] = array_merge(
+                    $_DB_DATAOBJECT['INI'][$this->_database],
+                    parse_ini_file($ini, true)
+                );
+                    
                 if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) { 
                     if (!is_readable ($ini)) {
                         $this->debug("ini file is not readable: $ini","databaseStructure",1);
@@ -2637,15 +2643,31 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         
         // does this need multi db support??
-        $p = isset($_DB_DATAOBJECT['CONFIG']['class_prefix']) ?
-            $_DB_DATAOBJECT['CONFIG']['class_prefix'] : '';
-        $class = $p . preg_replace('/[^A-Z0-9]/i','_',ucfirst($table));
-        $ce = substr(phpversion(),0,1) > 4 ? class_exists($class,false) : class_exists($class);
+        $cp = isset($_DB_DATAOBJECT['CONFIG']['class_prefix']) ?
+            explode(PATH_SEPARATOR, $_DB_DATAOBJECT['CONFIG']['class_prefix']) : '';
         
-        $class = $ce ? $class  : DB_DataObject::_autoloadClass($class);
+        // multiprefix support.
+        $tbl = preg_replace('/[^A-Z0-9]/i','_',ucfirst($table));
+        if (is_array($cp)) {
+            $class = array();
+            foreach($cp as $cpr) {
+                $ce = substr(phpversion(),0,1) > 4 ? class_exists($cpr . $tbl,false) : class_exists($cpr . $tbl);
+                if ($ce) {
+                    $class = $cpr . $tbl;
+                    break;
+                }
+                $class[] = $cpr . $tbl;
+            }
+        } else {
+            $class = $tbl;
+            $ce = substr(phpversion(),0,1) > 4 ? class_exists($class,false) : class_exists($class);
+        }
+        
+        
+        $rclass = $ce ? $class  : DB_DataObject::_autoloadClass($class, $table);
         
         // proxy = full|light
-        if (!$class && isset($_DB_DATAOBJECT['CONFIG']['proxy'])) { 
+        if (!$rclass && isset($_DB_DATAOBJECT['CONFIG']['proxy'])) { 
         
             DB_DataObject::debug("FAILED TO Autoload  $database.$table - using proxy.","FACTORY",1);
         
@@ -2666,12 +2688,14 @@ class DB_DataObject extends DB_DataObject_Overload
             return $x->$proxyMethod( $d->_database, $table);
         }
         
-        if (!$class) {
+        if (!$rclass) {
             return DB_DataObject::raiseError(
-                "factory could not find class $class from $table",
+                "factory could not find class " . 
+                (is_array($class) ? implode(PATH_SEPARATOR, $class)  : $class  ). 
+                "from $table",
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
         }
-        $ret = new $class;
+        $ret = new $rclass;
         if (!empty($database)) {
             DB_DataObject::debug("Setting database to $database","FACTORY",1);
             $ret->database($database);
@@ -2681,11 +2705,12 @@ class DB_DataObject extends DB_DataObject_Overload
     /**
      * autoload Class
      *
-     * @param  string  $class  Class
+     * @param  string|array  $class  Class
+     * @param  string  $table  Table trying to load.
      * @access private
      * @return string classname on Success
      */
-    function _autoloadClass($class)
+    function _autoloadClass($class, $table=false)
     {
         global $_DB_DATAOBJECT;
         
@@ -2695,32 +2720,56 @@ class DB_DataObject extends DB_DataObject_Overload
         $class_prefix = empty($_DB_DATAOBJECT['CONFIG']['class_prefix']) ? 
                 '' : $_DB_DATAOBJECT['CONFIG']['class_prefix'];
                 
-        $table   = substr($class,strlen($class_prefix));
+        $table   = $table ? $table : substr($class,strlen($class_prefix));
 
         // only include the file if it exists - and barf badly if it has parse errors :)
         if (!empty($_DB_DATAOBJECT['CONFIG']['proxy']) || empty($_DB_DATAOBJECT['CONFIG']['class_location'])) {
             return false;
         }
+        // support for:
+        // class_location = mydir/ => maps to mydir/Tablename.php
+        // class_location = mydir/myfile_%s.php => maps to mydir/myfile_Tablename
+        // with directory sepr
+        // class_location = mydir/:mydir2/: => tries all of thes locations.
+        $cl = $_DB_DATAOBJECT['CONFIG']['class_location'];
         
         
-        if (strpos($_DB_DATAOBJECT['CONFIG']['class_location'],'%s') !== false) {
-            $file = sprintf($_DB_DATAOBJECT['CONFIG']['class_location'], preg_replace('/[^A-Z0-9]/i','_',ucfirst($table)));
-        } else {
-            $file = $_DB_DATAOBJECT['CONFIG']['class_location'].'/'.preg_replace('/[^A-Z0-9]/i','_',ucfirst($table)).".php";
+        switch (true) {
+            case (strpos($cl ,'%s') !== false):
+                $file = sprintf($cl , preg_replace('/[^A-Z0-9]/i','_',ucfirst($table)));
+                break;
+                
+            case (strpos($cl , PATH_SEPARATOR) !== false):
+                $file = array();
+                foreach(explode(PATH_SEPARATOR, $cl ) as $p) {
+                    $file[] =  $p .'/'.preg_replace('/[^A-Z0-9]/i','_',ucfirst($table)).".php";
+                }
+                break;
+            default:
+                $file = $cl .'/'.preg_replace('/[^A-Z0-9]/i','_',ucfirst($table)).".php";
+                break;
         }
         
-        if (!file_exists($file)) {
+        $cls = is_array($class) ? $class : array($class);
+        
+        if (is_array($file) || !file_exists($file)) {
             $found = false;
-            foreach(explode(PATH_SEPARATOR, ini_get('include_path')) as $p) {
-                if (file_exists("$p/$file")) {
-                    $file = "$p/$file";
-                    $found = true;
+            $file = is_array($file) ? $file : array($file);
+            foreach($file as $f) {
+                foreach(explode(PATH_SEPARATOR, ini_get('include_path')) as $p) {
+                    if (file_exists("$p/$f")) {
+                        $file = "$p/$f";
+                        $found = true;
+                        break;
+                    }
+                }
+                if ($found) {
                     break;
                 }
             }
             if (!$found) {
                 DB_DataObject::raiseError(
-                    "autoload:Could not find class {$class} using class_location value", 
+                    "autoload:Could not find class " . implode(',', $cls) . " using class_location value", 
                     DB_DATAOBJECT_ERROR_INVALIDCONFIG);
                 return false;
             }
@@ -2728,12 +2777,18 @@ class DB_DataObject extends DB_DataObject_Overload
         
         include_once $file;
         
-        
-        $ce = substr(phpversion(),0,1) > 4 ? class_exists($class,false) : class_exists($class);
-        
+       
+        $ce = false;
+        foreach($cls as $c) {
+            $ce = substr(phpversion(),0,1) > 4 ? class_exists($c,false) : class_exists($c);
+            if ($ce) {
+                $class = $c;
+                break;
+            }
+        }
         if (!$ce) {
             DB_DataObject::raiseError(
-                "autoload:Could not autoload {$class}", 
+                "autoload:Could not autoload " . implode(',', $cls) , 
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
         }
@@ -2799,7 +2854,7 @@ class DB_DataObject extends DB_DataObject_Overload
             }
                         
              
-            
+            $_DB_DATAOBJECT['LINKS'][$this->_database] = array();
             foreach ($schemas as $ini) {
                 
                 $links =
@@ -2807,9 +2862,13 @@ class DB_DataObject extends DB_DataObject_Overload
                         $_DB_DATAOBJECT['CONFIG']["links_{$this->_database}"] :
                         str_replace('.ini','.links.ini',$ini);
         
-                if (empty($_DB_DATAOBJECT['LINKS'][$this->_database]) && file_exists($links) && is_file($links)) {
+                if (file_exists($links) && is_file($links)) {
                     /* not sure why $links = ... here  - TODO check if that works */
-                    $_DB_DATAOBJECT['LINKS'][$this->_database] = parse_ini_file($links, true);
+                    $_DB_DATAOBJECT['LINKS'][$this->_database] = array_merge(
+                        $_DB_DATAOBJECT['LINKS'][$this->_database],
+                        parse_ini_file($links, true)
+                    );
+                        
                     if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                         $this->debug("Loaded links.ini file: $links","links",1);
                     }
@@ -4285,4 +4344,5 @@ if (!defined('DB_DATAOBJECT_NO_OVERLOAD')) {
         $GLOBALS['_DB_DATAOBJECT']['OVERLOADED'] = true;
     }
 }
+
 
