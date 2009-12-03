@@ -49,12 +49,18 @@ http://pear.php.net/dtd/package-2.0.xsd">
     #-------  class_prefix accepts multiple prefixes with PATH_SEPARATOR 
     #-------  ini_DATABASENAME merges all found ini files in paths (seperated by PATH_SEPARATOR)
                 previous behaviour was just to read the first. - this applies to matching links.ini files.
-    
+    #12550 -  disable_null_strings=full -- see the bug report for details - it is highly recommended not to use this feature,
+              as it may result in data being deleted from your database if not used carefully.
+
     Notes:
     #-------  staticGet now marked depreciated.
     #-------  links_DATABASENAME does not support multiple paths
     #-------  staticAutoloadTable (depreciated) and staticGet (depreciated) do not support this feature
     
+
+
+
+
          
  ]]></notes>
  
