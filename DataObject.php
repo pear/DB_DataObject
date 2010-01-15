@@ -722,7 +722,7 @@ class DB_DataObject extends DB_DataObject_Overload
 
         $ar = array();
         foreach($list as $k) {
-            settype($k, $type)
+            settype($k, $type);
             $ar[] = $type =='string' ? $this->escape($k) : $k;
         }
         if (!$ar) {

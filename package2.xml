@@ -26,7 +26,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
      <date>2010-01-15</date>
       
      <version>
-      <release>1.9.2</release>
+      <release>1.9.3</release>
       <api>1.9.0</api>
      </version>
      
@@ -38,7 +38,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
      <license uri="http://www.php.net/license/3_01.txt">PHP License 3.01</license>
      <notes><![CDATA[
         
-        Fix broken release (1.9.1)
+        Fix broken release (1.9.1 and 1.9.2)
         
         fetchAll() / whereAddIn() Release version.
         
