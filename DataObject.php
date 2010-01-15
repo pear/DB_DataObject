@@ -625,7 +625,7 @@ class DB_DataObject extends DB_DataObject_Overload
      * @access  public
      * @return  array  format dependant on arguments, may be empty
      */
-    function fetchAll($k= false, $v = false, $method = false) ;
+    function fetchAll($k= false, $v = false, $method = false)  
     {
         // should it even do this!!!?!?
         if ($k !== false && 

@@ -26,7 +26,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
      <date>2010-01-15</date>
       
      <version>
-      <release>1.9.1</release>
+      <release>1.9.2</release>
       <api>1.9.0</api>
      </version>
      
@@ -37,6 +37,8 @@ http://pear.php.net/dtd/package-2.0.xsd">
      
      <license uri="http://www.php.net/license/3_01.txt">PHP License 3.01</license>
      <notes><![CDATA[
+        
+        Fix broken release (1.9.1)
         
         fetchAll() / whereAddIn() Release version.
         
@@ -106,6 +108,36 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <phprelease />
  <changelog>
  
+  <release>
+ 
+     <date>2010-01-15</date>
+      
+     <version>
+      <release>1.9.1</release>
+      <api>1.9.0</api>
+     </version>
+     
+     <stability>
+      <release>stable</release>
+      <api>stable</api>
+     </stability>
+     
+     <license uri="http://www.php.net/license/3_01.txt">PHP License 3.01</license>
+     <notes><![CDATA[
+        
+        fetchAll() / whereAddIn() Release version.
+        
+        This version adds two new utility methods, that can speed up usage,
+        fetchAll()  - does the $do->find() / while($do->fetch()) $ar[] = clone($do) loop, and more.
+        whereAddIn() - allows you to quickly build IN queries, with correct escaping.
+        
+
+
+             
+     ]]></notes>
+     
+ 
+  </release>
  <release>
  
  
