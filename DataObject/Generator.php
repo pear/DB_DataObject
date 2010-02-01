@@ -412,7 +412,7 @@ class DB_DataObject_Generator extends DB_DataObject
 
                     while ($row = $res->fetchRow(DB_FETCHMODE_ASSOC)) {
                         $treffer = array();
-                        // this only picks up one fo these.. (mysql handle multiple. - wonder why)
+                        // this only picks up one of these.. see this for why: http://pear.php.net/bugs/bug.php?id=17049
                         preg_match(
                             "/FOREIGN KEY \((\w*)\) REFERENCES (\w*)\((\w*)\)/i",
                             $row['condef'],
