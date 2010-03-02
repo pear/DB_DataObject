@@ -3391,41 +3391,48 @@ class DB_DataObject extends DB_DataObject_Overload
         //print_r($obj->links());
         if (!$ofield && ($olinks = $obj->links())) {
             
-            foreach ($olinks as $k => $v) {
-                /* link contains {this column} = {linked table}:{linked column} */
-                $ar = explode(':', $v);
-                
-                // Feature Request #4266 - Allow joins with multiple keys
-                
-                $links_key_array = strpos($k,',');
-                if ($links_key_array !== false) {
-                    $k = explode(',', $k);
+            foreach ($olinks as $k => $linkVar) {
+                /* link contains {this column} = array ( {linked table}:{linked column} )*/
+                if (!is_array($linkVar)) {
+                    $linkVar  = array($linkVar);
                 }
-                
-                $ar_array = strpos($ar[1],',');
-                if ($ar_array !== false) {
-                    $ar[1] = explode(',', $ar[1]);
-                }
-             
-                if ($ar[0] == $this->__table) {
+                foreach($linkVar as $v) {
                     
-                    // you have explictly specified the column
-                    // and the col is listed here..
-                    // not sure if 1:1 table could cause probs here..
+                    /* link contains {this column} = {linked table}:{linked column} */
+                    $ar = explode(':', $v);
                     
-                    if ($joinCol !== false) {
-                        $this->raiseError( 
-                            "joinAdd: You cannot target a join column in the " .
-                            "'link from' table ({$obj->__table}). " . 
-                            "Either remove the fourth argument to joinAdd() ".
-                            "({$joinCol}), or alter your links.ini file.",
-                            DB_DATAOBJECT_ERROR_NODATA);
-                        return false;
+                    // Feature Request #4266 - Allow joins with multiple keys
+                    
+                    $links_key_array = strpos($k,',');
+                    if ($links_key_array !== false) {
+                        $k = explode(',', $k);
                     }
-                
-                    $ofield = $k;
-                    $tfield = $ar[1];
-                    break;
+                    
+                    $ar_array = strpos($ar[1],',');
+                    if ($ar_array !== false) {
+                        $ar[1] = explode(',', $ar[1]);
+                    }
+                 
+                    if ($ar[0] == $this->__table) {
+                        
+                        // you have explictly specified the column
+                        // and the col is listed here..
+                        // not sure if 1:1 table could cause probs here..
+                        
+                        if ($joinCol !== false) {
+                            $this->raiseError( 
+                                "joinAdd: You cannot target a join column in the " .
+                                "'link from' table ({$obj->__table}). " . 
+                                "Either remove the fourth argument to joinAdd() ".
+                                "({$joinCol}), or alter your links.ini file.",
+                                DB_DATAOBJECT_ERROR_NODATA);
+                            return false;
+                        }
+                    
+                        $ofield = $k;
+                        $tfield = $ar[1];
+                        break;
+                    }
                 }
             }
         }
