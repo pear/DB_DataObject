@@ -3402,7 +3402,6 @@ class DB_DataObject extends DB_DataObject_Overload
                     $ar = explode(':', $v);
                     
                     // Feature Request #4266 - Allow joins with multiple keys
-                    
                     $links_key_array = strpos($k,',');
                     if ($links_key_array !== false) {
                         $k = explode(',', $k);
@@ -3691,7 +3690,13 @@ class DB_DataObject extends DB_DataObject_Overload
             if (!$k) {
                 continue; // ignore empty keys!!! what
             }
-            if (is_object($from) && isset($from->{sprintf($format,$k)})) {
+            
+            $chk = is_object($from) &&  
+                (version_compare(phpversion(), "5.1.0" , ">=") ? 
+                    property_exists($from, sprintf($format,$k)) : isset($from->{sprintf($format,$k)})
+                );
+            // if from has property ($format($k)      
+            if ($chk) {
                 $kk = (strtolower($k) == 'from') ? '_from' : $k;
                 if (method_exists($this,'set'.$kk)) {
                     $ret = $this->{'set'.$kk}($from->{sprintf($format,$k)});
