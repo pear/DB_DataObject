@@ -3693,7 +3693,8 @@ class DB_DataObject extends DB_DataObject_Overload
             
             $chk = is_object($from) &&  
                 (version_compare(phpversion(), "5.1.0" , ">=") ? 
-                    property_exists($from, sprintf($format,$k)) : isset($from->{sprintf($format,$k)})
+                    property_exists($from, sprintf($format,$k)) :  // php5.1
+                    array_key_exists( sprintf($format,$k), get_class_vars($from)) //older
                 );
             // if from has property ($format($k)      
             if ($chk) {
