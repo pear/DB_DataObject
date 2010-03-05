@@ -969,7 +969,7 @@ class DB_DataObject_Generator extends DB_DataObject
             $body .= $this->derivedHookVar($t,$padding);
         }
          
-        $body .= $this->derivedHookPostVar($defs,$padding);
+        $body .= $this->derivedHookPostVar($defs);
 
         // THIS IS TOTALLY BORKED old FC creation
         // IT WILL BE REMOVED!!!!! in DataObjects 1.6
@@ -1126,11 +1126,10 @@ class DB_DataObject_Generator extends DB_DataObject
      * lines
      *
      * @param array cols containing array of objects with type,len,flags etc. from tableInfo call
-     * @param int padding number of spaces
      * @access   public
      * @return  string added to class eg. functions.
      */
-    function derivedHookPostVar(&$t,$padding)
+    function derivedHookPostVar($t)
     {
         // This is so derived generator classes can generate variabels
         // It MUST NOT be changed here!!!
