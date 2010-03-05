@@ -939,6 +939,7 @@ class DB_DataObject_Generator extends DB_DataObject
         // show nice information!
         $connections = array();
         $sets = array();
+
         foreach($defs as $t) {
             if (!strlen(trim($t->name))) {
                 continue;
@@ -967,6 +968,8 @@ class DB_DataObject_Generator extends DB_DataObject
             //    $sets[$t->Field] = "array".substr($t->Type,3);
             $body .= $this->derivedHookVar($t,$padding);
         }
+         
+        $body .= $this->derivedHookPostVar($defs,$padding);
 
         // THIS IS TOTALLY BORKED old FC creation
         // IT WILL BE REMOVED!!!!! in DataObjects 1.6
@@ -1117,7 +1120,22 @@ class DB_DataObject_Generator extends DB_DataObject
         // It MUST NOT be changed here!!!
         return "";
     }
-
+    /**
+     * hook for after var lines (
+     * called at the end of the output of var line have generated, override to add extra var
+     * lines
+     *
+     * @param array cols containing array of objects with type,len,flags etc. from tableInfo call
+     * @param int padding number of spaces
+     * @access   public
+     * @return  string added to class eg. functions.
+     */
+    function derivedHookPostVar(&$t,$padding)
+    {
+        // This is so derived generator classes can generate variabels
+        // It MUST NOT be changed here!!!
+        return "";
+    }
     /**
      * hook to add extra page-level (in terms of phpDocumentor) DocBlock
      *
