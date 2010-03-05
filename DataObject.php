@@ -3359,31 +3359,46 @@ class DB_DataObject extends DB_DataObject_Overload
         /* otherwise see if there are any links from this table to the obj. */
         //print_r($this->links());
         if (($ofield === false) && ($links = $this->links())) {
-            foreach ($links as $k => $v) {
-                /* link contains {this column} = {linked table}:{linked column} */
-                $ar = explode(':', $v);
-                // Feature Request #4266 - Allow joins with multiple keys
-                if (strpos($k, ',') !== false) {
-                    $k = explode(',', $k);
+            // this enables for support for arrays of links in ini file.
+            // link contains this_column[] =  linked_table:linked_column
+            // or standard way.
+            // link contains this_column =  linked_table:linked_column
+            foreach ($links as $k => $linkVar) {
+            
+                if (!is_array($linkVar)) {
+                    $linkVar  = array($linkVar);
                 }
-                if (strpos($ar[1], ',') !== false) {
-                    $ar[1] = explode(',', $ar[1]);
-                }
+                foreach($linkVar as $v) {
 
-                if ($ar[0] == $obj->__table) {
+                    
+                    
+                    /* link contains {this column} = {linked table}:{linked column} */
+                    $ar = explode(':', $v);
+                    // Feature Request #4266 - Allow joins with multiple keys
+                    if (strpos($k, ',') !== false) {
+                        $k = explode(',', $k);
+                    }
+                    if (strpos($ar[1], ',') !== false) {
+                        $ar[1] = explode(',', $ar[1]);
+                    }
+
+                    if ($ar[0] != $obj->__table) {
+                        continue;
+                    }
                     if ($joinCol !== false) {
                         if ($k == $joinCol) {
+                            // got it!?
                             $tfield = $k;
                             $ofield = $ar[1];
                             break;
-                        } else {
-                            continue;
-                        }
-                    } else {
-                        $tfield = $k;
-                        $ofield = $ar[1];
-                        break;
-                    }
+                        } 
+                        continue;
+                        
+                    } 
+                    $tfield = $k;
+                    $ofield = $ar[1];
+                    break;
+                        
                 }
             }
         }
@@ -3412,26 +3427,28 @@ class DB_DataObject extends DB_DataObject_Overload
                         $ar[1] = explode(',', $ar[1]);
                     }
                  
-                    if ($ar[0] == $this->__table) {
-                        
-                        // you have explictly specified the column
-                        // and the col is listed here..
-                        // not sure if 1:1 table could cause probs here..
-                        
-                        if ($joinCol !== false) {
-                            $this->raiseError( 
-                                "joinAdd: You cannot target a join column in the " .
-                                "'link from' table ({$obj->__table}). " . 
-                                "Either remove the fourth argument to joinAdd() ".
-                                "({$joinCol}), or alter your links.ini file.",
-                                DB_DATAOBJECT_ERROR_NODATA);
-                            return false;
-                        }
-                    
-                        $ofield = $k;
-                        $tfield = $ar[1];
-                        break;
+                    if ($ar[0] != $this->__table) {
+                        continue;
                     }
+                    
+                    // you have explictly specified the column
+                    // and the col is listed here..
+                    // not sure if 1:1 table could cause probs here..
+                    
+                    if ($joinCol !== false) {
+                        $this->raiseError( 
+                            "joinAdd: You cannot target a join column in the " .
+                            "'link from' table ({$obj->__table}). " . 
+                            "Either remove the fourth argument to joinAdd() ".
+                            "({$joinCol}), or alter your links.ini file.",
+                            DB_DATAOBJECT_ERROR_NODATA);
+                        return false;
+                    }
+                
+                    $ofield = $k;
+                    $tfield = $ar[1];
+                    break;
+                    
                 }
             }
         }
