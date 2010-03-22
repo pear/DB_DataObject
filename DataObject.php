@@ -717,7 +717,12 @@ class DB_DataObject extends DB_DataObject_Overload
     */
     function whereAddIn($key, $list, $type, $logic = 'AND') 
     {
-        // fix type for short entry.
+        $not = '';
+        if ($key[0] == '!') {
+            $not = 'NOT ';
+            $key = substr($key, 1);
+        }
+        // fix type for short entry. 
         $type = $type == 'int' ? 'integer' : $type; 
 
         $ar = array();
@@ -726,9 +731,9 @@ class DB_DataObject extends DB_DataObject_Overload
             $ar[] = $type =='string' ? $this->escape($k) : $k;
         }
         if (!$ar) {
-            return;
+            return $not ? $this->_query['condition'] : $this->whereAdd("1=0");
         }
-        return $this->whereAdd("$key IN (". implode(',', $ar). ')', $logic );
+        return $this->whereAdd("$key $not IN (". implode(',', $ar). ')', $logic );    
     }
 
     
