@@ -3272,15 +3272,19 @@ class DB_DataObject extends DB_DataObject_Overload
      * unionAdd - adds another dataobject to this, building a unioned query.
      *
      * usage: (Needs a better example..)
-     * $i = new DataObject_Image();
-     * $pi->where("size > 1000");
-     * $pi = new DataObjects_Images();
-     * $pi->where("color='red'");
-     * $i->unionAdd($pi, 'ALL');
-     * $i->find();
-     * while ($i->fetch()) {
-     *     // do stuff
-     * }
+     * $do1 = DB_DataObject::factory("table1");
+     * $do2 = DB_DataObject::factory("table2");
+     * 
+     * $do2->selectAdd();
+     * $do2->selectAdd("id");
+     * $do2->whereAdd("id < 100");
+     * 
+     * $do1->unionAdd($do2);
+     * $do1->selectAdd();
+     * $do1->selectAdd("id");
+     * $do1->whereAdd("id > 100");
+     * $do1->orderBy("id");
+     * $do1->find();
      * 
      * Note: this model may be a better way to implement joinAdd?, eg. do the building in find?
      * 
