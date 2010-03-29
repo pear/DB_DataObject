@@ -370,6 +370,31 @@ class DB_DataObject extends DB_DataObject_Overload
     }
 
     /**
+     * build the basic select query.
+     * 
+     * @access private
+     */
+    
+    function _build_select()
+    {
+        global $_DB_DATAOBJECT;
+        $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
+        if ($quoteIdentifiers) {
+            $this->_connect();
+            $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
+        }
+        $sql = 'SELECT ' .
+            $this->_query['data_select'] . " \n" .
+            ' FROM ' . ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table) . " \n" .
+            $this->_join . " \n" .
+            $this->_query['condition'] . " \n" ;
+         
+                 
+        return $sql;
+    }
+
+     
+    /**
      * find results, either normal or crosstable
      *
      * for example
@@ -411,19 +436,22 @@ class DB_DataObject extends DB_DataObject_Overload
         $query_before = $this->_query;
         $this->_build_condition($this->table()) ;
         
-        $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
+       
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
         /* We are checking for method modifyLimitQuery as it is PEAR DB specific */
-        $sql = 'SELECT ' .
-            $this->_query['data_select'] . " \n" .
-            ' FROM ' . ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table) . " \n" .
-            $this->_join . " \n" .
-            $this->_query['condition'] . " \n" .
-            $this->_query['group_by']  . " \n" .
+        $sql = $this->_build_select();
+        
+        foreach ($this->_query['unions'] as $union_ar) {  
+            $sql .= " UNION " . $union_ar[1] .   $union_ar[0]->_buildSelect() . " \n";
+        }
+        
+        $sql .=  $this->_query['group_by']  . " \n" .
             $this->_query['having']    . " \n" .
             $this->_query['order_by']  . " \n";
+        
+        
         
         if ((!isset($_DB_DATAOBJECT['CONFIG']['db_driver'])) || 
             ($_DB_DATAOBJECT['CONFIG']['db_driver'] == 'DB')) {
@@ -1786,6 +1814,7 @@ class DB_DataObject extends DB_DataObject_Overload
         'limit_start' => '', // the LIMIT condition
         'limit_count' => '', // the LIMIT condition
         'data_select' => '*', // the columns to be SELECTed
+        'unions'      => array(), // the added unions
     );
         
     
@@ -3239,6 +3268,41 @@ class DB_DataObject extends DB_DataObject_Overload
         return $ret;
     }
 
+     /**
+     * unionAdd - adds another dataobject to this, building a unioned query.
+     *
+     * usage: (Needs a better example..)
+     * $i = new DataObject_Image();
+     * $pi->where("size > 1000");
+     * $pi = new DataObjects_Images();
+     * $pi->where("color='red'");
+     * $i->unionAdd($pi, 'ALL');
+     * $i->find();
+     * while ($i->fetch()) {
+     *     // do stuff
+     * }
+     * 
+     * Note: this model may be a better way to implement joinAdd?, eg. do the building in find?
+     * 
+     * 
+     * @param             $obj       object|false the union object or false to reset
+     * @param    optional $is_all    string 'ALL' to do all.
+     * @returns           $obj       object|array the added object, or old list if reset.
+     */
+    
+    function unionAdd($obj,$is_all= '')
+    {
+        if ($obj === false) {
+            $ret = $this->_query['unions'];
+            $this->_query['unions'] = array();
+            return $ret;
+        }
+        $this->_query['unions'][] = array($obj, 'UNION ' . $is_all) ;
+        return $obj;
+    }
+
+    
+    
     /**
      * The JOIN condition
      *
