@@ -387,8 +387,9 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->_query['data_select'] . " \n" .
             ' FROM ' . ($quoteIdentifiers ? $DB->quoteIdentifier($this->__table) : $this->__table) . " \n" .
             $this->_join . " \n" .
-            $this->_query['condition'] . " \n" ;
-         
+            $this->_query['condition'] . " \n" .
+            $this->_query['group_by'] . " \n" .
+            $this->_query['having'] . " \n";
                  
         return $sql;
     }
@@ -440,19 +441,17 @@ class DB_DataObject extends DB_DataObject_Overload
         $this->_connect();
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
-        /* We are checking for method modifyLimitQuery as it is PEAR DB specific */
+        
         $sql = $this->_build_select();
         
         foreach ($this->_query['unions'] as $union_ar) {  
-            $sql .= " UNION " . $union_ar[1] .   $union_ar[0]->_buildSelect() . " \n";
+            $sql .=   $union_ar[1] .   $union_ar[0]->_buildSelect() . " \n";
         }
         
-        $sql .=  $this->_query['group_by']  . " \n" .
-            $this->_query['having']    . " \n" .
-            $this->_query['order_by']  . " \n";
+        $sql .=  $this->_query['order_by']  . " \n";
         
         
-        
+        /* We are checking for method modifyLimitQuery as it is PEAR DB specific */
         if ((!isset($_DB_DATAOBJECT['CONFIG']['db_driver'])) || 
             ($_DB_DATAOBJECT['CONFIG']['db_driver'] == 'DB')) {
             /* PEAR DB specific */
@@ -3271,21 +3270,22 @@ class DB_DataObject extends DB_DataObject_Overload
      /**
      * unionAdd - adds another dataobject to this, building a unioned query.
      *
-     * usage: (Needs a better example..)
-     * $do1 = DB_DataObject::factory("table1");
-     * $do2 = DB_DataObject::factory("table2");
+     * usage:  
+     * $doTable1 = DB_DataObject::factory("table1");
+     * $doTable2 = DB_DataObject::factory("table2");
      * 
-     * $do2->selectAdd();
-     * $do2->selectAdd("id");
-     * $do2->whereAdd("id < 100");
+     * $doTable1->selectAdd();
+     * $doTable1->selectAdd("col1,col2");
+     * $doTable1->whereAdd("col1 > 100");
+     * $doTable1->orderBy("col1");
+     *
+     * $doTable2->selectAdd();
+     * $doTable2->selectAdd("col1, col2");
+     * $doTable2->whereAdd("col2 = 'v'");
      * 
-     * $do1->unionAdd($do2);
-     * $do1->selectAdd();
-     * $do1->selectAdd("id");
-     * $do1->whereAdd("id > 100");
-     * $do1->orderBy("id");
-     * $do1->find();
-     * 
+     * $doTable1->unionAdd($doTable2);
+     * $doTable1->find();
+      * 
      * Note: this model may be a better way to implement joinAdd?, eg. do the building in find?
      * 
      * 
@@ -3301,7 +3301,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->_query['unions'] = array();
             return $ret;
         }
-        $this->_query['unions'][] = array($obj, 'UNION ' . $is_all) ;
+        $this->_query['unions'][] = array($obj, 'UNION ' . $is_all . ' ') ;
         return $obj;
     }
 
