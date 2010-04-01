@@ -445,7 +445,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $sql = $this->_build_select();
         
         foreach ($this->_query['unions'] as $union_ar) {  
-            $sql .=   $union_ar[1] .   $union_ar[0]->_buildSelect() . " \n";
+            $sql .=   $union_ar[1] .   $union_ar[0]->_build_select() . " \n";
         }
         
         $sql .=  $this->_query['order_by']  . " \n";
