@@ -2176,9 +2176,9 @@ class DB_DataObject extends DB_DataObject_Overload
         $seqname = false;
         
         if (!empty($_DB_DATAOBJECT['CONFIG']['sequence_'.$this->__table])) {
-            $usekey = $_DB_DATAOBJECT['CONFIG']['sequence_'.$this->__table];
-            if (strpos($usekey,':') !== false) {
-                list($usekey,$seqname) = explode(':',$usekey);
+            $seqname = $_DB_DATAOBJECT['CONFIG']['sequence_'.$this->__table];
+            if (strpos($seqname,':') !== false) {
+                list($usekey,$seqname) = explode(':',$seqname);
             }
         }  
         
