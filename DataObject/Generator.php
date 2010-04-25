@@ -900,10 +900,8 @@ class DB_DataObject_Generator extends DB_DataObject
         $body =  "\n    ###START_AUTOCODE\n";
         $body .= "    /* the code below is auto generated do not remove the above tag */\n\n";
         // table
-        $padding = (30 - strlen($this->table));
-        $padding  = ($padding < 2) ? 2 : $padding;
-        
-        $p =  str_repeat(' ',$padding) ;
+
+        $p = str_repeat(' ',max(2, (18 - strlen($this->table)))) ;
         
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
         
@@ -926,6 +924,7 @@ class DB_DataObject_Generator extends DB_DataObject
          // Only include the $_database property if the omit_database_var is unset or false
         
         if (isset($options["database_{$this->_database}"]) && empty($GLOBALS['_DB_DATAOBJECT']['CONFIG']['generator_omit_database_var'])) {
+            $p = str_repeat(' ',   max(2, (16 - strlen($this->table))));
             $body .= "    {$var} \$_database = '{$this->_database}';  {$p}// database name (used with database_{*} config)\n";
         }
         
@@ -955,18 +954,15 @@ class DB_DataObject_Generator extends DB_DataObject
                 continue;
             }
             
-            
-            $padding = (30 - strlen($t->name));
-            if ($padding < 2) $padding =2;
-            $p =  str_repeat(' ',$padding) ;
-            
+            $p = str_repeat(' ',max(2,  (30 - strlen($t->name))));
+
             $length = empty($t->len) ? '' : '('.$t->len.')';
             $body .="    {$var} \${$t->name};  {$p}// {$t->type}$length  {$t->flags}\n";
             
             // can not do set as PEAR::DB table info doesnt support it.
             //if (substr($t->Type,0,3) == "set")
             //    $sets[$t->Field] = "array".substr($t->Type,3);
-            $body .= $this->derivedHookVar($t,$padding);
+            $body .= $this->derivedHookVar($t,strlen($p));
         }
          
         $body .= $this->derivedHookPostVar($defs);
