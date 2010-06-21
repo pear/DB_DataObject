@@ -752,10 +752,14 @@ class DB_DataObject extends DB_DataObject_Overload
         // fix type for short entry. 
         $type = $type == 'int' ? 'integer' : $type; 
 
+        if ($type == 'string') {
+            $this->_connect();
+        }
+
         $ar = array();
         foreach($list as $k) {
             settype($k, $type);
-            $ar[] = $type =='string' ? $this->escape($k) : $k;
+            $ar[] = $type =='string' ? $this->_quote($k) : $k;
         }
         if (!$ar) {
             return $not ? $this->_query['condition'] : $this->whereAdd("1=0");
