@@ -23,10 +23,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active>
  </lead>
      
-     <date>2010-01-15</date>
+     <date>2010-07-07</date>
       
      <version>
-      <release>1.9.3</release>
+      <release>1.9.5</release>
       <api>1.9.0</api>
      </version>
      
@@ -37,16 +37,9 @@ http://pear.php.net/dtd/package-2.0.xsd">
      
      <license uri="http://www.php.net/license/3_01.txt">PHP License 3.01</license>
      <notes><![CDATA[
-        
-        Fix broken release (1.9.1 and 1.9.2)
-        
-        fetchAll() / whereAddIn() Release version.
-        
-        This version adds two new utility methods, that can speed up usage,
-        fetchAll()  - does the $do->find() / while($do->fetch()) $ar[] = clone($do) loop, and more.
-        whereAddIn() - allows you to quickly build IN queries, with correct escaping.
-        
-
+        Small fix release.
+ 
+fix #17508 - whereAddIn used wrong method to quote strings
 
              
      ]]></notes>
@@ -108,12 +101,50 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <phprelease />
  <changelog>
  
+
   <release>
  
-     <date>2010-01-15</date>
+ <date>2010-06-21</date>
+ 
+ <version>
+  <release>1.9.4</release>
+  <api>1.9.0</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license uri="http://www.php.net/license/3_01.txt">PHP License 3.01</license>
+ <notes>
+Bug Fixes
+#17508 - whereAddIn used wrong method to quote strings
+#6202  - better docs on getLinkArray - needs documentation as well really..
+#17343 - tidy up padding code, - fix alignnment of comments in generated files (Original Patch
+         by madsliejensen)
+#17289 - fix sequence_&lt;table&gt; = XXXXX (madsliejensen)
+#17157 - use property_exists in newer versions of php.
+
+
+
+New Features
+#7590  - union support - thanks to Ian Carmichael
+#----- - whereAdd in support for negative (prefix column with &apos;!&apos;) and empty arrays forces 1=0 query.
+#13798 - add hookpostvar for adding things like varchar len data etc.. as per req 
+#16267 - Linking Multiple foreign keys - supports links.ini  id[] = table1:col1   id[] =...
+#17049 - generate links.ini for postgres - by madsliejensen
+ </notes>
+ 
+  </release>
+ 
+ 
+
+
+  <release>
+ 
+   <date>2010-01-15</date>
       
      <version>
-      <release>1.9.1</release>
+      <release>1.9.3</release>
       <api>1.9.0</api>
      </version>
      
@@ -124,6 +155,8 @@ http://pear.php.net/dtd/package-2.0.xsd">
      
      <license uri="http://www.php.net/license/3_01.txt">PHP License 3.01</license>
      <notes><![CDATA[
+        
+        Fix broken release (1.9.1 and 1.9.2)
         
         fetchAll() / whereAddIn() Release version.
         
@@ -138,8 +171,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
      
  
   </release>
- <release>
  
+ 
+  <release>
+
  
   <date>2009-12-03</date>
       
