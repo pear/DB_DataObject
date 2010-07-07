@@ -37,10 +37,11 @@ http://pear.php.net/dtd/package-2.0.xsd">
      
      <license uri="http://www.php.net/license/3_01.txt">PHP License 3.01</license>
      <notes><![CDATA[
-        Small fix release.
- 
-fix #17508 - whereAddIn used wrong method to quote strings
+      Small fix release.
 
+     fix bug #17554 - update when id=0 (or primary key is 0) - thanks to the persistance of Jacek Pawlowski
+
+ 
              
      ]]></notes>
      
