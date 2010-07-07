@@ -1322,7 +1322,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $seq    = $this->sequenceKey();
         if ($seq[0] !== false) {
             $keys = array($seq[0]);
-            if (empty($this->{$keys[0]}) && $dataObject !== true) {
+            if (!isset($this->{$keys[0]}) && $dataObject !== true) {
                 $this->raiseError("update: trying to perform an update without 
                         the key set, and argument to update is not 
                         DB_DATAOBJECT_WHEREADD_ONLY
