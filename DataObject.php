@@ -2974,7 +2974,7 @@ class DB_DataObject extends DB_DataObject_Overload
     * @return   array|null    
     *           array       = if there are links defined for this table.
     *           empty array - if there is a links.ini file, but no links on this table
-    *           null        - if no links.ini exists for this database (hence try auto_links).
+    *           false        - if no links.ini exists for this database (hence try auto_links).
     * @access   public
     * @see      DB_DataObject::getLinks(), DB_DataObject::getLink()
     */
@@ -2988,63 +2988,76 @@ class DB_DataObject extends DB_DataObject_Overload
         // have to connect.. -> otherwise things break later.
         $this->_connect();
         
-        if (isset($_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table])) {
-            return $_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table];
+        // alias for shorter code..
+        $lcfg = &$_DB_DATAOBJECT['LINKS'];
+        $cfg   = &$_DB_DATAOBJECT['CONFIG'];
+
+        // loaded and available.
+        if (isset($lcfg[$this->_database][$this->__table])) {
+            return $lcfg[$this->_database][$this->__table];
+        }
+
+        // loaded 
+        if (isset($lcfg[$this->_database])) {
+            // either no file, or empty..
+            return $lcfg[$this->_database] === false ? null : array();
         }
         
-        
-        
-        
-        
-        // attempt to load links file here..
-        
-        if (!isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
-            $schemas = isset($_DB_DATAOBJECT['CONFIG']['schema_location']) ?
-                array("{$_DB_DATAOBJECT['CONFIG']['schema_location']}/{$this->_database}.ini") :
-                array() ;
-                     
-            if (isset($_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"])) {
-                $schemas = is_array($_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"]) ?
-                    $_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"] :
-                    explode(PATH_SEPARATOR,$_DB_DATAOBJECT['CONFIG']["ini_{$this->_database}"]);
-            }
+        // links are same place as schema by default.
+        $schemas = isset($cfg['schema_location']) ?
+            array("{$cfg['schema_location']}/{$this->_database}.ini") :
+            array() ;
+
+        // if ini_* is set look there instead.
+        // and support multiple locations.                 
+        if (isset($cfg["ini_{$this->_database}"])) {
+            $schemas = is_array($cfg["ini_{$this->_database}"]) ?
+                $cfg["ini_{$this->_database}"] :
+                explode(PATH_SEPARATOR,$cfg["ini_{$this->_database}"]);
+        }
                         
-             
-            $_DB_DATAOBJECT['LINKS'][$this->_database] = array();
-            foreach ($schemas as $ini) {
+        // default to not available.
+        $lcfg[$this->_database] = false;
+
+        foreach ($schemas as $ini) {
                 
-                $links =
-                    isset($_DB_DATAOBJECT['CONFIG']["links_{$this->_database}"]) ?
-                        $_DB_DATAOBJECT['CONFIG']["links_{$this->_database}"] :
-                        str_replace('.ini','.links.ini',$ini);
-        
-                if (file_exists($links) && is_file($links)) {
-                    /* not sure why $links = ... here  - TODO check if that works */
-                    $_DB_DATAOBJECT['LINKS'][$this->_database] = array_merge(
-                        $_DB_DATAOBJECT['LINKS'][$this->_database],
-                        parse_ini_file($links, true)
-                    );
-                        
-                    if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
-                        $this->debug("Loaded links.ini file: $links","links",1);
-                    }
-                } else {
-                    if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
-                        $this->debug("Missing links.ini file: $links","links",1);
-                    }
+            $links = isset($cfg["links_{$this->_database}"]) ?
+                    $cfg["links_{$this->_database}"] :
+                    str_replace('.ini','.links.ini',$ini);
+            
+            // file really exists..
+            if (!file_exists($links) || !is_file($links)) {
+                if (!empty($cfg['debug'])) {
+                    $this->debug("Missing links.ini file: $links","links",1);
                 }
+                continue;
             }
+
+            // set to empty array - as we have at least one file now..
+            $lcfg[$this->_database] = empty($lcfg[$this->_database]) ? array() : $lcfg[$this->_database];
+
+            // merge schema file into lcfg..
+            $lcfg[$this->_database] = array_merge(
+                $lcfg[$this->_database],
+                parse_ini_file($links, true)
+            );
+
+                        
+            if (!empty($cfg['debug'])) {
+                $this->debug("Loaded links.ini file: $links","links",1);
+            }
+             
         }
         
         
         // if there is no link data at all on the file!
         // we return null.
-        if (!isset($_DB_DATAOBJECT['LINKS'][$this->_database])) {
+        if ($lcfg[$this->_database] === false) {
             return null;
         }
         
-        if (isset($_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table])) {
-            return $_DB_DATAOBJECT['LINKS'][$this->_database][$this->__table];
+        if (isset($lcfg[$this->_database][$this->__table])) {
+            return $lcfg[$this->_database][$this->__table];
         }
         
         return array();
