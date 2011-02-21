@@ -759,8 +759,9 @@ class DB_DataObject extends DB_DataObject_Overload
         $ar = array();
         foreach($list as $k) {
             settype($k, $type);
-            $ar[] = $type =='string' ? $this->_quote($k) : $k;
+            $ar[] = $type == 'string' ? $this->_quote($k) : $k;
         }
+      
         if (!$ar) {
             return $not ? $this->_query['condition'] : $this->whereAdd("1=0");
         }
@@ -2039,6 +2040,7 @@ class DB_DataObject extends DB_DataObject_Overload
         } else {
             $this->_connect();
         }
+        
         return $this->_database;
     }
   
@@ -2092,7 +2094,7 @@ class DB_DataObject extends DB_DataObject_Overload
      * or you do not want to use ini tables, you can override this.
      * @param  string optional set the key
      * @param  *   optional  set more keys
-     * @access private
+     * @access public
      * @return array
      */
     function keys()
@@ -2132,7 +2134,7 @@ class DB_DataObject extends DB_DataObject_Overload
      * @param  string  optional the key sequence/autoinc. key
      * @param  boolean optional use native increment. default false 
      * @param  false|string optional native sequence name
-     * @access private
+     * @access public
      * @return array (column,use_native,sequence_name)
      */
     function sequenceKey()
@@ -2974,7 +2976,7 @@ class DB_DataObject extends DB_DataObject_Overload
     * @return   array|null    
     *           array       = if there are links defined for this table.
     *           empty array - if there is a links.ini file, but no links on this table
-    *           false        - if no links.ini exists for this database (hence try auto_links).
+    *           false       - if no links.ini exists for this database (hence try auto_links).
     * @access   public
     * @see      DB_DataObject::getLinks(), DB_DataObject::getLink()
     */
