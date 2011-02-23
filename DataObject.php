@@ -3785,6 +3785,88 @@ class DB_DataObject extends DB_DataObject_Overload
     }
 
     /**
+     * autoJoin - using the links.ini file, it builds a query with all the joins 
+     * usage: 
+     * $x = DB_DataObject::factory('mytable');
+     * $x->autoJoin();
+     * $x->get(123); 
+     *   will result in all of the joined data being added to the fetched object..
+     * 
+     * $x = DB_DataObject::factory('mytable');
+     * $x->autoJoin();
+     * $ar = $x->fetchAll();
+     *   will result in an array containing all the data from the table, and any joined tables..
+     * 
+     * $x = DB_DataObject::factory('mytable');
+     * $jdata = $x->autoJoin();
+     * $x->selectAdd(); //reset..
+     * foreach($_REQUEST['requested_cols'] as $c) {
+     *    if (!isset($jdata[$c])) continue; // ignore columns not available..
+     *    $x->selectAdd( $jdata[$c] . ' as ' . $c);
+     * }
+     * $ar = $x->fetchAll(); 
+     *   will result in only the columns requested being fetched...
+     * @return   array      info about joins
+     *                      cols => map of resulting {joined_tablename}.{joined_table_column_name}
+     *                      join_names => map of resulting {join_name_as}.{joined_table_column_name}
+     * @access   public
+     */
+    function autoJoin()
+    {
+          
+        $map = $this->links();
+        
+        $tabdef = $this->table();
+         
+        // we need this as normally it's only cleared by an empty selectAs call.
+        $this->selectAdd(); 
+        
+        $selectAs = array(array( array_keys($tabdef) , '%s', false));
+        
+        $ret = array(
+            'cols' => array(),
+            'join_names' => array()
+        );
+        
+         foreach(array_keys($tabdef) as $k) {
+            $ret['cols'][$k] = $this->tableName(). '.' . $k;
+        }
+        
+        
+        foreach($map as $ocl=>$info) {
+            
+            list($tab,$col) = explode(':', $info);
+            // what about multiple joins on the same table!!!
+            $xx = DB_DataObject::factory($tab);
+            if (!is_a($xx, 'DB_DataObject')) {
+                continue;
+            }
+            // this is borked ... for multiple jions..
+            $this->joinAdd($xx, 'LEFT', 'join_'.$ocl.'_'. $col, $ocl);
+            $tabdef = $xx->table();
+            $table = $xx->tableName();
+            
+            $keys = array_keys($tabdef);
+             
+            $selectAs[] = array($keys, $ocl.'_%s', 'join_'.$ocl.'_'. $col);
+              
+            foreach($keys as $k) {
+                $ret['cols'][sprintf('%s_%s', $ocl, $k)] = $tab.'.'.$k;
+                $ret['join_names'][sprintf('%s_%s', $ocl, $k)] = sprintf('join_%s_%s.%s',$ocl, $col, $k);
+            }
+             
+        }
+         
+         
+        foreach($selectAs as $ar) {
+            $this->selectAs($ar[0], $ar[1], $ar[2]);
+        }
+        
+        return $ret;
+        
+    }
+    
+    /**
      * Copies items that are in the table definitions from an
      * array or object into the current object
      * will not override key values.
