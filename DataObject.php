@@ -180,18 +180,24 @@ $GLOBALS['_DB_DATAOBJECT']['QUERYENDTIME'] = 0;
 // these two are BC/FC handlers for call in PHP4/5
 
 if ( substr(phpversion(),0,1) == 5) {
-    class DB_DataObject_Overload 
-    {
-        function __call($method,$args) 
+    
+    if (!defined('DB_DATAOBJECT_NO_OVERLOAD')) {
+        
+        class DB_DataObject_Overload 
         {
-            $return = null;
-            $this->_call($method,$args,$return);
-            return $return;
+            function __call($method,$args) 
+            {
+                $return = null;
+                $this->_call($method,$args,$return);
+                return $return;
+            }
+            function __sleep() 
+            {
+                return array_keys(get_object_vars($this)) ; 
+            }
         }
-        function __sleep() 
-        {
-            return array_keys(get_object_vars($this)) ; 
-        }
+    } else {
+        class DB_DataObject_Overload {}
     }
 } else {
     if (version_compare(phpversion(),'4.3.10','eq') && !defined('DB_DATAOBJECT_NO_OVERLOAD')) {
