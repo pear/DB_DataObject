@@ -2361,7 +2361,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $dsn = isset($this->_database_dsn) ? $this->_database_dsn : null;
         
         if (!$dsn) {
-            if (!$this->_database) {
+            if (!$this->_database && !empty($this->__table)) {
                 $this->_database = isset($options["table_{$this->__table}"]) ? $options["table_{$this->__table}"] : null;
             }
             if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
