@@ -3972,7 +3972,9 @@ class DB_DataObject extends DB_DataObject_Overload
      * will also return links converted to arrays.
      *
      * @param   string  sprintf format for array
-     * @param   bool    empty only return elemnts that have a value set.
+     * @param   bool||number    [true = elemnts that have a value set],
+     *                          [false = table + returned colums] ,
+     *                          [0 = returned columsn only]
      *
      * @access   public
      * @return   array of key => value for row
@@ -3983,9 +3985,11 @@ class DB_DataObject extends DB_DataObject_Overload
         global $_DB_DATAOBJECT;
         $ret = array();
         $rf = ($this->_resultFields !== false) ? $this->_resultFields : 
-                (isset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid]) ? $_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid] : false);
+                (isset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid]) ?
+                 $_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid] : false);
+        
         $ar = ($rf !== false) ?
-            array_merge($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid],$this->table()) :
+            (($hideEmpty === 0) ? $rf : array_merge($rf, $this->table())) :
             $this->table();
 
         foreach($ar as $k=>$v) {
