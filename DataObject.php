@@ -1051,8 +1051,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
          
-        $items =  isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table]) ?   
-            $_DB_DATAOBJECT['INI'][$this->_database][$this->__table] : $this->table();
+        $items = $this->table();
             
         if (!$items) {
             $this->raiseError("insert:No table definition for {$this->__table}",
@@ -1321,8 +1320,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $original_query =  $this->_query;
         
-        $items =  isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table]) ?   
-            $_DB_DATAOBJECT['INI'][$this->_database][$this->__table] : $this->table();
+        $items = $this->table();
         
         // only apply update against sequence key if it is set?????
         
@@ -2075,7 +2073,7 @@ class DB_DataObject extends DB_DataObject_Overload
         if (!isset($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5])) {
             $this->_connect();
         }
-        
+          
         if (isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table])) {
             return $_DB_DATAOBJECT['INI'][$this->_database][$this->__table];
         }
@@ -2178,8 +2176,7 @@ class DB_DataObject extends DB_DataObject_Overload
         }
  
 
-        $table =  isset($_DB_DATAOBJECT['INI'][$this->_database][$this->__table]) ?   
-            $_DB_DATAOBJECT['INI'][$this->_database][$this->__table] : $this->table();
+        $table =  $this->table();
        
         $dbtype    = $_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'];
         
@@ -2823,7 +2820,6 @@ class DB_DataObject extends DB_DataObject_Overload
         
         
         $rclass = $ce ? $class  : DB_DataObject::_autoloadClass($class, $table);
-        
         // proxy = full|light
         if (!$rclass && isset($_DB_DATAOBJECT['CONFIG']['proxy'])) { 
         
@@ -2846,14 +2842,16 @@ class DB_DataObject extends DB_DataObject_Overload
             return $x->$proxyMethod( $d->_database, $table);
         }
         
-        if (!$rclass) {
+        if (!$rclass || !class_exists($rclass)) {
             return DB_DataObject::raiseError(
                 "factory could not find class " . 
                 (is_array($class) ? implode(PATH_SEPARATOR, $class)  : $class  ). 
                 "from $table",
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
         }
-        $ret = new $rclass;
+ 
+        $ret = new $rclass();
+ 
         if (!empty($database)) {
             DB_DataObject::debug("Setting database to $database","FACTORY",1);
             $ret->database($database);
