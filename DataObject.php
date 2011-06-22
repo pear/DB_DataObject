@@ -3981,6 +3981,10 @@ class DB_DataObject extends DB_DataObject_Overload
     function toArray($format = '%s', $hideEmpty = false) 
     {
         global $_DB_DATAOBJECT;
+        
+        // we use false to ignore sprintf.. (speed up..)
+        $format = $format == '%s' ? false : $format;
+        
         $ret = array();
         $rf = ($this->_resultFields !== false) ? $this->_resultFields : 
                 (isset($_DB_DATAOBJECT['RESULTFIELDS'][$this->_DB_resultid]) ?
@@ -3994,23 +3998,23 @@ class DB_DataObject extends DB_DataObject_Overload
              
             if (!isset($this->$k)) {
                 if (!$hideEmpty) {
-                    $ret[sprintf($format,$k)] = '';
+                    $ret[$format === false ? $k : sprintf($format,$k)] = '';
                 }
                 continue;
             }
             // call the overloaded getXXXX() method. - except getLink and getLinks
             if (method_exists($this,'get'.$k) && !in_array(strtolower($k),array('links','link'))) {
-                $ret[sprintf($format,$k)] = $this->{'get'.$k}();
+                $ret[$format === false ? $k : sprintf($format,$k)] = $this->{'get'.$k}();
                 continue;
             }
             // should this call toValue() ???
-            $ret[sprintf($format,$k)] = $this->$k;
+            $ret[$format === false ? $k : sprintf($format,$k)] = $this->$k;
         }
         if (!$this->_link_loaded) {
             return $ret;
         }
         foreach($this->_link_loaded as $k) {
-            $ret[sprintf($format,$k)] = $this->$k->toArray();
+            $ret[$format === false ? $k : sprintf($format,$k)] = $this->$k->toArray();
         
         }
         
