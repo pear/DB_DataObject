@@ -23,7 +23,7 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active>
  </lead>
      
-     <date>2010-08-29</date>
+     <date>2011-08-29</date>
       
      <version>
       <release>1.9.6</release>
@@ -42,7 +42,14 @@ http://pear.php.net/dtd/package-2.0.xsd">
         #18749 - Fix is_a() for 5.3.7+ due to php-core stupidity
         #18602 - optimize fetch - thanks to shadesofgraylin
         #18605 - optimize sprintf in toArray()
-             
+        #18446 - use table() method rather than accessing static global.
+        #----- - toArray support for only returning returned columns use "0" as the second parameter
+        #----- - allow tableless dataobject connect() call to work
+        #----- - disable overload using DB_DATAOBJECT_NO_OVERLOAD on PHP5 - Im supprised no one ever noticed this - overload is EVIL ;)
+        #----- - Add autoJoin method, which will build a full join with all related tables.
+        #16867 - fix doc comments - change to public methods for the ones that are supposed to be overridden
+        #17637 - fix detection of non-existant links files resulting in defaulting to autolinks
+
      ]]></notes>
      
  
