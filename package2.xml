@@ -23,10 +23,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <active>yes</active>
  </lead>
      
-     <date>2010-07-07</date>
+     <date>2010-08-29</date>
       
      <version>
-      <release>1.9.5</release>
+      <release>1.9.6</release>
       <api>1.9.0</api>
      </version>
      
@@ -38,10 +38,10 @@ http://pear.php.net/dtd/package-2.0.xsd">
      <license uri="http://www.php.net/license/3_01.txt">PHP License 3.01</license>
      <notes><![CDATA[
       Small fix release.
-
-     fix bug #17554 - update when id=0 (or primary key is 0) - thanks to the persistance of Jacek Pawlowski
-
- 
+      
+        #18749 - Fix is_a() for 5.3.7+ due to php-core stupidity
+        #18602 - optimize fetch - thanks to shadesofgraylin
+        #18605 - optimize sprintf in toArray()
              
      ]]></notes>
      
@@ -102,7 +102,31 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <phprelease />
  <changelog>
  
+ 
+ <release>
+ <date>2010-07-07</date>
+      
+     <version>
+      <release>1.9.5</release>
+      <api>1.9.0</api>
+     </version>
+     
+     <stability>
+      <release>stable</release>
+      <api>stable</api>
+     </stability>
+     
+     <license uri="http://www.php.net/license/3_01.txt">PHP License 3.01</license>
+     <notes><![CDATA[
+      Small fix release.
 
+     fix bug #17554 - update when id=0 (or primary key is 0) - thanks to the persistance of Jacek Pawlowski
+
+ 
+             
+     ]]></notes>
+ 
+  </release>
   <release>
  
  <date>2010-06-21</date>
