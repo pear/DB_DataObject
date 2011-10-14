@@ -225,7 +225,8 @@ class DB_DataObject_Generator extends DB_DataObject
         // build views as well if asked to.
         if (!empty($options['build_views'])) {
             if (!$is_MDB2) {
-                $views = $__DB->getListOf('views');
+                $views = $__DB->getListOf(is_string($options['build_views']) ?
+                                    $options['build_views'] : 'views');
             } else {
                 $views = $__DB->manager->listViews();
             }
@@ -247,11 +248,14 @@ class DB_DataObject_Generator extends DB_DataObject
         foreach($this->tables as $table) {
             if (isset($options['generator_include_regex']) &&
             !preg_match($options['generator_include_regex'],$table)) {
+                $this->debug("SKIPPING (generator_include_regex) : $table");
                 continue;
             } else if (isset($options['generator_exclude_regex']) &&
             preg_match($options['generator_exclude_regex'],$table)) {
                 continue;
             }
+            
+            
             // postgres strip the schema bit from the
             if (!empty($options['generator_strip_schema'])) {
                 $bits = explode('.', $table,2);
@@ -260,9 +264,10 @@ class DB_DataObject_Generator extends DB_DataObject
                     $table = $bits[1];
                 }
             }
+            
             $quotedTable = !empty($options['quote_identifiers_tableinfo']) ? 
                 $__DB->quoteIdentifier($table) : $table;
-                
+          
             if (!$is_MDB2) {
                 
                 $defs =  $__DB->tableInfo($quotedTable);
@@ -300,6 +305,7 @@ class DB_DataObject_Generator extends DB_DataObject
         // the temporary table array is now the right one (tables names matching
         // with regex expressions have been removed)
         $this->tables = $tmp_table;
+         
         //print_r($this->_definitions);
     }
     
@@ -615,6 +621,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 case 'TEXT':
                 case 'MEDIUMTEXT':
                 case 'LONGTEXT':
+                case '_TEXT':   //postgres (?? view ??)
                     
                     $type = DB_DATAOBJECT_STR + DB_DATAOBJECT_TXT;
                     break;
@@ -814,9 +821,9 @@ class DB_DataObject_Generator extends DB_DataObject
         //echo "Generating Class files:        \n";
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
        
-	$this->_extends = empty($options['extends']) ? $this->_extends : $options['extends'];
-	$this->_extendsFile = empty($options['extends_location']) ? $this->_extendsFile : $options['extends_location'];
- 
+        $this->_extends = empty($options['extends']) ? $this->_extends : $options['extends'];
+        $this->_extendsFile = empty($options['extends_location']) ? $this->_extendsFile : $options['extends_location'];
+     
 
         foreach($this->tables as $this->table) {
             $this->table        = trim($this->table);
