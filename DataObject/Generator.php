@@ -173,7 +173,10 @@ class DB_DataObject_Generator extends DB_DataObject
     function _createTableList()
     {
         $this->_connect();
+        
         $options = &PEAR::getStaticProperty('DB_DataObject','options');
+
+       
 
         $__DB= &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
 
@@ -247,23 +250,29 @@ class DB_DataObject_Generator extends DB_DataObject
 
         foreach($this->tables as $table) {
             if (isset($options['generator_include_regex']) &&
-            !preg_match($options['generator_include_regex'],$table)) {
+                    !preg_match($options['generator_include_regex'],$table)) {
                 $this->debug("SKIPPING (generator_include_regex) : $table");
                 continue;
-            } else if (isset($options['generator_exclude_regex']) &&
-            preg_match($options['generator_exclude_regex'],$table)) {
+            } 
+            
+            if (isset($options['generator_exclude_regex']) &&
+                    preg_match($options['generator_exclude_regex'],$table)) {
                 continue;
             }
             
             
             // postgres strip the schema bit from the
             if (!empty($options['generator_strip_schema'])) {
-                $bits = explode('.', $table,2);
-                $table = $bits[0];
-                if (count($bits) > 1) {
-                    $table = $bits[1];
+                $strip = $options['generator_strip_schema'];
+                if (!is_string($strip) || preg_match($strip, $table)) { 
+                    $bits = explode('.', $table,2);
+                    $table = $bits[0];
+                    if (count($bits) > 1) {
+                        $table = $bits[1];
+                    }
                 }
             }
+            $this->debug("EXTRACTING : $table");
             
             $quotedTable = !empty($options['quote_identifiers_tableinfo']) ? 
                 $__DB->quoteIdentifier($table) : $table;
@@ -279,6 +288,7 @@ class DB_DataObject_Generator extends DB_DataObject
 
             if (is_object($defs) && is_a($defs,'PEAR_Error')) {
                 // running in debug mode should pick this up as a big warning..
+                $this->debug("Error reading tableInfo: $table");
                 $this->raiseError('Error reading tableInfo, '. $defs->toString());
                 continue;
             }
@@ -393,7 +403,7 @@ class DB_DataObject_Generator extends DB_DataObject
             echo "WARNING: cant handle non-mysql and pgsql introspection for defaults.";
             return; // cant handle non-mysql introspection for defaults.
         }
-
+        $this->debug("generateForeignKeys: Start");
         $DB = $this->getDatabaseConnection();
 
         $fk = array();
@@ -478,16 +488,18 @@ class DB_DataObject_Generator extends DB_DataObject
         // it's created on the fly!
         $options = PEAR::getStaticProperty('DB_DataObject','options');
 
-        if (empty($options['schema_location'])) {
+        if (!empty($options['schema_location'])) {
+             $file = "{$options['schema_location']}/{$this->_database}.links.ini";
+        } elseif (isset($options["ini_{$this->_database}"])) {
+            $file = preg_replace('/\.ini/','.links.ini',$options["ini_{$this->_database}"]);
+        } else {
+            $this->debug("generateForeignKeys: SKIP - schema_location or ini_{database} was not set");
             return;
         }
-
-        
-        $file = "{$options['schema_location']}/{$this->_database}.links.ini";
+         
 
         if (!file_exists(dirname($file))) {
-            require_once 'System.php';
-            System::mkdir(array('-p','-m',0755,dirname($file)));
+            mkdir(dirname($file),0755, true);
         }
 
         $this->debug("Writing ini as {$file}\n");
