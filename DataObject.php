@@ -315,7 +315,7 @@ class DB_DataObject extends DB_DataObject_Overload
 
     /**
      * An autoloading, caching static get method  using key, value (based on get)
-     * (depreciated - use ::get / and your own caching method)
+     * (deprecated - use ::get / and your own caching method)
      * 
      * Usage:
      * $object = DB_DataObject::staticGet("DbTable_mytable",12);
@@ -2723,7 +2723,7 @@ class DB_DataObject extends DB_DataObject_Overload
 
     /**
      * autoload Class relating to a table
-     * (depreciated - use ::factory)
+     * (deprecated - use ::factory)
      *
      * @param  string  $table  table
      * @access private
@@ -3129,7 +3129,7 @@ class DB_DataObject extends DB_DataObject_Overload
         // this is the autonaming stuff..
         // it sends the column name down to getLink and lets that sort it out..
         // if there is a links file then it is not used!
-        // IT IS DEPRECIATED!!!! - USE 
+        // IT IS DEPRECATED!!!! - USE 
         if (!is_null($links)) {    
             return false;
         }
@@ -3157,7 +3157,7 @@ class DB_DataObject extends DB_DataObject_Overload
      * into a static property named <dbname>.links and specifies the table joins,
      * the other is highly dependant on naming columns 'correctly' :)
      *
-     * NOTE: the naming convention is depreciated!!! - use links.ini
+     * NOTE: the naming convention is deprecated!!! - use links.ini
      *
      * using colname = xxxxx_yyyyyy
      * xxxxxx = related table; (yyyyy = user defined..)
