@@ -8,9 +8,6 @@ DB::DataObject test
 --FILE--
 <?php // -*- C++ -*-
 
-error_reporting(E_ALL);
-
-
 // Test for: DB::parseDSN()
 
 require_once 'DB/DataObject.php';
