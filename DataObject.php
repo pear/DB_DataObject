@@ -2239,17 +2239,30 @@ class DB_DataObject extends DB_DataObject_Overload
         // technically postgres native here...
         // we need to get the new improved tabledata sorted out first.
         
+        // support named sequence keys.. - currently postgres only..
+        
+        if (    in_array($dbtype , array('pgsql')) &&
+                ($table[$usekey] & DB_DATAOBJECT_INT) && 
+                isset($realkeys[$usekey]) && strlen($realkeys[$usekey]) > 1) {
+            return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->tableName()] = array($usekey,true, $realkeys[$usekey]);
+        }
+        
         if (    in_array($dbtype , array('pgsql', 'mysql', 'mysqli', 'mssql', 'ifx')) && 
                 ($table[$usekey] & DB_DATAOBJECT_INT) && 
                 isset($realkeys[$usekey]) && ($realkeys[$usekey] == 'N')
                 ) {
             return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->tableName()] = array($usekey,true,$seqname);
         }
+        
+        
         // if not a native autoinc, and we have not assumed all primary keys are sequence
         if (($realkeys[$usekey] != 'N') && 
             !empty($_DB_DATAOBJECT['CONFIG']['dont_use_pear_sequences'])) {
             return array(false,false,false);
         }
+        
+        
+        
         // I assume it's going to try and be a nextval DB sequence.. (not native)
         return $_DB_DATAOBJECT['SEQUENCE'][$this->_database][$this->tableName()] = array($usekey,false,$seqname);
     }
