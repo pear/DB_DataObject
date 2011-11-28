@@ -1991,6 +1991,15 @@ class DB_DataObject extends DB_DataObject_Overload
             }
              
         }
+        // are table name lowecased..
+        if (!empty($_DB_DATAOBJECT['CONFIG']['portability']) && $_DB_DATAOBJECT['CONFIG']['portability'] & 1) {
+            foreach($_DB_DATAOBJECT['INI'][$this->_database] as $k=>$v) {
+                // results in duplicate cols.. but not a big issue..
+                $_DB_DATAOBJECT['INI'][$this->_database][strtolower($k)] = $v;
+            }
+        }
+        
+        
         // now have we loaded the structure.. 
         
         if (!empty($_DB_DATAOBJECT['INI'][$this->_database][$this->tableName()])) {
@@ -3084,6 +3093,25 @@ class DB_DataObject extends DB_DataObject_Overload
              
         }
         
+        if (!empty($_DB_DATAOBJECT['CONFIG']['portability']) && $_DB_DATAOBJECT['CONFIG']['portability'] & 1) {
+            foreach($lcfg[$this->_database] as $k=>$v) {
+                
+                $nk = strtolower($k);
+                // results in duplicate cols.. but not a big issue..
+                $lcfg[$this->_database][$nk] = isset($lcfg[$this->_database][$nk])
+                    ? $lcfg[$this->_database][$nk]  : array();
+                
+                foreach($v as $kk =>$vv) {
+                    //var_Dump($vv);exit;
+                    $vv =explode(':', $vv);
+                    $vv[0] = strtolower($vv[0]);
+                    $lcfg[$this->_database][$nk][$kk] = implode(':', $vv);
+                }
+                
+                
+            }
+        }
+        //echo '<PRE>';print_r($lcfg);exit;
         
         // if there is no link data at all on the file!
         // we return null.
@@ -3523,7 +3551,7 @@ class DB_DataObject extends DB_DataObject_Overload
                         $ar[1] = explode(',', $ar[1]);
                     }
 
-                    if ($ar[0] != $obj->__table) {
+                    if ($ar[0] != $obj->tableName()) {
                         continue;
                     }
                     if ($joinCol !== false) {
@@ -3605,7 +3633,7 @@ class DB_DataObject extends DB_DataObject_Overload
 
         if ($ofield === false) {
             $this->raiseError(
-                "joinAdd: {$obj->__table} has no link with {$this->tableName()}",
+                "joinAdd: {$obj->tableName()} has no link with {$this->tableName()}",
                 DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
