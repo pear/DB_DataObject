@@ -3642,7 +3642,7 @@ class DB_DataObject extends DB_DataObject_Overload
         // we default to joining as the same name (this is remvoed later..)
         
         if ($joinAs === false) {
-            $joinAs = $obj->__table;
+            $joinAs = $obj->tableName();
         }
         
         $quoteIdentifiers = !empty($_DB_DATAOBJECT['CONFIG']['quote_identifiers']);
@@ -3650,8 +3650,8 @@ class DB_DataObject extends DB_DataObject_Overload
         
         // not sure  how portable adding database prefixes is..
         $objTable = $quoteIdentifiers ? 
-                $DB->quoteIdentifier($obj->__table) : 
-                 $obj->__table ;
+                $DB->quoteIdentifier($obj->tableName()) : 
+                 $obj->tableName() ;
                 
         $dbPrefix  = '';
         if (strlen($obj->_database) && in_array($DB->dsn['phptype'],array('mysql','mysqli'))) {
@@ -3796,7 +3796,7 @@ class DB_DataObject extends DB_DataObject_Overload
        
         
         $fullJoinAs = '';
-        $addJoinAs  = ($quoteIdentifiers ? $DB->quoteIdentifier($obj->__table) : $obj->__table) != $joinAs;
+        $addJoinAs  = ($quoteIdentifiers ? $DB->quoteIdentifier($obj->tableName()) : $obj->tableName()) != $joinAs;
         if ($addJoinAs) {
             // join table a AS b - is only supported by a few databases and is probably not needed
             // , however since it makes the whole Statement alot clearer we are leaving it in
