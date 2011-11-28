@@ -1007,7 +1007,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         $table = $this->tableName();
         if (is_object($from)) {
-            $table = $from->__table;
+            $table = $from->tableName();
             $from = array_keys($from->table());
         }
         
