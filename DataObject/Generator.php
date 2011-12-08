@@ -86,6 +86,13 @@ class DB_DataObject_Generator extends DB_DataObject
      */
     var $table; // active tablename
 
+    /**
+     * links (generated)
+     *
+     * @var array
+     * @access private
+     */
+    var $_fkeys; // active tablename
 
     /**
      * The 'starter' = call this to start the process
@@ -142,6 +149,7 @@ class DB_DataObject_Generator extends DB_DataObject
                 $t->_database = basename($t->_database);
             }
             $t->_createTableList();
+            $t->_createForiegnKeys();
 
             foreach(get_class_methods($class) as $method) {
                 if (substr($method,0,8 ) != 'generate') {
@@ -384,17 +392,17 @@ class DB_DataObject_Generator extends DB_DataObject
         //    return PEAR::raiseError($ret->message,null,PEAR_ERROR_DIE);
         // }
     }
-
-    /**
-     * generate Foreign Keys (for links.ini) 
-     * Currenly only works with mysql / mysqli
+     /**
+     * create the data for Foreign Keys (for links.ini) 
+     * Currenly only works with mysql / mysqli / posgtreas
      * to use, you must set option: generate_links=true
      * 
      * @author Pascal Schöni 
      */
-    function generateForeignKeys() 
+    
+    function _createForiegnKeys()
     {
-        $options = PEAR::getStaticProperty('DB_DataObject','options');
+          $options = PEAR::getStaticProperty('DB_DataObject','options');
         if (empty($options['generate_links'])) {
             return false;
         }
@@ -474,6 +482,38 @@ class DB_DataObject_Generator extends DB_DataObject
                 }
 
         }
+ 
+     
+        $this->_fkeys = $fk;
+        
+        
+        
+        
+        
+    }
+    
+
+    /**
+     * generate Foreign Keys (for links.ini) 
+     * Currenly only works with mysql / mysqli
+     * to use, you must set option: generate_links=true
+     * 
+     * @author Pascal Schöni 
+     */
+    function generateForeignKeys() 
+    {
+        $options = PEAR::getStaticProperty('DB_DataObject','options');
+        if (empty($options['generate_links'])) {
+            return false;
+        }
+        $__DB = &$GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$this->_database_dsn_md5];
+        if (!in_array($__DB->phptype, array('mysql', 'mysqli', 'pgsql'))) {
+            echo "WARNING: cant handle non-mysql and pgsql introspection for defaults.";
+            return; // cant handle non-mysql introspection for defaults.
+        }
+        $this->debug("generateForeignKeys: Start");
+        
+        $fk = $this->_fkeys;
         $links_ini = "";
 
         foreach($fk as $table => $details) {
@@ -483,7 +523,7 @@ class DB_DataObject_Generator extends DB_DataObject
             }
             $links_ini .= "\n";
         }
-
+      
         // dont generate a schema if location is not set
         // it's created on the fly!
         $options = PEAR::getStaticProperty('DB_DataObject','options');
@@ -1012,7 +1052,7 @@ class DB_DataObject_Generator extends DB_DataObject
         // generate getter and setter methods
         $body .= $this->_generateGetters($input);
         $body .= $this->_generateSetters($input);
-        
+        $body .= $this->_generateLinkMethods($input);
         /*
         theoretically there is scope here to introduce 'list' methods
         based up 'xxxx_up' column!!! for heiracitcal trees..
@@ -1218,7 +1258,7 @@ class DB_DataObject_Generator extends DB_DataObject
         $class_prefix  = empty($options['class_prefix']) ? '' : $options['class_prefix'];
         
         $this->_extends = empty($options['extends']) ? $this->_extends : $options['extends'];
-	$this->_extendsFile = empty($options['extends_location']) ? $this->_extendsFile : $options['extends_location'];
+        $this->_extendsFile = empty($options['extends_location']) ? $this->_extendsFile : $options['extends_location'];
  
         $classname = $this->classname = $this->getClassNameFromTableName($this->table);
         
@@ -1371,7 +1411,77 @@ class DB_DataObject_Generator extends DB_DataObject
 
         return $getters;
     }
+    /**
+    * Generate link setter/getter methods for class definition
+    *
+    * @param    string  Existing class contents
+    * @return   string
+    * @access   public
+    */
+    function _generateLinkMethods($input) 
+    {
 
+        $options = &PEAR::getStaticProperty('DB_DataObject','options');
+        $setters = '';
+
+        // only generate if option is set to true
+        
+        // generate_link_methods true::
+        
+        
+        if  (empty($options['generate_link_methods'])) {
+            echo "skip lm? - not set";
+            return '';
+        }
+        
+        if (empty($this->_fkeys)) {
+             echo "skip lm? - fkyes empty";
+            return '';
+        }
+        if (empty($this->_fkeys[$this->table])) {
+            echo "skip lm? - no fkeys for {$this->table}";
+            return '';
+        }
+            
+        // remove auto-generated code from input to be able to check if the method exists outside of the auto-code
+        $input = preg_replace('/(\n|\r\n)\s*###START_AUTOCODE(\n|\r\n).*(\n|\r\n)\s*###END_AUTOCODE(\n|\r\n)/s', '', $input);
+
+        $setters .= "\n";
+        $defs     = $this->_fkeys[$this->table];
+        
+        
+        
+        
+        // $fk[$this->table][$tref[1]] = $tref[2] . ":" . $tref[3];
+
+        // loop through properties and create setter methods
+        foreach ($defs as $k => $info) {
+
+            // build mehtod name
+            $methodName =  is_callable($options['generate_link_methods']) ?
+                    $options['generate_link_methods']($k) : $k;
+
+            if (!strlen(trim($k)) || preg_match("/function[\s]+[&]?$methodName\(/i", $input)) {
+                continue;
+            }
+
+            $setters .= "   /**\n";
+            $setters .= "    * Getter / Setter for \${$k}\n";
+            $setters .= "    *\n";
+            $setters .= "    * @param    mixed   (optional) value to assign\n";
+            $setters .= "    * @access   public\n";
+            
+            $setters .= "    */\n";
+            $setters .= (substr(phpversion(),0,1) > 4) ? '    public '
+                                                       : '    ';
+            $setters .= "function $methodName() {\n";
+            $setters .= "        return func_num_args() ? \$this->link('$k', func_get_arg(0)) : \$this->link('$k');\n";
+            $setters .= "    }\n\n";
+        }
+        
+
+        return $setters;
+    }
 
    /**
     * Generate setter methods for class definition
