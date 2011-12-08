@@ -3150,11 +3150,9 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function link($field)
     {
-        require_once 'DB/DataObject/Link.php';
-        $l = new DB_DataObject_Link($this);
-        $args= func_get_arg(1);
-        array_shift($args);
-        return $l->link($field,$args);
+        require_once 'DB/DataObject/Links.php';
+        $l = new DB_DataObject_Links($this);
+        return func_num_args() > 1 ? $l->link($field,func_get_arg(1)) : $l->link($field);
         
     }
     
@@ -3177,8 +3175,8 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function getLinks($format = '_%s')
     {
-        require_once 'DB/DataObject/Link.php';
-         $l = new DB_DataObject_Link($this);
+        require_once 'DB/DataObject/Links.php';
+         $l = new DB_DataObject_Links($this);
         return $l->applyLinks($format);
            
     }
@@ -3209,8 +3207,8 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function getLink($row, $table = null, $link = false)
     {
-        require_once 'DB/DataObject/Link.php';
-        $l = new DB_DataObject_Link($this);
+        require_once 'DB/DataObject/Links.php';
+        $l = new DB_DataObject_Links($this);
         return $l->getLink($row, $table === null ? false: $table, $link);
          
         
@@ -3245,8 +3243,8 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function getLinkArray($row, $table = null)
     {
-        require_once 'DB/DataObject/Link.php';
-        $l = new DB_DataObject_Link($this);
+        require_once 'DB/DataObject/Links.php';
+        $l = new DB_DataObject_Links($this);
         return $l->getLinkArray($row, $table === null ? false: $table);
      
     }

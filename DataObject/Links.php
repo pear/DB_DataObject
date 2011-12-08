@@ -143,7 +143,7 @@ class DB_DataObject_Links
             
  
         if (!isset($this->do->$field)) {
-            $this->raiseError("getLink: row not set $field", DB_DATAOBJECT_ERROR_NODATA);
+            $this->do->raiseError("getLink: row not set $field", DB_DATAOBJECT_ERROR_NODATA);
             return false;
         }
         
@@ -201,25 +201,25 @@ class DB_DataObject_Links
          
         $links = $this->do->links();
         
-        if (!empty($links) && is_array($links)) {
-            
-            
-            
-            if (isset($links[$field])) {
-                list($table,$link) = explode(':', $links[$field]);
-                if ($p = strpos($field,".")) {
-                    $field = substr($field,0,$p);
-                }
-                return array(
-                    $this->do->factory($table),
-                    $link
-                );
-                    
-            }
-                
+        if (empty($links) || !is_array($links)) {
+             
             return false;
         }
-        return false;
+            
+            
+        if (!isset($links[$field])) {
+            
+            return false;
+        }
+        list($table,$link) = explode(':', $links[$field]);
+        
+        if ($p = strpos($field,".")) {
+            $field = substr($field,0,$p);
+        }
+        return array(
+            $this->do->factory($table),
+            $link
+        );
         
          
         
@@ -243,50 +243,58 @@ class DB_DataObject_Links
      *  @return mixed true of false on set, the object on getter.
      *
      */
-    function link($field,  $args)
+    function link($field)
     {
-        if (empty($args)) {
+        $info = $this->linkInfo($field);
+        if (func_num_args() < 2) {
+            if (!isset($this->$field)) {
+                return $info[0];
+            }
+            
             $ret = $this->getLink($field);
             if ($ret === 0) {
                 // empty.
-                $info = $this->linkInfo($field);
+                
                 return $info[0];
             }
             return $ret;
         }
+        $assign = func_get_arg(1);
+        
         // otherwise it's a set call..
-        if (!is_a($args[0], 'DB_DataObject')) {
-            if (is_integer($args[0])) {
-                if ($args[0] > 0) {
-                    $info = $this->linkInfo($field);
+        if (!is_a($assign , 'DB_DataObject')) {
+            
+            if (is_integer($assign )) {
+                if ($assign  > 0) {
+                    
                     if (!$info) {
                         return false;
                     }
                     // check that record exists..
-                    if (!$info[0]->get($info[1], $args[0])) {
+                    if (!$info[0]->get($info[1], $assign )) {
                         return false;
                     }
                     
                 }
                 
-                $this->do->$field = $args[0];
+                $this->do->$field = $assign ;
                 return true;
             }
+            
             return false;
         }
-        $assign = $args[0];
+        
         // otherwise we are assigning it ...
-        $links = $this->do->links();
+        
             
-        if (empty($links) || !is_array($links) || !isset($links[$field])) {
+        if (!$info) {
             $this->do->raiseError(
                 "getLink:Could not find link for row $field", 
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
             return false;
         }
         
-        $use = $links[$field];
-        $this->do->$field = $assign->$use;
+        $this->do->$field = $assign->{$info[1]};
         return true;
         
         
