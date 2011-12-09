@@ -158,7 +158,7 @@ class DB_DataObject_Links
             return $cache[$tn.':'. $link .':'. $this->do->$field];    
         }
         
-        $obj = is_string($table) ? $this->do->factory($tn) : $able;;
+        $obj = is_string($table) ? $this->do->factory($tn) : $table;;
         
         if (!is_a($obj,'DB_DataObject')) {
             $this->do->raiseError(
@@ -246,18 +246,17 @@ class DB_DataObject_Links
     function link($field)
     {
         $info = $this->linkInfo($field);
+        
         if (func_num_args() < 2) {
-            if (!isset($this->$field)) {
+            
+            if (!isset($this->do->$field)) {
                 return $info[0];
             }
             
             $ret = $this->getLink($field);
-            if ($ret === 0) {
-                // empty.
-                
-                return $info[0];
-            }
-            return $ret;
+            // nothing linked -- return new object..
+            return ($ret === 0) ? $info[0] : $ret;
+            
         }
         $assign = func_get_arg(1);
         
