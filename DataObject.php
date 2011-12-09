@@ -3836,7 +3836,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $value = func_get_arg(1);
         }
         require_once 'DB/DataObject/Cast.php';
-        return call_user_func(array('DB_DataObject_Cast', $method, $value));
+        return call_user_func(array('DB_DataObject_Cast', $method), $value);
         
     }
     
