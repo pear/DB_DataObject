@@ -1761,7 +1761,9 @@ class DB_DataObject extends DB_DataObject_Overload
         $l = $result->fetchRow(DB_DATAOBJECT_FETCHMODE_ORDERED);
         // free the results - essential on oracle.
         $t->free();
-        
+        if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
+            $this->debug('Count returned '. $l[0] ,1);
+        }
         return (int) $l[0];
     }
 
@@ -2676,13 +2678,16 @@ class DB_DataObject extends DB_DataObject_Overload
         if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
             $this->debug(serialize($result), 'RESULT',5);
         }
-        if (method_exists($result, 'numrows')) {
+        if (method_exists($result, 'numRows')) {
             if ($_DB_driver == 'DB') {
                 $DB->expectError(DB_ERROR_UNSUPPORTED);
             } else {
                 $DB->expectError(MDB2_ERROR_UNSUPPORTED);
             }
-            $this->N = $result->numrows();
+            
+            $this->N = $result->numRows();
+            //var_dump($this->N);
+            
             if (is_object($this->N) && is_a($this->N,'PEAR_Error')) {
                 $this->N = true;
             }
@@ -3355,9 +3360,10 @@ class DB_DataObject extends DB_DataObject_Overload
      * @param    optional $obj       object |array    the joining object (no value resets the join)
      *                                          If you use an array here it should be in the format:
      *                                          array('local_column','remotetable:remote_column');
-     *                                          if remotetable does not have a definition, you should
-     *                                          use @ to hide the include error message..
-     *                                      
+     *                                             if remotetable does not have a definition, you should
+     *                                             use @ to hide the include error message..
+     *                                          array('local_column',  $dataobject , 'remote_column');
+     *                                             if array has 3 args, then second is assumed to be the linked dataobject.
      *
      * @param    optional $joinType  string | array
      *                                          'LEFT'|'INNER'|'RIGHT'|'' Inner is default, '' indicates 
@@ -3417,14 +3423,21 @@ class DB_DataObject extends DB_DataObject_Overload
         $toTable = false;
         if (is_array($obj)) {
             $tfield = $obj[0];
-            list($toTable,$ofield) = explode(':',$obj[1]);
-            $obj = DB_DataObject::factory($toTable);
             
-            if (!$obj || !is_object($obj) || is_a($obj,'PEAR_Error')) {
-                $obj = new DB_DataObject;
-                $obj->__table = $toTable;
+            if (count($obj) == 3) {
+                $ofield = $obj[2];
+                $obj = $obj[1];
+            } else {
+                list($toTable,$ofield) = explode(':',$obj[1]);
+            
+                $obj = is_string($toTable) ? DB_DataObject::factory($toTable) : $toTable;
+            
+                if (!$obj || !is_object($obj) || is_a($obj,'PEAR_Error')) {
+                    $obj = new DB_DataObject;
+                    $obj->__table = $toTable;
+                }
+                $obj->_connect();
             }
-            $obj->_connect();
             // set the table items to nothing.. - eg. do not try and match
             // things in the child table...???
             $items = array();
