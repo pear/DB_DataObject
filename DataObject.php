@@ -3170,23 +3170,34 @@ class DB_DataObject extends DB_DataObject_Overload
      * usage:
      *  get:
      *  $obj = $do->link('company_id');
+     *  $obj = $do->link(array('local_col', 'linktable:linked_col'));
      *  
      *  set:
      *  $do->link('company_id',0);
      *  $do->link('company_id',$obj);
-     *  
+     *  $do->link('company_id', array($obj));
      *
+     *  example function
      *
-     * @param  string field 
+     *  function company() {
+     *     $this->link(array('company_id','company:id'), func_get_args());
+     *   }
+     *
+     * 
+     *
+     * @param  mixed $link_spec              link specification (normally a string)
+     *                                       uses similar rules to  joinAdd() array argument.
+     * @param  mixed $set_value (optional)   int, DataObject, or array('set')
      * @author Alan Knowles
      * @access public
      * @return mixed true or false on setting, object on getting
      */
-    function link($field)
+    function link($field, $set_args = array())
     {
         require_once 'DB/DataObject/Links.php';
         $l = new DB_DataObject_Links($this);
-        return func_num_args() > 1 ? $l->link($field,func_get_arg(1)) : $l->link($field);
+        
+        return  $l->link($field,$set_args) ;
         
     }
     
@@ -3216,28 +3227,7 @@ class DB_DataObject extends DB_DataObject_Overload
     }
 
     /**
-     * return name from related object
-     *
-     * There are two ways to use this, one is to set up a <dbname>.links.ini file
-     * into a static property named <dbname>.links and specifies the table joins,
-     * the other is highly dependant on naming columns 'correctly' :)
-     *
-     * NOTE: the naming convention is deprecited!!! - use links.ini
-     *
-     * using colname = xxxxx_yyyyyy
-     * xxxxxx = related table; (yyyyy = user defined..)
-     * looks up table xxxxx, for value id=$this->xxxxx
-     * stores it in $this->_xxxxx_yyyyy
-     *
-     * you can also use $this->getLink('thisColumnName','otherTable','otherTableColumnName')
-     *
-     *
-     * @param string $row    either row or row.xxxxx
-     * @param string $table  name of table to look up value in
-     * @param string $link   name of column in other table to match
-     * @author Tim White <tim@cyface.com>
-     * @access public
-     * @return mixed object on success
+     * deprecited : @use link() 
      */
     function getLink($row, $table = null, $link = false)
     {
