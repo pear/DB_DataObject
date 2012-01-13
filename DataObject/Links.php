@@ -205,20 +205,22 @@ class DB_DataObject_Links
     {
          
         if (is_array($field)) {
-            if (count($field) == 2) { 
-                list($table,$link) = explode(':', $field[1]);
-                $field = $field[0];
-            } else {
+            if (count($field) == 3) {
                 // array with 3 args:
                 // local_col , dataobject, remote_col
-                $obj = $field[1];
-                $link = $field[2];
-                $field = $field[0];
-            }
+                return array(
+                    $field[1],
+                    $field[2],
+                    $field[0]
+                );
+                
+            } 
+            list($table,$link) = explode(':', $field[1]);
+            
             return array(
                 $this->do->factory($table),
                 $link,
-                $field
+                $field[0]
             );
             
         }
@@ -278,8 +280,7 @@ class DB_DataObject_Links
     function link($field, $args = array())
     {
         $info = $this->linkInfo($field);
-        
-            
+         
         if (!$info) {
             $this->do->raiseError(
                 "getLink:Could not find link for row $field", 
