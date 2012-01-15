@@ -57,21 +57,26 @@ http://pear.php.net/dtd/package-2.0.xsd">
  
  <contents>
   <dir name="/">
-   <dir name="DataObject">
-    <file baseinstalldir="DB" name="Cast.php" role="php" />
-    <file baseinstalldir="DB" name="createTables.php" role="php" />
-    <file baseinstalldir="DB" name="Error.php" role="php" />
-    <file baseinstalldir="DB" name="Generator.php" role="php" />
-   </dir> <!-- /DataObject -->
+     <dir name="DB">
+         <dir name="DataObject">
+            <file name="Cast.php" role="php" />
+            <file name="createTables.php" role="php" />
+            <file name="Error.php" role="php" />
+            <file name="Generator.php" role="php" />
+      </dir> <!-- /DataObject -->
+     <file name="DataObject.php" role="php">
+        <tasks:replace from="@version@" to="version" type="package-info" />
+     </file>
+   </dir> <!-- /DB -->
+
    <dir name="docs">
     <file baseinstalldir="DB" name="example.ini" role="doc" />
    </dir> <!-- /docs -->
+
    <dir name="scripts">
     <file baseinstalldir="DB" name="DB_DataObject_createTables.bat" role="script" />
    </dir> <!-- /scripts -->
-   <file baseinstalldir="DB" name="DataObject.php" role="php">
-    <tasks:replace from="@version@" to="version" type="package-info" />
-   </file>
+
   </dir> <!-- / -->
  </contents>
  <dependencies>
