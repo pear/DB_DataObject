@@ -306,7 +306,7 @@ class DB_DataObject_Links
         // otherwise it's a set call..
         if (!is_a($assign , 'DB_DataObject')) {
             
-            if (is_integer($assign )) {
+            if (is_numeric($assign) && is_integer($assign * 1)) {
                 if ($assign  > 0) {
                     
                     if (!$info) {
