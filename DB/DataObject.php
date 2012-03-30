@@ -3196,7 +3196,6 @@ class DB_DataObject extends DB_DataObject_Overload
     {
         require_once 'DB/DataObject/Links.php';
         $l = new DB_DataObject_Links($this);
-        
         return  $l->link($field,$set_args) ;
         
     }
@@ -3785,12 +3784,17 @@ class DB_DataObject extends DB_DataObject_Overload
      * }
      * $ar = $x->fetchAll(); 
      *   will result in only the columns requested being fetched...
+     *
+     *
+     *
+     * @param     array     Configuration
+     *          exclude  Array of columns to exclude from results (eg. modified_by_id)
      * @return   array      info about joins
      *                      cols => map of resulting {joined_tablename}.{joined_table_column_name}
      *                      join_names => map of resulting {join_name_as}.{joined_table_column_name}
      * @access   public
      */
-    function autoJoin()
+    function autoJoin($cfg = array())
     {
           
         $map = $this->links();
@@ -3820,6 +3824,12 @@ class DB_DataObject extends DB_DataObject_Overload
             if (!is_object($xx) || !is_a($xx, 'DB_DataObject')) {
                 continue;
             }
+            // skip columns that are excluded.
+            if (isset($cfg['exclude']) && in_array($ocl, $cfg['exclude'])) {
+                continue;
+            }
+            
+            
             // this is borked ... for multiple jions..
             $this->joinAdd($xx, 'LEFT', 'join_'.$ocl.'_'. $col, $ocl);
             $tabdef = $xx->table();
