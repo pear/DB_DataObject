@@ -3048,6 +3048,9 @@ class DB_DataObject extends DB_DataObject_Overload
     * Should look a bit like
     *       [local_col_name] => "related_tablename:related_col_name"
     * 
+    * @param    array $new_links optional - force update of the links for this table
+    *               You probably want to restore it to it's original state after,
+    *               as modifying here does it for the whole PHP request.
     * 
     * @return   array|null    
     *           array       = if there are links defined for this table.
@@ -3067,9 +3070,18 @@ class DB_DataObject extends DB_DataObject_Overload
         $this->_connect();
         
         // alias for shorter code..
-        $lcfg = &$_DB_DATAOBJECT['LINKS'];
+        $lcfg  = &$_DB_DATAOBJECT['LINKS'];
         $cfg   = &$_DB_DATAOBJECT['CONFIG'];
 
+        if ($args = func_get_args()) {
+            // an associative array was specified, that updates the current
+            // schema... - be careful doing this
+            if (empty( $lcfg[$this->_database])) {
+                $lcfg[$this->_database] = array();
+            }
+            $lcfg[$this->_database][$this->tableName()] = $args[0];
+            
+        }
         // loaded and available.
         if (isset($lcfg[$this->_database][$this->tableName()])) {
             return $lcfg[$this->_database][$this->tableName()];
@@ -3798,11 +3810,12 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function autoJoin($cfg = array())
     {
-          
-        $map = array_merge($this->links(),
-                !empty($cfg['links']) ? $cfg['links'] : array()
-        );
-        
+        $pre_links = $this->links();
+        if (!empty($cfg['links'])) {
+            $this->links(array_merge( $pre_links , $cfg['links']));
+        }
+        $map = $this->links( );
+        //print_r($map);
         $tabdef = $this->table();
          
         // we need this as normally it's only cleared by an empty selectAs call.
@@ -3854,6 +3867,8 @@ class DB_DataObject extends DB_DataObject_Overload
         foreach($selectAs as $ar) {
             $this->selectAs($ar[0], $ar[1], $ar[2]);
         }
+        // restore links..
+        $this->links( $pre_links );
         
         return $ret;
         
