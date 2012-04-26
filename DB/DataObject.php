@@ -2571,10 +2571,10 @@ class DB_DataObject extends DB_DataObject_Overload
         if (strtoupper($string) == 'BEGIN') {
             if ($_DB_driver == 'DB') {
                 $DB->autoCommit(false);
+                $DB->simpleQuery('BEGIN');
             } else {
                 $DB->beginTransaction();
             }
-            // db backend adds begin anyway from now on..
             return true;
         }
         if (strtoupper($string) == 'COMMIT') {
