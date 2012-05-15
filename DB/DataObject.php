@@ -3982,13 +3982,15 @@ class DB_DataObject extends DB_DataObject_Overload
                 }
                 continue;
             }
-            if (is_object($from[sprintf($format,$k)])) {
+            $val = $from[sprintf($format,$k)];
+            if (is_a('DB_DataObject_Cast', $val)) {
+                $this->$k = $val;
                 continue;
             }
-            if (is_array($from[sprintf($format,$k)])) {
+            if (is_object($val) || is_array($val)) {
                 continue;
             }
-            $ret = $this->fromValue($k,$from[sprintf($format,$k)]);
+            $ret = $this->fromValue($k,$val);
             if ($ret !== true)  {
                 $overload_return[$k] = 'Not A Valid Value';
             }
@@ -4325,7 +4327,7 @@ class DB_DataObject extends DB_DataObject_Overload
         $options = $_DB_DATAOBJECT['CONFIG'];
         $cols = $this->table();
         // dont know anything about this col..
-        if (!isset($cols[$col])) {
+        if (!isset($cols[$col]) || is_a($value, 'DB_DataObject_Cast')) {
             $this->$col = $value;
             return true;
         }
