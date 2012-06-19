@@ -1448,16 +1448,16 @@ class DB_DataObject_Generator extends DB_DataObject
         
         
         if  (empty($options['generate_link_methods'])) {
-            echo "skip lm? - not set";
+            //echo "skip lm? - not set";
             return '';
         }
         
         if (empty($this->_fkeys)) {
-             echo "skip lm? - fkyes empty";
+            //echo "skip lm? - fkyes empty";
             return '';
         }
         if (empty($this->_fkeys[$this->table])) {
-            echo "skip lm? - no fkeys for {$this->table}";
+            //echo "skip lm? - no fkeys for {$this->table}";
             return '';
         }
             
@@ -1466,9 +1466,7 @@ class DB_DataObject_Generator extends DB_DataObject
 
         $setters .= "\n";
         $defs     = $this->_fkeys[$this->table];
-        
-        
-        
+         
         
         // $fk[$this->table][$tref[1]] = $tref[2] . ":" . $tref[3];
 
@@ -1496,8 +1494,7 @@ class DB_DataObject_Generator extends DB_DataObject
             $setters .= "        return \$this->link('$k', func_get_args());\n";
             $setters .= "    }\n\n";
         }
-        
-
+         
         return $setters;
     }
 
