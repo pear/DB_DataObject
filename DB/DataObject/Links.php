@@ -355,7 +355,7 @@ class DB_DataObject_Links
     {
          
         // get table will load the options.
-        if (isset($this->do->_link_loaded) && $this->do->_link_loaded !== false) {
+        if ($this->do->_link_loaded) {
             return true;
         }
         
