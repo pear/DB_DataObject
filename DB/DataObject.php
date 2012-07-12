@@ -1959,31 +1959,40 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->_connect();
         }
         
-        // loaded already?
-        if (!empty($_DB_DATAOBJECT['INI'][$this->_database])) {
-            
-            // database loaded - but this is table is not available..
-            if (
-                    empty($_DB_DATAOBJECT['INI'][$this->_database][$this->tableName()]) 
-                    && !empty($_DB_DATAOBJECT['CONFIG']['proxy'])
-                ) {
-                if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
-                    $this->debug("Loading Generator to fetch Schema",1);
-                }
-                class_exists('DB_DataObject_Generator') ? '' : 
-                    require_once 'DB/DataObject/Generator.php';
-                    
-                
-                $x = new DB_DataObject_Generator;
-                $x->fillTableSchema($this->_database,$this->tableName());
-            }
+        
+        // if this table is already loaded this table..
+        if (!empty($_DB_DATAOBJECT['INI'][$this->_database][$this->tableName()])) {
             return true;
         }
         
-        
+        // initialize the ini data.. if empt..
+        if (empty($_DB_DATAOBJECT['INI'][$this->_database])) {
+            $_DB_DATAOBJECT['INI'][$this->_database] = array();
+        }
+         
         if (empty($_DB_DATAOBJECT['CONFIG'])) {
             DB_DataObject::_loadConfig();
         }
+        
+        // we do not have the data for this table yet...
+        
+        // if we are configured to use the proxy..
+        
+        if ( !empty($_DB_DATAOBJECT['CONFIG']['proxy']) ) {
+            if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
+                $this->debug("Loading Generator to fetch Schema",1);
+            }
+            class_exists('DB_DataObject_Generator') ? '' : 
+                require_once 'DB/DataObject/Generator.php';
+                
+            
+            $x = new DB_DataObject_Generator;
+            $x->fillTableSchema($this->_database,$this->tableName());
+            return true;
+        }
+            
+             
+       
         
         // if you supply this with arguments, then it will take those
         // as the database and links array...
