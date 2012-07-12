@@ -418,9 +418,33 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->_connect();
             $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
         }
+        $tn = ($quoteIdentifiers ? $DB->quoteIdentifier($this->tableName()) : $this->tableName()) ;
+        if (!empty($this->_query['derive_table']) && !empty($this->_query['derive_select']) ) {
+            
+            // this is a derived select..
+            // not much support in the api yet..
+            
+             $sql = 'SELECT ' .
+               $this->_query['derive_select']
+               .' FROM ( SELECT'.
+                    $this->_query['data_select'] . " \n" .
+                    " FROM   $tn \n" .
+                    $this->_join . " \n" .
+                    $this->_query['condition'] . " \n" .
+                    $this->_query['group_by'] . " \n" .
+                    $this->_query['having'] . " \n" .
+                ') ' . $this->_query['derive_table'];
+                     
+            return $sql;
+            
+            
+        }
+        
+       
+        
         $sql = 'SELECT ' .
             $this->_query['data_select'] . " \n" .
-            ' FROM ' . ($quoteIdentifiers ? $DB->quoteIdentifier($this->tableName()) : $this->tableName()) . " \n" .
+            " FROM   $tn \n" .
             $this->_join . " \n" .
             $this->_query['condition'] . " \n" .
             $this->_query['group_by'] . " \n" .
@@ -1859,7 +1883,9 @@ class DB_DataObject extends DB_DataObject_Overload
         'limit_start' => '', // the LIMIT condition
         'limit_count' => '', // the LIMIT condition
         'data_select' => '*', // the columns to be SELECTed
-        'unions'      => array(), // the added unions
+        'unions'      => array(), // the added unions,
+        'derive_table' => '', // derived table name (BETA)
+        'derive_select' => '', // derived table select (BETA)
     );
         
     
