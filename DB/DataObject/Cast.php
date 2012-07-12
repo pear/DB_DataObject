@@ -431,10 +431,10 @@ class DB_DataObject_Cast {
         // perhaps we should support TEXT fields???
         // 
         
-        if (!($to & DB_DATAOBJECT_BLOB)) {
-            return PEAR::raiseError('Invalid Cast from a DB_DataObject_Cast::string to something other than a blob!'.
-                ' (why not just use native features)');
-        }
+        // $to == a string field which is the default type (0)
+        // so we do not test it here. - we assume that number fields
+        // will accept a string?? - which is stretching it a bit ...
+        // should probaly add that test as some point. 
         
         switch ($db->dsn['phptype']) {
             case 'pgsql':
