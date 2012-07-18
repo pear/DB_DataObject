@@ -1342,6 +1342,9 @@ class DB_DataObject_Generator extends DB_DataObject
             $defs =  $__DB->tableInfo($quotedTable);
         } else {
             $defs =  $__DB->reverse->tableInfo($quotedTable);
+            if (is_a($defs,'PEAR_Error')) {
+                return $defs;
+            }
             foreach ($defs as $k => $v) {
                 if (!isset($defs[$k]['length'])) {
                     continue;
