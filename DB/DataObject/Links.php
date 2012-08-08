@@ -359,7 +359,7 @@ class DB_DataObject_Links
             return true;
         }
         
-        $this->_do->_link_loaded = false;
+        $this->do->_link_loaded = false;
         $cols  = $this->do->table();
         $links = $this->do->links();
          
