@@ -8,7 +8,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "DB_DataObject": "./"
+            "DB": "./"
         }
     },
     "description": "More info available on: http://pear.php.net/package/DB_DataObject",
@@ -23,9 +23,13 @@
     },
     "type": "library",
     "require": {
-        "pear/pear_exception": "*"
+        "pear/pear_exception": "*",
+        "pear/db": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
+    },
+    "suggest": {
+        "pear/mdb2": "Install optionally via your project's composer.json"
     }
 }
