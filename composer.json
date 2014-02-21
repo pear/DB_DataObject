@@ -1,0 +1,35 @@
+{
+    "authors": [
+        {
+            "email": "alan@akbkhome.com",
+            "name": "Alan Knowles",
+            "role": "Lead"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "DB": "./"
+        }
+    },
+    "description": "More info available on: http://pear.php.net/package/DB_DataObject",
+    "include-path": [
+        "./"
+    ],
+    "license": "PHP License 3.01",
+    "name": "pear/db_dataobject",
+    "support": {
+        "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=DB_DataObject",
+        "source": "https://github.com/pear/DB_DataObject"
+    },
+    "type": "library",
+    "require": {
+        "pear/pear_exception": "*",
+        "pear/db": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "suggest": {
+        "pear/mdb2": "Install optionally via your project's composer.json"
+    }
+}
